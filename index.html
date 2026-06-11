@@ -3,30 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Checklist System</title>
+    <title>Stagging Checklist System</title>
     
-    <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- Supabase SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <script>
         tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: { sans: ['Inter', 'sans-serif'] },
-                    colors: { primary: '#e11d48' }
-                }
-            }
+            theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'] } } }
         }
     </script>
 
@@ -36,7 +24,6 @@
         .custom-scroll::-webkit-scrollbar { height: 6px; width: 6px; }
         .custom-scroll::-webkit-scrollbar-track { background: transparent; }
         .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-        .custom-scroll::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
         .table-container::-webkit-scrollbar { height: 10px; width: 10px; }
         .table-container::-webkit-scrollbar-track { background: #f8fafc; border-radius: 8px; }
@@ -46,13 +33,10 @@
 
         input[type="radio"]:checked + div.radio-card-ok {
             background-color: #ecfdf5; border-color: #10b981; color: #047857;
-            box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.1), 0 2px 4px -1px rgba(16, 185, 129, 0.06);
         }
         input[type="radio"]:checked + div.radio-card-non {
             background-color: #fff1f2; border-color: #f43f5e; color: #be123c;
-            box-shadow: 0 4px 6px -1px rgba(244, 63, 94, 0.1), 0 2px 4px -1px rgba(244, 63, 94, 0.06);
         }
-        
         input[type="radio"]:checked + div .check-icon { transform: scale(1); opacity: 1; }
         .check-icon { transform: scale(0.5); opacity: 0; transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1); }
 
@@ -99,9 +83,85 @@
 </head>
 <body class="bg-[#f3f4f6] text-slate-800 antialiased selection:bg-rose-200 selection:text-rose-900">
 
-    <div id="dynamic-island" class="fixed top-6 left-1/2 -translate-x-1/2 z-[200] opacity-0 pointer-events-none transform -translate-y-full">
+    <!-- Notifikasi Dynamic Island -->
+    <div id="dynamic-island" class="fixed top-6 left-1/2 -translate-x-1/2 z-[500] opacity-0 pointer-events-none transform -translate-y-full">
         <div class="bg-black/90 backdrop-blur-md shadow-2xl rounded-full flex items-center overflow-hidden border border-white/10" style="min-width: 200px; max-width: 90vw;">
             <div id="island-content" class="flex items-center gap-3 px-5 py-3 w-full justify-center"></div>
+        </div>
+    </div>
+
+    <!-- Modal Form Tambah/Edit Item Ceklis (Dinamis: OK/Non OK, Ada/Tidak Ada, Ya/Tidak) -->
+    <div id="modal-item-form" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[400] flex items-center justify-center p-4">
+        <div class="max-w-sm w-full bg-white rounded-3xl shadow-2xl overflow-hidden border border-white/50">
+            <div class="p-6">
+                <div class="flex items-center gap-3 mb-5">
+                    <div class="w-10 h-10 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center text-lg"><i class="fa-solid fa-list-check"></i></div>
+                    <h3 class="font-bold text-slate-800 text-lg" id="modal-item-title">Tambah Item</h3>
+                </div>
+                <form id="form-manage-item" class="space-y-4">
+                    <input type="hidden" id="manage-item-catId">
+                    <input type="hidden" id="manage-item-id">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Deskripsi Item</label>
+                        <textarea id="manage-item-label" required rows="3" class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-purple-500 outline-none text-sm font-medium transition-colors custom-scroll"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Tipe Pilihan Jawaban</label>
+                        <select id="manage-item-type" required class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-purple-500 outline-none text-sm font-medium transition-colors cursor-pointer">
+                            <option value="ok_nonok">OK / Non OK</option>
+                            <option value="ada_tidak">Ada / Tidak Ada</option>
+                            <option value="ya_tidak">Ya / Tidak</option>
+                        </select>
+                    </div>
+                    <div class="pt-2 flex justify-end gap-3 border-t border-slate-100 mt-2">
+                        <button type="button" onclick="closeItemModal()" class="px-5 py-2.5 rounded-xl font-bold text-sm text-slate-500 hover:bg-slate-200 transition-colors">Batal</button>
+                        <button type="submit" class="px-6 py-2.5 rounded-xl font-bold text-sm text-white bg-purple-600 hover:bg-purple-700 shadow-md shadow-purple-200 transition-transform active:scale-95">Simpan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Ganti Password (Untuk User) -->
+    <div id="modal-change-password" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[400] flex items-center justify-center p-4">
+        <div class="max-w-sm w-full bg-white rounded-3xl shadow-2xl p-6">
+            <div class="flex items-center gap-3 mb-5">
+                <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center text-lg"><i class="fa-solid fa-key"></i></div>
+                <h3 class="font-bold text-slate-800 text-lg">Ganti Password</h3>
+            </div>
+            <form id="form-change-password" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Password Baru</label>
+                    <input type="password" id="new-password" required class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Konfirmasi Password Baru</label>
+                    <input type="password" id="confirm-password" required class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none text-sm">
+                </div>
+                <div class="pt-2 flex justify-end gap-3 border-t border-slate-100 mt-2">
+                    <button type="button" onclick="closeChangePasswordModal()" class="px-5 py-2.5 rounded-xl font-bold text-sm text-slate-500 hover:bg-slate-200 transition-colors">Batal</button>
+                    <button type="submit" class="px-6 py-2.5 rounded-xl font-bold text-sm text-white bg-blue-600 hover:bg-blue-700 shadow-md shadow-blue-200 transition-transform active:scale-95">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Confirm/Prompt Global -->
+    <div id="custom-modal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[600] flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+        <div id="modal-box" class="max-w-sm w-full bg-white rounded-3xl shadow-2xl overflow-hidden transform scale-95 transition-transform duration-300 border border-white/50">
+            <div class="p-6">
+                <div class="flex items-start gap-4">
+                    <div id="modal-icon" class="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 text-xl"></div>
+                    <div class="pt-1">
+                        <h3 id="modal-title" class="font-bold text-slate-800 text-lg leading-tight mb-1">Title</h3>
+                        <p id="modal-message" class="text-slate-500 text-sm leading-relaxed"></p>
+                    </div>
+                </div>
+                <div id="modal-input-container" class="hidden mt-5">
+                    <input type="text" id="modal-input" class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none text-sm font-medium transition-colors" />
+                </div>
+            </div>
+            <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-3" id="modal-actions"></div>
         </div>
     </div>
 
@@ -148,12 +208,11 @@
 
                 <div class="mt-8 bg-blue-50/80 border border-blue-100 rounded-xl p-4 text-xs text-blue-800">
                     <div class="flex items-center gap-2 mb-2 font-bold text-blue-900">
-                        <i class="fa-solid fa-code"></i> Data Testing
+                        <i class="fa-solid fa-code"></i> Kredensial Sistem
                     </div>
                     <div class="grid grid-cols-2 gap-2">
-                        <div><span class="opacity-70">Admin:</span><br><code>admin</code> / <code>123</code></div>
-                        <div><span class="opacity-70">Petugas:</span><br><code>user1</code> / <code>123</code></div>
-                        <div class="col-span-2"><span class="opacity-70">Visitor:</span> <code>tamu</code> / <code>123</code></div>
+                        <div><span class="opacity-70">Admin Master:</span><br><code>admin</code> / <code>123</code></div>
+                        <div class="col-span-2 mt-1 italic opacity-80">*Jika admin belum ada, login dengan data di atas akan otomatis membuatnya.</div>
                     </div>
                 </div>
             </div>
@@ -213,17 +272,14 @@
             <form id="checklist-form">
                 <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mb-8 relative overflow-hidden">
                     <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-rose-500 to-orange-400"></div>
-                    
                     <div class="flex items-center justify-between mb-6">
                         <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
-                            <div class="w-8 h-8 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center"><i class="fa-solid fa-map-pin"></i></div>
-                            Area Tugas Anda
+                            <div class="w-8 h-8 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center"><i class="fa-solid fa-map-pin"></i></div> Area Tugas
                         </h2>
                         <span class="bg-slate-100 text-slate-500 px-3 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1.5 border border-slate-200">
                             <i class="fa-solid fa-lock text-[10px]"></i> Auto-Fill
                         </span>
                     </div>
-
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                         <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
                             <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Nama Stagging</p>
@@ -240,8 +296,7 @@
 
                 <div class="mt-10 mb-8 sticky bottom-6 z-40 px-4 sm:px-0">
                     <button type="submit" id="btn-submit-form" class="w-full bg-slate-900 hover:bg-black text-white font-bold py-4 px-8 rounded-2xl shadow-2xl shadow-slate-900/30 flex items-center justify-center gap-3 transition-transform transform active:scale-[0.98]">
-                        <i class="fa-solid fa-paper-plane text-lg"></i> 
-                        <span>Kirim Hasil Pengecekan</span>
+                        <i class="fa-solid fa-paper-plane text-lg"></i> <span>Kirim Hasil Pengecekan</span>
                     </button>
                 </div>
             </form>
@@ -249,13 +304,11 @@
 
         <div id="content-admin-users" class="hidden max-w-[1400px] mx-auto w-full px-4 mt-8 animate-[islandEnter_0.4s_ease-out]">
             <div class="grid grid-cols-1 xl:grid-cols-3 gap-6 xl:gap-8">
-                
                 <div class="bg-white rounded-3xl shadow-sm border border-slate-200 p-6 xl:col-span-1 h-fit">
                     <div class="flex items-center gap-3 mb-6">
                         <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center text-lg"><i class="fa-solid fa-user-plus"></i></div>
                         <h2 class="text-lg font-bold text-slate-800">Registrasi Akun</h2>
                     </div>
-                    
                     <form id="add-user-form" class="space-y-5">
                         <div>
                             <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Tipe Akun</label>
@@ -265,7 +318,6 @@
                                 <option value="admin">Admin (Full Akses)</option>
                             </select>
                         </div>
-                        
                         <div class="grid grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Username</label>
@@ -276,7 +328,6 @@
                                 <input type="text" id="add-pw" required class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none text-sm font-medium" />
                             </div>
                         </div>
-                        
                         <div id="fields-lokasi" class="space-y-5 pt-4 border-t border-slate-100 mt-2">
                             <div>
                                 <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Nama Stagging</label>
@@ -293,13 +344,11 @@
                                 </div>
                             </div>
                         </div>
-
                         <button type="submit" id="btn-add-user" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 transition-transform active:scale-[0.98] mt-2">
                             <i class="fa-solid fa-save"></i> Buat Akun Baru
                         </button>
                     </form>
                 </div>
-
                 <div class="bg-white rounded-3xl shadow-sm border border-slate-200 xl:col-span-2 flex flex-col overflow-hidden">
                     <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-white">
                         <div class="flex items-center gap-3">
@@ -307,7 +356,6 @@
                             <h2 class="text-lg font-bold text-slate-800">Database Pengguna</h2>
                         </div>
                     </div>
-                    
                     <div class="overflow-x-auto flex-1 custom-scroll bg-slate-50/50 p-2">
                         <table class="w-full text-left border-collapse min-w-[700px] bg-white rounded-2xl overflow-hidden">
                             <thead>
@@ -319,8 +367,7 @@
                                     <th class="p-4 font-bold text-center rounded-tr-xl">Aksi</th>
                                 </tr>
                             </thead>
-                            <tbody id="users-tbody" class="divide-y divide-slate-50 text-sm">
-                            </tbody>
+                            <tbody id="users-tbody" class="divide-y divide-slate-50 text-sm"></tbody>
                         </table>
                     </div>
                 </div>
@@ -329,19 +376,15 @@
 
         <div id="content-admin-form" class="hidden max-w-[1400px] mx-auto w-full px-4 mt-8 animate-[islandEnter_0.4s_ease-out]">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 h-[75vh]">
-                
                 <div class="lg:col-span-4 bg-white rounded-3xl shadow-sm border border-slate-200 flex flex-col overflow-hidden">
                     <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-white z-10">
                         <div class="flex items-center gap-3">
                             <div class="w-10 h-10 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center text-lg"><i class="fa-solid fa-layer-group"></i></div>
                             <h2 class="font-bold text-slate-800">Master Kategori</h2>
                         </div>
-                        <button onclick="adminAddCategory()" class="w-9 h-9 rounded-full bg-slate-900 text-white flex items-center justify-center hover:scale-105 transition-transform shadow-md active:scale-95" title="Tambah Kategori">
-                            <i class="fa-solid fa-plus"></i>
-                        </button>
+                        <button onclick="adminAddCategory()" class="w-9 h-9 rounded-full bg-slate-900 text-white flex items-center justify-center hover:scale-105 transition-transform shadow-md active:scale-95" title="Tambah Kategori"><i class="fa-solid fa-plus"></i></button>
                     </div>
-                    <div class="flex-1 overflow-y-auto custom-scroll p-3 space-y-2 bg-slate-50/50" id="admin-category-list">
-                    </div>
+                    <div class="flex-1 overflow-y-auto custom-scroll p-3 space-y-2 bg-slate-50/50" id="admin-category-list"></div>
                 </div>
 
                 <div class="lg:col-span-8 bg-white rounded-3xl shadow-sm border border-slate-200 flex flex-col overflow-hidden relative">
@@ -354,36 +397,27 @@
                             <i class="fa-solid fa-plus"></i> Tambah Item Ceklis
                         </button>
                     </div>
-                    
                     <div class="flex-1 overflow-y-auto custom-scroll p-4 bg-slate-50/50">
                         <div id="admin-item-empty" class="h-full flex flex-col items-center justify-center text-slate-400">
-                            <div class="w-20 h-20 rounded-full bg-slate-100 flex items-center justify-center mb-4">
-                                <i class="fa-solid fa-hand-pointer text-3xl"></i>
-                            </div>
+                            <div class="w-20 h-20 rounded-full bg-slate-100 flex items-center justify-center mb-4"><i class="fa-solid fa-hand-pointer text-3xl"></i></div>
                             <p class="font-medium">Pilih kategori untuk melihat dan mengelola item.</p>
                         </div>
-                        
                         <div id="admin-item-list" class="space-y-3 hidden"></div>
                     </div>
                 </div>
-
             </div>
         </div>
 
         <div id="content-dashboard" class="hidden max-w-[98%] mx-auto w-full px-4 mt-8 animate-[islandEnter_0.4s_ease-out]">
             <div class="bg-white rounded-3xl shadow-sm border border-slate-200 flex flex-col overflow-hidden h-[80vh]">
-                
                 <div class="p-5 lg:p-6 border-b border-slate-100 bg-white flex flex-col xl:flex-row justify-between items-start xl:items-center gap-5 shrink-0 z-10">
                     <div class="flex items-start gap-4">
-                        <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-xl shrink-0">
-                            <i class="fa-solid fa-chart-pie"></i>
-                        </div>
+                        <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-xl shrink-0"><i class="fa-solid fa-chart-pie"></i></div>
                         <div>
                             <h2 class="text-xl font-bold text-slate-800">Dashboard Rekapitulasi</h2>
                             <p class="text-sm text-slate-500 mt-1">Pantau hasil pengecekan seluruh area stagging secara real-time.</p>
                         </div>
                     </div>
-                    
                     <div class="flex flex-wrap items-center gap-3 w-full xl:w-auto bg-slate-50 p-2 rounded-2xl border border-slate-100">
                         <div class="flex items-center pl-3 text-slate-400"><i class="fa-solid fa-filter"></i></div>
                         <select id="filter-month" onchange="applyFiltersAndRender()" class="px-3 py-2 bg-transparent text-sm outline-none font-semibold text-slate-700 cursor-pointer">
@@ -404,7 +438,6 @@
                         </select>
                     </div>
                 </div>
-
                 <div class="overflow-auto table-container flex-1 bg-slate-50 relative">
                     <table class="w-full text-left border-collapse min-w-max text-sm">
                         <thead class="sticky-header">
@@ -414,7 +447,6 @@
                         <tbody id="dashboard-tbody" class="bg-white"></tbody>
                     </table>
                 </div>
-
                 <div id="dashboard-notes-section" class="hidden shrink-0 border-t border-slate-200 bg-white p-5 lg:p-6 overflow-y-auto max-h-[30vh] custom-scroll shadow-[0_-10px_15px_-3px_rgba(0,0,0,0.05)] z-20">
                     <div class="flex items-center gap-2 mb-4">
                         <div class="w-8 h-8 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center"><i class="fa-solid fa-triangle-exclamation text-sm"></i></div>
@@ -422,51 +454,6 @@
                     </div>
                     <div id="dashboard-notes-container" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4"></div>
                 </div>
-            </div>
-        </div>
-
-    </div>
-
-    <div id="custom-modal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[300] flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
-        <div id="modal-box" class="max-w-sm w-full bg-white rounded-3xl shadow-2xl overflow-hidden transform scale-95 transition-transform duration-300 border border-white/50">
-            <div class="p-6">
-                <div class="flex items-start gap-4">
-                    <div id="modal-icon" class="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 text-xl"></div>
-                    <div class="pt-1">
-                        <h3 id="modal-title" class="font-bold text-slate-800 text-lg leading-tight mb-1">Title</h3>
-                        <p id="modal-message" class="text-slate-500 text-sm leading-relaxed"></p>
-                    </div>
-                </div>
-                <div id="modal-input-container" class="hidden mt-5">
-                    <input type="text" id="modal-input" class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none text-sm font-medium transition-colors" />
-                </div>
-            </div>
-            <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-3" id="modal-actions"></div>
-        </div>
-    </div>
-
-    <!-- Modal Ganti Password -->
-    <div id="modal-change-password" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[300] flex items-center justify-center p-4">
-        <div class="max-w-sm w-full bg-white rounded-3xl shadow-2xl overflow-hidden border border-white/50">
-            <div class="p-6">
-                <div class="flex items-center gap-3 mb-5">
-                    <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center text-lg"><i class="fa-solid fa-key"></i></div>
-                    <h3 class="font-bold text-slate-800 text-lg">Ganti Password</h3>
-                </div>
-                <form id="form-change-password" class="space-y-4">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Password Baru</label>
-                        <input type="password" id="new-password" required minlength="3" class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none text-sm font-medium transition-colors" />
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Konfirmasi Password Baru</label>
-                        <input type="password" id="confirm-password" required minlength="3" class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none text-sm font-medium transition-colors" />
-                    </div>
-                    <div class="pt-2 flex justify-end gap-3">
-                        <button type="button" onclick="closeChangePasswordModal()" class="px-5 py-2.5 rounded-xl font-bold text-sm text-slate-500 hover:bg-slate-200 transition-colors">Batal</button>
-                        <button type="submit" class="px-6 py-2.5 rounded-xl font-bold text-sm text-white bg-blue-600 hover:bg-blue-700 shadow-md shadow-blue-200 transition-transform active:scale-95">Simpan</button>
-                    </div>
-                </form>
             </div>
         </div>
     </div>
@@ -509,34 +496,23 @@
                 const inputContainer = document.getElementById('modal-input-container');
                 const inputEl = document.getElementById('modal-input');
                 if (showInput) {
-                    inputContainer.classList.remove('hidden');
-                    inputEl.value = inputVal;
-                    setTimeout(() => inputEl.focus(), 100);
-                } else {
-                    inputContainer.classList.add('hidden');
-                }
-                const actions = document.getElementById('modal-actions');
-                actions.innerHTML = '';
+                    inputContainer.classList.remove('hidden'); inputEl.value = inputVal; setTimeout(() => inputEl.focus(), 100);
+                } else { inputContainer.classList.add('hidden'); }
+                const actions = document.getElementById('modal-actions'); actions.innerHTML = '';
                 const btnCancel = document.createElement('button');
                 btnCancel.className = "px-5 py-2.5 rounded-xl font-bold text-sm text-slate-500 hover:bg-slate-200 transition-colors";
-                btnCancel.textContent = "Batal";
-                btnCancel.onclick = () => this._close();
-                const btnOk = document.createElement('button');
-                const isDanger = iconBg.includes('rose');
+                btnCancel.textContent = "Batal"; btnCancel.onclick = () => this._close();
+                const btnOk = document.createElement('button'); const isDanger = iconBg.includes('rose');
                 btnOk.className = `px-6 py-2.5 rounded-xl font-bold text-sm text-white transition-transform active:scale-95 shadow-md ${isDanger ? 'bg-rose-600 hover:bg-rose-700 shadow-rose-200' : 'bg-slate-900 hover:bg-slate-800 shadow-slate-200'}`;
                 btnOk.textContent = showInput ? "Simpan" : "Ya, Lanjutkan";
                 btnOk.onclick = () => { this._close(); if (onConfirm) onConfirm(showInput ? inputEl.value : null); };
                 actions.appendChild(btnCancel); actions.appendChild(btnOk);
-                container.classList.remove('hidden');
-                void container.offsetWidth;
-                container.classList.remove('opacity-0');
+                container.classList.remove('hidden'); void container.offsetWidth; container.classList.remove('opacity-0');
                 box.classList.remove('scale-95'); box.classList.add('scale-100');
             },
             _close() {
-                const container = document.getElementById('custom-modal');
-                const box = document.getElementById('modal-box');
-                container.classList.add('opacity-0');
-                box.classList.remove('scale-100'); box.classList.add('scale-95');
+                const container = document.getElementById('custom-modal'); const box = document.getElementById('modal-box');
+                container.classList.add('opacity-0'); box.classList.remove('scale-100'); box.classList.add('scale-95');
                 setTimeout(() => container.classList.add('hidden'), 300);
             },
             confirm(title, message, onConfirm) { this._show('confirm', title, message, 'fa-solid fa-circle-question text-orange-600', 'bg-orange-100', onConfirm); },
@@ -544,44 +520,21 @@
             prompt(title, message, defaultVal, onConfirm) { this._show('prompt', title, message, 'fa-solid fa-pen-nib text-blue-600', 'bg-blue-100', onConfirm, true, defaultVal); }
         };
 
-        // KONFIGURASI SUPABASE
         const { createClient } = supabase;
         const supabaseUrl = 'https://rrxospuiwtpauqwckvnd.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJyeG9zcHVpd3RwYXVxd2Nrdm5kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODExNjQyMDMsImV4cCI6MjA5Njc0MDIwM30.Uh2ruDv1zZVyIE94-FW4L6HZYA8NuTTInJKGKKE3lYM';
         const supabaseClient = createClient(supabaseUrl, supabaseKey);
 
-        const defaultUsers = [
-            { id: 'admin1', username: 'admin', password: '123', role: 'admin', stagging_name: null, province: null, ssc: null, is_active: true },
-            { id: 'tamu1', username: 'tamu', password: '123', role: 'visitor', stagging_name: null, province: null, ssc: null, is_active: true },
-            { id: 'user1', username: 'user1', password: '123', role: 'user', stagging_name: 'Store Antang', province: 'Sulawesi Selatan', ssc: 'SSC Makassar', is_active: true },
-            { id: 'user2', username: 'user2', password: '123', role: 'user', stagging_name: 'Store BTP', province: 'Sulawesi Selatan', ssc: 'SSC Makassar', is_active: true },
-            { id: 'user3', username: 'user3', password: '123', role: 'user', stagging_name: 'Store Sudiang', province: 'Sulawesi Selatan', ssc: 'SSC Makassar', is_active: true }
-        ];
-
-        const defaultChecklist = [
-            { id: "c1", category: "5R (Ringkas, Rapi, Resik, Rawat, Rajin)", items: [
-                { id: "r1", label: "Area Sorting bersih & rapi, ada tempat sampah", requiresNote: false },
-                { id: "r2", label: "Terdapat marking sesuai layout", requiresNote: false },
-                { id: "r3", label: "Dinding bersih tanpa noda/bekas poster", requiresNote: true },
-                { id: "r4", label: "Lantai bersih tanpa noda", requiresNote: false },
-            ]},
-            { id: "c2", category: "Kebersihan Toilet", items: [
-                { id: "t1", label: "Area toilet & bak mandi bersih, ada produk halal", requiresNote: true },
-                { id: "t2", label: "Pintu toilet berfungsi baik (kunci/selot)", requiresNote: true },
-            ]}
-        ];
-
+        const defaultUsers = [{ id: 'admin1', username: 'admin', password: '123', role: 'admin', stagging_name: null, province: null, ssc: null, is_active: true }];
+        
         let currentUser = null;
         Island.init();
 
         async function initDB() {
             try {
                 const { data } = await supabaseClient.from('users').select('id').limit(1);
-                if (!data || data.length === 0) {
-                    await supabaseClient.from('users').insert(defaultUsers);
-                    await supabaseClient.from('checklist_master').insert(defaultChecklist);
-                }
-            } catch(e) { console.error("Gagal inisialisasi:", e); }
+                if (!data || data.length === 0) { await supabaseClient.from('users').insert(defaultUsers); }
+            } catch(e) { console.error("Gagal inisialisasi database. Pastikan RLS Off di Supabase:", e); }
         }
         initDB();
 
@@ -589,70 +542,17 @@
             e.preventDefault();
             const un = document.getElementById('username').value;
             const pw = document.getElementById('password').value;
-            
             const btn = document.getElementById('btn-login');
             btn.disabled = true; btn.innerHTML = 'Memeriksa...';
 
-            let { data, error } = await supabaseClient.from('users').select('*').eq('username', un).eq('password', pw).single();
-            
-            // FAILSAFE: Jika login gagal tapi user memasukkan default admin, paksa buat akun admin di Supabase
-            if (!data && un === 'admin' && pw === '123') {
-                const adminFallback = { id: 'admin1', username: 'admin', password: '123', role: 'admin', is_active: true };
-                await supabaseClient.from('users').insert(adminFallback);
-                data = adminFallback;
-            }
-
+            const { data, error } = await supabaseClient.from('users').select('*').eq('username', un).eq('password', pw).single();
             btn.disabled = false; btn.innerHTML = 'Masuk ke Dashboard <i class="fa-solid fa-arrow-right text-sm"></i>';
 
             if (data) {
-                if (!data.is_active) {
-                    Island.show('Akun dinonaktifkan oleh Admin.', 'error');
-                    return;
-                }
-                currentUser = data;
-                await loginSuccess();
-            } else {
-                Island.show('Username atau password salah.', 'error');
-            }
+                if (!data.is_active) { Island.show('Akun dinonaktifkan oleh Admin.', 'error'); return; }
+                currentUser = data; await loginSuccess();
+            } else { Island.show('Username atau password salah.', 'error'); }
         });
-
-        // --- Fitur Ganti Password ---
-        function openChangePasswordModal() {
-            document.getElementById('modal-change-password').classList.remove('hidden');
-        }
-
-        function closeChangePasswordModal() {
-            document.getElementById('modal-change-password').classList.add('hidden');
-            document.getElementById('form-change-password').reset();
-        }
-
-        document.getElementById('form-change-password').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const newPw = document.getElementById('new-password').value;
-            const confPw = document.getElementById('confirm-password').value;
-
-            if (newPw !== confPw) {
-                Island.show('Konfirmasi password tidak cocok!', 'error');
-                return;
-            }
-
-            const btn = e.target.querySelector('button[type="submit"]');
-            btn.disabled = true; btn.textContent = 'Menyimpan...';
-
-            const { error } = await supabaseClient.from('users').update({ password: newPw }).eq('id', currentUser.id);
-
-            btn.disabled = false; btn.textContent = 'Simpan';
-
-            if (error) {
-                Island.show('Gagal mengganti password', 'error');
-                console.error(error);
-            } else {
-                currentUser.password = newPw;
-                Island.show('Password berhasil diperbarui.', 'success');
-                closeChangePasswordModal();
-            }
-        });
-        // -----------------------------
 
         async function loginSuccess() {
             document.getElementById('view-login').classList.add('hidden');
@@ -668,29 +568,51 @@
 
             if (currentUser.role === 'admin') {
                 tUsers.classList.remove('hidden'); tAdminForm.classList.remove('hidden');
-                switchTab('admin-form'); 
-                await renderAdminUsers(); await renderAdminCategoryList();
+                switchTab('admin-form'); await renderAdminUsers(); await renderAdminCategoryList();
             } else if (currentUser.role === 'user') {
                 tForm.classList.remove('hidden');
                 document.getElementById('form-staggingName').textContent = currentUser.stagging_name || '-';
                 document.getElementById('form-ssc-prov').textContent = `${currentUser.ssc || '-'} - ${currentUser.province || '-'}`;
-                await generateChecklistForm();
-                switchTab('form');
-            } else if (currentUser.role === 'visitor') {
-                switchTab('dashboard');
-            }
+                await generateChecklistForm(); switchTab('form');
+            } else if (currentUser.role === 'visitor') { switchTab('dashboard'); }
             
-            await populateCategoryFilter();
-            await applyFiltersAndRender();
+            await populateCategoryFilter(); await applyFiltersAndRender();
             Island.show(`Selamat datang, ${currentUser.username}!`, 'success');
         }
 
         function logout() {
-            currentUser = null;
-            document.getElementById('login-form').reset();
-            document.getElementById('view-app').classList.add('hidden');
-            document.getElementById('view-login').classList.remove('hidden');
+            currentUser = null; document.getElementById('login-form').reset();
+            document.getElementById('view-app').classList.add('hidden'); document.getElementById('view-login').classList.remove('hidden');
         }
+
+        function openChangePasswordModal() {
+            document.getElementById('new-password').value = ''; document.getElementById('confirm-password').value = '';
+            document.getElementById('modal-change-password').classList.remove('hidden');
+        }
+
+        function closeChangePasswordModal() { document.getElementById('modal-change-password').classList.add('hidden'); }
+
+        document.getElementById('form-change-password').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const newPw = document.getElementById('new-password').value;
+            const confPw = document.getElementById('confirm-password').value;
+
+            if (newPw !== confPw) { Island.show('Konfirmasi password tidak cocok!', 'error'); return; }
+
+            const btn = e.target.querySelector('button[type="submit"]');
+            const originTxt = btn.textContent; btn.disabled = true; btn.textContent = 'Menyimpan...';
+
+            const { error } = await supabaseClient.from('users').update({ password: newPw }).eq('id', currentUser.id);
+
+            btn.disabled = false; btn.textContent = originTxt;
+
+            if (error) { Island.show('Gagal mengganti password.', 'error'); console.error(error); } 
+            else {
+                currentUser.password = newPw;
+                Island.show('Password berhasil diperbarui.', 'success');
+                closeChangePasswordModal();
+            }
+        });
 
         function switchTab(tabName) {
             const views = ['form', 'admin-users', 'admin-form', 'dashboard'];
@@ -699,77 +621,51 @@
                 const btn = document.getElementById(`tab-${v}`);
                 if(btn) { btn.classList.remove('bg-white', 'text-slate-900', 'shadow-sm'); btn.classList.add('text-slate-500'); }
             });
-
             document.getElementById(`content-${tabName}`).classList.remove('hidden');
             const activeBtn = document.getElementById(`tab-${tabName}`);
             if(activeBtn) { activeBtn.classList.remove('text-slate-500'); activeBtn.classList.add('bg-white', 'text-slate-900', 'shadow-sm'); }
-
+            
             if (tabName === 'dashboard') applyFiltersAndRender();
             if (tabName === 'admin-users') renderAdminUsers();
             if (tabName === 'admin-form') renderAdminCategoryList();
         }
 
         function toggleFormFieldsBasedOnRole() {
-            const role = document.getElementById('add-role').value;
-            const locFields = document.getElementById('fields-lokasi');
+            const role = document.getElementById('add-role').value; const locFields = document.getElementById('fields-lokasi');
             if (role === 'user') {
                 locFields.classList.remove('hidden');
-                document.getElementById('add-st').required = true;
-                document.getElementById('add-pr').required = true;
-                document.getElementById('add-ss').required = true;
+                document.getElementById('add-st').required = true; document.getElementById('add-pr').required = true; document.getElementById('add-ss').required = true;
             } else {
                 locFields.classList.add('hidden');
-                document.getElementById('add-st').required = false;
-                document.getElementById('add-pr').required = false;
-                document.getElementById('add-ss').required = false;
+                document.getElementById('add-st').required = false; document.getElementById('add-pr').required = false; document.getElementById('add-ss').required = false;
             }
         }
 
         document.getElementById('add-user-form').addEventListener('submit', async function(e) {
             e.preventDefault();
-            const role = document.getElementById('add-role').value;
-            const un = document.getElementById('add-un').value.trim();
-            const pw = document.getElementById('add-pw').value.trim();
-            
+            const role = document.getElementById('add-role').value; const un = document.getElementById('add-un').value.trim(); const pw = document.getElementById('add-pw').value.trim();
             let st = null, pr = null, ss = null;
-            if (role === 'user') {
-                st = document.getElementById('add-st').value.trim();
-                pr = document.getElementById('add-pr').value.trim();
-                ss = document.getElementById('add-ss').value.trim();
-            }
-
-            const { data: exist } = await supabaseClient.from('users').select('id').eq('username', un);
-            if(exist && exist.length > 0) {
-                Island.show('Username sudah terdaftar.', 'error'); return;
-            }
-
-            const btn = document.getElementById('btn-add-user'); btn.disabled = true;
-
-            await supabaseClient.from('users').insert({
-                id: 'U' + Date.now(), username: un, password: pw, role: role, stagging_name: st, province: pr, ssc: ss, is_active: true
-            });
+            if (role === 'user') { st = document.getElementById('add-st').value.trim(); pr = document.getElementById('add-pr').value.trim(); ss = document.getElementById('add-ss').value.trim(); }
             
-            btn.disabled = false;
-            Island.show('Akun berhasil dibuat.', 'success');
-            e.target.reset(); toggleFormFieldsBasedOnRole(); await renderAdminUsers();
+            const { data: exist } = await supabaseClient.from('users').select('id').eq('username', un);
+            if(exist && exist.length > 0) { Island.show('Username sudah terdaftar.', 'error'); return; }
+            
+            const btn = document.getElementById('btn-add-user'); btn.disabled = true;
+            await supabaseClient.from('users').insert({ id: 'U' + Date.now(), username: un, password: pw, role: role, stagging_name: st, province: pr, ssc: ss, is_active: true });
+            btn.disabled = false; Island.show('Akun berhasil dibuat.', 'success'); e.target.reset(); toggleFormFieldsBasedOnRole(); await renderAdminUsers();
         });
 
         async function toggleUserStatus(userId) {
-            if(userId === currentUser.id) {
-                Island.show('Tidak bisa menonaktifkan diri sendiri.', 'error');
-                await renderAdminUsers(); return;
-            }
+            if(userId === currentUser.id) { Island.show('Tidak bisa menonaktifkan diri sendiri.', 'error'); await renderAdminUsers(); return; }
             const { data: u } = await supabaseClient.from('users').select('is_active').eq('id', userId).single();
             await supabaseClient.from('users').update({ is_active: !u.is_active }).eq('id', userId);
-            Island.show('Status akun diperbarui.', 'success');
-            await renderAdminUsers();
+            Island.show('Status akun diperbarui.', 'success'); await renderAdminUsers();
         }
 
         async function deleteUser(userId) {
             Modal.danger('Hapus Akun?', 'Tindakan ini permanen. Lanjutkan?', async () => {
                 await supabaseClient.from('users').delete().eq('id', userId);
-                Island.show('Akun dihapus.', 'success');
-                await renderAdminUsers();
+                Island.show('Akun dihapus.', 'success'); await renderAdminUsers();
             });
         }
 
@@ -777,8 +673,7 @@
             Modal.prompt('Ubah Password', `Password baru untuk ${username}:`, currentPassword, async (newPw) => {
                 if(!newPw.trim()) return;
                 await supabaseClient.from('users').update({ password: newPw.trim() }).eq('id', userId);
-                Island.show('Password user diperbarui.', 'success');
-                await renderAdminUsers();
+                Island.show('Password user diperbarui.', 'success'); await renderAdminUsers();
             });
         }
 
@@ -788,10 +683,7 @@
             
             tbody.innerHTML = (!users || users.length === 0) ? `<tr><td colspan="5" class="p-8 text-center text-slate-400">Belum ada data.</td></tr>` : '';
             if(users) users.forEach(u => {
-                const statusBadge = u.is_active 
-                    ? '<span class="bg-emerald-100 text-emerald-700 text-[10px] uppercase font-bold px-2.5 py-1 rounded-full border border-emerald-200">Aktif</span>' 
-                    : '<span class="bg-rose-100 text-rose-700 text-[10px] uppercase font-bold px-2.5 py-1 rounded-full border border-rose-200">Non-Aktif</span>';
-                
+                const statusBadge = u.is_active ? '<span class="bg-emerald-100 text-emerald-700 text-[10px] uppercase font-bold px-2.5 py-1 rounded-full border border-emerald-200">Aktif</span>' : '<span class="bg-rose-100 text-rose-700 text-[10px] uppercase font-bold px-2.5 py-1 rounded-full border border-rose-200">Non-Aktif</span>';
                 const roleColors = { admin: 'text-purple-600 bg-purple-50 border-purple-200', visitor: 'text-blue-600 bg-blue-50 border-blue-200', user: 'text-slate-600 bg-slate-100 border-slate-200' };
                 const roleIcon = { admin: 'fa-crown', visitor: 'fa-eye', user: 'fa-user' };
                 
@@ -830,19 +722,14 @@
             const { data } = await supabaseClient.from('checklist_master').select('*').order('id', { ascending: true });
             
             list.innerHTML = '';
-            
             if (!data || data.length === 0) { 
                 list.innerHTML = `<div class="p-4 text-center text-sm text-slate-400">Kosong.</div>`; 
                 document.getElementById('admin-selected-category-name').textContent = "Tidak ada kategori";
-                document.getElementById('btn-add-item').classList.add('hidden');
-                document.getElementById('admin-item-empty').classList.remove('hidden');
-                document.getElementById('admin-item-list').classList.add('hidden');
+                document.getElementById('btn-add-item').classList.add('hidden'); document.getElementById('admin-item-empty').classList.remove('hidden'); document.getElementById('admin-item-list').classList.add('hidden');
                 return;
             }
 
-            if (!activeAdminCategoryId || !data.find(c => c.id === activeAdminCategoryId)) {
-                activeAdminCategoryId = data[0].id;
-            }
+            if (!activeAdminCategoryId || !data.find(c => c.id === activeAdminCategoryId)) { activeAdminCategoryId = data[0].id; }
 
             data.forEach((cat, idx) => {
                 const isActive = cat.id === activeAdminCategoryId;
@@ -859,10 +746,8 @@
                             <button onclick="event.stopPropagation(); adminEditCategory('${cat.id}', '${cat.category}')" class="w-7 h-7 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg flex items-center justify-center"><i class="fa-solid fa-pen text-xs"></i></button>
                             <button onclick="event.stopPropagation(); adminDeleteCategory('${cat.id}')" class="w-7 h-7 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg flex items-center justify-center"><i class="fa-solid fa-trash text-xs"></i></button>
                         </div>
-                    </div>
-                `;
+                    </div>`;
             });
-
             const activeCat = data.find(c => c.id === activeAdminCategoryId);
             if (activeCat) renderAdminItems(activeCat);
         }
@@ -872,8 +757,7 @@
                 if(!val.trim()) return;
                 const newId = 'C' + Date.now();
                 await supabaseClient.from('checklist_master').insert({ id: newId, category: val.trim(), items: [] });
-                activeAdminCategoryId = newId;
-                Island.show('Kategori ditambahkan.', 'success');
+                activeAdminCategoryId = newId; Island.show('Kategori ditambahkan.', 'success');
                 await renderAdminCategoryList(); await populateCategoryFilter();
             });
         }
@@ -882,8 +766,7 @@
             Modal.prompt('Edit Kategori', 'Ubah nama:', currentName, async (val) => {
                 if(!val.trim()) return;
                 await supabaseClient.from('checklist_master').update({ category: val.trim() }).eq('id', id);
-                Island.show('Kategori diperbarui.', 'success');
-                await renderAdminCategoryList(); await populateCategoryFilter();
+                Island.show('Kategori diperbarui.', 'success'); await renderAdminCategoryList(); await populateCategoryFilter();
             });
         }
 
@@ -891,41 +774,37 @@
             Modal.danger('Hapus Kategori?', 'Semua item di dalamnya akan ikut terhapus.', async () => {
                 await supabaseClient.from('checklist_master').delete().eq('id', id);
                 if (activeAdminCategoryId === id) activeAdminCategoryId = null;
-                Island.show('Kategori dihapus.', 'success');
-                await renderAdminCategoryList(); await populateCategoryFilter();
+                Island.show('Kategori dihapus.', 'success'); await renderAdminCategoryList(); await populateCategoryFilter();
             });
         }
 
-        function selectAdminCategory(catId) {
-            activeAdminCategoryId = catId;
-            renderAdminCategoryList();
-        }
+        function selectAdminCategory(catId) { activeAdminCategoryId = catId; renderAdminCategoryList(); }
 
         function renderAdminItems(cat) {
             document.getElementById('admin-selected-category-name').textContent = cat.category;
             document.getElementById('btn-add-item').classList.remove('hidden');
-            const emptyState = document.getElementById('admin-item-empty');
-            const listState = document.getElementById('admin-item-list');
+            const emptyState = document.getElementById('admin-item-empty'); const listState = document.getElementById('admin-item-list');
             
-            if (!cat.items || cat.items.length === 0) {
-                emptyState.classList.remove('hidden'); listState.classList.add('hidden');
-            } else {
-                emptyState.classList.add('hidden'); listState.classList.remove('hidden');
-                listState.innerHTML = '';
-                
+            if (!cat.items || cat.items.length === 0) { emptyState.classList.remove('hidden'); listState.classList.add('hidden'); } 
+            else {
+                emptyState.classList.add('hidden'); listState.classList.remove('hidden'); listState.innerHTML = '';
                 cat.items.forEach((item, idx) => {
+                    const typeBadgeStr = { 'ok_nonok': 'OK / Non OK', 'ada_tidak': 'Ada / Tidak', 'ya_tidak': 'Ya / Tidak' }[item.type || 'ok_nonok'];
+
                     listState.innerHTML += `
                         <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex flex-col sm:flex-row gap-4 justify-between sm:items-center hover:shadow-md transition-shadow">
                             <div class="flex items-start gap-3 flex-1">
                                 <div class="bg-slate-100 text-slate-500 w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold mt-0.5 shrink-0">${idx+1}</div>
                                 <div>
                                     <p class="text-sm font-bold text-slate-800">${item.label}</p>
-                                    <p class="text-[10px] text-slate-400 font-mono mt-1">ID: ${item.id}</p>
+                                    <div class="flex gap-2 items-center mt-1.5">
+                                        <p class="text-[10px] text-slate-400 font-mono">ID: ${item.id}</p>
+                                        <span class="bg-slate-100 text-slate-500 px-2 py-0.5 rounded text-[9px] font-bold border border-slate-200">${typeBadgeStr}</span>
+                                    </div>
                                 </div>
                             </div>
-                            
                             <div class="flex items-center gap-4 shrink-0 pl-10 sm:pl-0">
-                                <label class="flex items-center cursor-pointer group" title="Wajib isi note jika Non OK">
+                                <label class="flex items-center cursor-pointer group" title="Wajib isi note jika Temuan Negatif">
                                     <div class="relative inline-block w-8 mr-2 align-middle select-none">
                                         <input type="checkbox" class="toggle-checkbox absolute block w-4 h-4 rounded-full bg-white border-2 appearance-none cursor-pointer peer transition-all" ${item.requiresNote ? 'checked' : ''} onchange="adminToggleItemNote('${cat.id}', '${item.id}')"/>
                                         <label class="toggle-label block overflow-hidden h-4 rounded-full bg-slate-200 cursor-pointer peer-checked:bg-amber-500 transition-colors"></label>
@@ -943,27 +822,54 @@
             }
         }
 
-        async function adminAddItem() {
-            Modal.prompt('Tambah Item', 'Deskripsi item ceklis:', '', async (val) => {
-                if(!val.trim()) return;
-                const { data: cat } = await supabaseClient.from('checklist_master').select('*').eq('id', activeAdminCategoryId).single();
-                cat.items.push({ id: 'I'+Date.now(), label: val.trim(), requiresNote: false });
-                await supabaseClient.from('checklist_master').update({ items: cat.items }).eq('id', activeAdminCategoryId);
-                renderAdminItems(cat); Island.show('Item ditambahkan.', 'success');
-            });
+        function openItemModal(catId, itemId = null) {
+            document.getElementById('manage-item-catId').value = catId;
+            document.getElementById('manage-item-id').value = itemId || '';
+            document.getElementById('modal-item-title').textContent = itemId ? 'Edit Item' : 'Tambah Item';
+            
+            if (itemId) {
+                supabaseClient.from('checklist_master').select('*').eq('id', catId).single().then(({data}) => {
+                    const item = data.items.find(i => i.id === itemId);
+                    document.getElementById('manage-item-label').value = item.label;
+                    document.getElementById('manage-item-type').value = item.type || 'ok_nonok';
+                    document.getElementById('modal-item-form').classList.remove('hidden');
+                });
+            } else {
+                document.getElementById('form-manage-item').reset();
+                document.getElementById('manage-item-type').value = 'ok_nonok';
+                document.getElementById('modal-item-form').classList.remove('hidden');
+            }
         }
 
-        async function adminEditItem(catId, itemId) {
+        function closeItemModal() {
+            document.getElementById('modal-item-form').classList.add('hidden'); document.getElementById('form-manage-item').reset();
+        }
+
+        document.getElementById('form-manage-item').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const catId = document.getElementById('manage-item-catId').value;
+            const itemId = document.getElementById('manage-item-id').value;
+            const label = document.getElementById('manage-item-label').value.trim();
+            const type = document.getElementById('manage-item-type').value;
+
+            const btn = e.target.querySelector('button[type="submit"]'); btn.disabled = true; btn.textContent = 'Menyimpan...';
             const { data: cat } = await supabaseClient.from('checklist_master').select('*').eq('id', catId).single();
-            const item = cat.items.find(i => i.id === itemId);
-            Modal.prompt('Edit Item', 'Ubah deskripsi:', item.label, async (val) => {
-                if(!val.trim()) return;
-                item.label = val.trim();
-                await supabaseClient.from('checklist_master').update({ items: cat.items }).eq('id', catId);
-                renderAdminItems(cat);
-            });
-        }
+            
+            if (itemId) {
+                const item = cat.items.find(i => i.id === itemId);
+                item.label = label; item.type = type;
+            } else {
+                cat.items.push({ id: 'I'+Date.now(), label: label, type: type, requiresNote: false });
+            }
 
+            await supabaseClient.from('checklist_master').update({ items: cat.items }).eq('id', catId);
+            renderAdminItems(cat); btn.disabled = false; btn.textContent = 'Simpan';
+            Island.show(itemId ? 'Item diperbarui.' : 'Item ditambahkan.', 'success'); closeItemModal();
+        });
+
+        async function adminAddItem() { openItemModal(activeAdminCategoryId); }
+        async function adminEditItem(catId, itemId) { openItemModal(catId, itemId); }
+        
         async function adminDeleteItem(catId, itemId) {
             Modal.danger('Hapus Item?', 'Item ini akan dihilangkan dari form.', async () => {
                 const { data: cat } = await supabaseClient.from('checklist_master').select('*').eq('id', catId).single();
@@ -975,15 +881,12 @@
 
         async function adminToggleItemNote(catId, itemId) {
             const { data: cat } = await supabaseClient.from('checklist_master').select('*').eq('id', catId).single();
-            const item = cat.items.find(i => i.id === itemId);
-            item.requiresNote = !item.requiresNote;
-            await supabaseClient.from('checklist_master').update({ items: cat.items }).eq('id', catId);
-            renderAdminItems(cat);
+            const item = cat.items.find(i => i.id === itemId); item.requiresNote = !item.requiresNote;
+            await supabaseClient.from('checklist_master').update({ items: cat.items }).eq('id', catId); renderAdminItems(cat);
         }
 
         async function generateChecklistForm() {
-            const container = document.getElementById('checklist-container');
-            container.innerHTML = ''; 
+            const container = document.getElementById('checklist-container'); container.innerHTML = ''; 
             const { data } = await supabaseClient.from('checklist_master').select('*').order('id', { ascending: true });
             
             if(!data || data.length === 0) {
@@ -1002,27 +905,32 @@
                     </div><div class="divide-y divide-slate-50">`;
 
                 category.items.forEach(item => {
+                    const typeDef = {
+                        'ok_nonok': { pos: 'OK', neg: 'Non OK', posL: 'Sesuai / OK', negL: 'Tidak Sesuai' },
+                        'ada_tidak': { pos: 'Ada', neg: 'Tidak Ada', posL: 'Ada', negL: 'Tidak Ada' },
+                        'ya_tidak': { pos: 'Ya', neg: 'Tidak', posL: 'Ya', negL: 'Tidak' }
+                    }[item.type || 'ok_nonok'];
+
                     html += `
                         <div class="p-5 sm:p-6 hover:bg-slate-50/50 smooth-transition">
                             <p class="text-slate-800 font-semibold mb-4 leading-snug text-[15px]">${item.label}</p>
                             <div class="flex flex-col gap-4">
                                 <div class="grid grid-cols-2 gap-3 max-w-sm">
                                     <label class="cursor-pointer relative">
-                                        <input type="radio" name="status-${item.id}" value="OK" onchange="handleRadioChange('${item.id}', ${item.requiresNote}, 'OK')" class="peer sr-only" required>
+                                        <input type="radio" name="status-${item.id}" value="${typeDef.pos}" onchange="handleRadioChange('${item.id}', ${item.requiresNote}, '${typeDef.pos}')" class="peer sr-only" required>
                                         <div class="radio-card-ok flex flex-col items-center justify-center p-3 rounded-2xl border-2 border-slate-200 text-slate-500 smooth-transition hover:bg-slate-50 relative overflow-hidden">
                                             <i class="fa-solid fa-circle-check text-2xl mb-1 opacity-50 check-icon"></i>
-                                            <span class="font-bold text-sm">Sesuai / OK</span>
+                                            <span class="font-bold text-sm">${typeDef.posL}</span>
                                         </div>
                                     </label>
                                     <label class="cursor-pointer relative">
-                                        <input type="radio" name="status-${item.id}" value="Non OK" onchange="handleRadioChange('${item.id}', ${item.requiresNote}, 'Non OK')" class="peer sr-only" required>
+                                        <input type="radio" name="status-${item.id}" value="${typeDef.neg}" onchange="handleRadioChange('${item.id}', ${item.requiresNote}, '${typeDef.neg}')" class="peer sr-only" required>
                                         <div class="radio-card-non flex flex-col items-center justify-center p-3 rounded-2xl border-2 border-slate-200 text-slate-500 smooth-transition hover:bg-slate-50 relative overflow-hidden">
                                             <i class="fa-solid fa-circle-xmark text-2xl mb-1 opacity-50 check-icon"></i>
-                                            <span class="font-bold text-sm">Tidak Sesuai</span>
+                                            <span class="font-bold text-sm">${typeDef.negL}</span>
                                         </div>
                                     </label>
                                 </div>
-                                
                                 <div id="note-container-${item.id}" class="hidden overflow-hidden transition-all duration-300 max-h-0 opacity-0 max-w-lg">
                                     <div class="bg-amber-50/50 border border-amber-200/60 rounded-2xl p-4 mt-2">
                                         <label class="text-xs font-bold text-amber-800 uppercase tracking-wider mb-2 flex items-center gap-1.5">
@@ -1034,44 +942,34 @@
                             </div>
                         </div>`;
                 });
-                html += `</div>`;
-                catDiv.innerHTML = html;
-                container.appendChild(catDiv);
+                html += `</div>`; catDiv.innerHTML = html; container.appendChild(catDiv);
             });
         }
 
         window.handleRadioChange = function(itemId, requiresNote, value) {
-            const container = document.getElementById(`note-container-${itemId}`);
-            const input = document.getElementById(`note-input-${itemId}`);
+            const container = document.getElementById(`note-container-${itemId}`); const input = document.getElementById(`note-input-${itemId}`);
             if (!container || !input) return;
+            const negValues = ['Non OK', 'Tidak Ada', 'Tidak'];
 
-            if (requiresNote && value === 'Non OK') {
+            if (requiresNote && negValues.includes(value)) {
                 container.classList.remove('hidden');
-                setTimeout(() => {
-                    container.classList.remove('max-h-0', 'opacity-0');
-                    container.classList.add('max-h-40', 'opacity-100');
-                    input.required = true;
-                }, 10);
+                setTimeout(() => { container.classList.remove('max-h-0', 'opacity-0'); container.classList.add('max-h-40', 'opacity-100'); input.required = true; }, 10);
             } else {
-                container.classList.remove('max-h-40', 'opacity-100');
-                container.classList.add('max-h-0', 'opacity-0');
-                setTimeout(() => { container.classList.add('hidden'); }, 300);
-                input.required = false; input.value = ''; 
+                container.classList.remove('max-h-40', 'opacity-100'); container.classList.add('max-h-0', 'opacity-0');
+                setTimeout(() => { container.classList.add('hidden'); }, 300); input.required = false; input.value = ''; 
             }
         }
 
         document.getElementById('checklist-form').addEventListener('submit', async function(e) {
             e.preventDefault();
-            const btn = document.getElementById('btn-submit-form');
-            btn.disabled = true; btn.innerHTML = 'Menyimpan...';
+            const btn = document.getElementById('btn-submit-form'); btn.disabled = true; btn.innerHTML = 'Menyimpan...';
 
             const formData = new FormData(e.target); const answers = {}; 
             const { data } = await supabaseClient.from('checklist_master').select('*');
 
             data.forEach(cat => {
                 if(cat.items) cat.items.forEach(item => {
-                    const status = formData.get(`status-${item.id}`);
-                    const note = formData.get(`note-${item.id}`);
+                    const status = formData.get(`status-${item.id}`); const note = formData.get(`note-${item.id}`);
                     if (status) answers[item.id] = { status: status, note: note || '' };
                 });
             });
@@ -1081,36 +979,25 @@
             const timeStr = `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
 
             await supabaseClient.from('submissions').insert({
-                id: Date.now().toString(),
-                user_id: currentUser.id,
-                pic: currentUser.username, 
-                ssc: currentUser.ssc,
-                province: currentUser.province,
-                stagging_name: currentUser.stagging_name,
-                date: `${dateStr}, ${timeStr}`,
-                answers: answers
+                id: Date.now().toString(), user_id: currentUser.id, pic: currentUser.username, 
+                ssc: currentUser.ssc, province: currentUser.province, stagging_name: currentUser.stagging_name,
+                date: `${dateStr}, ${timeStr}`, answers: answers
             });
 
-            Island.show('Checklist Berhasil Disimpan!', 'success', 4000);
-            e.target.reset(); 
-            document.querySelectorAll('[id^="note-container-"]').forEach(el => {
-                el.classList.add('max-h-0', 'opacity-0'); setTimeout(() => el.classList.add('hidden'), 300);
-            });
+            Island.show('Checklist Berhasil Disimpan!', 'success', 4000); e.target.reset(); 
+            document.querySelectorAll('[id^="note-container-"]').forEach(el => { el.classList.add('max-h-0', 'opacity-0'); setTimeout(() => el.classList.add('hidden'), 300); });
             btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-paper-plane text-lg"></i> <span>Kirim Hasil Pengecekan</span>';
             setTimeout(() => switchTab('dashboard'), 1500);
         });
 
         async function populateCategoryFilter() {
-            const filter = document.getElementById('filter-category');
-            filter.innerHTML = '<option value="all">Kategori (Semua)</option>';
+            const filter = document.getElementById('filter-category'); filter.innerHTML = '<option value="all">Kategori (Semua)</option>';
             const { data } = await supabaseClient.from('checklist_master').select('*').order('id', { ascending: true });
             if(data) data.forEach(cat => { filter.innerHTML += `<option value="${cat.id}">${cat.category}</option>`; });
         }
 
         async function applyFiltersAndRender() {
-            const vM = document.getElementById('filter-month').value;
-            const vY = document.getElementById('filter-year').value;
-            const vC = document.getElementById('filter-category').value;
+            const vM = document.getElementById('filter-month').value; const vY = document.getElementById('filter-year').value; const vC = document.getElementById('filter-category').value;
             
             const { data: allCats } = await supabaseClient.from('checklist_master').select('*').order('id', { ascending: true });
             const safeAllCats = allCats || [];
@@ -1134,9 +1021,7 @@
                 }
 
                 if (userSubs.length > 0) {
-                    const parseDate = d => {
-                        try { const [a, b] = d.split(', '); const [day, m, y] = a.split('/'); const [hh, mm] = b.split(':'); return new Date(y, m-1, day, hh, mm).getTime(); } catch(e){ return 0; }
-                    };
+                    const parseDate = d => { try { const [a, b] = d.split(', '); const [day, m, y] = a.split('/'); const [hh, mm] = b.split(':'); return new Date(y, m-1, day, hh, mm).getTime(); } catch(e){ return 0; } };
                     renderData.push(userSubs.sort((a, b) => parseDate(b.date) - parseDate(a.date))[0]);
                 } else {
                     renderData.push({ user_id: user.id, pic: '-', ssc: user.ssc, province: user.province, stagging_name: user.stagging_name, date: '-', answers: {} });
@@ -1164,28 +1049,23 @@
             cats.forEach(cat => {
                 if(!cat.items || cat.items.length === 0) return;
                 h1 += `<th colspan="${cat.items.length}" class="p-3 border-r border-slate-200 text-center bg-slate-100/50">${cat.category}</th>`;
-                cat.items.forEach(item => {
-                    h2 += `<th class="p-3 border-r border-slate-100 text-center bg-white"><div class="truncate w-[100px] mx-auto" title="${item.label}">${item.label}</div></th>`;
-                });
+                cat.items.forEach(item => { h2 += `<th class="p-3 border-r border-slate-100 text-center bg-white"><div class="truncate w-[100px] mx-auto" title="${item.label}">${item.label}</div></th>`; });
             });
             r1.innerHTML = h1; r2.innerHTML = h2;
         }
 
         function renderDashboardBodyAndNotes(data, filteredCats, allCats) {
             const tbody = document.getElementById('dashboard-tbody');
-            const noteSec = document.getElementById('dashboard-notes-section');
-            const noteCon = document.getElementById('dashboard-notes-container');
+            const noteSec = document.getElementById('dashboard-notes-section'); const noteCon = document.getElementById('dashboard-notes-container');
             let html = '', noteHtml = '';
 
             const itemMap = {}; allCats.forEach(c => { if(c.items) c.items.forEach(i => itemMap[i.id] = { label: i.label, cat: c.category }) });
 
-            if (data.length === 0) {
-                html = `<tr><td colspan="100" class="p-8 text-center text-slate-400">Tidak ada data terdaftar.</td></tr>`;
-            } else {
+            if (data.length === 0) { html = `<tr><td colspan="100" class="p-8 text-center text-slate-400">Tidak ada data terdaftar.</td></tr>`; } 
+            else {
                 let currGroup = '';
                 data.forEach((sub, idx) => {
-                    const isNew = currGroup !== sub.ssc;
-                    if(isNew) currGroup = sub.ssc;
+                    const isNew = currGroup !== sub.ssc; if(isNew) currGroup = sub.ssc;
                     const borderCls = isNew && idx !== 0 ? 'border-t-4 border-slate-200' : 'border-t border-slate-100';
 
                     html += `<tr class="hover:bg-slate-50 smooth-transition ${borderCls}">
@@ -1199,17 +1079,18 @@
                         if(cat.items) cat.items.forEach(item => {
                             const ans = sub.answers[item.id];
                             if(ans) {
-                                if(ans.status === 'OK') html += `<td class="p-3 border-r border-slate-100 text-center"><div class="w-6 h-6 rounded-full bg-emerald-50 text-emerald-500 flex items-center justify-center mx-auto"><i class="fa-solid fa-check text-xs"></i></div></td>`;
+                                const posValues = ['OK', 'Ada', 'Ya'];
+                                if(posValues.includes(ans.status)) html += `<td class="p-3 border-r border-slate-100 text-center"><div class="w-6 h-6 rounded-full bg-emerald-50 text-emerald-500 flex items-center justify-center mx-auto"><i class="fa-solid fa-check text-xs"></i></div></td>`;
                                 else html += `<td class="p-3 border-r border-slate-100 text-center"><div class="w-6 h-6 rounded-full bg-rose-50 text-rose-500 flex items-center justify-center mx-auto relative"><i class="fa-solid fa-xmark text-xs"></i>${ans.note && item.requiresNote ? '<span class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-amber-400 border-2 border-white rounded-full"></span>':''}</div></td>`;
                             } else html += `<td class="p-3 border-r border-slate-100 text-center text-slate-300">-</td>`;
                         })
                     });
                     html += `</tr>`;
 
-                    let subNotes = '';
+                    let subNotes = ''; const negValues = ['Non OK', 'Tidak Ada', 'Tidak'];
                     Object.keys(sub.answers).forEach(itemId => {
                         const ans = sub.answers[itemId];
-                        if (ans.status === 'Non OK' && ans.note) {
+                        if (negValues.includes(ans.status) && ans.note) {
                             const meta = itemMap[itemId];
                             if(meta) subNotes += `
                                 <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 mb-2 last:mb-0">
@@ -1230,7 +1111,6 @@
                 });
             }
             tbody.innerHTML = html;
-            
             if(noteHtml) { noteSec.classList.remove('hidden'); noteCon.innerHTML = noteHtml; }
             else noteSec.classList.add('hidden');
         }
