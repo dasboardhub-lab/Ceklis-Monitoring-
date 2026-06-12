@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Stagging Checklist System</title>
+    <title>Form Checklist System V.1</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -145,21 +145,11 @@
 
     <div id="view-app" class="hidden min-h-screen pb-24 flex flex-col">
         <header class="glass-header sticky top-0 z-50 border-b border-slate-200">
-<<<<<<< HEAD
             <div class="w-full px-4 sm:px-6 lg:px-8 mx-auto max-w-[1600px]">
                 <div class="flex items-center justify-between h-16 lg:h-20">
                     <div class="flex items-center gap-3 shrink-0">
                         <div class="w-10 h-10 lg:w-12 lg:h-12 bg-gradient-to-br from-rose-500 to-rose-600 rounded-xl flex items-center justify-center shadow-md shadow-rose-200 text-white shrink-0">
                             <i class="fa-solid fa-clipboard-check text-lg lg:text-xl"></i>
-=======
-            <div class="w-full px-4 sm:px-6 lg:px-8 mx-auto max-w-[1600px]">
-                <!-- Baris Atas: Logo & User Info -->
-                <div class="flex items-center justify-between h-16 lg:h-20">
-                    <!-- Kiri: Logo -->
-                    <div class="flex items-center gap-3 shrink-0">
-                        <div class="w-10 h-10 lg:w-12 lg:h-12 bg-gradient-to-br from-rose-500 to-rose-600 rounded-xl flex items-center justify-center shadow-md shadow-rose-200 text-white shrink-0">
-                            <i class="fa-solid fa-clipboard-check text-lg lg:text-xl"></i>
->>>>>>> 718b682af0877dabe3d170cac85a5c7e818f8f27
                         </div>
                         <div class="flex flex-col justify-center">
                             <h1 class="font-bold text-slate-900 text-base lg:text-lg leading-tight">Checklist System</h1>
@@ -167,18 +157,10 @@
                         </div>
                     </div>
                     
-<<<<<<< HEAD
                     <div class="flex items-center gap-3 sm:gap-5">
                         <div class="text-right hidden sm:flex sm:flex-col sm:justify-center">
                             <p class="text-sm lg:text-base font-bold text-slate-800 leading-tight" id="display-username">User</p>
                             <p class="text-[11px] text-emerald-600 font-medium flex items-center justify-end gap-1.5 mt-0.5"><span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_5px_rgba(16,185,129,0.6)]"></span> Online</p>
-=======
-                    <!-- Kanan: Profil & Tombol -->
-                    <div class="flex items-center gap-3 sm:gap-5">
-                        <div class="text-right hidden sm:flex sm:flex-col sm:justify-center">
-                            <p class="text-sm lg:text-base font-bold text-slate-800 leading-tight" id="display-username">User</p>
-                            <p class="text-[11px] text-emerald-600 font-medium flex items-center justify-end gap-1.5 mt-0.5"><span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_5px_rgba(16,185,129,0.6)]"></span> Online</p>
->>>>>>> 718b682af0877dabe3d170cac85a5c7e818f8f27
                         </div>
                         <div class="h-8 w-px bg-slate-200 hidden sm:block"></div>
                         <div class="flex items-center gap-2">
@@ -192,16 +174,9 @@
                     </div>
                 </div>
 
-<<<<<<< HEAD
                 <div class="flex items-center gap-2 sm:gap-3 overflow-x-auto custom-scroll pb-3 pt-1">
                     <button onclick="switchTab('dashboard')" id="tab-dashboard" class="px-5 py-2.5 rounded-xl text-sm font-bold transition-all whitespace-nowrap bg-slate-100 text-slate-500 hover:bg-slate-200 shrink-0">
                         <i class="fa-solid fa-chart-pie mr-1.5 opacity-70"></i> Dashboard Rekap
-=======
-                <!-- Baris Bawah: Tabs Navigasi -->
-                <div class="flex items-center gap-2 sm:gap-3 overflow-x-auto custom-scroll pb-3 pt-1">
-                    <button onclick="switchTab('dashboard')" id="tab-dashboard" class="px-5 py-2.5 rounded-xl text-sm font-bold transition-all whitespace-nowrap bg-slate-100 text-slate-500 hover:bg-slate-200 shrink-0">
-                        <i class="fa-solid fa-chart-pie mr-1.5 opacity-70"></i> Dashboard Rekap
->>>>>>> 718b682af0877dabe3d170cac85a5c7e818f8f27
                     </button>
                     <button onclick="switchTab('admin-users')" id="tab-admin-users" class="hidden px-5 py-2.5 rounded-xl text-sm font-bold transition-all whitespace-nowrap bg-slate-100 text-slate-500 hover:bg-slate-200 shrink-0">
                         <i class="fa-solid fa-users-gear mr-1.5 opacity-70"></i> Akses & Pengguna
@@ -213,7 +188,6 @@
             </div>
         </header>
 
-<<<<<<< HEAD
         <div id="content-admin-users" class="hidden max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 mt-6 sm:mt-8 animate-content">
             <div class="grid grid-cols-1 xl:grid-cols-3 gap-6 xl:gap-8">
                 
@@ -222,9 +196,6 @@
                         <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl"><i class="fa-solid fa-user-plus"></i></div>
                         <h2 class="text-xl font-bold text-slate-800">Registrasi Akun</h2>
                     </div>
-=======
-        <div id="content-admin-users" class="hidden max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 mt-6 sm:mt-8 animate-content">
->>>>>>> 718b682af0877dabe3d170cac85a5c7e818f8f27
                     <form id="add-user-form" class="space-y-6">
                         <div>
                             <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">Tipe Akun</label>
@@ -371,13 +342,14 @@
                 </div>
             </div>
 
-            <!-- Bagian Tabel Rekapitulasi -->
+            <!-- Bagian Tabel Rekapitulasi (3 Tiers Header) -->
             <div class="bg-white rounded-3xl shadow-soft border border-slate-200 overflow-hidden mb-8 flex flex-col">
                 <div class="overflow-auto table-container w-full max-h-[60vh] sm:max-h-[65vh]">
                     <table class="w-full text-left border-collapse min-w-max text-xs">
                         <thead class="sticky-header shadow-sm">
-                            <tr class="text-slate-500 text-[9px] sm:text-[10px] uppercase tracking-wider font-bold" id="thead-row-1"></tr>
-                            <tr class="bg-white text-slate-700 text-[10px] sm:text-[11px] border-b-2 border-slate-200" id="thead-row-2"></tr>
+                            <tr class="text-slate-500 text-[9px] sm:text-[10px] uppercase tracking-wider font-bold bg-slate-100 border-b border-slate-200" id="thead-row-1"></tr>
+                            <tr class="bg-slate-50 text-slate-700 text-[10px] sm:text-[11px] border-b border-slate-200" id="thead-row-2"></tr>
+                            <tr class="bg-white text-slate-600 text-[10px] border-b-2 border-slate-300" id="thead-row-3"></tr>
                         </thead>
                         <tbody id="dashboard-tbody" class="bg-white"></tbody>
                     </table>
@@ -647,9 +619,10 @@
                 const btnOk = document.createElement('button');
                 const isDanger = iconBg.includes('rose');
                 btnOk.className = `px-8 py-3.5 sm:py-3 rounded-2xl font-bold text-sm text-white transition-transform active:scale-95 shadow-md w-full sm:w-auto ${isDanger ? 'bg-rose-600 hover:bg-rose-700 shadow-rose-200' : 'bg-slate-900 hover:bg-slate-800 shadow-slate-200'}`;
-                btnOk.textContent = showInput ? "Simpan" : "Ya, Lanjutkan";
+                btnOk.textContent = showInput ? "Simpan" : (onConfirm ? "Ya, Lanjutkan" : "Mengerti");
                 btnOk.onclick = () => { this._close(); if (onConfirm) onConfirm(showInput ? inputEl.value : null); };
-                actions.appendChild(btnCancel); actions.appendChild(btnOk);
+                if (onConfirm) actions.appendChild(btnCancel); 
+                actions.appendChild(btnOk);
                 container.classList.remove('hidden');
                 void container.offsetWidth;
                 container.classList.remove('opacity-0');
@@ -664,7 +637,8 @@
             },
             confirm(title, message, onConfirm) { this._show('confirm', title, message, 'fa-solid fa-circle-question text-orange-500', 'bg-orange-50', onConfirm); },
             danger(title, message, onConfirm) { this._show('confirm', title, message, 'fa-solid fa-trash-can text-rose-500', 'bg-rose-50', onConfirm); },
-            prompt(title, message, defaultVal, onConfirm) { this._show('prompt', title, message, 'fa-solid fa-pen-nib text-blue-500', 'bg-blue-50', onConfirm, true, defaultVal); }
+            prompt(title, message, defaultVal, onConfirm) { this._show('prompt', title, message, 'fa-solid fa-pen-nib text-blue-500', 'bg-blue-50', onConfirm, true, defaultVal); },
+            warning(title, message) { this._show('info', title, message, 'fa-solid fa-triangle-exclamation text-amber-500', 'bg-amber-50', null); }
         };
 
         const { createClient } = supabase;
@@ -794,9 +768,71 @@
             if (tabName === 'admin-form') renderAdminCategoryList();
         }
 
-        function openChecklistModal() {
-            document.getElementById('modal-checklist-form').classList.remove('hidden');
+        async function openChecklistModal() {
+            const btn = document.getElementById('btn-open-form');
+            const originalHtml = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Memeriksa Akses...';
+
+            try {
+                // 1. Ambil Waktu dari Server API agar tidak bisa dimanipulasi dari device
+                let serverDate;
+                try {
+                    const res = await fetch('https://worldtimeapi.org/api/timezone/Asia/Makassar');
+                    const data = await res.json();
+                    serverDate = new Date(data.datetime);
+                } catch(e) {
+                    serverDate = new Date(); // Fallback jika API gagal
+                }
+
+                let currentDay = serverDate.getDate();
+                const currentMonthStr = String(serverDate.getMonth() + 1).padStart(2, '0');
+                const currentYearStr = serverDate.getFullYear();
+
+                // === MODE TESTING AKTIF ===
+                // Ubah tanggal secara paksa menjadi 21 untuk bypass sistem.
+                // Hapus baris di bawah ini jika ingin mengunci permanen.
+                //currentDay = 21;
+                // ==========================
+
+                // 2. Rule: Hanya bisa isi form dari tanggal 20 hingga akhir bulan
+                if (currentDay < 20) {
+                    Modal.warning('Akses Belum Dibuka', 'Pengisian form checklist hanya dapat dilakukan mulai tanggal 20 hingga akhir bulan setiap bulannya. Harap kembali lagi nanti.');
+                    btn.disabled = false; btn.innerHTML = originalHtml;
+                    return;
+                }
+
+                // 3. Rule: Cek apakah SSC ini sudah mengisi di bulan yang sama (Mencegah Duplicate Data antar PIC)
+                const { data: subs, error } = await supabaseClient
+                    .from('submissions')
+                    .select('date')
+                    .eq('ssc', currentUser.ssc);
+
+                if (subs && subs.length > 0) {
+                    const hasSubmittedThisMonth = subs.some(sub => {
+                        const dateParts = sub.date.split(',')[0].trim().split('/'); // Format di DB: DD/MM/YYYY
+                        if (dateParts.length === 3) {
+                            return dateParts[1] === currentMonthStr && dateParts[2] === String(currentYearStr);
+                        }
+                        return false;
+                    });
+
+                    if (hasSubmittedThisMonth) {
+                        Modal.warning('Sudah Diisi', `Area Stagging ${currentUser.ssc} sudah melakukan pengisian checklist pada bulan ini. Pengisian hanya diperbolehkan 1x per area setiap bulannya.`);
+                        btn.disabled = false; btn.innerHTML = originalHtml;
+                        return;
+                    }
+                }
+
+                // Lolos semua seleksi, tampilkan form
+                document.getElementById('modal-checklist-form').classList.remove('hidden');
+            } catch (err) {
+                Island.show('Terjadi kesalahan saat memeriksa akses.', 'error');
+            } finally {
+                btn.disabled = false; btn.innerHTML = originalHtml;
+            }
         }
+
         function closeChecklistModal() {
             document.getElementById('modal-checklist-form').classList.add('hidden');
         }
@@ -1173,7 +1209,17 @@
 
             data.forEach(cat => { if(cat.items) cat.items.forEach(item => { const status = formData.get(`status-${item.id}`); const note = formData.get(`note-${item.id}`); if (status) answers[item.id] = { status: status, note: note || '' }; }); });
 
-            const d = new Date(); const dateStr = `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`; const timeStr = `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+            // Ambil waktu dari server API lagi saat disubmit (Anti Manipulasi Tanggal Device)
+            let d;
+            try {
+                const res = await fetch('https://worldtimeapi.org/api/timezone/Asia/Makassar');
+                const timeData = await res.json();
+                d = new Date(timeData.datetime);
+            } catch(err) {
+                d = new Date();
+            }
+
+            const dateStr = `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`; const timeStr = `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
 
             await supabaseClient.from('submissions').insert({
                 id: Date.now().toString(), user_id: currentUser.id, pic: currentUser.pic_name || currentUser.username, ssc: currentUser.ssc, province: currentUser.province, stagging_name: currentUser.stagging_name, date: `${dateStr}, ${timeStr}`, answers: answers
@@ -1270,25 +1316,50 @@
         };
 
         function renderDashboardHeaders(cats) {
-            const r1 = document.getElementById('thead-row-1'); const r2 = document.getElementById('thead-row-2');
-            let h1 = `<th rowspan="2" class="p-2 sm:p-2.5 sticky-col-1 col-w-1 bg-slate-50 border-r border-slate-200">SSC</th>
-                      <th rowspan="2" class="p-2 sm:p-2.5 sticky-col-2 col-w-2 bg-slate-50 border-r border-slate-200 hidden md:table-cell">Provinsi</th>
-                      <th rowspan="2" class="p-2 sm:p-2.5 sticky-col-3 col-w-3 bg-slate-50 text-slate-800 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] md:shadow-none">Nama Stagging</th>
-                      <th rowspan="2" class="p-2 sm:p-2.5 sticky-col-4 col-w-4 bg-slate-50 hidden md:table-cell">Nama PIC</th>
-                      <th rowspan="2" class="p-2 sm:p-2.5 sticky-col-5 col-w-5 bg-slate-50 border-r border-slate-300 hidden md:table-cell">Tanggal</th>`;
+            const r1 = document.getElementById('thead-row-1');
+            const r2 = document.getElementById('thead-row-2');
+            const r3 = document.getElementById('thead-row-3');
+            
+            let h1 = `
+                <th rowspan="3" class="p-2 sm:p-2.5 sticky-col-1 col-w-1 bg-slate-50 border-r border-slate-200 z-[45]">SSC</th>
+                <th rowspan="3" class="p-2 sm:p-2.5 sticky-col-2 col-w-2 bg-slate-50 border-r border-slate-200 hidden md:table-cell z-[45]">Provinsi</th>
+                <th rowspan="3" class="p-2 sm:p-2.5 sticky-col-3 col-w-3 bg-slate-50 text-slate-800 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] md:shadow-none z-[45]">Nama Stagging</th>
+                <th rowspan="3" class="p-2 sm:p-2.5 sticky-col-4 col-w-4 bg-slate-50 hidden md:table-cell z-[45]">Nama PIC</th>
+                <th rowspan="3" class="p-2 sm:p-2.5 sticky-col-5 col-w-5 bg-slate-50 border-r border-slate-300 hidden md:table-cell z-[45]">Tanggal</th>`;
             let h2 = ``;
+            let h3 = ``;
 
             cats.forEach((cat, idx) => {
                 if(!cat.items || cat.items.length === 0) return;
-                h1 += `<th colspan="${cat.items.length}" class="p-2 border-r border-slate-200 text-center bg-slate-100/50 cursor-pointer hover:bg-slate-200 transition-colors" onclick="toggleCatItems(${idx})" title="Klik untuk menampilkan teks penuh">${cat.category}</th>`;
                 
-                const sortedItems = [...cat.items].sort((a,b) => (a.subCategory||'').localeCompare(b.subCategory||''));
-                sortedItems.forEach(item => {
-                    const subLabel = item.subCategory ? `[${item.subCategory}] ` : '';
-                    h2 += `<th class="p-2 border-r border-slate-100 text-center bg-white min-w-[90px] max-w-[90px] transition-all duration-300 cat-group-${idx}"><div class="truncate w-full mx-auto font-medium text-[9px] sm:text-[10px] transition-all duration-300" title="${subLabel}${item.label}">${item.label}</div></th>`;
+                // Grouping berdasarkan subCategory untuk header
+                const grouped = {};
+                cat.items.forEach(item => {
+                    const sc = item.subCategory || 'Tanpa Sub Kategori';
+                    if(!grouped[sc]) grouped[sc] = [];
+                    grouped[sc].push(item);
+                });
+                
+                const scKeys = Object.keys(grouped).sort();
+
+                // BARIS 1: Kategori Utama
+                h1 += `<th colspan="${cat.items.length}" class="p-2 border-r border-slate-300 text-center bg-slate-200 text-slate-800 font-bold" onclick="toggleCatItems(${idx})" title="Klik untuk melebarkan kolom" style="cursor: pointer;">${cat.category}</th>`;
+                
+                // BARIS 2 & 3: Sub Kategori dan Item-Item
+                scKeys.forEach(sc => {
+                    // BARIS 2: Nama Sub Kategori
+                    h2 += `<th colspan="${grouped[sc].length}" class="p-1.5 border-r border-b border-slate-300 text-center bg-slate-100 text-slate-700 font-semibold text-[10px] sm:text-[11px]">${sc}</th>`;
+                    
+                    // BARIS 3: Nama-nama Item Ceklis
+                    grouped[sc].forEach(item => {
+                        h3 += `<th class="p-2 border-r border-slate-200 text-center bg-white min-w-[90px] max-w-[90px] transition-all duration-300 cat-group-${idx}"><div class="truncate w-full mx-auto font-medium text-[9px] sm:text-[10px] transition-all duration-300" title="${item.label}">${item.label}</div></th>`;
+                    });
                 });
             });
-            r1.innerHTML = h1; r2.innerHTML = h2;
+            
+            r1.innerHTML = h1; 
+            r2.innerHTML = h2;
+            r3.innerHTML = h3;
         }
 
         function renderDashboardBodyAndNotes(data, filteredCats, allCats, sscHistory) {
@@ -1329,19 +1400,29 @@
                         <td class="p-2 sm:p-2.5 sticky-col-5 col-w-5 text-center text-slate-500 text-[9px] sm:text-[10px] font-mono hidden md:table-cell">${sub.date}</td>`;
 
                     filteredCats.forEach(cat => {
-                        const sortedItems = [...(cat.items || [])].sort((a,b) => (a.subCategory||'').localeCompare(b.subCategory||''));
-                        sortedItems.forEach(item => {
-                            const ans = sub.answers[item.id];
-                            const tDef = itemTypeConfig[item.type || 'ok_nonok'];
-                            if(ans) {
-                                const isPos = ans.status === tDef.pos;
-                                const bgClass = isPos ? tDef.bgPos : tDef.bgNeg;
-                                const txtClass = isPos ? tDef.textPos : tDef.textNeg;
-                                const iconClass = isPos ? tDef.iconPos : tDef.iconNeg;
-                                
-                                html += `<td class="p-2 border-r border-slate-100 text-center"><div class="w-6 h-6 rounded-lg shadow-sm border border-white ${bgClass} ${txtClass} flex items-center justify-center mx-auto relative" title="${ans.status}"><i class="fa-solid ${iconClass} text-[11px]"></i>${(!isPos && ans.note && item.requiresNote) ? '<span class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-amber-400 border-2 border-white rounded-full"></span>':''}</div></td>`;
-                            } else html += `<td class="p-2 border-r border-slate-100 text-center text-slate-300">-</td>`;
-                        })
+                        // Pastikan urutan item di body TEPAT SAMA persis dengan urutan di thead (Dikelompokkan sesuai subCategory)
+                        const grouped = {};
+                        (cat.items || []).forEach(item => {
+                            const sc = item.subCategory || 'Tanpa Sub Kategori';
+                            if(!grouped[sc]) grouped[sc] = [];
+                            grouped[sc].push(item);
+                        });
+                        const scKeys = Object.keys(grouped).sort();
+
+                        scKeys.forEach(sc => {
+                            grouped[sc].forEach(item => {
+                                const ans = sub.answers[item.id];
+                                const tDef = itemTypeConfig[item.type || 'ok_nonok'];
+                                if(ans) {
+                                    const isPos = ans.status === tDef.pos;
+                                    const bgClass = isPos ? tDef.bgPos : tDef.bgNeg;
+                                    const txtClass = isPos ? tDef.textPos : tDef.textNeg;
+                                    const iconClass = isPos ? tDef.iconPos : tDef.iconNeg;
+                                    
+                                    html += `<td class="p-2 border-r border-slate-100 text-center"><div class="w-6 h-6 rounded-lg shadow-sm border border-white ${bgClass} ${txtClass} flex items-center justify-center mx-auto relative" title="${ans.status}"><i class="fa-solid ${iconClass} text-[11px]"></i>${(!isPos && ans.note && item.requiresNote) ? '<span class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-amber-400 border-2 border-white rounded-full"></span>':''}</div></td>`;
+                                } else html += `<td class="p-2 border-r border-slate-100 text-center text-slate-300">-</td>`;
+                            });
+                        });
                     });
                     html += `</tr>`;
 
