@@ -305,46 +305,14 @@
                         <p class="text-slate-500 text-sm mt-1 font-medium">Kelola hak akses, peran, dan penugasan area.</p>
                     </div>
 
-                    <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
-                        <!-- Form Tambah User -->
-                        <div class="bg-surface rounded-3xl shadow-soft border border-slate-200 p-6 sm:p-8 xl:col-span-1 h-fit">
-                            <div class="flex items-center gap-3 mb-6">
-                                <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center"><span class="material-symbols-rounded icon-fill">person_add</span></div>
-                                <h3 class="text-lg font-bold text-slate-800">Registrasi Akun</h3>
-                            </div>
-                            <form id="add-user-form" class="space-y-4">
-                                <div>
-                                    <label class="label-modern">Tipe Akun (Role)</label>
-                                    <select id="add-role" required onchange="toggleFormFieldsBasedOnRole()" class="input-modern w-full px-4 py-3 rounded-xl font-bold text-slate-800 cursor-pointer appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%24%2024%22%20fill%3D%22none%22%20stroke%3D%22%2364748b%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[position:right_1rem_center] bg-[length:1.2em_1.2em] pr-10">
-                                        <option value="user">User (Petugas Lapangan)</option>
-                                        <option value="visitor">Visitor (Hanya Lihat)</option>
-                                        <option value="admin">Admin (Akses Penuh)</option>
-                                    </select>
-                                </div>
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <div><label class="label-modern">Username</label><input type="text" id="add-un" required class="input-modern w-full px-4 py-3 rounded-xl font-medium text-sm" /></div>
-                                    <div><label class="label-modern">Password</label><input type="text" id="add-pw" required class="input-modern w-full px-4 py-3 rounded-xl font-medium text-sm" /></div>
-                                </div>
-                                <div><label class="label-modern">Nama Lengkap (PIC)</label><input type="text" id="add-pic" required placeholder="Cth: Budi Santoso" class="input-modern w-full px-4 py-3 rounded-xl font-medium text-sm" /></div>
-                                
-                                <div id="fields-lokasi" class="space-y-4 pt-4 mt-2 border-t border-slate-100">
-                                    <div><label class="label-modern">Stagging Area</label><input type="text" id="add-st" placeholder="Cth: Store Antang" class="input-modern w-full px-4 py-3 rounded-xl font-medium text-sm" /></div>
-                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                        <div><label class="label-modern">Koordinator (SSC)</label><input type="text" id="add-ss" placeholder="Cth: SSC MKS" class="input-modern w-full px-4 py-3 rounded-xl font-medium text-sm" /></div>
-                                        <div><label class="label-modern">Provinsi</label><input type="text" id="add-pr" placeholder="Cth: Sulsel" class="input-modern w-full px-4 py-3 rounded-xl font-medium text-sm" /></div>
-                                    </div>
-                                </div>
-                                <button type="submit" id="btn-add-user" class="w-full bg-slate-900 hover:bg-black text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 transition-transform active:scale-[0.98] mt-6 shadow-md">
-                                    <span class="material-symbols-rounded icon-fill text-[20px]">save</span> Simpan Akun
-                                </button>
-                            </form>
-                        </div>
-
+                    <div class="w-full">
                         <!-- Tabel User -->
-                        <div class="bg-surface rounded-3xl shadow-soft border border-slate-200 xl:col-span-2 flex flex-col overflow-hidden min-h-[500px]">
+                        <div class="bg-surface rounded-3xl shadow-soft border border-slate-200 flex flex-col overflow-hidden min-h-[500px]">
                             <div class="p-6 border-b border-slate-100 bg-surface flex justify-between items-center">
                                 <h3 class="text-lg font-bold text-slate-800">Daftar Pengguna Sistem</h3>
-                                <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center"><span class="material-symbols-rounded text-sm">list</span></div>
+                                <button onclick="openAddUserModal()" class="bg-slate-900 hover:bg-black text-white px-4 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-transform active:scale-95 shadow-md">
+                                    <span class="material-symbols-rounded icon-outline text-[18px]">person_add</span> Tambah Akun Baru
+                                </button>
                             </div>
                             <div class="overflow-x-auto flex-1 custom-scroll p-4 bg-slate-50/50">
                                 <table class="w-full text-left min-w-[800px] bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm">
@@ -572,6 +540,47 @@
                 </div>
             </div>
             <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex flex-col-reverse sm:flex-row justify-end gap-2" id="modal-actions"></div>
+        </div>
+    </div>
+
+    <!-- Add User Modal -->
+    <div id="modal-add-user" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[400] flex items-center justify-center p-4">
+        <div class="max-w-lg w-full bg-surface rounded-3xl shadow-float overflow-hidden animate-modal flex flex-col border border-slate-200">
+            <div class="bg-surface border-b border-slate-100 p-6 flex justify-between items-center shrink-0">
+                <h3 class="font-bold text-slate-900 text-lg flex items-center gap-2"><span class="material-symbols-rounded icon-fill text-indigo-600">person_add</span> Registrasi Akun Baru</h3>
+                <button onclick="closeAddUserModal()" class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 flex items-center justify-center transition-colors"><span class="material-symbols-rounded text-sm">close</span></button>
+            </div>
+            <div class="p-6 sm:p-8 overflow-y-auto custom-scroll max-h-[80vh]">
+                <form id="add-user-form" class="space-y-4">
+                    <div>
+                        <label class="label-modern">Tipe Akun (Role)</label>
+                        <select id="add-role" required onchange="toggleFormFieldsBasedOnRole()" class="input-modern w-full px-4 py-3 rounded-xl font-bold text-slate-800 cursor-pointer appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%24%2024%22%20fill%3D%22none%22%20stroke%3D%22%2364748b%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[position:right_1rem_center] bg-[length:1.2em_1.2em] pr-10">
+                            <option value="user">User (Petugas Lapangan)</option>
+                            <option value="visitor">Visitor (Hanya Lihat)</option>
+                            <option value="admin">Admin (Akses Penuh)</option>
+                        </select>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div><label class="label-modern">Username</label><input type="text" id="add-un" required class="input-modern w-full px-4 py-3 rounded-xl font-medium text-sm" /></div>
+                        <div><label class="label-modern">Password</label><input type="text" id="add-pw" required class="input-modern w-full px-4 py-3 rounded-xl font-medium text-sm" /></div>
+                    </div>
+                    <div><label class="label-modern">Nama Lengkap (PIC)</label><input type="text" id="add-pic" required placeholder="Cth: Budi Santoso" class="input-modern w-full px-4 py-3 rounded-xl font-medium text-sm" /></div>
+                    
+                    <div id="fields-lokasi" class="space-y-4 pt-4 mt-2 border-t border-slate-100">
+                        <div><label class="label-modern">Stagging Area</label><input type="text" id="add-st" placeholder="Cth: Store Antang" class="input-modern w-full px-4 py-3 rounded-xl font-medium text-sm" /></div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div><label class="label-modern">Koordinator (SSC)</label><input type="text" id="add-ss" placeholder="Cth: SSC MKS" class="input-modern w-full px-4 py-3 rounded-xl font-medium text-sm" /></div>
+                            <div><label class="label-modern">Provinsi</label><input type="text" id="add-pr" placeholder="Cth: Sulsel" class="input-modern w-full px-4 py-3 rounded-xl font-medium text-sm" /></div>
+                        </div>
+                    </div>
+                    <div class="pt-6 flex justify-end gap-2 border-t border-slate-100 mt-6">
+                        <button type="button" onclick="closeAddUserModal()" class="px-5 py-2.5 rounded-xl font-bold text-sm text-slate-600 hover:bg-slate-100 transition-colors">Batal</button>
+                        <button type="submit" id="btn-add-user" class="px-6 py-2.5 rounded-xl font-bold text-sm text-white bg-slate-900 hover:bg-black transition-transform active:scale-95 shadow-md flex items-center gap-2">
+                            <span class="material-symbols-rounded icon-fill text-[18px]">save</span> Simpan Akun
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 
@@ -1046,6 +1055,16 @@
 
         function closeChecklistModal() { document.getElementById('modal-checklist-form').classList.add('hidden'); }
 
+        function openAddUserModal() {
+            document.getElementById('add-user-form').reset();
+            toggleFormFieldsBasedOnRole();
+            document.getElementById('modal-add-user').classList.remove('hidden');
+        }
+
+        function closeAddUserModal() {
+            document.getElementById('modal-add-user').classList.add('hidden');
+        }
+
         function toggleFormFieldsBasedOnRole() {
             const role = document.getElementById('add-role').value; const locFields = document.getElementById('fields-lokasi');
             if (role === 'user') { locFields.classList.remove('hidden'); document.getElementById('add-st').required = true; document.getElementById('add-pr').required = true; document.getElementById('add-ss').required = true; } 
@@ -1064,7 +1083,7 @@
             await supabaseClient.from('users').insert({ id: 'U' + Date.now(), username: un, password: pw, pic_name: pic, role: role, stagging_name: st, province: pr, ssc: ss, is_active: true });
             document.getElementById('btn-add-user').disabled = false;
             
-            Island.show('Akun didaftarkan.', 'success'); e.target.reset(); toggleFormFieldsBasedOnRole(); await renderAdminUsers();
+            Island.show('Akun didaftarkan.', 'success'); e.target.reset(); closeAddUserModal(); await renderAdminUsers();
         });
 
         async function openEditUserModal(userId) {
