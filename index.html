@@ -8,363 +8,250 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <script>
         tailwind.config = {
-            theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'] } } }
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: { primary: '#e11d48' },
+                    boxShadow: {
+                        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+                        'floating': '0 10px 40px -10px rgba(0,0,0,0.08)'
+                    }
+                }
+            }
         }
     </script>
 
     <style>
-        body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; background-color: #f8fafc; }
         
         .custom-scroll::-webkit-scrollbar { height: 6px; width: 6px; }
         .custom-scroll::-webkit-scrollbar-track { background: transparent; }
         .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .custom-scroll::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-        .table-container::-webkit-scrollbar { height: 10px; width: 10px; }
-        .table-container::-webkit-scrollbar-track { background: #f8fafc; border-radius: 8px; }
-        .table-container::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 8px; border: 2px solid #f8fafc; }
+        .table-container::-webkit-scrollbar { height: 8px; width: 8px; }
+        .table-container::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 8px; }
+        .table-container::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 8px; border: 2px solid #f1f5f9; }
 
         .smooth-transition { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
 
-        input[type="radio"]:checked + div.radio-card-ok {
+        input[type="radio"]:checked + div.radio-card-pos {
             background-color: #ecfdf5; border-color: #10b981; color: #047857;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
         }
-        input[type="radio"]:checked + div.radio-card-non {
+        input[type="radio"]:checked + div.radio-card-neg {
             background-color: #fff1f2; border-color: #f43f5e; color: #be123c;
+            box-shadow: 0 4px 12px rgba(244, 63, 94, 0.15);
         }
         input[type="radio"]:checked + div .check-icon { transform: scale(1); opacity: 1; }
         .check-icon { transform: scale(0.5); opacity: 0; transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1); }
 
-        .col-w-1 { min-width: 80px; width: 80px; max-width: 80px; }
-        .col-w-2 { min-width: 140px; width: 140px; max-width: 140px; }
-        .col-w-3 { min-width: 180px; width: 180px; max-width: 180px; }
-        .col-w-4 { min-width: 120px; width: 120px; max-width: 120px; }
-        .col-w-5 { min-width: 140px; width: 140px; max-width: 140px; }
+        .col-w-1 { min-width: 70px; width: 70px; }
+        .col-w-2 { min-width: 100px; width: 100px; }
+        .col-w-3 { min-width: 140px; width: 140px; }
+        .col-w-4 { min-width: 90px; width: 90px; }
+        .col-w-5 { min-width: 100px; width: 100px; }
 
         .sticky-col-1 { position: sticky; left: 0; z-index: 20; border-right: 1px solid #f1f5f9; }
-        .sticky-col-2 { position: sticky; left: 80px; z-index: 20; border-right: 1px solid #f1f5f9; }
-        .sticky-col-3 { position: sticky; left: 220px; z-index: 20; border-right: 1px solid #f1f5f9; }
-        .sticky-col-4 { position: sticky; left: 400px; z-index: 20; border-right: 1px solid #f1f5f9; }
-        .sticky-col-5 { position: sticky; left: 520px; z-index: 20; border-right: 3px solid #cbd5e1; }
+        .sticky-col-3 { position: sticky; left: 70px; z-index: 20; border-right: 2px solid #e2e8f0; } 
         
+        @media (min-width: 768px) {
+            .sticky-col-2 { position: sticky; left: 70px; z-index: 20; border-right: 1px solid #f1f5f9; }
+            .sticky-col-3 { position: sticky; left: 170px; z-index: 20; border-right: 1px solid #f1f5f9; }
+            .sticky-col-4 { position: sticky; left: 310px; z-index: 20; border-right: 1px solid #f1f5f9; }
+            .sticky-col-5 { position: sticky; left: 400px; z-index: 20; border-right: 3px solid #cbd5e1; }
+        }
+
         .sticky-header th { position: sticky; top: 0; z-index: 30; background-color: #f8fafc; }
         .sticky-header th.sticky-col-1, .sticky-header th.sticky-col-2, 
         .sticky-header th.sticky-col-3, .sticky-header th.sticky-col-4, 
         .sticky-header th.sticky-col-5 { z-index: 40; }
 
-        tbody td.sticky-col-1, tbody td.sticky-col-2, 
-        tbody td.sticky-col-3, tbody td.sticky-col-4, 
-        tbody td.sticky-col-5 { background-color: #ffffff; }
-        
-        tr:hover td.sticky-col-1, tr:hover td.sticky-col-2, 
-        tr:hover td.sticky-col-3, tr:hover td.sticky-col-4, 
-        tr:hover td.sticky-col-5 { background-color: #f8fafc; }
+        tbody td.sticky-col-1, tbody td.sticky-col-2, tbody td.sticky-col-3, tbody td.sticky-col-4, tbody td.sticky-col-5 { background-color: #ffffff; }
+        tr:hover td.sticky-col-1, tr:hover td.sticky-col-2, tr:hover td.sticky-col-3, tr:hover td.sticky-col-4, tr:hover td.sticky-col-5 { background-color: #f8fafc; }
 
-        @keyframes islandEnter {
-            0% { transform: translate(-50%, -150%) scale(0.8); opacity: 0; filter: blur(4px); }
-            100% { transform: translate(-50%, 0) scale(1); opacity: 1; filter: blur(0); }
-        }
-        @keyframes islandLeave {
-            0% { transform: translate(-50%, 0) scale(1); opacity: 1; filter: blur(0); }
-            100% { transform: translate(-50%, -150%) scale(0.8); opacity: 0; filter: blur(4px); }
-        }
-        .island-active { animation: islandEnter 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
-        .island-inactive { animation: islandLeave 0.4s cubic-bezier(0.36, 0, 0.66, -0.56) forwards; }
+        /* Animasi Baru yang Elegan dan Profesional */
+        @keyframes toastEnter { 0% { transform: translate(-50%, -20px); opacity: 0; } 100% { transform: translate(-50%, 0); opacity: 1; } }
+        @keyframes toastLeave { 0% { transform: translate(-50%, 0); opacity: 1; } 100% { transform: translate(-50%, -20px); opacity: 0; } }
+        .island-active { animation: toastEnter 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .island-inactive { animation: toastLeave 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+
+        @keyframes contentFadeIn { 0% { opacity: 0; transform: translateY(15px); } 100% { opacity: 1; transform: translateY(0); } }
+        .animate-content { animation: contentFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+        @keyframes modalZoomIn { 0% { opacity: 0; transform: scale(0.96) translateY(10px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
+        .animate-modal { animation: modalZoomIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 
         .toggle-checkbox:checked { right: 0; border-color: #10b981; }
         .toggle-checkbox:checked + .toggle-label { background-color: #10b981; }
-        .glass-panel { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+        
+        .glass-header { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+        .input-modern { background-color: #f1f5f9; border: 1px solid transparent; transition: all 0.2s; }
+        .input-modern:focus { background-color: #ffffff; border-color: #f43f5e; box-shadow: 0 0 0 3px rgba(244,63,94,0.1); outline: none; }
     </style>
 </head>
-<body class="bg-[#f3f4f6] text-slate-800 antialiased selection:bg-rose-200 selection:text-rose-900">
+<body class="text-slate-800 antialiased selection:bg-rose-200 selection:text-rose-900">
 
-    <!-- Notifikasi Dynamic Island -->
-    <div id="dynamic-island" class="fixed top-6 left-1/2 -translate-x-1/2 z-[500] opacity-0 pointer-events-none transform -translate-y-full">
-        <div class="bg-black/90 backdrop-blur-md shadow-2xl rounded-full flex items-center overflow-hidden border border-white/10" style="min-width: 200px; max-width: 90vw;">
-            <div id="island-content" class="flex items-center gap-3 px-5 py-3 w-full justify-center"></div>
+    <div id="dynamic-island" class="fixed top-4 sm:top-6 left-1/2 -translate-x-1/2 z-[500] opacity-0 pointer-events-none transform -translate-y-full">
+        <div class="bg-slate-900/95 backdrop-blur-md shadow-floating rounded-full flex items-center overflow-hidden border border-white/10 px-5 py-3" style="min-width: 250px; max-width: 90vw;">
+            <div id="island-content" class="flex items-center gap-3 w-full justify-center"></div>
         </div>
     </div>
 
-    <!-- Modal Form Tambah/Edit Item Ceklis (Dinamis: OK/Non OK, Ada/Tidak Ada, Ya/Tidak) -->
-    <div id="modal-item-form" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[400] flex items-center justify-center p-4">
-        <div class="max-w-sm w-full bg-white rounded-3xl shadow-2xl overflow-hidden border border-white/50">
-            <div class="p-6">
-                <div class="flex items-center gap-3 mb-5">
-                    <div class="w-10 h-10 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center text-lg"><i class="fa-solid fa-list-check"></i></div>
-                    <h3 class="font-bold text-slate-800 text-lg" id="modal-item-title">Tambah Item</h3>
-                </div>
-                <form id="form-manage-item" class="space-y-4">
-                    <input type="hidden" id="manage-item-catId">
-                    <input type="hidden" id="manage-item-id">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Deskripsi Item</label>
-                        <textarea id="manage-item-label" required rows="3" class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-purple-500 outline-none text-sm font-medium transition-colors custom-scroll"></textarea>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Tipe Pilihan Jawaban</label>
-                        <select id="manage-item-type" required class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-purple-500 outline-none text-sm font-medium transition-colors cursor-pointer">
-                            <option value="ok_nonok">OK / Non OK</option>
-                            <option value="ada_tidak">Ada / Tidak Ada</option>
-                            <option value="ya_tidak">Ya / Tidak</option>
-                        </select>
-                    </div>
-                    <div class="pt-2 flex justify-end gap-3 border-t border-slate-100 mt-2">
-                        <button type="button" onclick="closeItemModal()" class="px-5 py-2.5 rounded-xl font-bold text-sm text-slate-500 hover:bg-slate-200 transition-colors">Batal</button>
-                        <button type="submit" class="px-6 py-2.5 rounded-xl font-bold text-sm text-white bg-purple-600 hover:bg-purple-700 shadow-md shadow-purple-200 transition-transform active:scale-95">Simpan</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+    <div id="view-login" class="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-slate-50">
+        <div class="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-rose-200/50 rounded-full mix-blend-multiply filter blur-[80px] opacity-70 animate-pulse"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-blue-200/50 rounded-full mix-blend-multiply filter blur-[80px] opacity-70 animate-pulse" style="animation-delay: 2s;"></div>
 
-    <!-- Modal Ganti Password (Untuk User) -->
-    <div id="modal-change-password" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[400] flex items-center justify-center p-4">
-        <div class="max-w-sm w-full bg-white rounded-3xl shadow-2xl p-6">
-            <div class="flex items-center gap-3 mb-5">
-                <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center text-lg"><i class="fa-solid fa-key"></i></div>
-                <h3 class="font-bold text-slate-800 text-lg">Ganti Password</h3>
-            </div>
-            <form id="form-change-password" class="space-y-4">
-                <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Password Baru</label>
-                    <input type="password" id="new-password" required class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none text-sm">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Konfirmasi Password Baru</label>
-                    <input type="password" id="confirm-password" required class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none text-sm">
-                </div>
-                <div class="pt-2 flex justify-end gap-3 border-t border-slate-100 mt-2">
-                    <button type="button" onclick="closeChangePasswordModal()" class="px-5 py-2.5 rounded-xl font-bold text-sm text-slate-500 hover:bg-slate-200 transition-colors">Batal</button>
-                    <button type="submit" class="px-6 py-2.5 rounded-xl font-bold text-sm text-white bg-blue-600 hover:bg-blue-700 shadow-md shadow-blue-200 transition-transform active:scale-95">Simpan</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Modal Confirm/Prompt Global -->
-    <div id="custom-modal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[600] flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
-        <div id="modal-box" class="max-w-sm w-full bg-white rounded-3xl shadow-2xl overflow-hidden transform scale-95 transition-transform duration-300 border border-white/50">
-            <div class="p-6">
-                <div class="flex items-start gap-4">
-                    <div id="modal-icon" class="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 text-xl"></div>
-                    <div class="pt-1">
-                        <h3 id="modal-title" class="font-bold text-slate-800 text-lg leading-tight mb-1">Title</h3>
-                        <p id="modal-message" class="text-slate-500 text-sm leading-relaxed"></p>
-                    </div>
-                </div>
-                <div id="modal-input-container" class="hidden mt-5">
-                    <input type="text" id="modal-input" class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none text-sm font-medium transition-colors" />
-                </div>
-            </div>
-            <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-3" id="modal-actions"></div>
-        </div>
-    </div>
-
-    <div id="view-login" class="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-gradient-to-br from-slate-100 to-slate-200">
-        <div class="absolute top-[-10%] left-[-10%] w-96 h-96 bg-rose-200 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-pulse"></div>
-        <div class="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-pulse" style="animation-delay: 2s;"></div>
-
-        <div class="max-w-md w-full glass-panel rounded-3xl shadow-2xl border border-white/50 overflow-hidden relative z-10">
-            <div class="p-8 text-center pt-10">
-                <div class="w-20 h-20 bg-gradient-to-tr from-rose-500 to-rose-400 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg shadow-rose-200 transform rotate-3">
-                    <i class="fa-solid fa-clipboard-list text-white text-4xl -rotate-3"></i>
+        <div class="max-w-md w-full bg-white/80 backdrop-blur-xl rounded-3xl shadow-floating border border-white overflow-hidden relative z-10 p-6 sm:p-10">
+            <div class="text-center mb-8">
+                <div class="w-20 h-20 bg-gradient-to-tr from-rose-600 to-rose-400 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg shadow-rose-200/50 transform rotate-3">
+                    <i class="fa-solid fa-clipboard-check text-white text-4xl -rotate-3"></i>
                 </div>
                 <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Stagging Checklist</h1>
-                <p class="text-slate-500 mt-2 text-sm">Sistem Monitoring & Evaluasi Terpadu</p>
+                <p class="text-slate-500 mt-2 text-sm font-medium">Sistem Monitoring & Evaluasi Terpadu</p>
             </div>
             
-            <div class="p-8 pt-0">
-                <form id="login-form" class="space-y-5">
-                    <div class="space-y-1.5">
-                        <label class="block text-sm font-semibold text-slate-700">Username</label>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                <i class="fa-regular fa-user text-slate-400"></i>
-                            </div>
-                            <input type="text" id="username" required placeholder="Masukkan ID Anda" 
-                                   class="w-full pl-11 pr-4 py-3.5 rounded-xl border border-slate-200 bg-white/50 focus:bg-white focus:ring-2 focus:ring-rose-500 focus:border-rose-500 outline-none transition-all shadow-sm">
-                        </div>
-                    </div>
-                    <div class="space-y-1.5">
-                        <label class="block text-sm font-semibold text-slate-700">Password</label>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                <i class="fa-solid fa-lock text-slate-400"></i>
-                            </div>
-                            <input type="password" id="password" required placeholder="••••••••" 
-                                   class="w-full pl-11 pr-4 py-3.5 rounded-xl border border-slate-200 bg-white/50 focus:bg-white focus:ring-2 focus:ring-rose-500 focus:border-rose-500 outline-none transition-all shadow-sm">
-                        </div>
-                    </div>
-                    
-                    <button type="submit" id="btn-login" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-semibold py-4 rounded-xl flex items-center justify-center gap-2 transition-all shadow-xl shadow-slate-900/20 mt-4 active:scale-[0.98]">
-                        Masuk ke Dashboard <i class="fa-solid fa-arrow-right text-sm"></i>
-                    </button>
-                </form>
-
-                <div class="mt-8 bg-blue-50/80 border border-blue-100 rounded-xl p-4 text-xs text-blue-800">
-                    <div class="flex items-center gap-2 mb-2 font-bold text-blue-900">
-                        <i class="fa-solid fa-code"></i> Kredensial Sistem
-                    </div>
-                    <div class="grid grid-cols-2 gap-2">
-                        <div><span class="opacity-70">Admin Master:</span><br><code>admin</code> / <code>123</code></div>
-                        <div class="col-span-2 mt-1 italic opacity-80">*Jika admin belum ada, login dengan data di atas akan otomatis membuatnya.</div>
+            <form id="login-form" class="space-y-5">
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">Username / ID</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"><i class="fa-regular fa-user text-slate-400"></i></div>
+                        <input type="text" id="username" required placeholder="Masukkan Username" class="input-modern w-full pl-11 pr-4 py-3.5 rounded-2xl font-medium">
                     </div>
                 </div>
-            </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">Password</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"><i class="fa-solid fa-lock text-slate-400"></i></div>
+                        <input type="password" id="password" required placeholder="••••••••" class="input-modern w-full pl-11 pr-4 py-3.5 rounded-2xl font-medium">
+                    </div>
+                </div>
+                
+                <button type="submit" id="btn-login" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-4 rounded-2xl flex items-center justify-center gap-2 transition-transform shadow-lg shadow-slate-900/20 mt-6 active:scale-[0.98]">
+                    Masuk ke Sistem <i class="fa-solid fa-arrow-right text-sm"></i>
+                </button>
+            </form>
         </div>
     </div>
 
     <div id="view-app" class="hidden min-h-screen pb-24 flex flex-col">
-        <div class="sticky top-0 z-50 p-4 pb-0">
-            <nav class="max-w-[1400px] mx-auto glass-panel rounded-2xl shadow-sm border border-white/60 px-4 py-3 flex flex-col sm:flex-row justify-between items-center gap-4 transition-all">
-                
-                <div class="flex items-center gap-3 w-full sm:w-auto justify-between">
+        <header class="glass-header sticky top-0 z-50 border-b border-slate-200">
+            <div class="max-w-[1400px] mx-auto">
+                <div class="px-4 py-3 flex justify-between items-center">
                     <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 bg-gradient-to-br from-rose-500 to-rose-600 rounded-xl flex items-center justify-center shadow-md shadow-rose-200 text-white">
+                        <div class="w-10 h-10 bg-gradient-to-br from-rose-500 to-rose-600 rounded-xl flex items-center justify-center shadow-md shadow-rose-200 text-white shrink-0">
                             <i class="fa-solid fa-clipboard-check text-lg"></i>
                         </div>
                         <div>
-                            <h1 class="font-bold text-slate-800 leading-tight">Checklist System</h1>
-                            <p class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider" id="display-role">ROLE</p>
+                            <h1 class="font-bold text-slate-900 text-base leading-tight hidden sm:block">Checklist System</h1>
+                            <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider bg-slate-100 px-2 py-0.5 rounded-md inline-block" id="display-role">ROLE</p>
                         </div>
                     </div>
-                    <button onclick="logout()" class="sm:hidden w-10 h-10 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center active:bg-slate-200">
-                        <i class="fa-solid fa-power-off"></i>
-                    </button>
-                </div>
-                
-                <div class="flex p-1 bg-slate-100 rounded-xl overflow-x-auto w-full sm:w-auto custom-scroll no-scrollbar">
-                    <button onclick="switchTab('form')" id="tab-form" class="hidden px-5 py-2 rounded-lg text-sm font-semibold transition-all whitespace-nowrap text-slate-500 hover:text-slate-800">
-                        <i class="fa-solid fa-pen-clip mr-1.5 opacity-70"></i> Isi Form
-                    </button>
-                    <button onclick="switchTab('admin-users')" id="tab-admin-users" class="hidden px-5 py-2 rounded-lg text-sm font-semibold transition-all whitespace-nowrap text-slate-500 hover:text-slate-800">
-                        <i class="fa-solid fa-users-gear mr-1.5 opacity-70"></i> Akses
-                    </button>
-                    <button onclick="switchTab('admin-form')" id="tab-admin-form" class="hidden px-5 py-2 rounded-lg text-sm font-semibold transition-all whitespace-nowrap text-slate-500 hover:text-slate-800">
-                        <i class="fa-solid fa-layer-group mr-1.5 opacity-70"></i> Kategori
-                    </button>
-                    <button onclick="switchTab('dashboard')" id="tab-dashboard" class="px-5 py-2 rounded-lg text-sm font-semibold transition-all whitespace-nowrap text-slate-500 hover:text-slate-800">
-                        <i class="fa-solid fa-chart-pie mr-1.5 opacity-70"></i> Dashboard
-                    </button>
-                </div>
-
-                <div class="hidden sm:flex items-center gap-3 pl-2 border-l border-slate-200">
-                    <div class="text-right">
-                        <p class="text-sm font-bold text-slate-800 leading-tight" id="display-username">User</p>
-                        <p class="text-[11px] text-emerald-600 font-medium flex items-center justify-end gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Online</p>
-                    </div>
-                    <button onclick="openChangePasswordModal()" class="w-10 h-10 rounded-xl bg-white border border-slate-200 text-slate-500 hover:text-blue-600 hover:border-blue-200 hover:bg-blue-50 transition-all flex items-center justify-center shadow-sm" title="Ganti Password">
-                        <i class="fa-solid fa-key"></i>
-                    </button>
-                    <button onclick="logout()" class="w-10 h-10 rounded-xl bg-white border border-slate-200 text-slate-500 hover:text-rose-600 hover:border-rose-200 hover:bg-rose-50 transition-all flex items-center justify-center shadow-sm" title="Keluar">
-                        <i class="fa-solid fa-arrow-right-from-bracket"></i>
-                    </button>
-                </div>
-            </nav>
-        </div>
-
-        <div id="content-form" class="hidden max-w-3xl mx-auto w-full px-4 mt-8 animate-[islandEnter_0.4s_ease-out]">
-            <form id="checklist-form">
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mb-8 relative overflow-hidden">
-                    <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-rose-500 to-orange-400"></div>
-                    <div class="flex items-center justify-between mb-6">
-                        <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
-                            <div class="w-8 h-8 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center"><i class="fa-solid fa-map-pin"></i></div> Area Tugas
-                        </h2>
-                        <span class="bg-slate-100 text-slate-500 px-3 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1.5 border border-slate-200">
-                            <i class="fa-solid fa-lock text-[10px]"></i> Auto-Fill
-                        </span>
-                    </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                            <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Nama Stagging</p>
-                            <p id="form-staggingName" class="font-bold text-slate-800 text-base">-</p>
+                    
+                    <div class="flex items-center gap-3">
+                        <div class="text-right hidden sm:block">
+                            <p class="text-sm font-bold text-slate-800 leading-tight" id="display-username">User</p>
+                            <p class="text-[11px] text-emerald-600 font-medium flex items-center justify-end gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Online</p>
                         </div>
-                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                            <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Provinsi & SSC</p>
-                            <p id="form-ssc-prov" class="font-bold text-slate-800 text-base">-</p>
-                        </div>
+                        <div class="h-8 w-px bg-slate-200 hidden sm:block mx-1"></div>
+                        <button onclick="openChangePasswordModal()" class="w-10 h-10 rounded-full sm:rounded-xl bg-slate-100 sm:bg-white sm:border sm:border-slate-200 text-slate-600 hover:text-blue-600 hover:bg-blue-50 transition-colors flex items-center justify-center" title="Ganti Password">
+                            <i class="fa-solid fa-key"></i>
+                        </button>
+                        <button onclick="logout()" class="w-10 h-10 rounded-full sm:rounded-xl bg-slate-100 sm:bg-white sm:border sm:border-slate-200 text-rose-600 hover:bg-rose-50 transition-colors flex items-center justify-center" title="Keluar">
+                            <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                        </button>
                     </div>
                 </div>
 
-                <div id="checklist-container" class="space-y-6"></div>
-
-                <div class="mt-10 mb-8 sticky bottom-6 z-40 px-4 sm:px-0">
-                    <button type="submit" id="btn-submit-form" class="w-full bg-slate-900 hover:bg-black text-white font-bold py-4 px-8 rounded-2xl shadow-2xl shadow-slate-900/30 flex items-center justify-center gap-3 transition-transform transform active:scale-[0.98]">
-                        <i class="fa-solid fa-paper-plane text-lg"></i> <span>Kirim Hasil Pengecekan</span>
+                <div class="px-4 pb-3 overflow-x-auto custom-scroll flex gap-2 sm:gap-3 items-center">
+                    <button onclick="switchTab('dashboard')" id="tab-dashboard" class="px-5 py-2.5 rounded-xl text-sm font-bold transition-all whitespace-nowrap bg-slate-100 text-slate-500 hover:bg-slate-200">
+                        <i class="fa-solid fa-chart-pie mr-1.5"></i> Dashboard Rekap
+                    </button>
+                    <button onclick="switchTab('admin-users')" id="tab-admin-users" class="hidden px-5 py-2.5 rounded-xl text-sm font-bold transition-all whitespace-nowrap bg-slate-100 text-slate-500 hover:bg-slate-200">
+                        <i class="fa-solid fa-users-gear mr-1.5"></i> Akses & Pengguna
+                    </button>
+                    <button onclick="switchTab('admin-form')" id="tab-admin-form" class="hidden px-5 py-2.5 rounded-xl text-sm font-bold transition-all whitespace-nowrap bg-slate-100 text-slate-500 hover:bg-slate-200">
+                        <i class="fa-solid fa-layer-group mr-1.5"></i> Format Form (Kategori)
                     </button>
                 </div>
-            </form>
-        </div>
+            </div>
+        </header>
 
-        <div id="content-admin-users" class="hidden max-w-[1400px] mx-auto w-full px-4 mt-8 animate-[islandEnter_0.4s_ease-out]">
+        <div id="content-admin-users" class="hidden max-w-[1400px] mx-auto w-full px-4 sm:px-6 mt-6 sm:mt-8 animate-content">
             <div class="grid grid-cols-1 xl:grid-cols-3 gap-6 xl:gap-8">
-                <div class="bg-white rounded-3xl shadow-sm border border-slate-200 p-6 xl:col-span-1 h-fit">
-                    <div class="flex items-center gap-3 mb-6">
-                        <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center text-lg"><i class="fa-solid fa-user-plus"></i></div>
-                        <h2 class="text-lg font-bold text-slate-800">Registrasi Akun</h2>
+                <div class="bg-white rounded-3xl shadow-soft border border-slate-200 p-6 sm:p-8 xl:col-span-1 h-fit">
+                    <div class="flex items-center gap-4 mb-8">
+                        <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl"><i class="fa-solid fa-user-plus"></i></div>
+                        <h2 class="text-xl font-bold text-slate-800">Registrasi Akun</h2>
                     </div>
-                    <form id="add-user-form" class="space-y-5">
+                    <form id="add-user-form" class="space-y-6">
                         <div>
-                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Tipe Akun</label>
-                            <select id="add-role" required onchange="toggleFormFieldsBasedOnRole()" class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none text-sm font-semibold text-slate-700 transition-colors">
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">Tipe Akun</label>
+                            <select id="add-role" required onchange="toggleFormFieldsBasedOnRole()" class="input-modern w-full px-4 py-3.5 rounded-2xl font-bold text-slate-700 cursor-pointer">
                                 <option value="user">User (Petugas Ceklis)</option>
                                 <option value="visitor">Visitor (Hanya Lihat)</option>
                                 <option value="admin">Admin (Full Akses)</option>
                             </select>
                         </div>
-                        <div class="grid grid-cols-2 gap-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                             <div>
-                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Username</label>
-                                <input type="text" id="add-un" required class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none text-sm font-medium" />
+                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">Username</label>
+                                <input type="text" id="add-un" required class="input-modern w-full px-4 py-3.5 rounded-2xl font-medium" />
                             </div>
                             <div>
-                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Password</label>
-                                <input type="text" id="add-pw" required class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none text-sm font-medium" />
+                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">Password</label>
+                                <input type="text" id="add-pw" required class="input-modern w-full px-4 py-3.5 rounded-2xl font-medium" />
                             </div>
                         </div>
-                        <div id="fields-lokasi" class="space-y-5 pt-4 border-t border-slate-100 mt-2">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">Nama Lengkap PIC</label>
+                            <input type="text" id="add-pic" required placeholder="Cth: Budi Santoso" class="input-modern w-full px-4 py-3.5 rounded-2xl font-medium" />
+                        </div>
+                        <div id="fields-lokasi" class="space-y-5 pt-6 border-t border-slate-100 mt-2">
                             <div>
-                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Nama Stagging</label>
-                                <input type="text" id="add-st" placeholder="Cth: Store Antang" class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none text-sm font-medium" />
+                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">Nama Stagging</label>
+                                <input type="text" id="add-st" placeholder="Cth: Store Antang" class="input-modern w-full px-4 py-3.5 rounded-2xl font-medium" />
                             </div>
-                            <div class="grid grid-cols-2 gap-4">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                                 <div>
-                                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Provinsi</label>
-                                    <input type="text" id="add-pr" placeholder="Cth: Sulsel" class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none text-sm font-medium" />
+                                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">Provinsi</label>
+                                    <input type="text" id="add-pr" placeholder="Cth: Sulsel" class="input-modern w-full px-4 py-3.5 rounded-2xl font-medium" />
                                 </div>
                                 <div>
-                                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">SSC</label>
-                                    <input type="text" id="add-ss" placeholder="Cth: SSC MKS" class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none text-sm font-medium" />
+                                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">Kode SSC</label>
+                                    <input type="text" id="add-ss" placeholder="Cth: SSC MKS" class="input-modern w-full px-4 py-3.5 rounded-2xl font-medium" />
                                 </div>
                             </div>
                         </div>
-                        <button type="submit" id="btn-add-user" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 transition-transform active:scale-[0.98] mt-2">
+                        <button type="submit" id="btn-add-user" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-4 rounded-2xl flex items-center justify-center gap-2 transition-transform active:scale-[0.98] mt-4 shadow-floating">
                             <i class="fa-solid fa-save"></i> Buat Akun Baru
                         </button>
                     </form>
                 </div>
-                <div class="bg-white rounded-3xl shadow-sm border border-slate-200 xl:col-span-2 flex flex-col overflow-hidden">
-                    <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-white">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center text-lg"><i class="fa-solid fa-users-viewfinder"></i></div>
-                            <h2 class="text-lg font-bold text-slate-800">Database Pengguna</h2>
+
+                <div class="bg-white rounded-3xl shadow-soft border border-slate-200 xl:col-span-2 flex flex-col overflow-hidden min-h-[500px]">
+                    <div class="p-6 sm:p-8 border-b border-slate-100 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 bg-white">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-2xl bg-slate-50 text-slate-600 flex items-center justify-center text-xl"><i class="fa-solid fa-users-viewfinder"></i></div>
+                            <h2 class="text-xl font-bold text-slate-800">Database Pengguna</h2>
                         </div>
                     </div>
-                    <div class="overflow-x-auto flex-1 custom-scroll bg-slate-50/50 p-2">
-                        <table class="w-full text-left border-collapse min-w-[700px] bg-white rounded-2xl overflow-hidden">
+                    <div class="overflow-x-auto flex-1 custom-scroll p-4 sm:p-6 bg-slate-50/50">
+                        <table class="w-full text-left border-collapse min-w-[800px] bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-100">
                             <thead>
-                                <tr class="bg-slate-100/80 text-slate-500 text-[11px] uppercase tracking-wider">
-                                    <th class="p-4 font-bold rounded-tl-xl">Kredensial</th>
-                                    <th class="p-4 font-bold">Role</th>
-                                    <th class="p-4 font-bold">Area Tugas</th>
-                                    <th class="p-4 font-bold text-center">Status</th>
-                                    <th class="p-4 font-bold text-center rounded-tr-xl">Aksi</th>
+                                <tr class="bg-slate-100 text-slate-500 text-xs uppercase tracking-wider">
+                                    <th class="p-5 font-bold">Kredensial</th>
+                                    <th class="p-5 font-bold">Role</th>
+                                    <th class="p-5 font-bold">Area Tugas</th>
+                                    <th class="p-5 font-bold text-center">Status</th>
+                                    <th class="p-5 font-bold text-center">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody id="users-tbody" class="divide-y divide-slate-50 text-sm"></tbody>
@@ -374,91 +261,291 @@
             </div>
         </div>
 
-        <div id="content-admin-form" class="hidden max-w-[1400px] mx-auto w-full px-4 mt-8 animate-[islandEnter_0.4s_ease-out]">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 h-[75vh]">
-                <div class="lg:col-span-4 bg-white rounded-3xl shadow-sm border border-slate-200 flex flex-col overflow-hidden">
-                    <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-white z-10">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center text-lg"><i class="fa-solid fa-layer-group"></i></div>
-                            <h2 class="font-bold text-slate-800">Master Kategori</h2>
+        <div id="content-admin-form" class="hidden max-w-[1400px] mx-auto w-full px-4 sm:px-6 mt-6 sm:mt-8 animate-content">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 h-auto lg:h-[75vh]">
+                <div class="lg:col-span-4 bg-white rounded-3xl shadow-soft border border-slate-200 flex flex-col overflow-hidden min-h-[400px]">
+                    <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-white z-10">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center text-xl"><i class="fa-solid fa-layer-group"></i></div>
+                            <h2 class="text-xl font-bold text-slate-800">Kategori</h2>
                         </div>
-                        <button onclick="adminAddCategory()" class="w-9 h-9 rounded-full bg-slate-900 text-white flex items-center justify-center hover:scale-105 transition-transform shadow-md active:scale-95" title="Tambah Kategori"><i class="fa-solid fa-plus"></i></button>
-                    </div>
-                    <div class="flex-1 overflow-y-auto custom-scroll p-3 space-y-2 bg-slate-50/50" id="admin-category-list"></div>
-                </div>
-
-                <div class="lg:col-span-8 bg-white rounded-3xl shadow-sm border border-slate-200 flex flex-col overflow-hidden relative">
-                    <div class="p-5 border-b border-slate-100 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 bg-white z-10">
-                        <div>
-                            <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">Mengelola Item Pada Kategori:</p>
-                            <h2 class="font-bold text-slate-800 text-lg" id="admin-selected-category-name">Pilih Kategori di Samping</h2>
-                        </div>
-                        <button id="btn-add-item" onclick="adminAddItem()" class="hidden bg-purple-600 hover:bg-purple-700 text-white px-5 py-2.5 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 transition-transform active:scale-[0.98] shadow-md shadow-purple-200">
-                            <i class="fa-solid fa-plus"></i> Tambah Item Ceklis
+                        <button onclick="adminAddCategory()" class="w-10 h-10 rounded-2xl bg-slate-900 text-white flex items-center justify-center hover:scale-105 transition-transform shadow-md active:scale-95" title="Tambah Kategori">
+                            <i class="fa-solid fa-plus"></i>
                         </button>
                     </div>
-                    <div class="flex-1 overflow-y-auto custom-scroll p-4 bg-slate-50/50">
-                        <div id="admin-item-empty" class="h-full flex flex-col items-center justify-center text-slate-400">
-                            <div class="w-20 h-20 rounded-full bg-slate-100 flex items-center justify-center mb-4"><i class="fa-solid fa-hand-pointer text-3xl"></i></div>
+                    <div class="flex-1 overflow-y-auto custom-scroll p-4 space-y-2 bg-slate-50/50" id="admin-category-list"></div>
+                </div>
+
+                <div class="lg:col-span-8 bg-white rounded-3xl shadow-soft border border-slate-200 flex flex-col overflow-hidden relative min-h-[500px]">
+                    <div class="p-6 border-b border-slate-100 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-5 bg-white z-10">
+                        <div>
+                            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Daftar Item Form</p>
+                            <h2 class="font-bold text-slate-800 text-xl" id="admin-selected-category-name">Pilih Kategori di Samping</h2>
+                        </div>
+                        <button id="btn-add-item" onclick="openItemModal(activeAdminCategoryId)" class="hidden bg-purple-600 hover:bg-purple-700 text-white px-6 py-3.5 rounded-2xl text-sm font-bold flex items-center justify-center gap-2 transition-transform active:scale-[0.98] shadow-floating shadow-purple-200">
+                            <i class="fa-solid fa-plus"></i> Tambah Item Baru
+                        </button>
+                    </div>
+                    <div class="flex-1 overflow-y-auto custom-scroll p-4 sm:p-6 bg-slate-50/50">
+                        <div id="admin-item-empty" class="h-full flex flex-col items-center justify-center text-slate-400 py-10">
+                            <div class="w-24 h-24 rounded-full bg-slate-100 flex items-center justify-center mb-5">
+                                <i class="fa-solid fa-hand-pointer text-4xl"></i>
+                            </div>
                             <p class="font-medium">Pilih kategori untuk melihat dan mengelola item.</p>
                         </div>
-                        <div id="admin-item-list" class="space-y-3 hidden"></div>
+                        <div id="admin-item-list" class="space-y-4 hidden pb-10"></div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div id="content-dashboard" class="hidden max-w-[98%] mx-auto w-full px-4 mt-8 animate-[islandEnter_0.4s_ease-out]">
-            <div class="bg-white rounded-3xl shadow-sm border border-slate-200 flex flex-col overflow-hidden h-[80vh]">
-                <div class="p-5 lg:p-6 border-b border-slate-100 bg-white flex flex-col xl:flex-row justify-between items-start xl:items-center gap-5 shrink-0 z-10">
-                    <div class="flex items-start gap-4">
-                        <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-xl shrink-0"><i class="fa-solid fa-chart-pie"></i></div>
-                        <div>
-                            <h2 class="text-xl font-bold text-slate-800">Dashboard Rekapitulasi</h2>
-                            <p class="text-sm text-slate-500 mt-1">Pantau hasil pengecekan seluruh area stagging secara real-time.</p>
-                        </div>
+        <div id="content-dashboard" class="hidden max-w-[100%] mx-auto w-full px-2 sm:px-4 mt-4 sm:mt-6 animate-content">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-3 px-2">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-lg sm:text-xl shrink-0">
+                        <i class="fa-solid fa-chart-line"></i>
                     </div>
-                    <div class="flex flex-wrap items-center gap-3 w-full xl:w-auto bg-slate-50 p-2 rounded-2xl border border-slate-100">
-                        <div class="flex items-center pl-3 text-slate-400"><i class="fa-solid fa-filter"></i></div>
-                        <select id="filter-month" onchange="applyFiltersAndRender()" class="px-3 py-2 bg-transparent text-sm outline-none font-semibold text-slate-700 cursor-pointer">
+                    <div>
+                        <h2 class="text-base sm:text-lg font-bold text-slate-800">Dashboard Rekapitulasi</h2>
+                        <p class="text-[10px] sm:text-[11px] text-slate-500 mt-0.5">Pantau hasil monitoring area secara real-time.</p>
+                    </div>
+                </div>
+                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
+                    <div class="flex flex-wrap items-center gap-1.5 sm:gap-2 bg-white p-1.5 sm:p-2 rounded-xl border border-slate-200 shadow-soft">
+                        <div class="flex items-center pl-2 text-slate-400 text-xs"><i class="fa-solid fa-filter"></i></div>
+                        <select id="filter-month" onchange="applyFiltersAndRender()" class="px-1.5 sm:px-2 py-1.5 bg-transparent text-[11px] sm:text-xs outline-none font-bold text-slate-700 cursor-pointer">
                             <option value="all">Bulan (Semua)</option>
                             <option value="1">Januari</option><option value="2">Februari</option><option value="3">Maret</option>
                             <option value="4">April</option><option value="5">Mei</option><option value="6">Juni</option>
                             <option value="7">Juli</option><option value="8">Agustus</option><option value="9">September</option>
                             <option value="10">Oktober</option><option value="11">November</option><option value="12">Desember</option>
                         </select>
-                        <div class="w-px h-6 bg-slate-200"></div>
-                        <select id="filter-year" onchange="applyFiltersAndRender()" class="px-3 py-2 bg-transparent text-sm outline-none font-semibold text-slate-700 cursor-pointer">
+                        <div class="w-px h-4 bg-slate-200"></div>
+                        <select id="filter-year" onchange="applyFiltersAndRender()" class="px-1.5 sm:px-2 py-1.5 bg-transparent text-[11px] sm:text-xs outline-none font-bold text-slate-700 cursor-pointer">
                             <option value="all">Tahun (Semua)</option>
-                            <option value="2024">2024</option><option value="2025">2025</option><option value="2026">2026</option>
+                            <option value="2026">2026</option><option value="2027">2027</option><option value="2028">2028</option>
                         </select>
-                        <div class="w-px h-6 bg-slate-200 hidden sm:block"></div>
-                        <select id="filter-category" onchange="applyFiltersAndRender()" class="px-3 py-2 bg-transparent text-sm outline-none font-semibold text-slate-700 cursor-pointer max-w-[200px]">
+                        <div class="w-px h-4 bg-slate-200 hidden sm:block"></div>
+                        <select id="filter-category" onchange="applyFiltersAndRender()" class="px-1.5 sm:px-2 py-1.5 bg-transparent text-[11px] sm:text-xs outline-none font-bold text-slate-700 cursor-pointer max-w-[120px] sm:max-w-[150px] truncate">
                             <option value="all">Kategori (Semua)</option>
                         </select>
                     </div>
+                    <button id="btn-open-form" onclick="openChecklistModal()" class="hidden w-full sm:w-auto bg-rose-600 hover:bg-rose-700 text-white px-5 py-2.5 rounded-xl text-[11px] font-bold flex items-center justify-center gap-2 transition-transform active:scale-[0.98] shadow-floating shadow-rose-200">
+                        <i class="fa-solid fa-pen-clip"></i> Isi Form Ceklis
+                    </button>
                 </div>
-                <div class="overflow-auto table-container flex-1 bg-slate-50 relative">
-                    <table class="w-full text-left border-collapse min-w-max text-sm">
-                        <thead class="sticky-header">
-                            <tr class="text-slate-500 text-[10px] uppercase tracking-wider font-bold" id="thead-row-1"></tr>
-                            <tr class="bg-white text-slate-700 text-[11px] border-b-2 border-slate-200 shadow-sm" id="thead-row-2"></tr>
+            </div>
+
+            <!-- Bagian Tabel Rekapitulasi -->
+            <div class="bg-white rounded-2xl shadow-soft border border-slate-200 overflow-hidden mb-6">
+                <div class="overflow-auto table-container w-full max-h-[60vh] sm:max-h-[70vh]">
+                    <table class="w-full text-left border-collapse min-w-max text-xs">
+                        <thead class="sticky-header shadow-sm">
+                            <tr class="text-slate-500 text-[9px] sm:text-[10px] uppercase tracking-wider font-bold" id="thead-row-1"></tr>
+                            <tr class="bg-white text-slate-700 text-[10px] sm:text-[11px] border-b-2 border-slate-200" id="thead-row-2"></tr>
                         </thead>
                         <tbody id="dashboard-tbody" class="bg-white"></tbody>
                     </table>
                 </div>
-                <div id="dashboard-notes-section" class="hidden shrink-0 border-t border-slate-200 bg-white p-5 lg:p-6 overflow-y-auto max-h-[30vh] custom-scroll shadow-[0_-10px_15px_-3px_rgba(0,0,0,0.05)] z-20">
-                    <div class="flex items-center gap-2 mb-4">
-                        <div class="w-8 h-8 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center"><i class="fa-solid fa-triangle-exclamation text-sm"></i></div>
-                        <h3 class="font-bold text-slate-800">Log Catatan Temuan Lapangan</h3>
-                    </div>
-                    <div id="dashboard-notes-container" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4"></div>
+            </div>
+
+            <!-- Bagian Log Catatan (Terpisah di Bawah) -->
+            <div id="dashboard-notes-section" class="hidden bg-white rounded-2xl shadow-soft border border-slate-200 p-4 sm:p-5 mb-8">
+                <div class="flex items-center gap-2.5 mb-4">
+                    <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-500 flex items-center justify-center"><i class="fa-solid fa-triangle-exclamation text-sm"></i></div>
+                    <h3 class="font-bold text-slate-800 text-sm">Log Catatan Temuan Lapangan</h3>
                 </div>
+                <div id="dashboard-notes-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 sm:gap-4"></div>
             </div>
         </div>
     </div>
 
+    <!-- MODAL FORM CHECKLIST PENGGUNA -->
+    <div id="modal-checklist-form" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[400] flex items-center justify-center p-2 sm:p-4">
+        <div class="max-w-4xl w-full bg-slate-50 rounded-3xl shadow-floating overflow-hidden flex flex-col max-h-[95vh] animate-modal">
+            <div class="bg-slate-900 p-5 sm:p-6 flex justify-between items-center shrink-0">
+                <h3 class="font-bold text-white text-lg flex items-center gap-3"><i class="fa-solid fa-list-check text-rose-400"></i> Form Pengecekan Stagging</h3>
+                <button onclick="closeChecklistModal()" class="w-8 h-8 rounded-full bg-white/10 text-white hover:bg-white/20 flex items-center justify-center transition-colors"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <div class="p-4 sm:p-6 overflow-y-auto custom-scroll flex-1">
+                <form id="checklist-form">
+                    <div class="bg-white rounded-3xl shadow-sm border border-slate-200 p-5 sm:p-6 mb-6 relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-rose-500 to-orange-400"></div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Nama Stagging</p>
+                                <p id="form-staggingName" class="font-bold text-slate-800 text-lg">-</p>
+                            </div>
+                            <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Provinsi & SSC</p>
+                                <p id="form-ssc-prov" class="font-bold text-slate-800 text-lg">-</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="checklist-container" class="space-y-6"></div>
+                    <div class="mt-8 mb-4">
+                        <button type="submit" id="btn-submit-form" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-4 sm:py-5 rounded-2xl shadow-floating flex items-center justify-center gap-3 transition-transform transform active:scale-[0.98] text-base sm:text-lg">
+                            <i class="fa-solid fa-paper-plane"></i> <span>Kirim Hasil Pengecekan</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL CUSTOM (Confirm/Prompt) -->
+    <div id="custom-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[500] flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+        <div id="modal-box" class="max-w-sm w-full bg-white rounded-3xl shadow-floating overflow-hidden transform scale-95 transition-transform duration-300 border border-white/50">
+            <div class="p-6 sm:p-8">
+                <div class="flex flex-col items-center text-center gap-4">
+                    <div id="modal-icon" class="w-16 h-16 rounded-3xl flex items-center justify-center shrink-0 text-3xl mb-2"></div>
+                    <div>
+                        <h3 id="modal-title" class="font-bold text-slate-900 text-xl leading-tight mb-2">Title</h3>
+                        <p id="modal-message" class="text-slate-500 text-sm leading-relaxed"></p>
+                    </div>
+                </div>
+                <div id="modal-input-container" class="hidden mt-6">
+                    <input type="text" id="modal-input" class="input-modern w-full px-4 py-4 rounded-2xl text-sm font-medium transition-colors text-center" />
+                </div>
+            </div>
+            <div class="px-6 py-5 bg-slate-50 border-t border-slate-100 flex flex-col-reverse sm:flex-row justify-end gap-3" id="modal-actions"></div>
+        </div>
+    </div>
+
+    <!-- MODAL EDIT PENGGUNA -->
+    <div id="modal-edit-user" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[400] flex items-center justify-center p-4">
+        <div class="max-w-lg w-full bg-white rounded-3xl shadow-floating overflow-hidden animate-modal">
+            <div class="bg-slate-900 p-6 flex justify-between items-center">
+                <h3 class="font-bold text-white text-lg flex items-center gap-2"><i class="fa-solid fa-user-pen text-blue-400"></i> Edit Pengguna</h3>
+                <button onclick="closeEditUserModal()" class="w-8 h-8 rounded-full bg-white/10 text-white hover:bg-white/20 flex items-center justify-center transition-colors"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="p-6 sm:p-8">
+                <form id="form-edit-user" class="space-y-5">
+                    <input type="hidden" id="edit-user-id">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">Username</label>
+                        <input type="text" id="edit-un" required class="input-modern w-full px-4 py-3.5 rounded-2xl font-medium">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">Nama Lengkap PIC</label>
+                        <input type="text" id="edit-pic" required class="input-modern w-full px-4 py-3.5 rounded-2xl font-medium">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">Tipe Akun</label>
+                        <select id="edit-role" required onchange="toggleEditFormFields()" class="input-modern w-full px-4 py-3.5 rounded-2xl font-bold text-slate-700 cursor-pointer">
+                            <option value="user">User (Petugas Ceklis)</option>
+                            <option value="visitor">Visitor (Hanya Lihat)</option>
+                            <option value="admin">Admin (Full Akses)</option>
+                        </select>
+                    </div>
+                    <div id="edit-fields-lokasi" class="space-y-5 pt-6 border-t border-slate-100 mt-2">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">Nama Stagging</label>
+                            <input type="text" id="edit-st" class="input-modern w-full px-4 py-3.5 rounded-2xl font-medium">
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">Provinsi</label>
+                                <input type="text" id="edit-pr" class="input-modern w-full px-4 py-3.5 rounded-2xl font-medium">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">Kode SSC</label>
+                                <input type="text" id="edit-ss" class="input-modern w-full px-4 py-3.5 rounded-2xl font-medium">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pt-6 flex flex-col-reverse sm:flex-row justify-end gap-3 border-t border-slate-100 mt-4">
+                        <button type="button" onclick="closeEditUserModal()" class="px-6 py-3.5 sm:py-3 rounded-2xl font-bold text-sm text-slate-500 hover:bg-slate-200 transition-colors w-full sm:w-auto">Batal</button>
+                        <button type="submit" class="px-8 py-3.5 sm:py-3 rounded-2xl font-bold text-sm text-white bg-blue-600 hover:bg-blue-700 transition-transform active:scale-95 shadow-md w-full sm:w-auto">Simpan Perubahan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL TAMBAH/EDIT ITEM DENGAN TIPE & SUBKATEGORI -->
+    <div id="modal-item-form" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[400] flex items-center justify-center p-4">
+        <div class="max-w-lg w-full bg-white rounded-3xl shadow-floating overflow-hidden animate-modal">
+            <div class="bg-slate-900 p-6 flex justify-between items-center">
+                <h3 id="modal-item-title" class="font-bold text-white text-lg flex items-center gap-2">Kelola Item Ceklis</h3>
+                <button onclick="closeItemModal()" class="w-8 h-8 rounded-full bg-white/10 text-white hover:bg-white/20 flex items-center justify-center transition-colors"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="p-6 sm:p-8">
+                <form id="form-manage-item" class="space-y-5">
+                    <input type="hidden" id="manage-item-catId">
+                    <input type="hidden" id="manage-item-id">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">Deskripsi Item</label>
+                        <textarea id="manage-item-label" required rows="2" placeholder="Cth: Area dalam kondisi bersih..." class="input-modern w-full px-4 py-3.5 rounded-2xl font-medium"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">Tipe Pilihan Jawaban</label>
+                        <select id="manage-item-type" required class="input-modern w-full px-4 py-3.5 rounded-2xl font-bold text-slate-700 cursor-pointer">
+                            <option value="ok_nonok">OK / Non OK</option>
+                            <option value="ada_tidak">Ada / Tidak Ada</option>
+                            <option value="normal_rusak">Normal / Rusak</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1 flex justify-between">
+                            <span>Sub Kategori (Opsional)</span>
+                            <span class="text-[10px] font-normal text-slate-400 normal-case">Bisa dikosongkan</span>
+                        </label>
+                        <input type="text" id="manage-item-subcategory" list="subcat-list" placeholder="Cth: Area Luar, Fasilitas..." class="input-modern w-full px-4 py-3.5 rounded-2xl font-medium">
+                        <datalist id="subcat-list"></datalist>
+                    </div>
+                    <div class="pt-6 flex flex-col-reverse sm:flex-row justify-end gap-3 border-t border-slate-100 mt-4">
+                        <button type="button" onclick="closeItemModal()" class="px-6 py-3.5 sm:py-3 rounded-2xl font-bold text-sm text-slate-500 hover:bg-slate-200 transition-colors w-full sm:w-auto">Batal</button>
+                        <button type="submit" class="px-8 py-3.5 sm:py-3 rounded-2xl font-bold text-sm text-white bg-purple-600 hover:bg-purple-700 transition-transform active:scale-95 shadow-md shadow-purple-200 w-full sm:w-auto">Simpan Item</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL GANTI PASSWORD USER -->
+    <div id="modal-change-password" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[400] flex items-center justify-center p-4">
+        <div class="max-w-sm w-full bg-white rounded-3xl shadow-floating overflow-hidden animate-modal">
+            <div class="bg-slate-900 p-6 flex justify-between items-center">
+                <h3 class="font-bold text-white text-lg flex items-center gap-2"><i class="fa-solid fa-key text-yellow-400"></i> Ganti Password</h3>
+                <button onclick="closeChangePasswordModal()" class="w-8 h-8 rounded-full bg-white/10 text-white hover:bg-white/20 flex items-center justify-center transition-colors"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="p-6 sm:p-8">
+                <form id="form-change-password" class="space-y-5">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">Password Baru</label>
+                        <input type="text" id="new-password" required placeholder="Masukkan password baru" class="input-modern w-full px-4 py-3.5 rounded-2xl font-medium text-center">
+                    </div>
+                    <div class="pt-4 flex flex-col-reverse sm:flex-row justify-end gap-3 mt-4">
+                        <button type="button" onclick="closeChangePasswordModal()" class="px-6 py-3.5 sm:py-3 rounded-2xl font-bold text-sm text-slate-500 hover:bg-slate-200 transition-colors w-full sm:w-auto">Batal</button>
+                        <button type="submit" class="px-8 py-3.5 sm:py-3 rounded-2xl font-bold text-sm text-slate-900 bg-yellow-400 hover:bg-yellow-500 transition-transform active:scale-95 shadow-md w-full sm:w-auto">Simpan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
     <script>
+        const itemTypeConfig = {
+            'ok_nonok': { 
+                pos: 'OK', neg: 'Non OK', posL: 'Sesuai / OK', negL: 'Tidak Sesuai',
+                iconPos: 'fa-check', iconNeg: 'fa-xmark', 
+                bgPos: 'bg-emerald-50', textPos: 'text-emerald-600', bgNeg: 'bg-rose-50', textNeg: 'text-rose-600'
+            },
+            'ada_tidak': { 
+                pos: 'Ada', neg: 'Tidak Ada', posL: 'Ada', negL: 'Tidak Ada',
+                iconPos: 'fa-cube', iconNeg: 'fa-ban', 
+                bgPos: 'bg-blue-50', textPos: 'text-blue-600', bgNeg: 'bg-slate-100', textNeg: 'text-slate-400'
+            },
+            'normal_rusak': { 
+                pos: 'Normal', neg: 'Rusak', posL: 'Kondisi Normal', negL: 'Kondisi Rusak',
+                iconPos: 'fa-thumbs-up', iconNeg: 'fa-wrench', 
+                bgPos: 'bg-teal-50', textPos: 'text-teal-600', bgNeg: 'bg-orange-50', textNeg: 'text-orange-600'
+            }
+        };
+
         const Island = {
             el: null, content: null, timeout: null,
             init() {
@@ -469,9 +556,9 @@
                 if(!this.el) this.init();
                 clearTimeout(this.timeout);
                 let icon = '<i class="fa-solid fa-circle-info text-blue-400"></i>';
-                if(type === 'success') icon = '<i class="fa-solid fa-circle-check text-emerald-400"></i>';
-                if(type === 'error') icon = '<i class="fa-solid fa-triangle-exclamation text-rose-400"></i>';
-                this.content.innerHTML = `<div class="shrink-0 text-lg flex items-center">${icon}</div><span class="text-sm font-medium text-slate-100 pr-2">${msg}</span>`;
+                if(type === 'success') icon = '<i class="fa-solid fa-circle-check text-emerald-400 text-xl"></i>';
+                if(type === 'error') icon = '<i class="fa-solid fa-triangle-exclamation text-rose-400 text-xl"></i>';
+                this.content.innerHTML = `<div class="shrink-0 flex items-center">${icon}</div><span class="text-sm font-semibold text-white pr-2">${msg}</span>`;
                 this.el.classList.remove('island-inactive', 'opacity-0', 'pointer-events-none');
                 this.el.classList.add('island-active', 'pointer-events-auto');
                 if(duration) this.timeout = setTimeout(() => this.hide(), duration);
@@ -480,7 +567,7 @@
                 if(!this.el) return;
                 this.el.classList.remove('island-active');
                 this.el.classList.add('island-inactive');
-                setTimeout(() => { this.el.classList.add('opacity-0', 'pointer-events-none'); }, 400); 
+                setTimeout(() => { this.el.classList.add('opacity-0', 'pointer-events-none'); }, 300); 
             }
         };
 
@@ -491,33 +578,44 @@
                 document.getElementById('modal-title').textContent = title;
                 document.getElementById('modal-message').textContent = message;
                 const iconEl = document.getElementById('modal-icon');
-                iconEl.className = `w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 text-xl ${iconBg}`;
+                iconEl.className = `w-20 h-20 rounded-[2rem] flex items-center justify-center shrink-0 text-4xl mb-2 shadow-inner ${iconBg}`;
                 iconEl.innerHTML = `<i class="${iconClass}"></i>`;
                 const inputContainer = document.getElementById('modal-input-container');
                 const inputEl = document.getElementById('modal-input');
                 if (showInput) {
-                    inputContainer.classList.remove('hidden'); inputEl.value = inputVal; setTimeout(() => inputEl.focus(), 100);
-                } else { inputContainer.classList.add('hidden'); }
-                const actions = document.getElementById('modal-actions'); actions.innerHTML = '';
+                    inputContainer.classList.remove('hidden');
+                    inputEl.value = inputVal;
+                    setTimeout(() => inputEl.focus(), 100);
+                } else {
+                    inputContainer.classList.add('hidden');
+                }
+                const actions = document.getElementById('modal-actions');
+                actions.innerHTML = '';
                 const btnCancel = document.createElement('button');
-                btnCancel.className = "px-5 py-2.5 rounded-xl font-bold text-sm text-slate-500 hover:bg-slate-200 transition-colors";
-                btnCancel.textContent = "Batal"; btnCancel.onclick = () => this._close();
-                const btnOk = document.createElement('button'); const isDanger = iconBg.includes('rose');
-                btnOk.className = `px-6 py-2.5 rounded-xl font-bold text-sm text-white transition-transform active:scale-95 shadow-md ${isDanger ? 'bg-rose-600 hover:bg-rose-700 shadow-rose-200' : 'bg-slate-900 hover:bg-slate-800 shadow-slate-200'}`;
+                btnCancel.className = "px-6 py-3.5 sm:py-3 rounded-2xl font-bold text-sm text-slate-500 hover:bg-slate-200 transition-colors w-full sm:w-auto";
+                btnCancel.textContent = "Batal";
+                btnCancel.onclick = () => this._close();
+                const btnOk = document.createElement('button');
+                const isDanger = iconBg.includes('rose');
+                btnOk.className = `px-8 py-3.5 sm:py-3 rounded-2xl font-bold text-sm text-white transition-transform active:scale-95 shadow-md w-full sm:w-auto ${isDanger ? 'bg-rose-600 hover:bg-rose-700 shadow-rose-200' : 'bg-slate-900 hover:bg-slate-800 shadow-slate-200'}`;
                 btnOk.textContent = showInput ? "Simpan" : "Ya, Lanjutkan";
                 btnOk.onclick = () => { this._close(); if (onConfirm) onConfirm(showInput ? inputEl.value : null); };
                 actions.appendChild(btnCancel); actions.appendChild(btnOk);
-                container.classList.remove('hidden'); void container.offsetWidth; container.classList.remove('opacity-0');
+                container.classList.remove('hidden');
+                void container.offsetWidth;
+                container.classList.remove('opacity-0');
                 box.classList.remove('scale-95'); box.classList.add('scale-100');
             },
             _close() {
-                const container = document.getElementById('custom-modal'); const box = document.getElementById('modal-box');
-                container.classList.add('opacity-0'); box.classList.remove('scale-100'); box.classList.add('scale-95');
+                const container = document.getElementById('custom-modal');
+                const box = document.getElementById('modal-box');
+                container.classList.add('opacity-0');
+                box.classList.remove('scale-100'); box.classList.add('scale-95');
                 setTimeout(() => container.classList.add('hidden'), 300);
             },
-            confirm(title, message, onConfirm) { this._show('confirm', title, message, 'fa-solid fa-circle-question text-orange-600', 'bg-orange-100', onConfirm); },
-            danger(title, message, onConfirm) { this._show('confirm', title, message, 'fa-solid fa-trash-can text-rose-600', 'bg-rose-100', onConfirm); },
-            prompt(title, message, defaultVal, onConfirm) { this._show('prompt', title, message, 'fa-solid fa-pen-nib text-blue-600', 'bg-blue-100', onConfirm, true, defaultVal); }
+            confirm(title, message, onConfirm) { this._show('confirm', title, message, 'fa-solid fa-circle-question text-orange-500', 'bg-orange-50', onConfirm); },
+            danger(title, message, onConfirm) { this._show('confirm', title, message, 'fa-solid fa-trash-can text-rose-500', 'bg-rose-50', onConfirm); },
+            prompt(title, message, defaultVal, onConfirm) { this._show('prompt', title, message, 'fa-solid fa-pen-nib text-blue-500', 'bg-blue-50', onConfirm, true, defaultVal); }
         };
 
         const { createClient } = supabase;
@@ -525,16 +623,20 @@
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJyeG9zcHVpd3RwYXVxd2Nrdm5kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODExNjQyMDMsImV4cCI6MjA5Njc0MDIwM30.Uh2ruDv1zZVyIE94-FW4L6HZYA8NuTTInJKGKKE3lYM';
         const supabaseClient = createClient(supabaseUrl, supabaseKey);
 
-        const defaultUsers = [{ id: 'admin1', username: 'admin', password: '123', role: 'admin', stagging_name: null, province: null, ssc: null, is_active: true }];
-        
         let currentUser = null;
         Island.init();
+
+        const defaultUsers = [{ id: 'admin1', username: 'admin', password: '123', pic_name: 'Administrator', role: 'admin', is_active: true }];
+        const defaultChecklist = [{ id: "c1", category: "Kategori Default", items: [] }];
 
         async function initDB() {
             try {
                 const { data } = await supabaseClient.from('users').select('id').limit(1);
-                if (!data || data.length === 0) { await supabaseClient.from('users').insert(defaultUsers); }
-            } catch(e) { console.error("Gagal inisialisasi database. Pastikan RLS Off di Supabase:", e); }
+                if (!data || data.length === 0) {
+                    await supabaseClient.from('users').insert(defaultUsers);
+                    await supabaseClient.from('checklist_master').insert(defaultChecklist);
+                }
+            } catch(e) { console.error("Inisialisasi DB Error:", e); }
         }
         initDB();
 
@@ -542,96 +644,111 @@
             e.preventDefault();
             const un = document.getElementById('username').value;
             const pw = document.getElementById('password').value;
+            
             const btn = document.getElementById('btn-login');
-            btn.disabled = true; btn.innerHTML = 'Memeriksa...';
+            btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Memeriksa...';
 
             const { data, error } = await supabaseClient.from('users').select('*').eq('username', un).eq('password', pw).single();
-            btn.disabled = false; btn.innerHTML = 'Masuk ke Dashboard <i class="fa-solid fa-arrow-right text-sm"></i>';
+            btn.disabled = false; btn.innerHTML = 'Masuk ke Sistem <i class="fa-solid fa-arrow-right text-sm"></i>';
 
             if (data) {
                 if (!data.is_active) { Island.show('Akun dinonaktifkan oleh Admin.', 'error'); return; }
                 currentUser = data; await loginSuccess();
-            } else { Island.show('Username atau password salah.', 'error'); }
+            } else {
+                Island.show('Username atau password salah.', 'error');
+            }
         });
 
         async function loginSuccess() {
             document.getElementById('view-login').classList.add('hidden');
             document.getElementById('view-app').classList.remove('hidden');
-            document.getElementById('display-username').textContent = currentUser.username;
+            document.getElementById('display-username').textContent = currentUser.pic_name || currentUser.username;
             document.getElementById('display-role').textContent = currentUser.role;
             
-            const tForm = document.getElementById('tab-form');
             const tUsers = document.getElementById('tab-admin-users');
             const tAdminForm = document.getElementById('tab-admin-form');
+            const btnOpenForm = document.getElementById('btn-open-form');
             
-            tForm.classList.add('hidden'); tUsers.classList.add('hidden'); tAdminForm.classList.add('hidden');
+            tUsers.classList.add('hidden'); 
+            tAdminForm.classList.add('hidden');
+            btnOpenForm.classList.add('hidden');
 
             if (currentUser.role === 'admin') {
-                tUsers.classList.remove('hidden'); tAdminForm.classList.remove('hidden');
-                switchTab('admin-form'); await renderAdminUsers(); await renderAdminCategoryList();
+                tUsers.classList.remove('hidden'); 
+                tAdminForm.classList.remove('hidden');
+                switchTab('dashboard'); 
+                await renderAdminUsers(); 
+                await renderAdminCategoryList();
             } else if (currentUser.role === 'user') {
-                tForm.classList.remove('hidden');
+                btnOpenForm.classList.remove('hidden');
                 document.getElementById('form-staggingName').textContent = currentUser.stagging_name || '-';
                 document.getElementById('form-ssc-prov').textContent = `${currentUser.ssc || '-'} - ${currentUser.province || '-'}`;
-                await generateChecklistForm(); switchTab('form');
-            } else if (currentUser.role === 'visitor') { switchTab('dashboard'); }
+                await generateChecklistForm(); 
+                switchTab('dashboard');
+            } else if (currentUser.role === 'visitor') {
+                switchTab('dashboard');
+            }
             
-            await populateCategoryFilter(); await applyFiltersAndRender();
+            await populateCategoryFilter(); 
+            await applyFiltersAndRender();
             Island.show(`Selamat datang, ${currentUser.username}!`, 'success');
         }
 
         function logout() {
             currentUser = null; document.getElementById('login-form').reset();
-            document.getElementById('view-app').classList.add('hidden'); document.getElementById('view-login').classList.remove('hidden');
+            document.getElementById('view-app').classList.add('hidden');
+            document.getElementById('view-login').classList.remove('hidden');
         }
 
         function openChangePasswordModal() {
-            document.getElementById('new-password').value = ''; document.getElementById('confirm-password').value = '';
             document.getElementById('modal-change-password').classList.remove('hidden');
+            document.getElementById('new-password').value = currentUser.password;
         }
-
         function closeChangePasswordModal() { document.getElementById('modal-change-password').classList.add('hidden'); }
-
+        
         document.getElementById('form-change-password').addEventListener('submit', async function(e) {
             e.preventDefault();
-            const newPw = document.getElementById('new-password').value;
-            const confPw = document.getElementById('confirm-password').value;
-
-            if (newPw !== confPw) { Island.show('Konfirmasi password tidak cocok!', 'error'); return; }
-
-            const btn = e.target.querySelector('button[type="submit"]');
-            const originTxt = btn.textContent; btn.disabled = true; btn.textContent = 'Menyimpan...';
-
-            const { error } = await supabaseClient.from('users').update({ password: newPw }).eq('id', currentUser.id);
-
-            btn.disabled = false; btn.textContent = originTxt;
-
-            if (error) { Island.show('Gagal mengganti password.', 'error'); console.error(error); } 
-            else {
-                currentUser.password = newPw;
-                Island.show('Password berhasil diperbarui.', 'success');
-                closeChangePasswordModal();
-            }
+            const newPw = document.getElementById('new-password').value.trim();
+            if(!newPw) return;
+            await supabaseClient.from('users').update({ password: newPw }).eq('id', currentUser.id);
+            currentUser.password = newPw;
+            Island.show('Password berhasil diubah!', 'success');
+            closeChangePasswordModal();
+            if(currentUser.role === 'admin') await renderAdminUsers();
         });
 
         function switchTab(tabName) {
-            const views = ['form', 'admin-users', 'admin-form', 'dashboard'];
+            const views = ['admin-users', 'admin-form', 'dashboard'];
             views.forEach(v => {
                 document.getElementById(`content-${v}`)?.classList.add('hidden');
                 const btn = document.getElementById(`tab-${v}`);
-                if(btn) { btn.classList.remove('bg-white', 'text-slate-900', 'shadow-sm'); btn.classList.add('text-slate-500'); }
+                if(btn) { 
+                    btn.classList.remove('bg-slate-900', 'text-white', 'shadow-md'); 
+                    btn.classList.add('bg-slate-100', 'text-slate-500'); 
+                }
             });
             document.getElementById(`content-${tabName}`).classList.remove('hidden');
             const activeBtn = document.getElementById(`tab-${tabName}`);
-            if(activeBtn) { activeBtn.classList.remove('text-slate-500'); activeBtn.classList.add('bg-white', 'text-slate-900', 'shadow-sm'); }
+            if(activeBtn) { 
+                activeBtn.classList.remove('bg-slate-100', 'text-slate-500'); 
+                activeBtn.classList.add('bg-slate-900', 'text-white', 'shadow-md'); 
+            }
             
             if (tabName === 'dashboard') applyFiltersAndRender();
             if (tabName === 'admin-users') renderAdminUsers();
             if (tabName === 'admin-form') renderAdminCategoryList();
         }
 
+        function openChecklistModal() {
+            document.getElementById('modal-checklist-form').classList.remove('hidden');
+        }
+        function closeChecklistModal() {
+            document.getElementById('modal-checklist-form').classList.add('hidden');
+        }
+
         function toggleFormFieldsBasedOnRole() {
-            const role = document.getElementById('add-role').value; const locFields = document.getElementById('fields-lokasi');
+            const role = document.getElementById('add-role').value;
+            const locFields = document.getElementById('fields-lokasi');
             if (role === 'user') {
                 locFields.classList.remove('hidden');
                 document.getElementById('add-st').required = true; document.getElementById('add-pr').required = true; document.getElementById('add-ss').required = true;
@@ -643,16 +760,75 @@
 
         document.getElementById('add-user-form').addEventListener('submit', async function(e) {
             e.preventDefault();
-            const role = document.getElementById('add-role').value; const un = document.getElementById('add-un').value.trim(); const pw = document.getElementById('add-pw').value.trim();
-            let st = null, pr = null, ss = null;
-            if (role === 'user') { st = document.getElementById('add-st').value.trim(); pr = document.getElementById('add-pr').value.trim(); ss = document.getElementById('add-ss').value.trim(); }
+            const role = document.getElementById('add-role').value;
+            const un = document.getElementById('add-un').value.trim();
+            const pw = document.getElementById('add-pw').value.trim();
+            const pic = document.getElementById('add-pic').value.trim();
             
+            let st = null, pr = null, ss = null;
+            if (role === 'user') {
+                st = document.getElementById('add-st').value.trim(); pr = document.getElementById('add-pr').value.trim(); ss = document.getElementById('add-ss').value.trim();
+            }
+
             const { data: exist } = await supabaseClient.from('users').select('id').eq('username', un);
             if(exist && exist.length > 0) { Island.show('Username sudah terdaftar.', 'error'); return; }
+
+            document.getElementById('btn-add-user').disabled = true;
+            await supabaseClient.from('users').insert({ id: 'U' + Date.now(), username: un, password: pw, pic_name: pic, role: role, stagging_name: st, province: pr, ssc: ss, is_active: true });
+            document.getElementById('btn-add-user').disabled = false;
             
-            const btn = document.getElementById('btn-add-user'); btn.disabled = true;
-            await supabaseClient.from('users').insert({ id: 'U' + Date.now(), username: un, password: pw, role: role, stagging_name: st, province: pr, ssc: ss, is_active: true });
-            btn.disabled = false; Island.show('Akun berhasil dibuat.', 'success'); e.target.reset(); toggleFormFieldsBasedOnRole(); await renderAdminUsers();
+            Island.show('Akun berhasil dibuat.', 'success'); e.target.reset(); toggleFormFieldsBasedOnRole(); await renderAdminUsers();
+        });
+
+        async function openEditUserModal(userId) {
+            const { data } = await supabaseClient.from('users').select('*').eq('id', userId).single();
+            if(!data) return;
+            document.getElementById('edit-user-id').value = data.id;
+            document.getElementById('edit-un').value = data.username;
+            document.getElementById('edit-pic').value = data.pic_name || '';
+            document.getElementById('edit-role').value = data.role;
+            document.getElementById('edit-st').value = data.stagging_name || '';
+            document.getElementById('edit-pr').value = data.province || '';
+            document.getElementById('edit-ss').value = data.ssc || '';
+            toggleEditFormFields();
+            document.getElementById('modal-edit-user').classList.remove('hidden');
+        }
+
+        function closeEditUserModal() { document.getElementById('modal-edit-user').classList.add('hidden'); }
+        
+        function toggleEditFormFields() {
+            const role = document.getElementById('edit-role').value;
+            const locFields = document.getElementById('edit-fields-lokasi');
+            if (role === 'user') {
+                locFields.classList.remove('hidden');
+                document.getElementById('edit-st').required = true; document.getElementById('edit-pr').required = true; document.getElementById('edit-ss').required = true;
+            } else {
+                locFields.classList.add('hidden');
+                document.getElementById('edit-st').required = false; document.getElementById('edit-pr').required = false; document.getElementById('edit-ss').required = false;
+            }
+        }
+
+        document.getElementById('form-edit-user').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const id = document.getElementById('edit-user-id').value;
+            const role = document.getElementById('edit-role').value;
+            const un = document.getElementById('edit-un').value.trim();
+            const pic = document.getElementById('edit-pic').value.trim();
+            let st = null, pr = null, ss = null;
+            if(role === 'user') {
+                st = document.getElementById('edit-st').value.trim();
+                pr = document.getElementById('edit-pr').value.trim();
+                ss = document.getElementById('edit-ss').value.trim();
+            }
+
+            const { data: exist } = await supabaseClient.from('users').select('id').eq('username', un).neq('id', id);
+            if(exist && exist.length > 0) { Island.show('Username sudah dipakai.', 'error'); return; }
+
+            await supabaseClient.from('users').update({ username: un, pic_name: pic, role: role, stagging_name: st, province: pr, ssc: ss }).eq('id', id);
+            Island.show('Data pengguna diperbarui.', 'success');
+            closeEditUserModal();
+            await renderAdminUsers();
+            await applyFiltersAndRender();
         });
 
         async function toggleUserStatus(userId) {
@@ -663,52 +839,44 @@
         }
 
         async function deleteUser(userId) {
-            Modal.danger('Hapus Akun?', 'Tindakan ini permanen. Lanjutkan?', async () => {
-                await supabaseClient.from('users').delete().eq('id', userId);
-                Island.show('Akun dihapus.', 'success'); await renderAdminUsers();
-            });
-        }
-
-        function adminResetPassword(userId, username, currentPassword) {
-            Modal.prompt('Ubah Password', `Password baru untuk ${username}:`, currentPassword, async (newPw) => {
-                if(!newPw.trim()) return;
-                await supabaseClient.from('users').update({ password: newPw.trim() }).eq('id', userId);
-                Island.show('Password user diperbarui.', 'success'); await renderAdminUsers();
+            Modal.danger('Hapus Akun?', 'Tindakan ini permanen.', async () => {
+                await supabaseClient.from('users').delete().eq('id', userId); Island.show('Akun dihapus.', 'success'); await renderAdminUsers();
             });
         }
 
         async function renderAdminUsers() {
             const tbody = document.getElementById('users-tbody');
             const { data: users } = await supabaseClient.from('users').select('*').order('role', { ascending: true });
-            
             tbody.innerHTML = (!users || users.length === 0) ? `<tr><td colspan="5" class="p-8 text-center text-slate-400">Belum ada data.</td></tr>` : '';
+            
             if(users) users.forEach(u => {
-                const statusBadge = u.is_active ? '<span class="bg-emerald-100 text-emerald-700 text-[10px] uppercase font-bold px-2.5 py-1 rounded-full border border-emerald-200">Aktif</span>' : '<span class="bg-rose-100 text-rose-700 text-[10px] uppercase font-bold px-2.5 py-1 rounded-full border border-rose-200">Non-Aktif</span>';
+                const statusBadge = u.is_active ? '<span class="bg-emerald-100 text-emerald-700 text-[10px] uppercase font-bold px-3 py-1.5 rounded-lg border border-emerald-200 shadow-sm">Aktif</span>' : '<span class="bg-rose-100 text-rose-700 text-[10px] uppercase font-bold px-3 py-1.5 rounded-lg border border-rose-200 shadow-sm">Non-Aktif</span>';
                 const roleColors = { admin: 'text-purple-600 bg-purple-50 border-purple-200', visitor: 'text-blue-600 bg-blue-50 border-blue-200', user: 'text-slate-600 bg-slate-100 border-slate-200' };
                 const roleIcon = { admin: 'fa-crown', visitor: 'fa-eye', user: 'fa-user' };
                 
                 let area = '<span class="text-xs text-slate-400 italic">Semua Area</span>';
-                if(u.role === 'user') area = `<span class="font-bold text-slate-700">${u.stagging_name}</span><br><span class="text-xs text-slate-500">${u.ssc} - ${u.province}</span>`;
+                if(u.role === 'user') area = `<span class="font-bold text-slate-800 text-[13px] block mb-0.5">${u.stagging_name}</span><span class="text-[11px] text-slate-500 font-medium">${u.ssc} - ${u.province}</span>`;
 
                 tbody.innerHTML += `
-                    <tr class="hover:bg-slate-50 transition-colors">
-                        <td class="p-4">
-                            <div class="font-bold text-slate-800">${u.username}</div>
-                            <div class="text-[11px] text-slate-600 font-mono mt-1 flex items-center gap-2">
-                                <span class="bg-slate-100 px-2 py-1 rounded border border-slate-200"><i class="fa-solid fa-key text-slate-400 mr-1"></i>${u.password}</span>
-                                <button onclick="adminResetPassword('${u.id}', '${u.username}', '${u.password}')" class="text-blue-500 hover:bg-blue-50 w-6 h-6 rounded flex items-center justify-center transition-colors" title="Ubah Password User"><i class="fa-solid fa-pen"></i></button>
+                    <tr class="hover:bg-slate-50/80 transition-colors">
+                        <td class="p-5">
+                            <div class="font-bold text-slate-800 text-[15px] mb-0.5">${u.pic_name || u.username}</div>
+                            <div class="text-[11px] font-mono text-slate-500 mb-1.5">@${u.username}</div>
+                            <div class="text-[11px] font-mono flex items-center gap-2 text-slate-400">
+                                <i class="fa-solid fa-key mr-1"></i>${u.password}
                             </div>
                         </td>
-                        <td class="p-4"><span class="text-[10px] uppercase font-bold px-2 py-1 rounded-lg border ${roleColors[u.role]}"><i class="fa-solid ${roleIcon[u.role]} mr-1"></i>${u.role}</span></td>
-                        <td class="p-4">${area}</td>
-                        <td class="p-4 text-center">${statusBadge}</td>
-                        <td class="p-4 text-center">
-                            <div class="flex items-center justify-center gap-4">
-                                <div class="relative inline-block w-10 align-middle select-none">
-                                    <input type="checkbox" id="toggle-${u.id}" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-[3px] appearance-none cursor-pointer peer transition-all" ${u.is_active ? 'checked' : ''} onchange="toggleUserStatus('${u.id}')"/>
-                                    <label for="toggle-${u.id}" class="toggle-label block overflow-hidden h-5 rounded-full bg-slate-200 cursor-pointer peer-checked:bg-emerald-500 transition-colors"></label>
+                        <td class="p-5"><span class="text-[10px] uppercase font-bold px-2.5 py-1.5 rounded-lg border shadow-sm ${roleColors[u.role]}"><i class="fa-solid ${roleIcon[u.role]} mr-1.5 opacity-70"></i>${u.role}</span></td>
+                        <td class="p-5">${area}</td>
+                        <td class="p-5 text-center">${statusBadge}</td>
+                        <td class="p-5 text-center">
+                            <div class="flex items-center justify-center gap-3">
+                                <div class="relative inline-block w-12 mr-1 align-middle select-none">
+                                    <input type="checkbox" id="toggle-${u.id}" class="toggle-checkbox absolute z-10 block w-6 h-6 rounded-full bg-white border-[3px] appearance-none cursor-pointer peer transition-all shadow-sm" ${u.is_active ? 'checked' : ''} onchange="toggleUserStatus('${u.id}')"/>
+                                    <label for="toggle-${u.id}" class="toggle-label block overflow-hidden h-6 rounded-full bg-slate-200 cursor-pointer peer-checked:bg-emerald-500 transition-colors shadow-inner"></label>
                                 </div>
-                                <button onclick="deleteUser('${u.id}')" class="text-rose-400 hover:text-rose-600 hover:bg-rose-50 w-8 h-8 rounded-lg transition-colors flex items-center justify-center" title="Hapus"><i class="fa-solid fa-trash-can"></i></button>
+                                <button onclick="openEditUserModal('${u.id}')" class="text-blue-500 hover:text-blue-700 hover:bg-blue-50 w-9 h-9 rounded-xl transition-colors flex items-center justify-center border border-transparent hover:border-blue-100 shadow-sm" title="Edit Pengguna"><i class="fa-solid fa-user-pen"></i></button>
+                                <button onclick="deleteUser('${u.id}')" class="text-rose-500 hover:text-rose-700 hover:bg-rose-50 w-9 h-9 rounded-xl transition-colors flex items-center justify-center border border-transparent hover:border-rose-100 shadow-sm" title="Hapus"><i class="fa-solid fa-trash-can"></i></button>
                             </div>
                         </td>
                     </tr>`;
@@ -720,31 +888,30 @@
         async function renderAdminCategoryList() {
             const list = document.getElementById('admin-category-list');
             const { data } = await supabaseClient.from('checklist_master').select('*').order('id', { ascending: true });
-            
             list.innerHTML = '';
+            
             if (!data || data.length === 0) { 
                 list.innerHTML = `<div class="p-4 text-center text-sm text-slate-400">Kosong.</div>`; 
                 document.getElementById('admin-selected-category-name').textContent = "Tidak ada kategori";
-                document.getElementById('btn-add-item').classList.add('hidden'); document.getElementById('admin-item-empty').classList.remove('hidden'); document.getElementById('admin-item-list').classList.add('hidden');
+                document.getElementById('btn-add-item').classList.add('hidden');
+                document.getElementById('admin-item-empty').classList.remove('hidden'); document.getElementById('admin-item-list').classList.add('hidden');
                 return;
             }
 
-            if (!activeAdminCategoryId || !data.find(c => c.id === activeAdminCategoryId)) { activeAdminCategoryId = data[0].id; }
+            if (!activeAdminCategoryId || !data.find(c => c.id === activeAdminCategoryId)) activeAdminCategoryId = data[0].id;
 
             data.forEach((cat, idx) => {
                 const isActive = cat.id === activeAdminCategoryId;
-                const activeClass = isActive ? 'bg-purple-50 border-purple-200 shadow-sm' : 'bg-white border-transparent hover:border-slate-200';
-                const textColor = isActive ? 'text-purple-700 font-bold' : 'text-slate-700 font-medium';
-
+                const activeClass = isActive ? 'bg-purple-100 border-purple-300 shadow-sm' : 'bg-white border-transparent hover:border-slate-200 hover:bg-slate-50';
                 list.innerHTML += `
-                    <div class="rounded-xl p-3 cursor-pointer transition-all flex justify-between items-center group border ${activeClass}" onclick="selectAdminCategory('${cat.id}')">
-                        <div class="flex items-center gap-3 overflow-hidden">
-                            <div class="w-6 h-6 rounded-md bg-slate-100 text-slate-500 flex items-center justify-center text-[10px] font-bold shrink-0">${idx+1}</div>
-                            <span class="${textColor} text-sm truncate">${cat.category}</span>
+                    <div class="rounded-2xl p-4 cursor-pointer transition-all flex justify-between items-center group border ${activeClass}" onclick="selectAdminCategory('${cat.id}')">
+                        <div class="flex items-center gap-4 overflow-hidden">
+                            <div class="w-8 h-8 rounded-xl ${isActive ? 'bg-purple-500 text-white' : 'bg-slate-100 text-slate-500'} flex items-center justify-center text-xs font-bold shrink-0 transition-colors shadow-sm">${idx+1}</div>
+                            <span class="${isActive ? 'text-purple-900 font-bold' : 'text-slate-700 font-semibold'} text-sm truncate">${cat.category}</span>
                         </div>
-                        <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <button onclick="event.stopPropagation(); adminEditCategory('${cat.id}', '${cat.category}')" class="w-7 h-7 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg flex items-center justify-center"><i class="fa-solid fa-pen text-xs"></i></button>
-                            <button onclick="event.stopPropagation(); adminDeleteCategory('${cat.id}')" class="w-7 h-7 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg flex items-center justify-center"><i class="fa-solid fa-trash text-xs"></i></button>
+                        <div class="flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button onclick="event.stopPropagation(); adminEditCategory('${cat.id}', '${cat.category}')" class="w-8 h-8 text-slate-400 hover:text-blue-600 hover:bg-blue-100 rounded-xl flex items-center justify-center transition-colors"><i class="fa-solid fa-pen text-[11px]"></i></button>
+                            <button onclick="event.stopPropagation(); adminDeleteCategory('${cat.id}')" class="w-8 h-8 text-slate-400 hover:text-rose-600 hover:bg-rose-100 rounded-xl flex items-center justify-center transition-colors"><i class="fa-solid fa-trash text-[11px]"></i></button>
                         </div>
                     </div>`;
             });
@@ -752,32 +919,9 @@
             if (activeCat) renderAdminItems(activeCat);
         }
 
-        async function adminAddCategory() {
-            Modal.prompt('Tambah Kategori', 'Nama kategori baru:', '', async (val) => {
-                if(!val.trim()) return;
-                const newId = 'C' + Date.now();
-                await supabaseClient.from('checklist_master').insert({ id: newId, category: val.trim(), items: [] });
-                activeAdminCategoryId = newId; Island.show('Kategori ditambahkan.', 'success');
-                await renderAdminCategoryList(); await populateCategoryFilter();
-            });
-        }
-
-        async function adminEditCategory(id, currentName) {
-            Modal.prompt('Edit Kategori', 'Ubah nama:', currentName, async (val) => {
-                if(!val.trim()) return;
-                await supabaseClient.from('checklist_master').update({ category: val.trim() }).eq('id', id);
-                Island.show('Kategori diperbarui.', 'success'); await renderAdminCategoryList(); await populateCategoryFilter();
-            });
-        }
-
-        async function adminDeleteCategory(id) {
-            Modal.danger('Hapus Kategori?', 'Semua item di dalamnya akan ikut terhapus.', async () => {
-                await supabaseClient.from('checklist_master').delete().eq('id', id);
-                if (activeAdminCategoryId === id) activeAdminCategoryId = null;
-                Island.show('Kategori dihapus.', 'success'); await renderAdminCategoryList(); await populateCategoryFilter();
-            });
-        }
-
+        async function adminAddCategory() { Modal.prompt('Tambah Kategori', 'Nama kategori baru:', '', async (val) => { if(val.trim()) { await supabaseClient.from('checklist_master').insert({ id: 'C' + Date.now(), category: val.trim(), items: [] }); Island.show('Kategori ditambahkan.', 'success'); await renderAdminCategoryList(); await populateCategoryFilter(); } }); }
+        async function adminEditCategory(id, currentName) { Modal.prompt('Edit Kategori', 'Ubah nama:', currentName, async (val) => { if(val.trim()) { await supabaseClient.from('checklist_master').update({ category: val.trim() }).eq('id', id); Island.show('Kategori diperbarui.', 'success'); await renderAdminCategoryList(); await populateCategoryFilter(); } }); }
+        async function adminDeleteCategory(id) { Modal.danger('Hapus Kategori?', 'Item di dalamnya ikut terhapus.', async () => { await supabaseClient.from('checklist_master').delete().eq('id', id); Island.show('Kategori dihapus.', 'success'); await renderAdminCategoryList(); await populateCategoryFilter(); }); }
         function selectAdminCategory(catId) { activeAdminCategoryId = catId; renderAdminCategoryList(); }
 
         function renderAdminItems(cat) {
@@ -788,36 +932,50 @@
             if (!cat.items || cat.items.length === 0) { emptyState.classList.remove('hidden'); listState.classList.add('hidden'); } 
             else {
                 emptyState.classList.add('hidden'); listState.classList.remove('hidden'); listState.innerHTML = '';
-                cat.items.forEach((item, idx) => {
-                    const typeBadgeStr = { 'ok_nonok': 'OK / Non OK', 'ada_tidak': 'Ada / Tidak', 'ya_tidak': 'Ya / Tidak' }[item.type || 'ok_nonok'];
+                
+                const groupedItems = {};
+                cat.items.forEach(item => {
+                    const sc = item.subCategory || 'Tanpa Sub Kategori';
+                    if(!groupedItems[sc]) groupedItems[sc] = [];
+                    groupedItems[sc].push(item);
+                });
 
-                    listState.innerHTML += `
-                        <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex flex-col sm:flex-row gap-4 justify-between sm:items-center hover:shadow-md transition-shadow">
-                            <div class="flex items-start gap-3 flex-1">
-                                <div class="bg-slate-100 text-slate-500 w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold mt-0.5 shrink-0">${idx+1}</div>
-                                <div>
-                                    <p class="text-sm font-bold text-slate-800">${item.label}</p>
-                                    <div class="flex gap-2 items-center mt-1.5">
-                                        <p class="text-[10px] text-slate-400 font-mono">ID: ${item.id}</p>
-                                        <span class="bg-slate-100 text-slate-500 px-2 py-0.5 rounded text-[9px] font-bold border border-slate-200">${typeBadgeStr}</span>
+                Object.keys(groupedItems).sort().forEach(subCatName => {
+                    if (subCatName !== 'Tanpa Sub Kategori') {
+                        listState.innerHTML += `<div class="mt-6 mb-3 flex items-center gap-2 px-1"><span class="bg-purple-100 text-purple-800 text-xs font-bold px-4 py-2 rounded-xl border border-purple-200 shadow-sm flex items-center gap-2"><i class="fa-solid fa-folder-tree opacity-70"></i> ${subCatName}</span></div>`;
+                    } else if (Object.keys(groupedItems).length > 1 && groupedItems['Tanpa Sub Kategori'].length > 0) {
+                         listState.innerHTML += `<div class="mt-6 mb-3 flex items-center gap-2 px-1"><span class="bg-slate-200 text-slate-600 text-xs font-bold px-4 py-2 rounded-xl shadow-sm flex items-center gap-2"><i class="fa-solid fa-list opacity-70"></i> Item Utama</span></div>`;
+                    }
+
+                    groupedItems[subCatName].forEach((item, idx) => {
+                        const typeBadgeStr = itemTypeConfig[item.type || 'ok_nonok'].pos + ' / ' + itemTypeConfig[item.type || 'ok_nonok'].neg;
+                        listState.innerHTML += `
+                            <div class="bg-white border border-slate-200 rounded-3xl p-5 shadow-sm flex flex-col sm:flex-row gap-5 justify-between sm:items-center hover:shadow-soft transition-shadow">
+                                <div class="flex items-start gap-4 flex-1">
+                                    <div class="bg-slate-100 text-slate-500 w-10 h-10 rounded-2xl flex items-center justify-center text-sm font-bold shrink-0 shadow-inner"><i class="fa-solid fa-hashtag text-[10px]"></i></div>
+                                    <div>
+                                        <p class="text-sm font-bold text-slate-800 leading-snug">${item.label}</p>
+                                        <div class="flex gap-2 items-center mt-2">
+                                            <span class="bg-blue-50 text-blue-600 px-2 py-0.5 rounded text-[10px] font-bold border border-blue-200">${typeBadgeStr}</span>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="flex items-center gap-4 shrink-0 pl-10 sm:pl-0">
-                                <label class="flex items-center cursor-pointer group" title="Wajib isi note jika Temuan Negatif">
-                                    <div class="relative inline-block w-8 mr-2 align-middle select-none">
-                                        <input type="checkbox" class="toggle-checkbox absolute block w-4 h-4 rounded-full bg-white border-2 appearance-none cursor-pointer peer transition-all" ${item.requiresNote ? 'checked' : ''} onchange="adminToggleItemNote('${cat.id}', '${item.id}')"/>
-                                        <label class="toggle-label block overflow-hidden h-4 rounded-full bg-slate-200 cursor-pointer peer-checked:bg-amber-500 transition-colors"></label>
+                                <div class="flex flex-col sm:flex-row sm:items-center gap-4 shrink-0 bg-slate-50 sm:bg-transparent p-3 sm:p-0 rounded-2xl sm:rounded-none border sm:border-transparent border-slate-100 w-full sm:w-auto">
+                                    <label class="flex items-center cursor-pointer group justify-between sm:justify-start w-full sm:w-auto" title="Wajib isi note jika Temuan Negatif">
+                                        <span class="text-[11px] font-bold ${item.requiresNote ? 'text-amber-600' : 'text-slate-400'} uppercase tracking-wider order-2 sm:order-1 sm:mr-3">Wajib Note</span>
+                                        <div class="relative inline-block w-10 align-middle select-none order-1 sm:order-2">
+                                            <input type="checkbox" id="req-note-${item.id}" class="toggle-checkbox absolute z-10 block w-5 h-5 rounded-full bg-white border-[3px] appearance-none cursor-pointer peer transition-all shadow-sm" ${item.requiresNote ? 'checked' : ''} onchange="adminToggleItemNote('${cat.id}', '${item.id}')"/>
+                                            <label for="req-note-${item.id}" class="toggle-label block overflow-hidden h-5 rounded-full bg-slate-200 cursor-pointer peer-checked:bg-amber-500 transition-colors shadow-inner"></label>
+                                        </div>
+                                    </label>
+                                    <div class="hidden sm:block h-8 w-px bg-slate-200"></div>
+                                    <div class="flex gap-2 justify-end">
+                                        <button onclick="openItemModal('${cat.id}', '${item.id}')" class="text-blue-500 hover:bg-blue-100 hover:text-blue-700 w-10 h-10 rounded-xl transition-colors flex items-center justify-center bg-white sm:bg-transparent border border-slate-200 sm:border-transparent shadow-sm sm:shadow-none"><i class="fa-solid fa-pen text-sm"></i></button>
+                                        <button onclick="adminDeleteItem('${cat.id}', '${item.id}')" class="text-rose-500 hover:bg-rose-100 hover:text-rose-700 w-10 h-10 rounded-xl transition-colors flex items-center justify-center bg-white sm:bg-transparent border border-slate-200 sm:border-transparent shadow-sm sm:shadow-none"><i class="fa-solid fa-trash text-sm"></i></button>
                                     </div>
-                                    <span class="text-[10px] font-bold ${item.requiresNote ? 'text-amber-600' : 'text-slate-400'} uppercase tracking-wider">Wajib Note</span>
-                                </label>
-                                <div class="h-6 w-px bg-slate-200"></div>
-                                <div class="flex gap-1">
-                                    <button onclick="adminEditItem('${cat.id}', '${item.id}')" class="text-blue-500 hover:bg-blue-50 w-8 h-8 rounded-lg transition-colors flex items-center justify-center"><i class="fa-solid fa-pen"></i></button>
-                                    <button onclick="adminDeleteItem('${cat.id}', '${item.id}')" class="text-rose-500 hover:bg-rose-50 w-8 h-8 rounded-lg transition-colors flex items-center justify-center"><i class="fa-solid fa-trash"></i></button>
                                 </div>
-                            </div>
-                        </div>`;
+                            </div>`;
+                    });
                 });
             }
         }
@@ -825,25 +983,29 @@
         function openItemModal(catId, itemId = null) {
             document.getElementById('manage-item-catId').value = catId;
             document.getElementById('manage-item-id').value = itemId || '';
-            document.getElementById('modal-item-title').textContent = itemId ? 'Edit Item' : 'Tambah Item';
+            document.getElementById('modal-item-title').innerHTML = itemId ? '<i class="fa-solid fa-pen-to-square text-blue-400"></i> Edit Item' : '<i class="fa-solid fa-plus text-purple-400"></i> Tambah Item';
             
-            if (itemId) {
-                supabaseClient.from('checklist_master').select('*').eq('id', catId).single().then(({data}) => {
+            supabaseClient.from('checklist_master').select('*').eq('id', catId).single().then(({data}) => {
+                const datalist = document.getElementById('subcat-list'); datalist.innerHTML = '';
+                if(data && data.items) {
+                    const subs = [...new Set(data.items.map(i => i.subCategory).filter(Boolean))];
+                    subs.forEach(s => datalist.innerHTML += `<option value="${s}">`);
+                }
+
+                if (itemId) {
                     const item = data.items.find(i => i.id === itemId);
                     document.getElementById('manage-item-label').value = item.label;
                     document.getElementById('manage-item-type').value = item.type || 'ok_nonok';
-                    document.getElementById('modal-item-form').classList.remove('hidden');
-                });
-            } else {
-                document.getElementById('form-manage-item').reset();
-                document.getElementById('manage-item-type').value = 'ok_nonok';
+                    document.getElementById('manage-item-subcategory').value = item.subCategory || '';
+                } else {
+                    document.getElementById('form-manage-item').reset();
+                    document.getElementById('manage-item-type').value = 'ok_nonok';
+                }
                 document.getElementById('modal-item-form').classList.remove('hidden');
-            }
+            });
         }
 
-        function closeItemModal() {
-            document.getElementById('modal-item-form').classList.add('hidden'); document.getElementById('form-manage-item').reset();
-        }
+        function closeItemModal() { document.getElementById('modal-item-form').classList.add('hidden'); }
 
         document.getElementById('form-manage-item').addEventListener('submit', async function(e) {
             e.preventDefault();
@@ -851,31 +1013,26 @@
             const itemId = document.getElementById('manage-item-id').value;
             const label = document.getElementById('manage-item-label').value.trim();
             const type = document.getElementById('manage-item-type').value;
+            const subCategory = document.getElementById('manage-item-subcategory').value.trim();
 
-            const btn = e.target.querySelector('button[type="submit"]'); btn.disabled = true; btn.textContent = 'Menyimpan...';
             const { data: cat } = await supabaseClient.from('checklist_master').select('*').eq('id', catId).single();
-            
             if (itemId) {
                 const item = cat.items.find(i => i.id === itemId);
-                item.label = label; item.type = type;
+                item.label = label; item.type = type; item.subCategory = subCategory;
             } else {
-                cat.items.push({ id: 'I'+Date.now(), label: label, type: type, requiresNote: false });
+                cat.items.push({ id: 'I'+Date.now(), label: label, type: type, requiresNote: false, subCategory: subCategory });
             }
 
             await supabaseClient.from('checklist_master').update({ items: cat.items }).eq('id', catId);
-            renderAdminItems(cat); btn.disabled = false; btn.textContent = 'Simpan';
-            Island.show(itemId ? 'Item diperbarui.' : 'Item ditambahkan.', 'success'); closeItemModal();
+            renderAdminItems(cat); closeItemModal(); Island.show(itemId ? 'Item diperbarui.' : 'Item ditambahkan.', 'success');
         });
 
-        async function adminAddItem() { openItemModal(activeAdminCategoryId); }
-        async function adminEditItem(catId, itemId) { openItemModal(catId, itemId); }
-        
         async function adminDeleteItem(catId, itemId) {
-            Modal.danger('Hapus Item?', 'Item ini akan dihilangkan dari form.', async () => {
+            Modal.danger('Hapus Item?', 'Akan dihilangkan dari form.', async () => {
                 const { data: cat } = await supabaseClient.from('checklist_master').select('*').eq('id', catId).single();
                 cat.items = cat.items.filter(i => i.id !== itemId);
                 await supabaseClient.from('checklist_master').update({ items: cat.items }).eq('id', catId);
-                renderAdminItems(cat);
+                renderAdminItems(cat); Island.show('Item Dihapus.', 'success');
             });
         }
 
@@ -888,107 +1045,95 @@
         async function generateChecklistForm() {
             const container = document.getElementById('checklist-container'); container.innerHTML = ''; 
             const { data } = await supabaseClient.from('checklist_master').select('*').order('id', { ascending: true });
-            
-            if(!data || data.length === 0) {
-                container.innerHTML = `<div class="bg-white p-8 rounded-3xl text-center border border-slate-200"><i class="fa-solid fa-folder-open text-4xl text-slate-300 mb-3"></i><p class="text-slate-500">Belum ada format checklist.</p></div>`; return;
-            }
+            if(!data || data.length === 0) { container.innerHTML = `<div class="bg-white p-10 rounded-3xl text-center border border-slate-200 shadow-sm"><i class="fa-solid fa-folder-open text-5xl text-slate-300 mb-4"></i><p class="text-slate-500 font-medium">Belum ada format checklist dari Admin.</p></div>`; return; }
 
             data.forEach((category, catIndex) => {
                 if (!category.items || category.items.length === 0) return;
-                const catDiv = document.createElement('div');
-                catDiv.className = 'bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden';
+                const catDiv = document.createElement('div'); catDiv.className = 'bg-white rounded-3xl shadow-soft border border-slate-200 overflow-hidden';
                 
-                let html = `
-                    <div class="bg-slate-50/80 px-6 py-4 border-b border-slate-100 flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-lg bg-white shadow-sm border border-slate-200 flex items-center justify-center font-bold text-slate-600 text-sm">${catIndex + 1}</div>
-                        <h3 class="font-bold text-slate-800 text-lg tracking-tight">${category.category}</h3>
-                    </div><div class="divide-y divide-slate-50">`;
+                let html = `<div class="bg-slate-50/80 px-5 sm:px-8 py-3.5 border-b border-slate-100 flex items-center gap-3"><div class="w-8 h-8 rounded-xl bg-white shadow-sm border border-slate-200 flex items-center justify-center font-bold text-slate-600 text-sm">${catIndex + 1}</div><h3 class="font-bold text-slate-800 text-base sm:text-lg tracking-tight">${category.category}</h3></div><div class="divide-y divide-slate-50">`;
 
-                category.items.forEach(item => {
-                    const typeDef = {
-                        'ok_nonok': { pos: 'OK', neg: 'Non OK', posL: 'Sesuai / OK', negL: 'Tidak Sesuai' },
-                        'ada_tidak': { pos: 'Ada', neg: 'Tidak Ada', posL: 'Ada', negL: 'Tidak Ada' },
-                        'ya_tidak': { pos: 'Ya', neg: 'Tidak', posL: 'Ya', negL: 'Tidak' }
-                    }[item.type || 'ok_nonok'];
+                const groupedItems = {};
+                category.items.forEach(item => { const sc = item.subCategory || 'Tanpa Sub Kategori'; if(!groupedItems[sc]) groupedItems[sc] = []; groupedItems[sc].push(item); });
 
-                    html += `
-                        <div class="p-5 sm:p-6 hover:bg-slate-50/50 smooth-transition">
-                            <p class="text-slate-800 font-semibold mb-4 leading-snug text-[15px]">${item.label}</p>
-                            <div class="flex flex-col gap-4">
-                                <div class="grid grid-cols-2 gap-3 max-w-sm">
-                                    <label class="cursor-pointer relative">
-                                        <input type="radio" name="status-${item.id}" value="${typeDef.pos}" onchange="handleRadioChange('${item.id}', ${item.requiresNote}, '${typeDef.pos}')" class="peer sr-only" required>
-                                        <div class="radio-card-ok flex flex-col items-center justify-center p-3 rounded-2xl border-2 border-slate-200 text-slate-500 smooth-transition hover:bg-slate-50 relative overflow-hidden">
-                                            <i class="fa-solid fa-circle-check text-2xl mb-1 opacity-50 check-icon"></i>
-                                            <span class="font-bold text-sm">${typeDef.posL}</span>
-                                        </div>
-                                    </label>
-                                    <label class="cursor-pointer relative">
-                                        <input type="radio" name="status-${item.id}" value="${typeDef.neg}" onchange="handleRadioChange('${item.id}', ${item.requiresNote}, '${typeDef.neg}')" class="peer sr-only" required>
-                                        <div class="radio-card-non flex flex-col items-center justify-center p-3 rounded-2xl border-2 border-slate-200 text-slate-500 smooth-transition hover:bg-slate-50 relative overflow-hidden">
-                                            <i class="fa-solid fa-circle-xmark text-2xl mb-1 opacity-50 check-icon"></i>
-                                            <span class="font-bold text-sm">${typeDef.negL}</span>
-                                        </div>
-                                    </label>
-                                </div>
-                                <div id="note-container-${item.id}" class="hidden overflow-hidden transition-all duration-300 max-h-0 opacity-0 max-w-lg">
-                                    <div class="bg-amber-50/50 border border-amber-200/60 rounded-2xl p-4 mt-2">
-                                        <label class="text-xs font-bold text-amber-800 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                                            <i class="fa-solid fa-pen-clip"></i> Keterangan Temuan (Wajib)
+                Object.keys(groupedItems).sort().forEach(subCatName => {
+                    if (subCatName !== 'Tanpa Sub Kategori') { html += `<div class="px-5 sm:px-8 py-2 bg-slate-100/50 border-y border-slate-100 flex items-center gap-2"><i class="fa-solid fa-folder-tree text-rose-500 text-xs opacity-70"></i><h4 class="font-bold text-slate-600 text-xs tracking-wider uppercase">${subCatName}</h4></div>`; }
+                    
+                    groupedItems[subCatName].forEach(item => {
+                        const typeDef = itemTypeConfig[item.type || 'ok_nonok'];
+                        html += `
+                            <div class="py-3.5 px-5 sm:px-8 hover:bg-slate-50/80 smooth-transition border-b border-slate-50 last:border-b-0">
+                                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                    <p class="text-slate-700 font-medium text-sm leading-snug flex-1 pr-2">${item.label}</p>
+                                    <div class="flex items-center gap-1.5 shrink-0 bg-slate-100/80 p-1 rounded-xl border border-slate-200/60 w-full sm:w-auto">
+                                        <label class="cursor-pointer relative flex-1 sm:flex-none">
+                                            <input type="radio" name="status-${item.id}" value="${typeDef.pos}" onchange="handleRadioChange('${item.id}', ${item.requiresNote}, '${typeDef.pos}', '${item.type}')" class="peer sr-only" required>
+                                            <div class="radio-card-pos flex items-center justify-center px-3 py-1.5 rounded-lg border border-transparent text-slate-500 smooth-transition hover:bg-white/60 relative overflow-hidden bg-transparent text-xs w-full">
+                                                <i class="fa-solid ${typeDef.iconPos} mr-1.5 opacity-50 check-icon transition-transform duration-300"></i><span class="font-bold whitespace-nowrap">${typeDef.posL}</span>
+                                            </div>
                                         </label>
-                                        <textarea id="note-input-${item.id}" name="note-${item.id}" rows="2" placeholder="Tuliskan detail masalah..." class="w-full text-sm px-4 py-3 rounded-xl border border-amber-200 focus:bg-white focus:ring-2 focus:ring-amber-500 outline-none bg-white/60 smooth-transition"></textarea>
+                                        <label class="cursor-pointer relative flex-1 sm:flex-none">
+                                            <input type="radio" name="status-${item.id}" value="${typeDef.neg}" onchange="handleRadioChange('${item.id}', ${item.requiresNote}, '${typeDef.neg}', '${item.type}')" class="peer sr-only" required>
+                                            <div class="radio-card-neg flex items-center justify-center px-3 py-1.5 rounded-lg border border-transparent text-slate-500 smooth-transition hover:bg-white/60 relative overflow-hidden bg-transparent text-xs w-full">
+                                                <i class="fa-solid ${typeDef.iconNeg} mr-1.5 opacity-50 check-icon transition-transform duration-300"></i><span class="font-bold whitespace-nowrap">${typeDef.negL}</span>
+                                            </div>
+                                        </label>
                                     </div>
                                 </div>
-                            </div>
-                        </div>`;
+                                <div id="note-container-${item.id}" class="hidden overflow-hidden transition-all duration-300 max-h-0 opacity-0 mt-3 max-w-2xl">
+                                    <div class="bg-amber-50 border border-amber-200/60 rounded-xl p-3 flex gap-3 items-start shadow-sm">
+                                        <i class="fa-solid fa-pen-clip text-amber-400 mt-0.5"></i>
+                                        <input type="text" id="note-input-${item.id}" name="note-${item.id}" placeholder="Keterangan temuan wajib diisi..." class="w-full text-sm bg-transparent border-b border-amber-200 focus:border-amber-500 outline-none pb-1 text-amber-900 placeholder-amber-500/50 font-medium smooth-transition">
+                                    </div>
+                                </div>
+                            </div>`;
+                    });
                 });
                 html += `</div>`; catDiv.innerHTML = html; container.appendChild(catDiv);
             });
         }
 
-        window.handleRadioChange = function(itemId, requiresNote, value) {
+        window.handleRadioChange = function(itemId, requiresNote, value, type) {
             const container = document.getElementById(`note-container-${itemId}`); const input = document.getElementById(`note-input-${itemId}`);
             if (!container || !input) return;
-            const negValues = ['Non OK', 'Tidak Ada', 'Tidak'];
-
-            if (requiresNote && negValues.includes(value)) {
-                container.classList.remove('hidden');
-                setTimeout(() => { container.classList.remove('max-h-0', 'opacity-0'); container.classList.add('max-h-40', 'opacity-100'); input.required = true; }, 10);
+            
+            const def = itemTypeConfig[type || 'ok_nonok'];
+            const isNegative = value === def.neg;
+            
+            if (requiresNote && isNegative) {
+                container.classList.remove('hidden'); setTimeout(() => { container.classList.remove('max-h-0', 'opacity-0'); container.classList.add('max-h-[200px]', 'opacity-100'); input.required = true; }, 10);
             } else {
-                container.classList.remove('max-h-40', 'opacity-100'); container.classList.add('max-h-0', 'opacity-0');
-                setTimeout(() => { container.classList.add('hidden'); }, 300); input.required = false; input.value = ''; 
+                container.classList.remove('max-h-[200px]', 'opacity-100'); container.classList.add('max-h-0', 'opacity-0'); setTimeout(() => { container.classList.add('hidden'); }, 300);
+                input.required = false; input.value = ''; 
             }
         }
 
         document.getElementById('checklist-form').addEventListener('submit', async function(e) {
             e.preventDefault();
-            const btn = document.getElementById('btn-submit-form'); btn.disabled = true; btn.innerHTML = 'Menyimpan...';
+            const btn = document.getElementById('btn-submit-form'); btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Memproses...';
 
             const formData = new FormData(e.target); const answers = {}; 
             const { data } = await supabaseClient.from('checklist_master').select('*');
 
-            data.forEach(cat => {
-                if(cat.items) cat.items.forEach(item => {
-                    const status = formData.get(`status-${item.id}`); const note = formData.get(`note-${item.id}`);
-                    if (status) answers[item.id] = { status: status, note: note || '' };
-                });
-            });
+            data.forEach(cat => { if(cat.items) cat.items.forEach(item => { const status = formData.get(`status-${item.id}`); const note = formData.get(`note-${item.id}`); if (status) answers[item.id] = { status: status, note: note || '' }; }); });
 
-            const d = new Date();
-            const dateStr = `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
-            const timeStr = `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+            const d = new Date(); const dateStr = `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`; const timeStr = `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
 
             await supabaseClient.from('submissions').insert({
-                id: Date.now().toString(), user_id: currentUser.id, pic: currentUser.username, 
-                ssc: currentUser.ssc, province: currentUser.province, stagging_name: currentUser.stagging_name,
-                date: `${dateStr}, ${timeStr}`, answers: answers
+                id: Date.now().toString(), user_id: currentUser.id, pic: currentUser.pic_name || currentUser.username, ssc: currentUser.ssc, province: currentUser.province, stagging_name: currentUser.stagging_name, date: `${dateStr}, ${timeStr}`, answers: answers
             });
 
             Island.show('Checklist Berhasil Disimpan!', 'success', 4000); e.target.reset(); 
             document.querySelectorAll('[id^="note-container-"]').forEach(el => { el.classList.add('max-h-0', 'opacity-0'); setTimeout(() => el.classList.add('hidden'), 300); });
-            btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-paper-plane text-lg"></i> <span>Kirim Hasil Pengecekan</span>';
-            setTimeout(() => switchTab('dashboard'), 1500);
+            btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> <span>Kirim Hasil Pengecekan</span>';
+            closeChecklistModal();
+            setTimeout(() => switchTab('dashboard'), 500);
         });
+
+        const parseDateObj = d => {
+            if(!d || d === '-') return 0;
+            try { const [a, b] = d.split(', '); const [day, m, y] = a.split('/'); const [hh, mm] = b.split(':'); return new Date(y, m-1, day, hh, mm).getTime(); } catch(e){ return 0; }
+        };
 
         async function populateCategoryFilter() {
             const filter = document.getElementById('filter-category'); filter.innerHTML = '<option value="all">Kategori (Semua)</option>';
@@ -1009,105 +1154,165 @@
             const { data: submissions } = await supabaseClient.from('submissions').select('*');
             const safeSubmissions = submissions || [];
 
-            let renderData = [];
-            validUsers.forEach(user => {
-                let userSubs = [];
-                if (safeSubmissions.length > 0) {
-                    userSubs = safeSubmissions.filter(sub => {
-                        if (sub.user_id !== user.id) return false;
-                        const parts = sub.date.split(',')[0].split('/');
-                        return (vM === 'all' || parseInt(parts[1]) == vM) && (vY === 'all' || parseInt(parts[2]) == vY);
-                    });
-                }
-
-                if (userSubs.length > 0) {
-                    const parseDate = d => { try { const [a, b] = d.split(', '); const [day, m, y] = a.split('/'); const [hh, mm] = b.split(':'); return new Date(y, m-1, day, hh, mm).getTime(); } catch(e){ return 0; } };
-                    renderData.push(userSubs.sort((a, b) => parseDate(b.date) - parseDate(a.date))[0]);
-                } else {
-                    renderData.push({ user_id: user.id, pic: '-', ssc: user.ssc, province: user.province, stagging_name: user.stagging_name, date: '-', answers: {} });
+            const sortedAllSubs = [...safeSubmissions].sort((a, b) => parseDateObj(a.date) - parseDateObj(b.date));
+            const sscHistory = {}; 
+            sortedAllSubs.forEach(sub => {
+                if (!sscHistory[sub.user_id]) sscHistory[sub.user_id] = [];
+                const hist = sscHistory[sub.user_id];
+                if (hist.length === 0 || hist[hist.length - 1] !== sub.ssc) {
+                    hist.push(sub.ssc);
                 }
             });
 
+            const locationMap = new Map();
+            validUsers.forEach(u => {
+                const key = `${u.ssc}|${u.province}|${u.stagging_name}`;
+                locationMap.set(key, { user_id: u.id, pic: u.pic_name || '-', ssc: u.ssc, province: u.province, stagging_name: u.stagging_name, date: '-', answers: {} });
+            });
+
+            safeSubmissions.forEach(sub => {
+                const parts = sub.date.split(',')[0].split('/');
+                const matchM = (vM === 'all' || parseInt(parts[1]) == vM);
+                const matchY = (vY === 'all' || parseInt(parts[2]) == vY);
+                
+                if (matchM && matchY) {
+                    const key = `${sub.ssc}|${sub.province}|${sub.stagging_name}`;
+                    const existing = locationMap.get(key);
+                    
+                    if (!existing || existing.date === '-' || parseDateObj(sub.date) > parseDateObj(existing.date)) {
+                        locationMap.set(key, sub);
+                    }
+                }
+            });
+
+            let renderData = Array.from(locationMap.values());
             renderData.sort((a, b) => {
                 if (a.ssc !== b.ssc) return (a.ssc || '').localeCompare(b.ssc || '');
                 if (a.province !== b.province) return (a.province || '').localeCompare(b.province || '');
                 return (a.stagging_name || '').localeCompare(b.stagging_name || '');
             });
 
-            renderDashboardHeaders(filteredCats); renderDashboardBodyAndNotes(renderData, filteredCats, safeAllCats);
+            renderDashboardHeaders(filteredCats); renderDashboardBodyAndNotes(renderData, filteredCats, safeAllCats, sscHistory);
         }
 
         function renderDashboardHeaders(cats) {
             const r1 = document.getElementById('thead-row-1'); const r2 = document.getElementById('thead-row-2');
-            let h1 = `<th rowspan="2" class="p-4 sticky-col-1 col-w-1 bg-slate-50 border-r border-slate-200">SSC</th>
-                      <th rowspan="2" class="p-4 sticky-col-2 col-w-2 bg-slate-50 border-r border-slate-200">Provinsi</th>
-                      <th rowspan="2" class="p-4 sticky-col-3 col-w-3 bg-slate-50 text-slate-800">Nama Stagging</th>
-                      <th rowspan="2" class="p-4 sticky-col-4 col-w-4 bg-slate-50">PIC</th>
-                      <th rowspan="2" class="p-4 sticky-col-5 col-w-5 bg-slate-50 border-r border-slate-300">Tanggal</th>`;
+            let h1 = `<th rowspan="2" class="p-2 sm:p-2.5 sticky-col-1 col-w-1 bg-slate-50 border-r border-slate-200">SSC</th>
+                      <th rowspan="2" class="p-2 sm:p-2.5 sticky-col-2 col-w-2 bg-slate-50 border-r border-slate-200 hidden md:table-cell">Provinsi</th>
+                      <th rowspan="2" class="p-2 sm:p-2.5 sticky-col-3 col-w-3 bg-slate-50 text-slate-800 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] md:shadow-none">Nama Stagging</th>
+                      <th rowspan="2" class="p-2 sm:p-2.5 sticky-col-4 col-w-4 bg-slate-50 hidden md:table-cell">PIC</th>
+                      <th rowspan="2" class="p-2 sm:p-2.5 sticky-col-5 col-w-5 bg-slate-50 border-r border-slate-300 hidden md:table-cell">Tanggal</th>`;
             let h2 = ``;
 
             cats.forEach(cat => {
                 if(!cat.items || cat.items.length === 0) return;
-                h1 += `<th colspan="${cat.items.length}" class="p-3 border-r border-slate-200 text-center bg-slate-100/50">${cat.category}</th>`;
-                cat.items.forEach(item => { h2 += `<th class="p-3 border-r border-slate-100 text-center bg-white"><div class="truncate w-[100px] mx-auto" title="${item.label}">${item.label}</div></th>`; });
+                h1 += `<th colspan="${cat.items.length}" class="p-2 border-r border-slate-200 text-center bg-slate-100/50">${cat.category}</th>`;
+                
+                const sortedItems = [...cat.items].sort((a,b) => (a.subCategory||'').localeCompare(b.subCategory||''));
+                sortedItems.forEach(item => {
+                    const subLabel = item.subCategory ? `[${item.subCategory}] ` : '';
+                    h2 += `<th class="p-2 border-r border-slate-100 text-center bg-white min-w-[90px] max-w-[120px]"><div class="truncate w-full mx-auto font-medium text-[9px] sm:text-[10px]" title="${subLabel}${item.label}">${item.label}</div></th>`;
+                });
             });
             r1.innerHTML = h1; r2.innerHTML = h2;
         }
 
-        function renderDashboardBodyAndNotes(data, filteredCats, allCats) {
+        function renderDashboardBodyAndNotes(data, filteredCats, allCats, sscHistory) {
             const tbody = document.getElementById('dashboard-tbody');
-            const noteSec = document.getElementById('dashboard-notes-section'); const noteCon = document.getElementById('dashboard-notes-container');
+            const noteSec = document.getElementById('dashboard-notes-section');
+            const noteCon = document.getElementById('dashboard-notes-container');
             let html = '', noteHtml = '';
 
-            const itemMap = {}; allCats.forEach(c => { if(c.items) c.items.forEach(i => itemMap[i.id] = { label: i.label, cat: c.category }) });
+            const itemMap = {}; allCats.forEach(c => { if(c.items) c.items.forEach(i => itemMap[i.id] = { label: i.label, cat: c.category, type: i.type || 'ok_nonok' }) });
 
-            if (data.length === 0) { html = `<tr><td colspan="100" class="p-8 text-center text-slate-400">Tidak ada data terdaftar.</td></tr>`; } 
+            if (data.length === 0) { html = `<tr><td colspan="100" class="p-6 text-center text-slate-400 font-medium">Tidak ada data yang ditemukan.</td></tr>`; } 
             else {
                 let currGroup = '';
                 data.forEach((sub, idx) => {
                     const isNew = currGroup !== sub.ssc; if(isNew) currGroup = sub.ssc;
-                    const borderCls = isNew && idx !== 0 ? 'border-t-4 border-slate-200' : 'border-t border-slate-100';
+                    const borderCls = isNew && idx !== 0 ? 'border-t-[3px] border-slate-200' : 'border-t border-slate-100';
 
-                    html += `<tr class="hover:bg-slate-50 smooth-transition ${borderCls}">
-                        <td class="p-3 sticky-col-1 col-w-1 text-center font-bold text-slate-700 text-[11px]">${sub.ssc || '-'}</td>
-                        <td class="p-3 sticky-col-2 col-w-2 font-medium text-slate-600 text-[11px]">${sub.province || '-'}</td>
-                        <td class="p-3 sticky-col-3 col-w-3 font-bold text-slate-900 text-xs">${sub.stagging_name || '-'}</td>
-                        <td class="p-3 sticky-col-4 col-w-4 text-slate-500 text-[11px] text-center">${sub.pic}</td>
-                        <td class="p-3 sticky-col-5 col-w-5 text-center text-slate-500 text-[10px] font-mono">${sub.date}</td>`;
+                    let prevSscHtml = '';
+                    if (sscHistory && sscHistory[sub.user_id]) {
+                        const hist = sscHistory[sub.user_id];
+                        const currentIdx = hist.indexOf(sub.ssc);
+                        let prevSsc = null;
+                        if (currentIdx > 0) prevSsc = hist[currentIdx - 1];
+                        else if (currentIdx === -1 && hist.length > 0) prevSsc = hist[hist.length - 1];
+                        
+                        if (prevSsc && prevSsc !== sub.ssc) {
+                            prevSscHtml = `<div class="text-[8px] text-purple-600 font-bold bg-purple-50 border border-purple-200 rounded px-1 py-0.5 mt-0.5 inline-block whitespace-nowrap" title="Lokasi sebelumnya"><i class="fa-solid fa-clock-rotate-left mr-0.5"></i>Eks-${prevSsc}</div>`;
+                        }
+                    }
+
+                    const mobileInfo = `<div class="md:hidden mt-0.5 text-[9px] font-normal text-slate-500 font-mono">${sub.date} | ${sub.pic}</div>`;
+
+                    html += `<tr class="hover:bg-slate-50/80 smooth-transition ${borderCls}">
+                        <td class="p-2 sm:p-2.5 sticky-col-1 col-w-1 text-center font-bold text-slate-700 text-[10px] sm:text-[11px]">${sub.ssc || '-'}<br>${prevSscHtml}</td>
+                        <td class="p-2 sm:p-2.5 sticky-col-2 col-w-2 font-medium text-slate-600 text-[10px] sm:text-[11px] hidden md:table-cell">${sub.province || '-'}</td>
+                        <td class="p-2 sm:p-2.5 sticky-col-3 col-w-3 font-bold text-slate-900 text-[11px] sm:text-xs shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] md:shadow-none">${sub.stagging_name || '-'}${mobileInfo}</td>
+                        <td class="p-2 sm:p-2.5 sticky-col-4 col-w-4 text-slate-500 text-[10px] sm:text-[11px] text-center hidden md:table-cell">${sub.pic}</td>
+                        <td class="p-2 sm:p-2.5 sticky-col-5 col-w-5 text-center text-slate-500 text-[9px] sm:text-[10px] font-mono hidden md:table-cell">${sub.date}</td>`;
 
                     filteredCats.forEach(cat => {
-                        if(cat.items) cat.items.forEach(item => {
+                        const sortedItems = [...(cat.items || [])].sort((a,b) => (a.subCategory||'').localeCompare(b.subCategory||''));
+                        sortedItems.forEach(item => {
                             const ans = sub.answers[item.id];
+                            const tDef = itemTypeConfig[item.type || 'ok_nonok'];
                             if(ans) {
-                                const posValues = ['OK', 'Ada', 'Ya'];
-                                if(posValues.includes(ans.status)) html += `<td class="p-3 border-r border-slate-100 text-center"><div class="w-6 h-6 rounded-full bg-emerald-50 text-emerald-500 flex items-center justify-center mx-auto"><i class="fa-solid fa-check text-xs"></i></div></td>`;
-                                else html += `<td class="p-3 border-r border-slate-100 text-center"><div class="w-6 h-6 rounded-full bg-rose-50 text-rose-500 flex items-center justify-center mx-auto relative"><i class="fa-solid fa-xmark text-xs"></i>${ans.note && item.requiresNote ? '<span class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-amber-400 border-2 border-white rounded-full"></span>':''}</div></td>`;
-                            } else html += `<td class="p-3 border-r border-slate-100 text-center text-slate-300">-</td>`;
+                                const isPos = ans.status === tDef.pos;
+                                const bgClass = isPos ? tDef.bgPos : tDef.bgNeg;
+                                const txtClass = isPos ? tDef.textPos : tDef.textNeg;
+                                const iconClass = isPos ? tDef.iconPos : tDef.iconNeg;
+                                
+                                html += `<td class="p-2 border-r border-slate-100 text-center"><div class="w-6 h-6 rounded-lg shadow-sm border border-white ${bgClass} ${txtClass} flex items-center justify-center mx-auto relative" title="${ans.status}"><i class="fa-solid ${iconClass} text-[11px]"></i>${(!isPos && ans.note && item.requiresNote) ? '<span class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-amber-400 border-2 border-white rounded-full"></span>':''}</div></td>`;
+                            } else html += `<td class="p-2 border-r border-slate-100 text-center text-slate-300">-</td>`;
                         })
                     });
                     html += `</tr>`;
 
-                    let subNotes = ''; const negValues = ['Non OK', 'Tidak Ada', 'Tidak'];
+                    // Susun Catatan
+                    let notesByCategory = {};
                     Object.keys(sub.answers).forEach(itemId => {
                         const ans = sub.answers[itemId];
-                        if (negValues.includes(ans.status) && ans.note) {
-                            const meta = itemMap[itemId];
-                            if(meta) subNotes += `
-                                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 mb-2 last:mb-0">
-                                    <p class="text-[11px] font-bold text-slate-700 leading-tight">${meta.label}</p>
-                                    <p class="text-[10px] text-slate-400 mb-1.5">${meta.cat}</p>
-                                    <p class="text-xs text-amber-800 font-medium bg-amber-50/50 p-2 rounded-lg border border-amber-100/50 flex gap-2 items-start"><i class="fa-solid fa-quote-left text-amber-300 mt-0.5"></i> ${ans.note}</p>
-                                </div>`;
+                        const meta = itemMap[itemId];
+                        const isNeg = meta ? ans.status === itemTypeConfig[meta.type].neg : (ans.status === 'Non OK' || ans.status === 'Tidak Ada' || ans.status === 'Rusak');
+                        
+                        if (isNeg && ans.note) {
+                            if(meta) {
+                                if(!notesByCategory[meta.cat]) notesByCategory[meta.cat] = [];
+                                notesByCategory[meta.cat].push({ label: meta.label, note: ans.note });
+                            }
                         }
                     });
-                    if(subNotes) noteHtml += `
-                        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col">
-                            <div class="bg-slate-900 px-4 py-3 flex justify-between items-center shrink-0">
-                                <h4 class="font-bold text-white text-sm truncate pr-2">${sub.stagging_name}</h4>
-                                <span class="bg-white/20 text-white text-[10px] px-2 py-1 rounded-full whitespace-nowrap">${sub.date.split(',')[0]}</span>
-                            </div>
-                            <div class="p-3 bg-white flex-1">${subNotes}</div>
-                        </div>`;
+
+                    let subNotesHtml = '';
+                    const catKeys = Object.keys(notesByCategory);
+                    if(catKeys.length > 0) {
+                        catKeys.forEach(catName => {
+                            subNotesHtml += `<div class="mb-2 last:mb-0">
+                                <div class="font-bold text-slate-800 text-[10px] uppercase leading-tight">${catName}</div>`;
+                            notesByCategory[catName].forEach(item => {
+                                subNotesHtml += `<div class="text-[10px] leading-snug mt-0.5"><span class="font-bold text-slate-700">- ${item.label}:</span> <span class="italic text-amber-900">"${item.note}"</span></div>`;
+                            });
+                            subNotesHtml += `</div>`;
+                        });
+
+                        noteHtml += `
+                            <div class="bg-amber-50/90 rounded-xl border border-amber-200/80 shadow-sm overflow-hidden flex flex-col relative transform transition-all hover:-translate-y-1 hover:shadow-md h-full">
+                                <div class="absolute top-1.5 right-2"><i class="fa-solid fa-thumbtack text-amber-400/70 transform rotate-45 text-[10px]"></i></div>
+                                <div class="px-3 py-2 border-b border-amber-200/50 shrink-0 pr-6">
+                                    <div class="flex justify-between items-start gap-2">
+                                        <span class="font-bold text-amber-900 text-[11px] leading-tight">${sub.stagging_name} <span class="opacity-60 font-normal">(${sub.ssc})</span></span>
+                                        <span class="text-amber-700 text-[9px] font-mono whitespace-nowrap bg-amber-100/50 px-1 py-0.5 rounded">${sub.date.split(',')[0]}</span>
+                                    </div>
+                                    <div class="text-amber-700 text-[9px] font-medium mt-0.5">PIC: ${sub.pic}</div>
+                                </div>
+                                <div class="p-3 bg-transparent flex-1 custom-scroll overflow-y-auto max-h-[160px]">
+                                    ${subNotesHtml}
+                                </div>
+                            </div>`;
+                    }
                 });
             }
             tbody.innerHTML = html;
