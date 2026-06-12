@@ -410,6 +410,12 @@
                                 <select id="filter-category" onchange="applyFiltersAndRender()" class="px-3 py-2 bg-transparent hover:bg-slate-50 rounded-xl text-sm outline-none font-bold text-slate-700 cursor-pointer transition-colors max-w-[150px] sm:max-w-[180px] truncate appearance-none pr-8 bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%24%2024%22%20fill%3D%22none%22%20stroke%3D%22%2394a3b8%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[position:right_0.2rem_center]">
                                     <option value="all">Semua Kategori</option>
                                 </select>
+
+                                <div class="hidden md:block w-px h-5 bg-slate-200 mx-1"></div>
+                                
+                                <select id="filter-ssc" onchange="applyFiltersAndRender()" class="px-3 py-2 bg-transparent hover:bg-slate-50 rounded-xl text-sm outline-none font-bold text-slate-700 cursor-pointer transition-colors max-w-[150px] sm:max-w-[180px] truncate appearance-none pr-8 bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%24%2024%22%20fill%3D%22none%22%20stroke%3D%22%2394a3b8%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[position:right_0.2rem_center]">
+                                    <option value="all">Semua Koordinator</option>
+                                </select>
                             </div>
 
                             <div class="flex gap-3 w-full sm:w-auto">
@@ -706,7 +712,7 @@
     <script>
         // Konfigurasi Ikon diupdate untuk Material Symbols Rounded
         const itemTypeConfig = {
-            'ok_nonok': { pos: 'OK', neg: 'Non OK', posL: 'OK', negL: 'Non OK', iconPos: 'check', iconNeg: 'close', bgPos: 'bg-emerald-50', textPos: 'text-emerald-700', bgNeg: 'bg-rose-50', textNeg: 'text-rose-700' },
+            'ok_nonok': { pos: 'OK', neg: 'Non OK', posL: 'OK', negL: 'Non OK', iconPos: 'check', iconNeg: 'close', bgPos: 'bg-emerald-50', textPos: 'textemerald-700', bgNeg: 'bg-rose-50', textNeg: 'text-rose-700' },
             'ada_tidak': { pos: 'Ada', neg: 'Tidak Ada', posL: 'Ada', negL: 'Tidak Ada', iconPos: 'inventory_2', iconNeg: 'block', bgPos: 'bg-indigo-50', textPos: 'text-indigo-700', bgNeg: 'bg-slate-100', textNeg: 'text-slate-500' },
             'normal_rusak': { pos: 'Normal', neg: 'Rusak', posL: 'Normal', negL: 'Rusak', iconPos: 'thumb_up', iconNeg: 'build', bgPos: 'bg-teal-50', textPos: 'text-teal-700', bgNeg: 'bg-amber-50', textNeg: 'text-amber-700' }
         };
@@ -1381,16 +1387,27 @@
             const filter = document.getElementById('filter-category'); filter.innerHTML = '<option value="all">Semua Kategori</option>';
             const { data } = await supabaseClient.from('checklist_master').select('*').order('id', { ascending: true });
             if(data) data.forEach(cat => { filter.innerHTML += `<option value="${cat.id}">${cat.category}</option>`; });
+
+            const filterSsc = document.getElementById('filter-ssc');
+            if (filterSsc) {
+                filterSsc.innerHTML = '<option value="all">Semua Koordinator</option>';
+                const { data: users } = await supabaseClient.from('users').select('ssc').eq('role', 'user');
+                if (users) {
+                    const uniqueSsc = [...new Set(users.map(u => u.ssc).filter(Boolean))].sort();
+                    uniqueSsc.forEach(ssc => { filterSsc.innerHTML += `<option value="${ssc}">${ssc}</option>`; });
+                }
+            }
         }
 
         async function applyFiltersAndRender() {
             const vM = document.getElementById('filter-month').value; const vY = document.getElementById('filter-year').value; const vC = document.getElementById('filter-category').value;
+            const vSsc = document.getElementById('filter-ssc').value;
             
             const { data: allCats } = await supabaseClient.from('checklist_master').select('*').order('id', { ascending: true });
             const safeAllCats = allCats || []; let filteredCats = vC !== 'all' ? safeAllCats.filter(c => c.id === vC) : safeAllCats;
 
             const { data: fieldUsers } = await supabaseClient.from('users').select('*').eq('role', 'user');
-            const validUsers = (fieldUsers || []).filter(u => u.stagging_name);
+            const validUsers = (fieldUsers || []).filter(u => u.stagging_name && (vSsc === 'all' || u.ssc === vSsc));
 
             const { data: submissions } = await supabaseClient.from('submissions').select('*'); const safeSubmissions = submissions || [];
             const sortedAllSubs = [...safeSubmissions].sort((a, b) => parseDateObj(a.date) - parseDateObj(b.date));
@@ -1405,7 +1422,8 @@
 
             safeSubmissions.forEach(sub => {
                 const parts = sub.date.split(',')[0].split('/'); const matchM = (vM === 'all' || parseInt(parts[1]) == vM); const matchY = (vY === 'all' || parseInt(parts[2]) == vY);
-                if (matchM && matchY) {
+                const matchSsc = (vSsc === 'all' || sub.ssc === vSsc);
+                if (matchM && matchY && matchSsc) {
                     const key = `${sub.ssc}|${sub.province}|${sub.stagging_name}`; const existing = locationMap.get(key);
                     if (!existing || existing.date === '-' || parseDateObj(sub.date) > parseDateObj(existing.date)) { locationMap.set(key, sub); }
                 }
