@@ -380,6 +380,13 @@
                     
                     <button onclick="closeChecklistModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/10 text-white hover:bg-rose-500 flex items-center justify-center transition-colors z-20"><i class="fa-solid fa-xmark"></i></button>
 
+                    <div id="admin-selector-container" class="hidden mb-5 relative z-10 p-4 bg-white/10 rounded-2xl border border-white/20 backdrop-blur-sm">
+                        <label class="block text-[10px] text-white/70 uppercase font-bold tracking-wider mb-2"><i class="fa-solid fa-crown text-yellow-400 mr-1"></i> Mode Admin: Pilih Target Lokasi</label>
+                        <select id="admin-target-select" class="w-full bg-slate-900/50 border border-white/20 text-white text-sm font-medium rounded-xl px-4 py-3 outline-none cursor-pointer focus:border-rose-400 transition-colors" onchange="updateAdminTargetInfo()">
+                            <option value="" class="text-slate-800">-- Pilih Stagging / SSC --</option>
+                        </select>
+                    </div>
+
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
                         <div class="flex items-center gap-4 sm:gap-5">
                             <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center text-white shrink-0 backdrop-blur-sm shadow-inner">
@@ -699,6 +706,7 @@
             if (currentUser.role === 'admin') {
                 tUsers.classList.remove('hidden'); 
                 tAdminForm.classList.remove('hidden');
+                btnOpenForm.classList.remove('hidden');
                 switchTab('dashboard'); 
                 await renderAdminUsers(); 
                 await renderAdminCategoryList();
@@ -712,7 +720,6 @@
                 document.getElementById('form-pic-name').textContent = picName;
                 document.getElementById('form-user-initial').textContent = picName.charAt(0).toUpperCase();
 
-                await generateChecklistForm(); 
                 switchTab('dashboard');
             } else if (currentUser.role === 'visitor') {
                 switchTab('dashboard');
@@ -775,6 +782,8 @@
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Memeriksa Akses...';
 
             try {
+                const isAdmin = currentUser.role === 'admin';
+
                 // 1. Ambil Waktu dari Server API agar tidak bisa dimanipulasi dari device
                 let serverDate;
                 try {
@@ -789,47 +798,91 @@
                 const currentMonthStr = String(serverDate.getMonth() + 1).padStart(2, '0');
                 const currentYearStr = serverDate.getFullYear();
 
-                // === MODE TESTING AKTIF ===
-                // Ubah tanggal secara paksa menjadi 21 untuk bypass sistem.
-                // Hapus baris di bawah ini jika ingin mengunci permanen.
-                //currentDay = 21;
-                // ==========================
-
-                // 2. Rule: Hanya bisa isi form dari tanggal 20 hingga akhir bulan
-                if (currentDay < 20) {
-                    Modal.warning('Akses Belum Dibuka', 'Pengisian form checklist hanya dapat dilakukan mulai tanggal 20 hingga akhir bulan setiap bulannya. Harap kembali lagi nanti.');
-                    btn.disabled = false; btn.innerHTML = originalHtml;
-                    return;
-                }
-
-                // 3. Rule: Cek apakah SSC ini sudah mengisi di bulan yang sama (Mencegah Duplicate Data antar PIC)
-                const { data: subs, error } = await supabaseClient
-                    .from('submissions')
-                    .select('date')
-                    .eq('ssc', currentUser.ssc);
-
-                if (subs && subs.length > 0) {
-                    const hasSubmittedThisMonth = subs.some(sub => {
-                        const dateParts = sub.date.split(',')[0].trim().split('/'); // Format di DB: DD/MM/YYYY
-                        if (dateParts.length === 3) {
-                            return dateParts[1] === currentMonthStr && dateParts[2] === String(currentYearStr);
-                        }
-                        return false;
-                    });
-
-                    if (hasSubmittedThisMonth) {
-                        Modal.warning('Sudah Diisi', `Area Stagging ${currentUser.ssc} sudah melakukan pengisian checklist pada bulan ini. Pengisian hanya diperbolehkan 1x per area setiap bulannya.`);
+                if (!isAdmin) {
+                    // 2. Rule: Hanya bisa isi form dari tanggal 20 hingga akhir bulan (Bypass untuk Admin)
+                    if (currentDay < 20) {
+                        Modal.warning('Akses Belum Dibuka', 'Pengisian form checklist hanya dapat dilakukan mulai tanggal 20 hingga akhir bulan setiap bulannya. Harap kembali lagi nanti.');
                         btn.disabled = false; btn.innerHTML = originalHtml;
                         return;
                     }
+
+                    // 3. Rule: Cek apakah SSC ini sudah mengisi di bulan yang sama (Mencegah Duplicate Data antar PIC) (Bypass untuk Admin)
+                    const { data: subs, error } = await supabaseClient
+                        .from('submissions')
+                        .select('date')
+                        .eq('ssc', currentUser.ssc);
+
+                    if (subs && subs.length > 0) {
+                        const hasSubmittedThisMonth = subs.some(sub => {
+                            const dateParts = sub.date.split(',')[0].trim().split('/'); // Format di DB: DD/MM/YYYY
+                            if (dateParts.length === 3) {
+                                return dateParts[1] === currentMonthStr && dateParts[2] === String(currentYearStr);
+                            }
+                            return false;
+                        });
+
+                        if (hasSubmittedThisMonth) {
+                            Modal.warning('Sudah Diisi', `Area Stagging ${currentUser.ssc} sudah melakukan pengisian checklist pada bulan ini. Pengisian hanya diperbolehkan 1x per area setiap bulannya.`);
+                            btn.disabled = false; btn.innerHTML = originalHtml;
+                            return;
+                        }
+                    }
                 }
 
-                // Lolos semua seleksi, tampilkan form
+                // Lolos semua seleksi, persiapkan form
+                if (isAdmin) {
+                    document.getElementById('admin-selector-container').classList.remove('hidden');
+                    document.getElementById('form-staggingName').textContent = 'Pilih Lokasi...';
+                    document.getElementById('form-ssc-prov').textContent = '-';
+                    document.getElementById('form-pic-name').textContent = 'Mode Admin';
+                    document.getElementById('form-user-initial').textContent = 'A';
+                    await loadAdminTargets();
+                } else {
+                    document.getElementById('admin-selector-container').classList.add('hidden');
+                    document.getElementById('form-staggingName').textContent = currentUser.stagging_name || '-';
+                    document.getElementById('form-ssc-prov').textContent = `${currentUser.ssc || '-'} - ${currentUser.province || '-'}`;
+                    const picName = currentUser.pic_name || currentUser.username;
+                    document.getElementById('form-pic-name').textContent = picName;
+                    document.getElementById('form-user-initial').textContent = picName.charAt(0).toUpperCase();
+                }
+
+                await generateChecklistForm();
                 document.getElementById('modal-checklist-form').classList.remove('hidden');
             } catch (err) {
                 Island.show('Terjadi kesalahan saat memeriksa akses.', 'error');
             } finally {
                 btn.disabled = false; btn.innerHTML = originalHtml;
+            }
+        }
+
+        let adminTargetUsers = [];
+        async function loadAdminTargets() {
+            const select = document.getElementById('admin-target-select');
+            select.innerHTML = '<option value="" class="text-slate-800">-- Memuat Data... --</option>';
+            const { data } = await supabaseClient.from('users').select('*').eq('role', 'user');
+            adminTargetUsers = data || [];
+            select.innerHTML = '<option value="" class="text-slate-800">-- Pilih Stagging / SSC --</option>';
+            adminTargetUsers.forEach(u => {
+                select.innerHTML += `<option value="${u.id}" class="text-slate-800">${u.stagging_name} (${u.ssc}) - PIC: ${u.pic_name}</option>`;
+            });
+        }
+
+        window.updateAdminTargetInfo = function() {
+            const select = document.getElementById('admin-target-select');
+            const targetId = select.value;
+            if (!targetId) {
+                document.getElementById('form-staggingName').textContent = 'Pilih Lokasi...';
+                document.getElementById('form-ssc-prov').textContent = '-';
+                document.getElementById('form-pic-name').textContent = 'Mode Admin';
+                document.getElementById('form-user-initial').textContent = 'A';
+                return;
+            }
+            const u = adminTargetUsers.find(x => x.id === targetId);
+            if (u) {
+                document.getElementById('form-staggingName').textContent = u.stagging_name || '-';
+                document.getElementById('form-ssc-prov').textContent = `${u.ssc || '-'} - ${u.province || '-'}`;
+                document.getElementById('form-pic-name').textContent = u.pic_name || u.username;
+                document.getElementById('form-user-initial').textContent = (u.pic_name || u.username).charAt(0).toUpperCase();
             }
         }
 
@@ -1221,6 +1274,33 @@
 
         document.getElementById('checklist-form').addEventListener('submit', async function(e) {
             e.preventDefault();
+            
+            let targetData = {
+                id: currentUser.id,
+                pic: currentUser.pic_name || currentUser.username,
+                ssc: currentUser.ssc,
+                province: currentUser.province,
+                stagging_name: currentUser.stagging_name
+            };
+
+            if (currentUser.role === 'admin') {
+                const selectVal = document.getElementById('admin-target-select').value;
+                if (!selectVal) {
+                    Island.show('Admin: Anda harus memilih target lokasi stagging!', 'error');
+                    return;
+                }
+                const u = adminTargetUsers.find(x => x.id === selectVal);
+                if (u) {
+                    targetData = {
+                        id: u.id,
+                        pic: u.pic_name || u.username,
+                        ssc: u.ssc,
+                        province: u.province,
+                        stagging_name: u.stagging_name
+                    };
+                }
+            }
+
             const btn = document.getElementById('btn-submit-form'); btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Memproses...';
 
             const formData = new FormData(e.target); const answers = {}; 
@@ -1241,7 +1321,7 @@
             const dateStr = `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`; const timeStr = `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
 
             await supabaseClient.from('submissions').insert({
-                id: Date.now().toString(), user_id: currentUser.id, pic: currentUser.pic_name || currentUser.username, ssc: currentUser.ssc, province: currentUser.province, stagging_name: currentUser.stagging_name, date: `${dateStr}, ${timeStr}`, answers: answers
+                id: Date.now().toString(), user_id: targetData.id, pic: targetData.pic, ssc: targetData.ssc, province: targetData.province, stagging_name: targetData.stagging_name, date: `${dateStr}, ${timeStr}`, answers: answers
             });
 
             Island.show('Checklist Berhasil Disimpan!', 'success', 4000); e.target.reset(); 
