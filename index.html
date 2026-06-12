@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stagging Checklist System</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -53,27 +53,28 @@
         input[type="radio"]:checked + div .check-icon { transform: scale(1); opacity: 1; }
         .check-icon { transform: scale(0.5); opacity: 0; transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1); }
 
-        /* Dashboard Table Sticky Cols */
-        .col-w-1 { min-width: 90px; width: 90px; }
-        .col-w-2 { min-width: 140px; width: 140px; }
-        .col-w-3 { min-width: 100px; width: 100px; }
-        .col-w-4 { min-width: 120px; width: 120px; }
-        .col-w-5 { min-width: 100px; width: 100px; }
+        /* Dashboard Table Sticky Cols - COMPACT MODE */
+        .col-w-1 { min-width: 70px; width: 70px; }
+        .col-w-2 { min-width: 80px; width: 80px; }
+        .col-w-3 { min-width: 110px; width: 110px; }
+        .col-w-4 { min-width: 100px; width: 100px; }
+        .col-w-5 { min-width: 75px; width: 75px; }
 
         .sticky-col-1 { position: sticky; left: 0; z-index: 20; border-right: 1px solid #f1f5f9; }
-        .sticky-col-2 { position: sticky; left: 90px; z-index: 20; border-right: 2px solid #e2e8f0; } 
+        .sticky-col-2 { position: sticky; left: 70px; z-index: 20; border-right: 2px solid #e2e8f0; } 
         
         @media (min-width: 768px) {
             .sticky-col-2 { border-right: 1px solid #f1f5f9; }
-            .sticky-col-3 { position: sticky; left: 230px; z-index: 20; border-right: 1px solid #f1f5f9; }
-            .sticky-col-4 { position: sticky; left: 330px; z-index: 20; border-right: 1px solid #f1f5f9; }
-            .sticky-col-5 { position: sticky; left: 450px; z-index: 20; border-right: 3px solid #cbd5e1; }
+            .sticky-col-3 { position: sticky; left: 150px; z-index: 20; border-right: 1px solid #f1f5f9; }
+            .sticky-col-4 { position: sticky; left: 260px; z-index: 20; border-right: 1px solid #f1f5f9; }
+            .sticky-col-5 { position: sticky; left: 360px; z-index: 20; border-right: 3px solid #cbd5e1; }
         }
 
-        .sticky-header th { position: sticky; top: 0; z-index: 30; background-color: #f8fafc; }
+        /* PERBAIKAN: Mengubah thead menjadi sticky secara utuh, bukan memecahnya per <th> */
+        .sticky-header { position: sticky; top: 0; z-index: 40; }
         .sticky-header th.sticky-col-1, .sticky-header th.sticky-col-2, 
         .sticky-header th.sticky-col-3, .sticky-header th.sticky-col-4, 
-        .sticky-header th.sticky-col-5 { z-index: 40; }
+        .sticky-header th.sticky-col-5 { z-index: 45; }
 
         tbody td.sticky-col-1, tbody td.sticky-col-2, tbody td.sticky-col-3, tbody td.sticky-col-4, tbody td.sticky-col-5 { background-color: #ffffff; }
         tr:hover td.sticky-col-1, tr:hover td.sticky-col-2, tr:hover td.sticky-col-3, tr:hover td.sticky-col-4, tr:hover td.sticky-col-5 { background-color: #f8fafc; }
@@ -143,7 +144,7 @@
 
     <div id="view-app" class="hidden min-h-screen pb-24 flex flex-col">
         <header class="glass-header sticky top-0 z-50 border-b border-slate-200">
-            <div class="w-full px-3 sm:px-6 lg:px-8 mx-auto max-w-[1600px] relative">
+            <div class="w-full px-3 sm:px-6 lg:px-8 relative">
                 <div class="flex flex-wrap items-center justify-between py-3 lg:py-0 lg:h-20 gap-y-3">
                     
                     <!-- 1. KIRI: Logo & Judul -->
@@ -196,7 +197,7 @@
             </div>
         </header>
 
-        <div id="content-admin-users" class="hidden max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 mt-6 sm:mt-8 animate-content">
+        <div id="content-admin-users" class="hidden w-full px-4 sm:px-6 lg:px-8 mt-6 sm:mt-8 animate-content">
             <div class="grid grid-cols-1 xl:grid-cols-3 gap-6 xl:gap-8">
                 
                 <div class="bg-white rounded-3xl shadow-soft border border-slate-200 p-6 sm:p-8 xl:col-span-1 h-fit">
@@ -275,7 +276,7 @@
             </div>
         </div>
 
-        <div id="content-admin-form" class="hidden max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 mt-6 sm:mt-8 animate-content">
+        <div id="content-admin-form" class="hidden w-full px-4 sm:px-6 lg:px-8 mt-6 sm:mt-8 animate-content">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 h-auto lg:h-[75vh]">
                 <div class="lg:col-span-4 bg-white rounded-3xl shadow-soft border border-slate-200 flex flex-col overflow-hidden min-h-[400px]">
                     <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-white z-10">
@@ -313,7 +314,7 @@
             </div>
         </div>
 
-        <div id="content-dashboard" class="hidden max-w-[1600px] mx-auto w-full px-2 sm:px-6 lg:px-8 mt-4 sm:mt-8 animate-content">
+        <div id="content-dashboard" class="hidden w-full px-2 sm:px-6 lg:px-8 mt-4 sm:mt-8 animate-content">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4 sm:mb-6 px-2">
                 <div class="flex items-center gap-4">
                     <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl sm:text-2xl shrink-0">
@@ -356,7 +357,7 @@
             </div>
 
             <div class="bg-white rounded-3xl shadow-soft border border-slate-200 overflow-hidden mb-8 flex flex-col">
-                <div class="overflow-auto table-container w-full max-h-[60vh] sm:max-h-[65vh]">
+                <div class="overflow-auto table-container w-full h-[75vh] md:h-[80vh]">
                     <table class="w-full text-left border-collapse min-w-max text-xs">
                         <thead class="sticky-header shadow-sm">
                             <tr class="bg-slate-100 text-slate-500 text-[9px] sm:text-[10px] uppercase tracking-wider font-bold border-b border-slate-200" id="thead-row-1"></tr>
@@ -1408,8 +1409,8 @@
             sortedAllSubs.forEach(sub => {
                 if (!sscHistory[sub.user_id]) sscHistory[sub.user_id] = [];
                 const hist = sscHistory[sub.user_id];
-                if (hist.length === 0 || hist[hist.length - 1] !== sub.ssc) {
-                    hist.push(sub.ssc);
+                if (hist.length === 0 || hist[hist.length - 1] !== sub.stagging_name) {
+                    hist.push(sub.stagging_name);
                 }
             });
 
@@ -1450,11 +1451,11 @@
             const row3 = document.getElementById('thead-row-3');
             
             let h1 = `
-                <th rowspan="3" class="p-2 sm:p-2.5 sticky-col-1 col-w-1 bg-slate-50 border-r border-b-2 border-slate-300 z-[45]">Koordinator</th>
-                <th rowspan="3" class="p-2 sm:p-2.5 sticky-col-2 col-w-2 bg-slate-50 text-slate-800 border-b-2 border-slate-300 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] md:shadow-none z-[45]">Kode SS/HUB</th>
-                <th rowspan="3" class="p-2 sm:p-2.5 sticky-col-3 col-w-3 bg-slate-50 border-r border-b-2 border-slate-300 z-[45] hidden md:table-cell text-center">Provinsi</th>
-                <th rowspan="3" class="p-2 sm:p-2.5 sticky-col-4 col-w-4 bg-slate-50 border-r border-b-2 border-slate-300 z-[45] hidden md:table-cell text-center">PIC</th>
-                <th rowspan="3" class="p-2 sm:p-2.5 sticky-col-5 col-w-5 bg-slate-50 border-r border-b-2 border-slate-300 z-[45] hidden md:table-cell text-center">Tanggal</th>`;
+                <th rowspan="3" class="p-1.5 sticky-col-1 col-w-1 bg-slate-50 border-r border-b-2 border-slate-300 z-[45] text-center">Koordinator (SSC)</th>
+                <th rowspan="3" class="p-1.5 sticky-col-2 col-w-2 bg-slate-50 border-r border-b-2 border-slate-300 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] md:shadow-none z-[45] text-center">Provinsi</th>
+                <th rowspan="3" class="p-1.5 sticky-col-3 col-w-3 bg-slate-50 border-r border-b-2 border-slate-300 z-[45] hidden md:table-cell text-center">Nama Stagging</th>
+                <th rowspan="3" class="p-1.5 sticky-col-4 col-w-4 bg-slate-50 border-r border-b-2 border-slate-300 z-[45] hidden md:table-cell text-center">Leader (PIC)</th>
+                <th rowspan="3" class="p-1.5 sticky-col-5 col-w-5 bg-slate-50 border-r border-b-2 border-slate-300 z-[45] hidden md:table-cell text-center">Tanggal</th>`;
             let h2 = ``;
             let h3 = ``;
 
@@ -1470,14 +1471,14 @@
                 
                 const scKeys = Object.keys(grouped).sort();
 
-                h1 += `<th colspan="${cat.items.length}" class="p-2 border-r border-b border-slate-300 text-center bg-slate-200 text-slate-800 font-bold">${cat.category}</th>`;
+                h1 += `<th colspan="${cat.items.length}" class="p-1.5 border-r border-b border-slate-300 text-center bg-slate-200 text-slate-800 font-bold">${cat.category}</th>`;
                 
                 scKeys.forEach(sc => {
                     const displaySc = sc === 'Tanpa Sub Kategori' ? '-' : sc;
-                    h2 += `<th colspan="${grouped[sc].length}" class="p-1.5 border-r border-b border-slate-300 text-center bg-slate-100 text-slate-700 font-semibold text-[10px] sm:text-[11px]">${displaySc}</th>`;
+                    h2 += `<th colspan="${grouped[sc].length}" class="p-1 border-r border-b border-slate-300 text-center bg-slate-100 text-slate-700 font-semibold text-[9px] sm:text-[10px]">${displaySc}</th>`;
                     
                     grouped[sc].forEach(item => {
-                        h3 += `<th class="p-2 border-r border-slate-200 text-center align-top bg-white min-w-[100px] w-[100px]"><div class="w-full mx-auto font-medium text-[9px] sm:text-[10px] whitespace-normal break-words leading-tight" title="${item.label}">${item.label}</div></th>`;
+                        h3 += `<th class="p-1 border-r border-slate-200 text-center align-top bg-white min-w-[70px] w-[70px]"><div class="w-full mx-auto font-medium text-[8px] sm:text-[9px] whitespace-normal break-words leading-tight" title="${item.label}">${item.label}</div></th>`;
                     });
                 });
             });
@@ -1505,24 +1506,24 @@
                     let prevSscHtml = '';
                     if (sscHistory && sscHistory[sub.user_id]) {
                         const hist = sscHistory[sub.user_id];
-                        const currentIdx = hist.indexOf(sub.ssc);
+                        const currentIdx = hist.indexOf(sub.stagging_name);
                         let prevSsc = null;
                         if (currentIdx > 0) prevSsc = hist[currentIdx - 1];
                         else if (currentIdx === -1 && hist.length > 0) prevSsc = hist[hist.length - 1];
                         
-                        if (prevSsc && prevSsc !== sub.ssc) {
-                            prevSscHtml = `<div class="text-[8px] text-purple-600 font-bold bg-purple-50 border border-purple-200 rounded px-1 py-0.5 mt-0.5 inline-block whitespace-nowrap" title="Lokasi sebelumnya"><i class="fa-solid fa-clock-rotate-left mr-0.5"></i>Eks-${prevSsc}</div>`;
+                        if (prevSsc && prevSsc !== sub.stagging_name) {
+                            prevSscHtml = `<div class="text-[7px] text-purple-600 font-bold bg-purple-50 border border-purple-200 rounded px-1 py-[2px] mt-0.5 inline-block whitespace-nowrap" title="Lokasi sebelumnya"><i class="fa-solid fa-clock-rotate-left mr-0.5"></i>Eks-${prevSsc}</div>`;
                         }
                     }
 
-                    const mobileInfo = `<div class="md:hidden mt-0.5 text-[9px] font-normal text-slate-500 font-mono">${sub.date} | PIC: ${sub.pic !== '-' ? sub.pic : 'Belum isi'}</div>`;
+                    const mobileInfo = `<div class="md:hidden mt-0.5 text-[8px] font-normal text-slate-500 font-mono">${sub.date} | PIC: ${sub.pic !== '-' ? sub.pic : 'Belum isi'}</div>`;
 
                     html += `<tr class="hover:bg-slate-50/80 smooth-transition ${borderCls}">
-                        <td class="p-2 sm:p-2.5 sticky-col-1 col-w-1 text-center font-bold text-slate-700 text-[10px] sm:text-[11px]">${sub.ssc || '-'}<br>${prevSscHtml}</td>
-                        <td class="p-2 sm:p-2.5 sticky-col-2 col-w-2 font-bold text-slate-900 text-[11px] sm:text-xs shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] md:shadow-none">${sub.stagging_name || '-'}${mobileInfo}</td>
-                        <td class="p-2 sm:p-2.5 sticky-col-3 col-w-3 font-medium text-slate-600 text-[10px] sm:text-[11px] hidden md:table-cell text-center">${sub.province || '-'}</td>
-                        <td class="p-2 sm:p-2.5 sticky-col-4 col-w-4 text-slate-700 font-bold text-[10px] sm:text-[11px] text-center hidden md:table-cell">${sub.pic !== '-' ? sub.pic : '<span class="text-slate-300 italic font-normal">Belum diisi</span>'}</td>
-                        <td class="p-2 sm:p-2.5 sticky-col-5 col-w-5 text-center text-slate-500 text-[9px] sm:text-[10px] font-mono hidden md:table-cell">${sub.date}</td>`;
+                        <td class="px-1.5 py-1 sticky-col-1 col-w-1 text-center font-bold text-slate-700 text-[9px] sm:text-[10px] leading-tight">${sub.ssc || '-'}</td>
+                        <td class="px-1.5 py-1 sticky-col-2 col-w-2 text-center font-medium text-slate-600 text-[9px] sm:text-[10px] shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] md:shadow-none leading-tight">${sub.province || '-'}${mobileInfo}</td>
+                        <td class="px-1.5 py-1 sticky-col-3 col-w-3 font-bold text-slate-900 text-[9px] sm:text-[10px] hidden md:table-cell leading-tight">${sub.stagging_name || '-'}</td>
+                        <td class="px-1.5 py-1 sticky-col-4 col-w-4 text-slate-700 font-bold text-[9px] sm:text-[10px] hidden md:table-cell leading-tight">${sub.pic !== '-' ? sub.pic : '<span class="text-slate-300 italic font-normal">Belum diisi</span>'}<br>${prevSscHtml}</td>
+                        <td class="px-1.5 py-1 sticky-col-5 col-w-5 text-center text-slate-500 text-[8px] sm:text-[9px] font-mono hidden md:table-cell leading-tight">${sub.date}</td>`;
 
                     filteredCats.forEach(cat => {
                         const grouped = {};
@@ -1543,8 +1544,8 @@
                                     const txtClass = isPos ? tDef.textPos : tDef.textNeg;
                                     const iconClass = isPos ? tDef.iconPos : tDef.iconNeg;
                                     
-                                    html += `<td class="p-2 border-r border-slate-100 text-center"><div class="w-6 h-6 rounded-lg shadow-sm border border-white ${bgClass} ${txtClass} flex items-center justify-center mx-auto relative" title="${ans.status}"><i class="fa-solid ${iconClass} text-[11px]"></i>${(!isPos && ans.note && item.requiresNote) ? '<span class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-amber-400 border-2 border-white rounded-full"></span>':''}</div></td>`;
-                                } else html += `<td class="p-2 border-r border-slate-100 text-center text-slate-300">-</td>`;
+                                    html += `<td class="px-1 py-1 border-r border-slate-100 text-center"><div class="w-5 h-5 rounded shadow-sm border border-white ${bgClass} ${txtClass} flex items-center justify-center mx-auto relative" title="${ans.status}"><i class="fa-solid ${iconClass} text-[10px]"></i>${(!isPos && ans.note && item.requiresNote) ? '<span class="absolute -top-1 -right-1 w-2 h-2 bg-amber-400 border border-white rounded-full"></span>':''}</div></td>`;
+                                } else html += `<td class="px-1 py-1 border-r border-slate-100 text-center text-slate-300 text-[10px]">-</td>`;
                             });
                         });
                     });
