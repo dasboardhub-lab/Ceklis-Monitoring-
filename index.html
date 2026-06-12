@@ -54,19 +54,19 @@
         .check-icon { transform: scale(0.5); opacity: 0; transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1); }
 
         .col-w-1 { min-width: 90px; width: 90px; }
-        .col-w-2 { min-width: 110px; width: 110px; }
-        .col-w-3 { min-width: 140px; width: 140px; }
-        .col-w-4 { min-width: 100px; width: 100px; }
+        .col-w-2 { min-width: 140px; width: 140px; }
+        .col-w-3 { min-width: 100px; width: 100px; }
+        .col-w-4 { min-width: 120px; width: 120px; }
         .col-w-5 { min-width: 100px; width: 100px; }
 
         .sticky-col-1 { position: sticky; left: 0; z-index: 20; border-right: 1px solid #f1f5f9; }
-        .sticky-col-3 { position: sticky; left: 90px; z-index: 20; border-right: 2px solid #e2e8f0; } 
+        .sticky-col-2 { position: sticky; left: 90px; z-index: 20; border-right: 2px solid #e2e8f0; } 
         
         @media (min-width: 768px) {
-            .sticky-col-2 { position: sticky; left: 90px; z-index: 20; border-right: 1px solid #f1f5f9; }
-            .sticky-col-3 { position: sticky; left: 200px; z-index: 20; border-right: 1px solid #f1f5f9; }
-            .sticky-col-4 { position: sticky; left: 340px; z-index: 20; border-right: 1px solid #f1f5f9; }
-            .sticky-col-5 { position: sticky; left: 440px; z-index: 20; border-right: 3px solid #cbd5e1; }
+            .sticky-col-2 { border-right: 1px solid #f1f5f9; }
+            .sticky-col-3 { position: sticky; left: 230px; z-index: 20; border-right: 1px solid #f1f5f9; }
+            .sticky-col-4 { position: sticky; left: 330px; z-index: 20; border-right: 1px solid #f1f5f9; }
+            .sticky-col-5 { position: sticky; left: 450px; z-index: 20; border-right: 3px solid #cbd5e1; }
         }
 
         .sticky-header th { position: sticky; top: 0; z-index: 30; background-color: #f8fafc; }
@@ -1330,7 +1330,7 @@
             const locationMap = new Map();
             validUsers.forEach(u => {
                 const key = `${u.ssc}|${u.province}|${u.stagging_name}`;
-                locationMap.set(key, { user_id: u.id, pic: u.pic_name || u.username || '-', ssc: u.ssc, province: u.province, stagging_name: u.stagging_name, date: '-', answers: {} });
+                locationMap.set(key, { user_id: u.id, pic: '-', ssc: u.ssc, province: u.province, stagging_name: u.stagging_name, date: '-', answers: {} });
             });
 
             safeSubmissions.forEach(sub => {
@@ -1351,30 +1351,12 @@
             let renderData = Array.from(locationMap.values());
             renderData.sort((a, b) => {
                 if (a.ssc !== b.ssc) return (a.ssc || '').localeCompare(b.ssc || '');
-                if (a.pic !== b.pic) return (a.pic || '').localeCompare(b.pic || '');
-                return (a.stagging_name || '').localeCompare(b.stagging_name || '');
+                if (a.stagging_name !== b.stagging_name) return (a.stagging_name || '').localeCompare(b.stagging_name || '');
+                return (a.province || '').localeCompare(b.province || '');
             });
 
             renderDashboardHeaders(filteredCats); renderDashboardBodyAndNotes(renderData, filteredCats, safeAllCats, sscHistory);
         }
-
-        window.toggleCatItems = function(idx) {
-            const cols = document.querySelectorAll(`.cat-group-${idx}`);
-            cols.forEach(col => {
-                const div = col.querySelector('div');
-                if(div.classList.contains('truncate')) {
-                    div.classList.remove('truncate');
-                    div.classList.add('whitespace-normal');
-                    col.classList.remove('max-w-[90px]');
-                    col.classList.add('min-w-[150px]');
-                } else {
-                    div.classList.add('truncate');
-                    div.classList.remove('whitespace-normal');
-                    col.classList.add('max-w-[90px]');
-                    col.classList.remove('min-w-[150px]');
-                }
-            });
-        };
 
         function renderDashboardHeaders(cats) {
             const row1 = document.getElementById('thead-row-1');
@@ -1383,10 +1365,10 @@
             
             let h1 = `
                 <th rowspan="3" class="p-2 sm:p-2.5 sticky-col-1 col-w-1 bg-slate-50 border-r border-b-2 border-slate-300 z-[45]">Koordinator (SSC)</th>
-                <th rowspan="3" class="p-2 sm:p-2.5 sticky-col-2 col-w-2 bg-slate-50 border-r border-b-2 border-slate-300 z-[45] hidden md:table-cell">Leader (PIC)</th>
-                <th rowspan="3" class="p-2 sm:p-2.5 sticky-col-3 col-w-3 bg-slate-50 text-slate-800 border-b-2 border-slate-300 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] md:shadow-none z-[45]">Stagging Area</th>
-                <th rowspan="3" class="p-2 sm:p-2.5 sticky-col-4 col-w-4 bg-slate-50 border-r border-b-2 border-slate-300 z-[45] hidden md:table-cell">Provinsi</th>
-                <th rowspan="3" class="p-2 sm:p-2.5 sticky-col-5 col-w-5 bg-slate-50 border-r border-b-2 border-slate-300 z-[45] hidden md:table-cell">Tanggal</th>`;
+                <th rowspan="3" class="p-2 sm:p-2.5 sticky-col-2 col-w-2 bg-slate-50 text-slate-800 border-b-2 border-slate-300 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] md:shadow-none z-[45]">Stagging Area</th>
+                <th rowspan="3" class="p-2 sm:p-2.5 sticky-col-3 col-w-3 bg-slate-50 border-r border-b-2 border-slate-300 z-[45] hidden md:table-cell text-center">Provinsi</th>
+                <th rowspan="3" class="p-2 sm:p-2.5 sticky-col-4 col-w-4 bg-slate-50 border-r border-b-2 border-slate-300 z-[45] hidden md:table-cell text-center">Leader (PIC)</th>
+                <th rowspan="3" class="p-2 sm:p-2.5 sticky-col-5 col-w-5 bg-slate-50 border-r border-b-2 border-slate-300 z-[45] hidden md:table-cell text-center">Tanggal</th>`;
             let h2 = ``;
             let h3 = ``;
 
@@ -1447,13 +1429,13 @@
                         }
                     }
 
-                    const mobileInfo = `<div class="md:hidden mt-0.5 text-[9px] font-normal text-slate-500 font-mono">${sub.date} | ${sub.pic}</div>`;
+                    const mobileInfo = `<div class="md:hidden mt-0.5 text-[9px] font-normal text-slate-500 font-mono">${sub.date} | PIC: ${sub.pic !== '-' ? sub.pic : 'Belum isi'}</div>`;
 
                     html += `<tr class="hover:bg-slate-50/80 smooth-transition ${borderCls}">
                         <td class="p-2 sm:p-2.5 sticky-col-1 col-w-1 text-center font-bold text-slate-700 text-[10px] sm:text-[11px]">${sub.ssc || '-'}<br>${prevSscHtml}</td>
-                        <td class="p-2 sm:p-2.5 sticky-col-2 col-w-2 text-center text-slate-600 text-[10px] sm:text-[11px] hidden md:table-cell font-bold">${sub.pic}</td>
-                        <td class="p-2 sm:p-2.5 sticky-col-3 col-w-3 font-bold text-slate-900 text-[11px] sm:text-xs shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] md:shadow-none">${sub.stagging_name || '-'}${mobileInfo}</td>
-                        <td class="p-2 sm:p-2.5 sticky-col-4 col-w-4 font-medium text-slate-600 text-[10px] sm:text-[11px] hidden md:table-cell text-center">${sub.province || '-'}</td>
+                        <td class="p-2 sm:p-2.5 sticky-col-2 col-w-2 font-bold text-slate-900 text-[11px] sm:text-xs shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] md:shadow-none">${sub.stagging_name || '-'}${mobileInfo}</td>
+                        <td class="p-2 sm:p-2.5 sticky-col-3 col-w-3 font-medium text-slate-600 text-[10px] sm:text-[11px] hidden md:table-cell text-center">${sub.province || '-'}</td>
+                        <td class="p-2 sm:p-2.5 sticky-col-4 col-w-4 text-slate-700 font-bold text-[10px] sm:text-[11px] text-center hidden md:table-cell">${sub.pic !== '-' ? sub.pic : '<span class="text-slate-300 italic font-normal">Belum diisi</span>'}</td>
                         <td class="p-2 sm:p-2.5 sticky-col-5 col-w-5 text-center text-slate-500 text-[9px] sm:text-[10px] font-mono hidden md:table-cell">${sub.date}</td>`;
 
                     filteredCats.forEach(cat => {
