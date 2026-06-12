@@ -478,7 +478,7 @@
                     </div>
                     <div class="pt-6 flex flex-col-reverse sm:flex-row justify-end gap-3 border-t border-slate-100 mt-4">
                         <button type="button" onclick="closeEditUserModal()" class="px-6 py-3.5 sm:py-3 rounded-2xl font-bold text-sm text-slate-500 hover:bg-slate-200 transition-colors w-full sm:w-auto">Batal</button>
-                        <button type="submit" class="px-8 py-3.5 sm:py-3 rounded-2xl font-bold text-sm text-white bg-blue-600 hover:bg-blue-700 transition-transform active:scale-95 shadow-md w-full sm:w-auto">Simpan Perubahan</button>
+                        <button type="submit" class="px-8 py-3.5 sm:py-3 rounded-2xl font-bold text-sm text-white bg-blue-600 hover:bg-blue-700 transition-all active:scale-95 shadow-md w-full sm:w-auto flex items-center justify-center gap-2"><i class="fa-solid fa-floppy-disk"></i> Simpan Perubahan</button>
                     </div>
                 </form>
             </div>
@@ -915,11 +915,30 @@
             const { data: exist } = await supabaseClient.from('users').select('id').eq('username', un).neq('id', id);
             if(exist && exist.length > 0) { Island.show('Username sudah dipakai.', 'error'); return; }
 
-            await supabaseClient.from('users').update({ username: un, pic_name: pic, role: role, stagging_name: st, province: pr, ssc: ss }).eq('id', id);
-            Island.show('Data pengguna diperbarui.', 'success');
-            closeEditUserModal();
-            await renderAdminUsers();
-            await applyFiltersAndRender();
+            // Menambahkan Indikator Loading Saat Menyimpan dan Error Handling
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Menyimpan...';
+
+            try {
+                const { error } = await supabaseClient.from('users').update({ 
+                    username: un, pic_name: pic, role: role, stagging_name: st, province: pr, ssc: ss 
+                }).eq('id', id);
+
+                if (error) throw error; // Lempar ke blok catch jika database menolak perubahan
+
+                Island.show('Data pengguna diperbarui.', 'success');
+                closeEditUserModal();
+                await renderAdminUsers();
+                await applyFiltersAndRender();
+            } catch (err) {
+                console.error("Error updating user:", err);
+                Island.show('Gagal menyimpan: ' + (err.message || 'Cek koneksi/database'), 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            }
         });
 
         async function toggleUserStatus(userId) {
@@ -1348,7 +1367,9 @@
                 // BARIS 2 & 3: Sub Kategori dan Item-Item
                 scKeys.forEach(sc => {
                     // BARIS 2: Nama Sub Kategori
-                    h2 += `<th colspan="${grouped[sc].length}" class="p-1.5 border-r border-b border-slate-300 text-center bg-slate-100 text-slate-700 font-semibold text-[10px] sm:text-[11px]">${sc}</th>`;
+                    // Perbaikan: Kosongkan header sub-kategori jika dia 'Tanpa Sub Kategori'
+                    const displaySc = sc === 'Tanpa Sub Kategori' ? '-' : sc;
+                    h2 += `<th colspan="${grouped[sc].length}" class="p-1.5 border-r border-b border-slate-300 text-center bg-slate-100 text-slate-700 font-semibold text-[10px] sm:text-[11px]">${displaySc}</th>`;
                     
                     // BARIS 3: Nama-nama Item Ceklis
                     grouped[sc].forEach(item => {
