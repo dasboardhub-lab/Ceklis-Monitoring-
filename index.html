@@ -323,7 +323,7 @@
                         <div class="w-px h-4 bg-slate-200"></div>
                         <select id="filter-year" onchange="applyFiltersAndRender()" class="px-1.5 sm:px-2 py-1.5 bg-transparent text-[11px] sm:text-xs outline-none font-bold text-slate-700 cursor-pointer">
                             <option value="all">Tahun (Semua)</option>
-                            <option value="2026">2026</option><option value="2027">2027</option><option value="2028">2028</option>
+                            <option value="2024">2024</option><option value="2025">2025</option><option value="2026">2026</option><option value="2027">2027</option>
                         </select>
                         <div class="w-px h-4 bg-slate-200 hidden sm:block"></div>
                         <select id="filter-category" onchange="applyFiltersAndRender()" class="px-1.5 sm:px-2 py-1.5 bg-transparent text-[11px] sm:text-xs outline-none font-bold text-slate-700 cursor-pointer max-w-[120px] sm:max-w-[150px] truncate">
@@ -1167,7 +1167,7 @@
             const locationMap = new Map();
             validUsers.forEach(u => {
                 const key = `${u.ssc}|${u.province}|${u.stagging_name}`;
-                locationMap.set(key, { user_id: u.id, pic: u.pic_name || '-', ssc: u.ssc, province: u.province, stagging_name: u.stagging_name, date: '-', answers: {} });
+                locationMap.set(key, { user_id: u.id, pic: u.pic_name || u.username || '-', ssc: u.ssc, province: u.province, stagging_name: u.stagging_name, date: '-', answers: {} });
             });
 
             safeSubmissions.forEach(sub => {
@@ -1195,23 +1195,41 @@
             renderDashboardHeaders(filteredCats); renderDashboardBodyAndNotes(renderData, filteredCats, safeAllCats, sscHistory);
         }
 
+        window.toggleCatItems = function(idx) {
+            const cols = document.querySelectorAll(`.cat-group-${idx}`);
+            cols.forEach(col => {
+                const div = col.querySelector('div');
+                if(div.classList.contains('truncate')) {
+                    div.classList.remove('truncate');
+                    div.classList.add('whitespace-normal');
+                    col.classList.remove('max-w-[120px]');
+                    col.classList.add('min-w-[150px]');
+                } else {
+                    div.classList.add('truncate');
+                    div.classList.remove('whitespace-normal');
+                    col.classList.add('max-w-[120px]');
+                    col.classList.remove('min-w-[150px]');
+                }
+            });
+        };
+
         function renderDashboardHeaders(cats) {
             const r1 = document.getElementById('thead-row-1'); const r2 = document.getElementById('thead-row-2');
             let h1 = `<th rowspan="2" class="p-2 sm:p-2.5 sticky-col-1 col-w-1 bg-slate-50 border-r border-slate-200">SSC</th>
                       <th rowspan="2" class="p-2 sm:p-2.5 sticky-col-2 col-w-2 bg-slate-50 border-r border-slate-200 hidden md:table-cell">Provinsi</th>
                       <th rowspan="2" class="p-2 sm:p-2.5 sticky-col-3 col-w-3 bg-slate-50 text-slate-800 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] md:shadow-none">Nama Stagging</th>
-                      <th rowspan="2" class="p-2 sm:p-2.5 sticky-col-4 col-w-4 bg-slate-50 hidden md:table-cell">PIC</th>
+                      <th rowspan="2" class="p-2 sm:p-2.5 sticky-col-4 col-w-4 bg-slate-50 hidden md:table-cell">Nama PIC</th>
                       <th rowspan="2" class="p-2 sm:p-2.5 sticky-col-5 col-w-5 bg-slate-50 border-r border-slate-300 hidden md:table-cell">Tanggal</th>`;
             let h2 = ``;
 
-            cats.forEach(cat => {
+            cats.forEach((cat, idx) => {
                 if(!cat.items || cat.items.length === 0) return;
-                h1 += `<th colspan="${cat.items.length}" class="p-2 border-r border-slate-200 text-center bg-slate-100/50">${cat.category}</th>`;
+                h1 += `<th colspan="${cat.items.length}" class="p-2 border-r border-slate-200 text-center bg-slate-100/50 cursor-pointer hover:bg-slate-200 transition-colors" onclick="toggleCatItems(${idx})" title="Klik untuk menampilkan teks penuh">${cat.category}</th>`;
                 
                 const sortedItems = [...cat.items].sort((a,b) => (a.subCategory||'').localeCompare(b.subCategory||''));
                 sortedItems.forEach(item => {
                     const subLabel = item.subCategory ? `[${item.subCategory}] ` : '';
-                    h2 += `<th class="p-2 border-r border-slate-100 text-center bg-white min-w-[90px] max-w-[120px]"><div class="truncate w-full mx-auto font-medium text-[9px] sm:text-[10px]" title="${subLabel}${item.label}">${item.label}</div></th>`;
+                    h2 += `<th class="p-2 border-r border-slate-100 text-center bg-white min-w-[90px] max-w-[120px] transition-all duration-300 cat-group-${idx}"><div class="truncate w-full mx-auto font-medium text-[9px] sm:text-[10px] transition-all duration-300" title="${subLabel}${item.label}">${item.label}</div></th>`;
                 });
             });
             r1.innerHTML = h1; r2.innerHTML = h2;
