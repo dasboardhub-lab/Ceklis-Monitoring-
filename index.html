@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Stagging Checklist System</title>
+    <title>Checklist System</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -165,21 +165,21 @@
                                 <i class="fa-solid fa-key"></i>
                             </button>
                             <button onclick="logout()" class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-slate-50 text-rose-600 hover:bg-rose-50 transition-colors flex items-center justify-center border border-slate-200 hover:border-rose-200 shadow-sm" title="Keluar">
-                                <i class="fa-solid fa-arrow-right-from-bracket"></i>
-                            </button>
-                        </div>
+                            <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                        </button>
                     </div>
                 </div>
 
-                <div class="flex items-center gap-2 sm:gap-3 overflow-x-auto custom-scroll pb-3 pt-1">
-                    <button onclick="switchTab('dashboard')" id="tab-dashboard" class="px-5 py-2.5 rounded-xl text-sm font-bold transition-all whitespace-nowrap bg-slate-100 text-slate-500 hover:bg-slate-200 shrink-0">
-                        <i class="fa-solid fa-chart-pie mr-1.5 opacity-70"></i> Dashboard Rekap
+                <!-- Bagian Menu Tab yang Diperbarui -->
+                <div class="flex items-stretch gap-2 sm:gap-3 pb-3 pt-1 w-full">
+                    <button onclick="switchTab('dashboard')" id="tab-dashboard" class="flex-1 sm:flex-none px-2 sm:px-5 py-2 sm:py-2.5 rounded-xl text-[10px] sm:text-sm font-bold transition-all bg-slate-100 text-slate-500 hover:bg-slate-200 text-center leading-tight">
+                        <i class="fa-solid fa-chart-pie sm:mr-1.5 block sm:inline-block mb-1 sm:mb-0 opacity-70 text-sm sm:text-base"></i><span class="block sm:inline">Rekap</span>
                     </button>
-                    <button onclick="switchTab('admin-users')" id="tab-admin-users" class="hidden px-5 py-2.5 rounded-xl text-sm font-bold transition-all whitespace-nowrap bg-slate-100 text-slate-500 hover:bg-slate-200 shrink-0">
-                        <i class="fa-solid fa-users-gear mr-1.5 opacity-70"></i> Akses & Pengguna
+                    <button onclick="switchTab('admin-users')" id="tab-admin-users" class="hidden flex-1 sm:flex-none px-2 sm:px-5 py-2 sm:py-2.5 rounded-xl text-[10px] sm:text-sm font-bold transition-all bg-slate-100 text-slate-500 hover:bg-slate-200 text-center leading-tight">
+                        <i class="fa-solid fa-users-gear sm:mr-1.5 block sm:inline-block mb-1 sm:mb-0 opacity-70 text-sm sm:text-base"></i><span class="block sm:inline">Pengguna</span>
                     </button>
-                    <button onclick="switchTab('admin-form')" id="tab-admin-form" class="hidden px-5 py-2.5 rounded-xl text-sm font-bold transition-all whitespace-nowrap bg-slate-100 text-slate-500 hover:bg-slate-200 shrink-0">
-                        <i class="fa-solid fa-layer-group mr-1.5 opacity-70"></i> Format Form (Kategori)
+                    <button onclick="switchTab('admin-form')" id="tab-admin-form" class="hidden flex-1 sm:flex-none px-2 sm:px-5 py-2 sm:py-2.5 rounded-xl text-[10px] sm:text-sm font-bold transition-all bg-slate-100 text-slate-500 hover:bg-slate-200 text-center leading-tight">
+                        <i class="fa-solid fa-layer-group sm:mr-1.5 block sm:inline-block mb-1 sm:mb-0 opacity-70 text-sm sm:text-base"></i><span class="block sm:inline">Format</span>
                     </button>
                 </div>
             </div>
@@ -213,22 +213,22 @@
                             </div>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">Nama Leader (PIC)</label>
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">Nama Lengkap</label>
                             <input type="text" id="add-pic" required placeholder="Cth: Budi Santoso" class="input-modern w-full px-4 py-3.5 rounded-2xl font-medium" />
                         </div>
                         <div id="fields-lokasi" class="space-y-5 pt-6 border-t border-slate-100 mt-2">
                             <div>
-                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">Stagging Area</label>
-                                <input type="text" id="add-st" placeholder="Cth: Store Antang" class="input-modern w-full px-4 py-3.5 rounded-2xl font-medium" />
+                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">Kode SS/HUB</label>
+                                <input type="text" id="add-st" placeholder="Cth: GNBH0" class="input-modern w-full px-4 py-3.5 rounded-2xl font-medium" />
                             </div>
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                                 <div>
-                                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">Koordinator (SSC)</label>
-                                    <input type="text" id="add-ss" placeholder="Cth: SSC MKS" class="input-modern w-full px-4 py-3.5 rounded-2xl font-medium" />
+                                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">Koordinator</label>
+                                    <input type="text" id="add-ss" placeholder="Cth: MUNAWIR" class="input-modern w-full px-4 py-3.5 rounded-2xl font-medium" />
                                 </div>
                                 <div>
                                     <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">Provinsi</label>
-                                    <input type="text" id="add-pr" placeholder="Cth: Sulsel" class="input-modern w-full px-4 py-3.5 rounded-2xl font-medium" />
+                                    <input type="text" id="add-pr" placeholder="Cth: Sulawesi Selatan" class="input-modern w-full px-4 py-3.5 rounded-2xl font-medium" />
                                 </div>
                             </div>
                         </div>
@@ -395,7 +395,7 @@
                         <div class="flex items-center gap-4 bg-white/5 p-3 sm:p-4 rounded-2xl border border-white/10 backdrop-blur-sm">
                              <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-tr from-rose-500 to-orange-400 flex items-center justify-center text-white font-bold text-lg shadow-md" id="form-user-initial">U</div>
                              <div>
-                                 <p class="text-slate-400 text-[9px] sm:text-[10px] uppercase font-bold tracking-widest mb-0.5">Leader (PIC)</p>
+                                 <p class="text-slate-400 text-[9px] sm:text-[10px] uppercase font-bold tracking-widest mb-0.5">PIC</p>
                                  <p class="text-white text-sm sm:text-base font-bold" id="form-pic-name">-</p>
                              </div>
                         </div>
@@ -447,7 +447,7 @@
                         <input type="text" id="edit-un" required class="input-modern w-full px-4 py-3.5 rounded-2xl font-medium">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">Nama Leader (PIC)</label>
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">PIC</label>
                         <input type="text" id="edit-pic" required class="input-modern w-full px-4 py-3.5 rounded-2xl font-medium">
                     </div>
                     <div>
@@ -460,12 +460,12 @@
                     </div>
                     <div id="edit-fields-lokasi" class="space-y-5 pt-6 border-t border-slate-100 mt-2">
                         <div>
-                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">Stagging Area</label>
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">Kode SS/HUB</label>
                             <input type="text" id="edit-st" class="input-modern w-full px-4 py-3.5 rounded-2xl font-medium">
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                             <div>
-                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">Koordinator (SSC)</label>
+                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">Koordinator</label>
                                 <input type="text" id="edit-ss" class="input-modern w-full px-4 py-3.5 rounded-2xl font-medium">
                             </div>
                             <div>
@@ -714,7 +714,9 @@
             
             await populateCategoryFilter(); 
             await applyFiltersAndRender();
-            Island.show(`Selamat datang, ${currentUser.username}!`, 'success');
+            
+            const displayName = currentUser.pic_name || currentUser.username;
+            Island.show(`Selamat datang, ${displayName}!`, 'success');
         }
 
         function logout() {
@@ -1364,10 +1366,10 @@
             const row3 = document.getElementById('thead-row-3');
             
             let h1 = `
-                <th rowspan="3" class="p-2 sm:p-2.5 sticky-col-1 col-w-1 bg-slate-50 border-r border-b-2 border-slate-300 z-[45]">Koordinator (SSC)</th>
-                <th rowspan="3" class="p-2 sm:p-2.5 sticky-col-2 col-w-2 bg-slate-50 text-slate-800 border-b-2 border-slate-300 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] md:shadow-none z-[45]">Stagging Area</th>
+                <th rowspan="3" class="p-2 sm:p-2.5 sticky-col-1 col-w-1 bg-slate-50 border-r border-b-2 border-slate-300 z-[45]">Koordinator</th>
+                <th rowspan="3" class="p-2 sm:p-2.5 sticky-col-2 col-w-2 bg-slate-50 text-slate-800 border-b-2 border-slate-300 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] md:shadow-none z-[45]">Kode SS/HUB</th>
                 <th rowspan="3" class="p-2 sm:p-2.5 sticky-col-3 col-w-3 bg-slate-50 border-r border-b-2 border-slate-300 z-[45] hidden md:table-cell text-center">Provinsi</th>
-                <th rowspan="3" class="p-2 sm:p-2.5 sticky-col-4 col-w-4 bg-slate-50 border-r border-b-2 border-slate-300 z-[45] hidden md:table-cell text-center">Leader (PIC)</th>
+                <th rowspan="3" class="p-2 sm:p-2.5 sticky-col-4 col-w-4 bg-slate-50 border-r border-b-2 border-slate-300 z-[45] hidden md:table-cell text-center">PIC</th>
                 <th rowspan="3" class="p-2 sm:p-2.5 sticky-col-5 col-w-5 bg-slate-50 border-r border-b-2 border-slate-300 z-[45] hidden md:table-cell text-center">Tanggal</th>`;
             let h2 = ``;
             let h3 = ``;
@@ -1384,14 +1386,14 @@
                 
                 const scKeys = Object.keys(grouped).sort();
 
-                h1 += `<th colspan="${cat.items.length}" class="p-2 border-r border-b border-slate-300 text-center bg-slate-200 text-slate-800 font-bold" onclick="toggleCatItems(${idx})" title="Klik untuk melebarkan kolom" style="cursor: pointer;">${cat.category}</th>`;
+                h1 += `<th colspan="${cat.items.length}" class="p-2 border-r border-b border-slate-300 text-center bg-slate-200 text-slate-800 font-bold">${cat.category}</th>`;
                 
                 scKeys.forEach(sc => {
                     const displaySc = sc === 'Tanpa Sub Kategori' ? '-' : sc;
                     h2 += `<th colspan="${grouped[sc].length}" class="p-1.5 border-r border-b border-slate-300 text-center bg-slate-100 text-slate-700 font-semibold text-[10px] sm:text-[11px]">${displaySc}</th>`;
                     
                     grouped[sc].forEach(item => {
-                        h3 += `<th class="p-2 border-r border-slate-200 text-center bg-white min-w-[90px] max-w-[90px] transition-all duration-300 cat-group-${idx}"><div class="truncate w-full mx-auto font-medium text-[9px] sm:text-[10px] transition-all duration-300" title="${item.label}">${item.label}</div></th>`;
+                        h3 += `<th class="p-2 border-r border-slate-200 text-center align-top bg-white min-w-[100px] w-[100px]"><div class="w-full mx-auto font-medium text-[9px] sm:text-[10px] whitespace-normal break-words leading-tight" title="${item.label}">${item.label}</div></th>`;
                     });
                 });
             });
