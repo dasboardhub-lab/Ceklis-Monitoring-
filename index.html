@@ -50,28 +50,28 @@
             background-color: #ffffff; border-color: #f43f5e; color: #f43f5e;
             box-shadow: 0 2px 6px rgba(244, 63, 94, 0.15);
         }
-        input[type="radio"]:checked + div .check-icon { transform: scale(1); opacity: 1; }
-        .check-icon { transform: scale(0.5); opacity: 0; transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        /* Dimensi Kolom Sticky Kiri */
+        .col-w-1 { min-width: 100px; width: 100px; max-width: 100px; } /* Koordinator */
+        .col-w-2 { min-width: 110px; width: 110px; max-width: 110px; } /* Provinsi */
+        .col-w-3 { min-width: 140px; width: 140px; max-width: 140px; } /* Stagging Area */
+        .col-w-4 { min-width: 120px; width: 120px; max-width: 120px; } /* PIC */
+        .col-w-5 { min-width: 100px; width: 100px; max-width: 100px; } /* Tanggal */
 
-        /* Dashboard Table Sticky Cols - COMPACT MODE */
-        .col-w-1 { min-width: 70px; width: 70px; }
-        .col-w-2 { min-width: 80px; width: 80px; }
-        .col-w-3 { min-width: 110px; width: 110px; }
-        .col-w-4 { min-width: 100px; width: 100px; }
-        .col-w-5 { min-width: 75px; width: 75px; }
-
-        .sticky-col-1 { position: sticky; left: 0; z-index: 20; border-right: 1px solid #f1f5f9; }
-        .sticky-col-2 { position: sticky; left: 70px; z-index: 20; border-right: 2px solid #e2e8f0; } 
+        /* Posisi Sticky Kiri (Mode Mobile: SSC & Provinsi disembunyikan) */
+        .sticky-col-3 { position: sticky; left: 0; z-index: 20; border-right: 1px solid #e2e8f0; }
+        .sticky-col-4 { position: sticky; left: 140px; z-index: 20; border-right: 1px solid #e2e8f0; }
+        .sticky-col-5 { position: sticky; left: 260px; z-index: 20; border-right: 4px solid #94a3b8; }
         
+        /* Posisi Sticky Kiri (Mode PC: Semua Kolom Tampil) */
         @media (min-width: 768px) {
-            .sticky-col-2 { border-right: 1px solid #f1f5f9; }
-            .sticky-col-3 { position: sticky; left: 150px; z-index: 20; border-right: 1px solid #f1f5f9; }
-            .sticky-col-4 { position: sticky; left: 260px; z-index: 20; border-right: 1px solid #f1f5f9; }
-            .sticky-col-5 { position: sticky; left: 360px; z-index: 20; border-right: 3px solid #cbd5e1; }
+            .sticky-col-1 { position: sticky; left: 0; z-index: 20; border-right: 1px solid #e2e8f0; }
+            .sticky-col-2 { position: sticky; left: 100px; z-index: 20; border-right: 1px solid #e2e8f0; }
+            .sticky-col-3 { position: sticky; left: 210px; z-index: 20; border-right: 1px solid #e2e8f0; }
+            .sticky-col-4 { position: sticky; left: 350px; z-index: 20; border-right: 1px solid #e2e8f0; }
+            .sticky-col-5 { position: sticky; left: 470px; z-index: 20; border-right: 4px solid #94a3b8; }
         }
-
-        /* PERBAIKAN: Mengubah thead menjadi sticky secara utuh, bukan memecahnya per <th> */
-        .sticky-header { position: sticky; top: 0; z-index: 40; }
+        
+        /* Prioritas Z-Index untuk Header */
         .sticky-header th.sticky-col-1, .sticky-header th.sticky-col-2, 
         .sticky-header th.sticky-col-3, .sticky-header th.sticky-col-4, 
         .sticky-header th.sticky-col-5 { z-index: 45; }
@@ -230,12 +230,12 @@
                         </div>
                         <div id="fields-lokasi" class="space-y-5 pt-6 border-t border-slate-100 mt-2">
                             <div>
-                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">Kode Stagging/HUB</label>
+                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">Stagging Area</label>
                                 <input type="text" id="add-st" placeholder="Cth: Store Antang" class="input-modern w-full px-4 py-3.5 rounded-2xl font-medium" />
                             </div>
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                                 <div>
-                                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">Koordinator</label>
+                                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">Koordinator (SSC)</label>
                                     <input type="text" id="add-ss" placeholder="Cth: SSC MKS" class="input-modern w-full px-4 py-3.5 rounded-2xl font-medium" />
                                 </div>
                                 <div>
@@ -478,7 +478,7 @@
                     </div>
                     <div id="edit-fields-lokasi" class="space-y-5 pt-6 border-t border-slate-100 mt-2">
                         <div>
-                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">Kode Stagging/HUB</label>
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">Stagging Area</label>
                             <input type="text" id="edit-st" class="input-modern w-full px-4 py-3.5 rounded-2xl font-medium">
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -593,9 +593,9 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">Koordinator</label>
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">Koordinator (SSC)</label>
                         <select id="hapus-ssc" class="input-modern w-full px-4 py-3.5 rounded-2xl font-bold text-slate-700 cursor-pointer">
-                            <option value="all">Semua Koordinator</option>
+                            <option value="all">Semua Koordinator / SSC</option>
                         </select>
                     </div>
                     <div class="pt-4 flex flex-col-reverse sm:flex-row justify-end gap-3 mt-4">
@@ -1451,11 +1451,11 @@
             const row3 = document.getElementById('thead-row-3');
             
             let h1 = `
-                <th rowspan="3" class="p-1.5 sticky-col-1 col-w-1 bg-slate-50 border-r border-b-2 border-slate-300 z-[45] text-center">Koordinator</th>
-                <th rowspan="3" class="p-1.5 sticky-col-2 col-w-2 bg-slate-50 border-r border-b-2 border-slate-300 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] md:shadow-none z-[45] text-center">Provinsi</th>
-                <th rowspan="3" class="p-1.5 sticky-col-3 col-w-3 bg-slate-50 border-r border-b-2 border-slate-300 z-[45] hidden md:table-cell text-center">Kode Stagging</th>
-                <th rowspan="3" class="p-1.5 sticky-col-4 col-w-4 bg-slate-50 border-r border-b-2 border-slate-300 z-[45] hidden md:table-cell text-center">Leader (PIC)</th>
-                <th rowspan="3" class="p-1.5 sticky-col-5 col-w-5 bg-slate-50 border-r border-b-2 border-slate-300 z-[45] hidden md:table-cell text-center">Tanggal</th>`;
+                <th rowspan="3" class="p-1.5 sticky-col-1 col-w-1 bg-slate-50 border-r border-b-2 border-slate-300 z-[45] text-center hidden md:table-cell">Koordinator</th>
+                <th rowspan="3" class="p-1.5 sticky-col-2 col-w-2 bg-slate-50 border-r border-b-2 border-slate-300 z-[45] text-center hidden md:table-cell">Provinsi</th>
+                <th rowspan="3" class="p-1.5 sticky-col-3 col-w-3 bg-slate-50 border-r border-b-2 border-slate-300 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] md:shadow-none z-[45] text-center">Stagging Area</th>
+                <th rowspan="3" class="p-1.5 sticky-col-4 col-w-4 bg-slate-50 border-r border-b-2 border-slate-300 z-[45] text-center">Leader (PIC)</th>
+                <th rowspan="3" class="p-1.5 sticky-col-5 col-w-5 bg-slate-50 border-r border-b-2 border-slate-300 z-[45] text-center">Tanggal</th>`;
             let h2 = ``;
             let h3 = ``;
 
@@ -1516,14 +1516,12 @@
                         }
                     }
 
-                    const mobileInfo = `<div class="md:hidden mt-0.5 text-[8px] font-normal text-slate-500 font-mono">${sub.date} | PIC: ${sub.pic !== '-' ? sub.pic : 'Belum isi'}</div>`;
-
                     html += `<tr class="hover:bg-slate-50/80 smooth-transition ${borderCls}">
-                        <td class="px-1.5 py-1 sticky-col-1 col-w-1 text-center font-bold text-slate-700 text-[9px] sm:text-[10px] leading-tight">${sub.ssc || '-'}</td>
-                        <td class="px-1.5 py-1 sticky-col-2 col-w-2 text-center font-medium text-slate-600 text-[9px] sm:text-[10px] shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] md:shadow-none leading-tight">${sub.province || '-'}${mobileInfo}</td>
-                        <td class="px-1.5 py-1 sticky-col-3 col-w-3 font-bold text-slate-900 text-[9px] sm:text-[10px] hidden md:table-cell leading-tight">${sub.stagging_name || '-'}</td>
-                        <td class="px-1.5 py-1 sticky-col-4 col-w-4 text-slate-700 font-bold text-[9px] sm:text-[10px] hidden md:table-cell leading-tight">${sub.pic !== '-' ? sub.pic : '<span class="text-slate-300 italic font-normal">Belum diisi</span>'}<br>${prevSscHtml}</td>
-                        <td class="px-1.5 py-1 sticky-col-5 col-w-5 text-center text-slate-500 text-[8px] sm:text-[9px] font-mono hidden md:table-cell leading-tight">${sub.date}</td>`;
+                        <td class="px-1.5 py-2 sticky-col-1 col-w-1 text-center font-bold text-slate-700 text-[9px] sm:text-[10px] leading-tight hidden md:table-cell">${sub.ssc || '-'}</td>
+                        <td class="px-1.5 py-2 sticky-col-2 col-w-2 text-center font-medium text-slate-600 text-[9px] sm:text-[10px] leading-tight hidden md:table-cell">${sub.province || '-'}</td>
+                        <td class="px-1.5 py-2 sticky-col-3 col-w-3 font-bold text-slate-900 text-[9px] sm:text-[10px] shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] md:shadow-none leading-tight">${sub.stagging_name || '-'}</td>
+                        <td class="px-1.5 py-2 sticky-col-4 col-w-4 text-slate-700 font-bold text-[9px] sm:text-[10px] leading-tight">${sub.pic !== '-' ? sub.pic : '<span class="text-slate-300 italic font-normal">Belum diisi</span>'}<br>${prevSscHtml}</td>
+                        <td class="px-1.5 py-2 sticky-col-5 col-w-5 text-center text-slate-500 text-[8px] sm:text-[9px] font-mono leading-tight">${sub.date}</td>`;
 
                     filteredCats.forEach(cat => {
                         const grouped = {};
