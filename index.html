@@ -712,7 +712,7 @@
     <script>
         // Konfigurasi Ikon diupdate untuk Material Symbols Rounded
         const itemTypeConfig = {
-            'ok_nonok': { pos: 'OK', neg: 'Non OK', posL: 'OK', negL: 'Non OK', iconPos: 'check', iconNeg: 'close', bgPos: 'bg-emerald-50', textPos: 'textemerald-700', bgNeg: 'bg-rose-50', textNeg: 'text-rose-700' },
+            'ok_nonok': { pos: 'OK', neg: 'Non OK', posL: 'OK', negL: 'Non OK', iconPos: 'check', iconNeg: 'close', bgPos: 'bg-emerald-50', textPos: 'text-emerald-700', bgNeg: 'bg-rose-50', textNeg: 'text-rose-700' },
             'ada_tidak': { pos: 'Ada', neg: 'Tidak Ada', posL: 'Ada', negL: 'Tidak Ada', iconPos: 'inventory_2', iconNeg: 'block', bgPos: 'bg-indigo-50', textPos: 'text-indigo-700', bgNeg: 'bg-slate-100', textNeg: 'text-slate-500' },
             'normal_rusak': { pos: 'Normal', neg: 'Rusak', posL: 'Normal', negL: 'Rusak', iconPos: 'thumb_up', iconNeg: 'build', bgPos: 'bg-teal-50', textPos: 'text-teal-700', bgNeg: 'bg-amber-50', textNeg: 'text-amber-700' }
         };
@@ -1011,10 +1011,12 @@
 
                 if (!isAdmin) {
                     if (currentDay < 20) { Modal.warning('Akses Dikunci', 'Jendela pelaporan hanya dibuka mulai tanggal 20 hingga akhir bulan.'); btn.disabled = false; btn.innerHTML = originalHtml; return; }
-                    const { data: subs } = await supabaseClient.from('submissions').select('date').eq('ssc', currentUser.ssc);
+                    
+                    // PERBAIKAN VALIDASI: Cek berdasarkan Staging Area (Bukan berdasarkan Koordinator atau Akun PIC)
+                    const { data: subs } = await supabaseClient.from('submissions').select('date').eq('stagging_name', currentUser.stagging_name);
                     if (subs && subs.length > 0) {
                         const hasSubmittedThisMonth = subs.some(sub => { const dateParts = sub.date.split(',')[0].trim().split('/'); return dateParts.length === 3 && dateParts[1] === currentMonthStr && dateParts[2] === String(currentYearStr); });
-                        if (hasSubmittedThisMonth) { Modal.warning('Laporan Selesai', `Area ${currentUser.ssc} sudah mengirimkan laporan bulan ini.`); btn.disabled = false; btn.innerHTML = originalHtml; return; }
+                        if (hasSubmittedThisMonth) { Modal.warning('Laporan Selesai', `Area ${currentUser.stagging_name} sudah mengirimkan laporan bulan ini.`); btn.disabled = false; btn.innerHTML = originalHtml; return; }
                     }
                 }
 
