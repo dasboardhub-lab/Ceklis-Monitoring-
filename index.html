@@ -42,21 +42,23 @@
 
         .smooth-transition { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
 
+        /* Styling Segmented Control Radio Buttons */
         input[type="radio"]:checked + div.radio-card-pos {
-            background-color: #ecfdf5; border-color: #10b981; color: #047857;
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
+            background-color: #ffffff; border-color: #10b981; color: #10b981;
+            box-shadow: 0 2px 6px rgba(16, 185, 129, 0.15);
         }
         input[type="radio"]:checked + div.radio-card-neg {
-            background-color: #fff1f2; border-color: #f43f5e; color: #be123c;
-            box-shadow: 0 4px 12px rgba(244, 63, 94, 0.15);
+            background-color: #ffffff; border-color: #f43f5e; color: #f43f5e;
+            box-shadow: 0 2px 6px rgba(244, 63, 94, 0.15);
         }
         input[type="radio"]:checked + div .check-icon { transform: scale(1); opacity: 1; }
         .check-icon { transform: scale(0.5); opacity: 0; transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1); }
 
+        /* Dashboard Table Sticky Cols */
         .col-w-1 { min-width: 70px; width: 70px; }
         .col-w-2 { min-width: 100px; width: 100px; }
         .col-w-3 { min-width: 140px; width: 140px; }
-        .col-w-4 { min-width: 90px; width: 90px; }
+        .col-w-4 { min-width: 110px; width: 110px; }
         .col-w-5 { min-width: 100px; width: 100px; }
 
         .sticky-col-1 { position: sticky; left: 0; z-index: 20; border-right: 1px solid #f1f5f9; }
@@ -66,7 +68,7 @@
             .sticky-col-2 { position: sticky; left: 70px; z-index: 20; border-right: 1px solid #f1f5f9; }
             .sticky-col-3 { position: sticky; left: 170px; z-index: 20; border-right: 1px solid #f1f5f9; }
             .sticky-col-4 { position: sticky; left: 310px; z-index: 20; border-right: 1px solid #f1f5f9; }
-            .sticky-col-5 { position: sticky; left: 400px; z-index: 20; border-right: 3px solid #cbd5e1; }
+            .sticky-col-5 { position: sticky; left: 420px; z-index: 20; border-right: 3px solid #cbd5e1; }
         }
 
         .sticky-header th { position: sticky; top: 0; z-index: 30; background-color: #f8fafc; }
@@ -77,7 +79,7 @@
         tbody td.sticky-col-1, tbody td.sticky-col-2, tbody td.sticky-col-3, tbody td.sticky-col-4, tbody td.sticky-col-5 { background-color: #ffffff; }
         tr:hover td.sticky-col-1, tr:hover td.sticky-col-2, tr:hover td.sticky-col-3, tr:hover td.sticky-col-4, tr:hover td.sticky-col-5 { background-color: #f8fafc; }
 
-        /* Animasi Baru yang Elegan dan Profesional */
+        /* Animations */
         @keyframes toastEnter { 0% { transform: translate(-50%, -20px); opacity: 0; } 100% { transform: translate(-50%, 0); opacity: 1; } }
         @keyframes toastLeave { 0% { transform: translate(-50%, 0); opacity: 1; } 100% { transform: translate(-50%, -20px); opacity: 0; } }
         .island-active { animation: toastEnter 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
@@ -115,7 +117,7 @@
                     <i class="fa-solid fa-clipboard-check text-white text-4xl -rotate-3"></i>
                 </div>
                 <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Stagging Checklist</h1>
-                <p class="text-slate-500 mt-2 text-sm font-medium">Sistem Monitoring & Evaluasi Terpadu</p>
+                <p class="text-slate-500 mt-2 text-sm font-medium">Sistem Monitoring Terpadu</p>
             </div>
             
             <form id="login-form" class="space-y-5">
@@ -143,6 +145,13 @@
 
     <div id="view-app" class="hidden min-h-screen pb-24 flex flex-col">
         <header class="glass-header sticky top-0 z-50 border-b border-slate-200">
+<<<<<<< HEAD
+            <div class="w-full px-4 sm:px-6 lg:px-8 mx-auto max-w-[1600px]">
+                <div class="flex items-center justify-between h-16 lg:h-20">
+                    <div class="flex items-center gap-3 shrink-0">
+                        <div class="w-10 h-10 lg:w-12 lg:h-12 bg-gradient-to-br from-rose-500 to-rose-600 rounded-xl flex items-center justify-center shadow-md shadow-rose-200 text-white shrink-0">
+                            <i class="fa-solid fa-clipboard-check text-lg lg:text-xl"></i>
+=======
             <div class="w-full px-4 sm:px-6 lg:px-8 mx-auto max-w-[1600px]">
                 <!-- Baris Atas: Logo & User Info -->
                 <div class="flex items-center justify-between h-16 lg:h-20">
@@ -150,6 +159,7 @@
                     <div class="flex items-center gap-3 shrink-0">
                         <div class="w-10 h-10 lg:w-12 lg:h-12 bg-gradient-to-br from-rose-500 to-rose-600 rounded-xl flex items-center justify-center shadow-md shadow-rose-200 text-white shrink-0">
                             <i class="fa-solid fa-clipboard-check text-lg lg:text-xl"></i>
+>>>>>>> 718b682af0877dabe3d170cac85a5c7e818f8f27
                         </div>
                         <div class="flex flex-col justify-center">
                             <h1 class="font-bold text-slate-900 text-base lg:text-lg leading-tight">Checklist System</h1>
@@ -157,11 +167,18 @@
                         </div>
                     </div>
                     
+<<<<<<< HEAD
+                    <div class="flex items-center gap-3 sm:gap-5">
+                        <div class="text-right hidden sm:flex sm:flex-col sm:justify-center">
+                            <p class="text-sm lg:text-base font-bold text-slate-800 leading-tight" id="display-username">User</p>
+                            <p class="text-[11px] text-emerald-600 font-medium flex items-center justify-end gap-1.5 mt-0.5"><span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_5px_rgba(16,185,129,0.6)]"></span> Online</p>
+=======
                     <!-- Kanan: Profil & Tombol -->
                     <div class="flex items-center gap-3 sm:gap-5">
                         <div class="text-right hidden sm:flex sm:flex-col sm:justify-center">
                             <p class="text-sm lg:text-base font-bold text-slate-800 leading-tight" id="display-username">User</p>
                             <p class="text-[11px] text-emerald-600 font-medium flex items-center justify-end gap-1.5 mt-0.5"><span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_5px_rgba(16,185,129,0.6)]"></span> Online</p>
+>>>>>>> 718b682af0877dabe3d170cac85a5c7e818f8f27
                         </div>
                         <div class="h-8 w-px bg-slate-200 hidden sm:block"></div>
                         <div class="flex items-center gap-2">
@@ -175,10 +192,16 @@
                     </div>
                 </div>
 
+<<<<<<< HEAD
+                <div class="flex items-center gap-2 sm:gap-3 overflow-x-auto custom-scroll pb-3 pt-1">
+                    <button onclick="switchTab('dashboard')" id="tab-dashboard" class="px-5 py-2.5 rounded-xl text-sm font-bold transition-all whitespace-nowrap bg-slate-100 text-slate-500 hover:bg-slate-200 shrink-0">
+                        <i class="fa-solid fa-chart-pie mr-1.5 opacity-70"></i> Dashboard Rekap
+=======
                 <!-- Baris Bawah: Tabs Navigasi -->
                 <div class="flex items-center gap-2 sm:gap-3 overflow-x-auto custom-scroll pb-3 pt-1">
                     <button onclick="switchTab('dashboard')" id="tab-dashboard" class="px-5 py-2.5 rounded-xl text-sm font-bold transition-all whitespace-nowrap bg-slate-100 text-slate-500 hover:bg-slate-200 shrink-0">
                         <i class="fa-solid fa-chart-pie mr-1.5 opacity-70"></i> Dashboard Rekap
+>>>>>>> 718b682af0877dabe3d170cac85a5c7e818f8f27
                     </button>
                     <button onclick="switchTab('admin-users')" id="tab-admin-users" class="hidden px-5 py-2.5 rounded-xl text-sm font-bold transition-all whitespace-nowrap bg-slate-100 text-slate-500 hover:bg-slate-200 shrink-0">
                         <i class="fa-solid fa-users-gear mr-1.5 opacity-70"></i> Akses & Pengguna
@@ -190,7 +213,18 @@
             </div>
         </header>
 
+<<<<<<< HEAD
         <div id="content-admin-users" class="hidden max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 mt-6 sm:mt-8 animate-content">
+            <div class="grid grid-cols-1 xl:grid-cols-3 gap-6 xl:gap-8">
+                
+                <div class="bg-white rounded-3xl shadow-soft border border-slate-200 p-6 sm:p-8 xl:col-span-1 h-fit">
+                    <div class="flex items-center gap-4 mb-8">
+                        <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl"><i class="fa-solid fa-user-plus"></i></div>
+                        <h2 class="text-xl font-bold text-slate-800">Registrasi Akun</h2>
+                    </div>
+=======
+        <div id="content-admin-users" class="hidden max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 mt-6 sm:mt-8 animate-content">
+>>>>>>> 718b682af0877dabe3d170cac85a5c7e818f8f27
                     <form id="add-user-form" class="space-y-6">
                         <div>
                             <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">Tipe Akun</label>
@@ -258,10 +292,11 @@
                         </table>
                     </div>
                 </div>
+
             </div>
         </div>
 
-        <div id="content-admin-form" class="hidden max-w-[1400px] mx-auto w-full px-4 sm:px-6 mt-6 sm:mt-8 animate-content">
+        <div id="content-admin-form" class="hidden max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 mt-6 sm:mt-8 animate-content">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 h-auto lg:h-[75vh]">
                 <div class="lg:col-span-4 bg-white rounded-3xl shadow-soft border border-slate-200 flex flex-col overflow-hidden min-h-[400px]">
                     <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-white z-10">
@@ -299,46 +334,46 @@
             </div>
         </div>
 
-        <div id="content-dashboard" class="hidden max-w-[100%] mx-auto w-full px-2 sm:px-4 mt-4 sm:mt-6 animate-content">
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-3 px-2">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-lg sm:text-xl shrink-0">
+        <div id="content-dashboard" class="hidden max-w-[1600px] mx-auto w-full px-2 sm:px-6 lg:px-8 mt-4 sm:mt-8 animate-content">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4 sm:mb-6 px-2">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl sm:text-2xl shrink-0">
                         <i class="fa-solid fa-chart-line"></i>
                     </div>
                     <div>
-                        <h2 class="text-base sm:text-lg font-bold text-slate-800">Dashboard Rekapitulasi</h2>
-                        <p class="text-[10px] sm:text-[11px] text-slate-500 mt-0.5">Pantau hasil monitoring area secara real-time.</p>
+                        <h2 class="text-lg sm:text-2xl font-bold text-slate-800">Dashboard Rekapitulasi</h2>
+                        <p class="text-xs sm:text-sm text-slate-500 mt-1">Pantau hasil monitoring area secara real-time.</p>
                     </div>
                 </div>
-                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
-                    <div class="flex flex-wrap items-center gap-1.5 sm:gap-2 bg-white p-1.5 sm:p-2 rounded-xl border border-slate-200 shadow-soft">
-                        <div class="flex items-center pl-2 text-slate-400 text-xs"><i class="fa-solid fa-filter"></i></div>
-                        <select id="filter-month" onchange="applyFiltersAndRender()" class="px-1.5 sm:px-2 py-1.5 bg-transparent text-[11px] sm:text-xs outline-none font-bold text-slate-700 cursor-pointer">
+                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
+                    <div class="flex flex-wrap items-center gap-2 sm:gap-3 bg-white p-2.5 rounded-2xl border border-slate-200 shadow-soft">
+                        <div class="flex items-center pl-3 text-slate-400 text-sm"><i class="fa-solid fa-filter"></i></div>
+                        <select id="filter-month" onchange="applyFiltersAndRender()" class="px-2 sm:px-3 py-1.5 bg-transparent text-xs sm:text-sm outline-none font-bold text-slate-700 cursor-pointer">
                             <option value="all">Bulan (Semua)</option>
                             <option value="1">Januari</option><option value="2">Februari</option><option value="3">Maret</option>
                             <option value="4">April</option><option value="5">Mei</option><option value="6">Juni</option>
                             <option value="7">Juli</option><option value="8">Agustus</option><option value="9">September</option>
                             <option value="10">Oktober</option><option value="11">November</option><option value="12">Desember</option>
                         </select>
-                        <div class="w-px h-4 bg-slate-200"></div>
-                        <select id="filter-year" onchange="applyFiltersAndRender()" class="px-1.5 sm:px-2 py-1.5 bg-transparent text-[11px] sm:text-xs outline-none font-bold text-slate-700 cursor-pointer">
+                        <div class="w-px h-5 bg-slate-200"></div>
+                        <select id="filter-year" onchange="applyFiltersAndRender()" class="px-2 sm:px-3 py-1.5 bg-transparent text-xs sm:text-sm outline-none font-bold text-slate-700 cursor-pointer">
                             <option value="all">Tahun (Semua)</option>
                             <option value="2024">2024</option><option value="2025">2025</option><option value="2026">2026</option><option value="2027">2027</option>
                         </select>
-                        <div class="w-px h-4 bg-slate-200 hidden sm:block"></div>
-                        <select id="filter-category" onchange="applyFiltersAndRender()" class="px-1.5 sm:px-2 py-1.5 bg-transparent text-[11px] sm:text-xs outline-none font-bold text-slate-700 cursor-pointer max-w-[120px] sm:max-w-[150px] truncate">
+                        <div class="w-px h-5 bg-slate-200 hidden sm:block"></div>
+                        <select id="filter-category" onchange="applyFiltersAndRender()" class="px-2 sm:px-3 py-1.5 bg-transparent text-xs sm:text-sm outline-none font-bold text-slate-700 cursor-pointer max-w-[150px] sm:max-w-[200px] truncate">
                             <option value="all">Kategori (Semua)</option>
                         </select>
                     </div>
-                    <button id="btn-open-form" onclick="openChecklistModal()" class="hidden w-full sm:w-auto bg-rose-600 hover:bg-rose-700 text-white px-5 py-2.5 rounded-xl text-[11px] font-bold flex items-center justify-center gap-2 transition-transform active:scale-[0.98] shadow-floating shadow-rose-200">
+                    <button id="btn-open-form" onclick="openChecklistModal()" class="hidden w-full sm:w-auto bg-rose-600 hover:bg-rose-700 text-white px-6 py-3.5 rounded-2xl text-sm font-bold flex items-center justify-center gap-2 transition-transform active:scale-[0.98] shadow-floating shadow-rose-200">
                         <i class="fa-solid fa-pen-clip"></i> Isi Form Ceklis
                     </button>
                 </div>
             </div>
 
             <!-- Bagian Tabel Rekapitulasi -->
-            <div class="bg-white rounded-2xl shadow-soft border border-slate-200 overflow-hidden mb-6">
-                <div class="overflow-auto table-container w-full max-h-[60vh] sm:max-h-[70vh]">
+            <div class="bg-white rounded-3xl shadow-soft border border-slate-200 overflow-hidden mb-8 flex flex-col">
+                <div class="overflow-auto table-container w-full max-h-[60vh] sm:max-h-[65vh]">
                     <table class="w-full text-left border-collapse min-w-max text-xs">
                         <thead class="sticky-header shadow-sm">
                             <tr class="text-slate-500 text-[9px] sm:text-[10px] uppercase tracking-wider font-bold" id="thead-row-1"></tr>
@@ -350,43 +385,57 @@
             </div>
 
             <!-- Bagian Log Catatan (Terpisah di Bawah) -->
-            <div id="dashboard-notes-section" class="hidden bg-white rounded-2xl shadow-soft border border-slate-200 p-4 sm:p-5 mb-8">
-                <div class="flex items-center gap-2.5 mb-4">
-                    <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-500 flex items-center justify-center"><i class="fa-solid fa-triangle-exclamation text-sm"></i></div>
-                    <h3 class="font-bold text-slate-800 text-sm">Log Catatan Temuan Lapangan</h3>
+            <div id="dashboard-notes-section" class="hidden bg-white rounded-3xl shadow-soft border border-slate-200 p-6 sm:p-8 mb-10">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-500 flex items-center justify-center"><i class="fa-solid fa-triangle-exclamation text-lg"></i></div>
+                    <h3 class="font-bold text-slate-800 text-lg">Log Catatan Temuan Lapangan</h3>
                 </div>
-                <div id="dashboard-notes-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 sm:gap-4"></div>
+                <div id="dashboard-notes-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4"></div>
             </div>
         </div>
     </div>
 
-    <!-- MODAL FORM CHECKLIST PENGGUNA -->
-    <div id="modal-checklist-form" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[400] flex items-center justify-center p-2 sm:p-4">
-        <div class="max-w-4xl w-full bg-slate-50 rounded-3xl shadow-floating overflow-hidden flex flex-col max-h-[95vh] animate-modal">
-            <div class="bg-slate-900 p-5 sm:p-6 flex justify-between items-center shrink-0">
-                <h3 class="font-bold text-white text-lg flex items-center gap-3"><i class="fa-solid fa-list-check text-rose-400"></i> Form Pengecekan Stagging</h3>
-                <button onclick="closeChecklistModal()" class="w-8 h-8 rounded-full bg-white/10 text-white hover:bg-white/20 flex items-center justify-center transition-colors"><i class="fa-solid fa-xmark"></i></button>
-            </div>
+    <!-- MODAL FORM CHECKLIST PENGGUNA (Desain Baru) -->
+    <div id="modal-checklist-form" class="hidden fixed inset-0 bg-slate-900/70 backdrop-blur-md z-[400] flex items-center justify-center p-2 sm:p-4">
+        <div class="max-w-4xl w-full bg-slate-100 rounded-[2rem] shadow-floating overflow-hidden flex flex-col max-h-[95vh] animate-modal">
             
             <div class="p-4 sm:p-6 overflow-y-auto custom-scroll flex-1">
-                <form id="checklist-form">
-                    <div class="bg-white rounded-3xl shadow-sm border border-slate-200 p-5 sm:p-6 mb-6 relative overflow-hidden">
-                        <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-rose-500 to-orange-400"></div>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
-                                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Nama Stagging</p>
-                                <p id="form-staggingName" class="font-bold text-slate-800 text-lg">-</p>
+                
+                <!-- Identitas Pengisi (Header Mewah) -->
+                <div class="bg-gradient-to-br from-slate-900 to-slate-800 rounded-3xl p-6 sm:p-8 mb-6 relative overflow-hidden shadow-lg border border-slate-700">
+                    <div class="absolute -top-24 -right-24 w-64 h-64 bg-rose-500/20 rounded-full blur-3xl pointer-events-none"></div>
+                    <div class="absolute bottom-[-10%] left-[-10%] w-32 h-32 bg-blue-500/20 rounded-full blur-2xl pointer-events-none"></div>
+                    
+                    <button onclick="closeChecklistModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/10 text-white hover:bg-rose-500 flex items-center justify-center transition-colors z-20"><i class="fa-solid fa-xmark"></i></button>
+
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
+                        <div class="flex items-center gap-4 sm:gap-5">
+                            <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center text-white shrink-0 backdrop-blur-sm shadow-inner">
+                                <i class="fa-solid fa-map-location-dot text-2xl sm:text-3xl text-rose-400"></i>
                             </div>
-                            <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100">
-                                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Provinsi & SSC</p>
-                                <p id="form-ssc-prov" class="font-bold text-slate-800 text-lg">-</p>
+                            <div>
+                                <p class="text-slate-400 text-[10px] sm:text-xs font-bold uppercase tracking-widest mb-1">Target Pengecekan</p>
+                                <h2 id="form-staggingName" class="text-white text-xl sm:text-2xl font-bold tracking-tight mb-0.5">-</h2>
+                                <p id="form-ssc-prov" class="text-slate-300 text-xs sm:text-sm font-medium bg-white/5 inline-block px-2 py-0.5 rounded border border-white/10">-</p>
                             </div>
                         </div>
+                        <div class="h-px w-full md:w-px md:h-16 bg-white/10 hidden md:block"></div>
+                        <div class="flex items-center gap-4 bg-white/5 p-3 sm:p-4 rounded-2xl border border-white/10 backdrop-blur-sm">
+                             <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-tr from-rose-500 to-orange-400 flex items-center justify-center text-white font-bold text-lg shadow-md" id="form-user-initial">U</div>
+                             <div>
+                                 <p class="text-slate-400 text-[9px] sm:text-[10px] uppercase font-bold tracking-widest mb-0.5">Petugas PIC</p>
+                                 <p class="text-white text-sm sm:text-base font-bold" id="form-pic-name">-</p>
+                             </div>
+                        </div>
                     </div>
+                </div>
+
+                <form id="checklist-form">
                     <div id="checklist-container" class="space-y-6"></div>
-                    <div class="mt-8 mb-4">
-                        <button type="submit" id="btn-submit-form" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-4 sm:py-5 rounded-2xl shadow-floating flex items-center justify-center gap-3 transition-transform transform active:scale-[0.98] text-base sm:text-lg">
-                            <i class="fa-solid fa-paper-plane"></i> <span>Kirim Hasil Pengecekan</span>
+                    
+                    <div class="mt-8 mb-4 sticky bottom-4 z-40 px-2 sm:px-0">
+                        <button type="submit" id="btn-submit-form" class="w-full bg-slate-900 hover:bg-black text-white font-bold py-4 sm:py-5 rounded-2xl shadow-floating flex items-center justify-center gap-3 transition-transform transform active:scale-[0.98] text-base sm:text-lg">
+                            <i class="fa-solid fa-paper-plane text-rose-400"></i> <span>Kirim Hasil Pengecekan</span>
                         </button>
                     </div>
                 </form>
@@ -530,7 +579,7 @@
     <script>
         const itemTypeConfig = {
             'ok_nonok': { 
-                pos: 'OK', neg: 'Non OK', posL: 'Sesuai / OK', negL: 'Tidak Sesuai',
+                pos: 'OK', neg: 'Non OK', posL: 'OK', negL: 'Non OK',
                 iconPos: 'fa-check', iconNeg: 'fa-xmark', 
                 bgPos: 'bg-emerald-50', textPos: 'text-emerald-600', bgNeg: 'bg-rose-50', textNeg: 'text-rose-600'
             },
@@ -540,7 +589,7 @@
                 bgPos: 'bg-blue-50', textPos: 'text-blue-600', bgNeg: 'bg-slate-100', textNeg: 'text-slate-400'
             },
             'normal_rusak': { 
-                pos: 'Normal', neg: 'Rusak', posL: 'Kondisi Normal', negL: 'Kondisi Rusak',
+                pos: 'Normal', neg: 'Rusak', posL: 'Normal', negL: 'Rusak',
                 iconPos: 'fa-thumbs-up', iconNeg: 'fa-wrench', 
                 bgPos: 'bg-teal-50', textPos: 'text-teal-600', bgNeg: 'bg-orange-50', textNeg: 'text-orange-600'
             }
@@ -681,8 +730,14 @@
                 await renderAdminCategoryList();
             } else if (currentUser.role === 'user') {
                 btnOpenForm.classList.remove('hidden');
+                
+                // Set Form Identity Data
                 document.getElementById('form-staggingName').textContent = currentUser.stagging_name || '-';
                 document.getElementById('form-ssc-prov').textContent = `${currentUser.ssc || '-'} - ${currentUser.province || '-'}`;
+                const picName = currentUser.pic_name || currentUser.username;
+                document.getElementById('form-pic-name').textContent = picName;
+                document.getElementById('form-user-initial').textContent = picName.charAt(0).toUpperCase();
+
                 await generateChecklistForm(); 
                 switchTab('dashboard');
             } else if (currentUser.role === 'visitor') {
@@ -1042,6 +1097,7 @@
             await supabaseClient.from('checklist_master').update({ items: cat.items }).eq('id', catId); renderAdminItems(cat);
         }
 
+        // --- 7. USER: FORM PENGISIAN BARU (Space-Saving Segmented Control) ---
         async function generateChecklistForm() {
             const container = document.getElementById('checklist-container'); container.innerHTML = ''; 
             const { data } = await supabaseClient.from('checklist_master').select('*').order('id', { ascending: true });
@@ -1068,13 +1124,13 @@
                                     <div class="flex items-center gap-1.5 shrink-0 bg-slate-100/80 p-1 rounded-xl border border-slate-200/60 w-full sm:w-auto">
                                         <label class="cursor-pointer relative flex-1 sm:flex-none">
                                             <input type="radio" name="status-${item.id}" value="${typeDef.pos}" onchange="handleRadioChange('${item.id}', ${item.requiresNote}, '${typeDef.pos}', '${item.type}')" class="peer sr-only" required>
-                                            <div class="radio-card-pos flex items-center justify-center px-3 py-1.5 rounded-lg border border-transparent text-slate-500 smooth-transition hover:bg-white/60 relative overflow-hidden bg-transparent text-xs w-full">
+                                            <div class="radio-card-pos flex items-center justify-center px-3 py-1.5 rounded-lg border border-transparent text-slate-500 smooth-transition hover:bg-white/60 relative overflow-hidden bg-transparent text-xs w-full min-w-[90px]">
                                                 <i class="fa-solid ${typeDef.iconPos} mr-1.5 opacity-50 check-icon transition-transform duration-300"></i><span class="font-bold whitespace-nowrap">${typeDef.posL}</span>
                                             </div>
                                         </label>
                                         <label class="cursor-pointer relative flex-1 sm:flex-none">
                                             <input type="radio" name="status-${item.id}" value="${typeDef.neg}" onchange="handleRadioChange('${item.id}', ${item.requiresNote}, '${typeDef.neg}', '${item.type}')" class="peer sr-only" required>
-                                            <div class="radio-card-neg flex items-center justify-center px-3 py-1.5 rounded-lg border border-transparent text-slate-500 smooth-transition hover:bg-white/60 relative overflow-hidden bg-transparent text-xs w-full">
+                                            <div class="radio-card-neg flex items-center justify-center px-3 py-1.5 rounded-lg border border-transparent text-slate-500 smooth-transition hover:bg-white/60 relative overflow-hidden bg-transparent text-xs w-full min-w-[90px]">
                                                 <i class="fa-solid ${typeDef.iconNeg} mr-1.5 opacity-50 check-icon transition-transform duration-300"></i><span class="font-bold whitespace-nowrap">${typeDef.negL}</span>
                                             </div>
                                         </label>
@@ -1125,7 +1181,7 @@
 
             Island.show('Checklist Berhasil Disimpan!', 'success', 4000); e.target.reset(); 
             document.querySelectorAll('[id^="note-container-"]').forEach(el => { el.classList.add('max-h-0', 'opacity-0'); setTimeout(() => el.classList.add('hidden'), 300); });
-            btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> <span>Kirim Hasil Pengecekan</span>';
+            btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-paper-plane text-rose-400"></i> <span>Kirim Hasil Pengecekan</span>';
             closeChecklistModal();
             setTimeout(() => switchTab('dashboard'), 500);
         });
@@ -1202,12 +1258,12 @@
                 if(div.classList.contains('truncate')) {
                     div.classList.remove('truncate');
                     div.classList.add('whitespace-normal');
-                    col.classList.remove('max-w-[120px]');
+                    col.classList.remove('max-w-[90px]');
                     col.classList.add('min-w-[150px]');
                 } else {
                     div.classList.add('truncate');
                     div.classList.remove('whitespace-normal');
-                    col.classList.add('max-w-[120px]');
+                    col.classList.add('max-w-[90px]');
                     col.classList.remove('min-w-[150px]');
                 }
             });
@@ -1229,7 +1285,7 @@
                 const sortedItems = [...cat.items].sort((a,b) => (a.subCategory||'').localeCompare(b.subCategory||''));
                 sortedItems.forEach(item => {
                     const subLabel = item.subCategory ? `[${item.subCategory}] ` : '';
-                    h2 += `<th class="p-2 border-r border-slate-100 text-center bg-white min-w-[90px] max-w-[120px] transition-all duration-300 cat-group-${idx}"><div class="truncate w-full mx-auto font-medium text-[9px] sm:text-[10px] transition-all duration-300" title="${subLabel}${item.label}">${item.label}</div></th>`;
+                    h2 += `<th class="p-2 border-r border-slate-100 text-center bg-white min-w-[90px] max-w-[90px] transition-all duration-300 cat-group-${idx}"><div class="truncate w-full mx-auto font-medium text-[9px] sm:text-[10px] transition-all duration-300" title="${subLabel}${item.label}">${item.label}</div></th>`;
                 });
             });
             r1.innerHTML = h1; r2.innerHTML = h2;
@@ -1289,7 +1345,6 @@
                     });
                     html += `</tr>`;
 
-                    // Susun Catatan
                     let notesByCategory = {};
                     Object.keys(sub.answers).forEach(itemId => {
                         const ans = sub.answers[itemId];
