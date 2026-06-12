@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
-<hea7d>
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Stagging Checklist System</title>
@@ -379,8 +379,8 @@
     </div>
 
     <!-- MODAL FORM CHECKLIST PENGGUNA -->
-    <div id="modal-checklist-form" class="hidden fixed inset-0 bg-slate-900/70 backdrop-blur-md z-[400] flex items-center justify-center p-2 sm:p-4">
-        <div class="max-w-4xl w-full bg-slate-100 rounded-[2rem] shadow-floating overflow-hidden flex flex-col max-h-[95vh] animate-modal">
+    <div id="modal-checklist-form" class="hidden fixed inset-0 bg-slate-900/70 backdrop-blur-md z-[400] flex items-center justify-center p-4">
+        <div class="max-w-4xl w-full bg-slate-100 rounded-[2rem] shadow-floating overflow-hidden animate-modal flex flex-col max-h-[90vh]">
             
             <div class="p-4 sm:p-6 overflow-y-auto custom-scroll flex-1">
                 <div class="bg-gradient-to-br from-slate-900 to-slate-800 rounded-3xl p-6 sm:p-8 mb-6 relative overflow-hidden shadow-lg border border-slate-700">
@@ -432,8 +432,8 @@
 
     <!-- MODAL CUSTOM CONFIRM/PROMPT -->
     <div id="custom-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[500] flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
-        <div id="modal-box" class="max-w-sm w-full bg-white rounded-3xl shadow-floating overflow-hidden transform scale-95 transition-transform duration-300 border border-white/50">
-            <div class="p-6 sm:p-8">
+        <div id="modal-box" class="max-w-sm w-full bg-white rounded-3xl shadow-floating overflow-hidden transform scale-95 transition-transform duration-300 border border-white/50 flex flex-col max-h-[90vh]">
+            <div class="p-6 sm:p-8 overflow-y-auto custom-scroll flex-1">
                 <div class="flex flex-col items-center text-center gap-4">
                     <div id="modal-icon" class="w-16 h-16 rounded-3xl flex items-center justify-center shrink-0 text-3xl mb-2"></div>
                     <div>
@@ -445,18 +445,18 @@
                     <input type="text" id="modal-input" class="input-modern w-full px-4 py-4 rounded-2xl text-sm font-medium transition-colors text-center" />
                 </div>
             </div>
-            <div class="px-6 py-5 bg-slate-50 border-t border-slate-100 flex flex-col-reverse sm:flex-row justify-end gap-3" id="modal-actions"></div>
+            <div class="px-6 py-5 bg-slate-50 border-t border-slate-100 flex flex-col-reverse sm:flex-row justify-end gap-3 shrink-0" id="modal-actions"></div>
         </div>
     </div>
 
     <!-- MODAL EDIT PENGGUNA -->
     <div id="modal-edit-user" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[400] flex items-center justify-center p-4">
-        <div class="max-w-lg w-full bg-white rounded-3xl shadow-floating overflow-hidden animate-modal">
-            <div class="bg-slate-900 p-6 flex justify-between items-center">
+        <div class="max-w-lg w-full bg-white rounded-3xl shadow-floating overflow-hidden animate-modal flex flex-col max-h-[90vh]">
+            <div class="bg-slate-900 p-6 flex justify-between items-center shrink-0">
                 <h3 class="font-bold text-white text-lg flex items-center gap-2"><i class="fa-solid fa-user-pen text-blue-400"></i> Edit Pengguna</h3>
                 <button onclick="closeEditUserModal()" class="w-8 h-8 rounded-full bg-white/10 text-white hover:bg-white/20 flex items-center justify-center transition-colors"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <div class="p-6 sm:p-8">
+            <div class="p-6 sm:p-8 overflow-y-auto custom-scroll flex-1">
                 <form id="form-edit-user" class="space-y-5">
                     <input type="hidden" id="edit-user-id">
                     <div>
@@ -502,12 +502,12 @@
 
     <!-- MODAL ITEM FORM -->
     <div id="modal-item-form" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[400] flex items-center justify-center p-4">
-        <div class="max-w-lg w-full bg-white rounded-3xl shadow-floating overflow-hidden animate-modal">
-            <div class="bg-slate-900 p-6 flex justify-between items-center">
+        <div class="max-w-lg w-full bg-white rounded-3xl shadow-floating overflow-hidden animate-modal flex flex-col max-h-[90vh]">
+            <div class="bg-slate-900 p-6 flex justify-between items-center shrink-0">
                 <h3 id="modal-item-title" class="font-bold text-white text-lg flex items-center gap-2">Kelola Item Ceklis</h3>
                 <button onclick="closeItemModal()" class="w-8 h-8 rounded-full bg-white/10 text-white hover:bg-white/20 flex items-center justify-center transition-colors"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <div class="p-6 sm:p-8">
+            <div class="p-6 sm:p-8 overflow-y-auto custom-scroll flex-1">
                 <form id="form-manage-item" class="space-y-5">
                     <input type="hidden" id="manage-item-catId">
                     <input type="hidden" id="manage-item-id">
@@ -542,12 +542,12 @@
 
     <!-- MODAL GANTI PASSWORD -->
     <div id="modal-change-password" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[400] flex items-center justify-center p-4">
-        <div class="max-w-sm w-full bg-white rounded-3xl shadow-floating overflow-hidden animate-modal">
-            <div class="bg-slate-900 p-6 flex justify-between items-center">
+        <div class="max-w-sm w-full bg-white rounded-3xl shadow-floating overflow-hidden animate-modal flex flex-col max-h-[90vh]">
+            <div class="bg-slate-900 p-6 flex justify-between items-center shrink-0">
                 <h3 class="font-bold text-white text-lg flex items-center gap-2"><i class="fa-solid fa-key text-yellow-400"></i> Ganti Password</h3>
                 <button onclick="closeChangePasswordModal()" class="w-8 h-8 rounded-full bg-white/10 text-white hover:bg-white/20 flex items-center justify-center transition-colors"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <div class="p-6 sm:p-8">
+            <div class="p-6 sm:p-8 overflow-y-auto custom-scroll flex-1">
                 <form id="form-change-password" class="space-y-5">
                     <div>
                         <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 ml-1">Password Baru</label>
@@ -564,12 +564,12 @@
 
     <!-- MODAL HAPUS DATA ADMIN -->
     <div id="modal-hapus-data" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[400] flex items-center justify-center p-4">
-        <div class="max-w-md w-full bg-white rounded-3xl shadow-floating overflow-hidden animate-modal">
-            <div class="bg-rose-600 p-6 flex justify-between items-center">
+        <div class="max-w-md w-full bg-white rounded-3xl shadow-floating overflow-hidden animate-modal flex flex-col max-h-[90vh]">
+            <div class="bg-rose-600 p-6 flex justify-between items-center shrink-0">
                 <h3 class="font-bold text-white text-lg flex items-center gap-2"><i class="fa-solid fa-trash-can text-rose-200"></i> Hapus Rekapitulasi</h3>
                 <button onclick="closeAdminHapusModal()" class="w-8 h-8 rounded-full bg-white/10 text-white hover:bg-white/20 flex items-center justify-center transition-colors"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <div class="p-6 sm:p-8">
+            <div class="p-6 sm:p-8 overflow-y-auto custom-scroll flex-1">
                 <div class="bg-rose-50 text-rose-600 text-xs font-medium p-4 rounded-2xl mb-6 border border-rose-100 flex gap-3 items-start">
                     <i class="fa-solid fa-circle-exclamation mt-0.5 text-rose-500"></i>
                     <p>Pilih kriteria data yang ingin dihapus. Tindakan ini <b>permanen</b> dan tidak dapat dibatalkan.</p>
