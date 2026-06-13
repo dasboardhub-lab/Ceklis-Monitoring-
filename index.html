@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ceklis Monitoring GA</title>
+    <title>Ceklis Monitoring | Platform Analisis Data</title>
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%234f46e5'%3E%3Cpath d='M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z'/%3E%3C/svg%3E" type="image/svg+xml">
     
     <!-- Tipografi Modern: Figtree -->
@@ -21,6 +21,13 @@
     <!-- Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
+    <!-- Chart.js & Datalabels -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+    
+    <!-- SheetJS (Excel Upload) -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+    
     <script>
         tailwind.config = {
             theme: {
@@ -29,10 +36,10 @@
                     colors: {
                         brand: { 50: '#eef2ff', 100: '#e0e7ff', 200: '#c7d2fe', 300: '#a5b4fc', 400: '#818cf8', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca', 800: '#3730a3', 900: '#312e81' },
                         surface: '#ffffff',
-                        background: '#f8fafc', // slate-50
-                        border: '#e2e8f0', // slate-200
-                        textMain: '#0f172a', // slate-900
-                        textMuted: '#64748b' // slate-500
+                        background: '#f8fafc',
+                        border: '#e2e8f0',
+                        textMain: '#0f172a',
+                        textMuted: '#64748b'
                     },
                     boxShadow: {
                         'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.04)',
@@ -47,11 +54,9 @@
     <style>
         body { font-family: 'Figtree', sans-serif; -webkit-tap-highlight-color: transparent; background-color: #f8fafc; color: #0f172a; }
         
-        /* Ikon Material Helper */
         .icon-fill { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
         .icon-outline { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
 
-        /* Scrollbar Elegan */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
@@ -61,17 +66,9 @@
 
         .smooth-transition { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
 
-        /* Styling Radio Button Segmented Control */
-        input[type="radio"]:checked + div.radio-card-pos {
-            background-color: #ecfdf5; border-color: #10b981; color: #059669;
-            box-shadow: 0 2px 10px rgba(16, 185, 129, 0.15);
-        }
-        input[type="radio"]:checked + div.radio-card-neg {
-            background-color: #fff1f2; border-color: #f43f5e; color: #e11d48;
-            box-shadow: 0 2px 10px rgba(244, 63, 94, 0.15);
-        }
+        input[type="radio"]:checked + div.radio-card-pos { background-color: #ecfdf5; border-color: #10b981; color: #059669; box-shadow: 0 2px 10px rgba(16, 185, 129, 0.15); }
+        input[type="radio"]:checked + div.radio-card-neg { background-color: #fff1f2; border-color: #f43f5e; color: #e11d48; box-shadow: 0 2px 10px rgba(244, 63, 94, 0.15); }
 
-        /* Tabel Responsif Kustom */
         .col-w-1 { min-width: 90px; max-width: 90px; white-space: normal; word-break: break-word; }
         .col-w-2 { min-width: 100px; max-width: 100px; white-space: normal; word-break: break-word; }
         .col-w-3 { min-width: 130px; max-width: 130px; white-space: normal; word-break: break-word; }
@@ -90,15 +87,12 @@
             .sticky-col-3 { position: sticky !important; left: 0 !important; z-index: 20; border-right: 2px solid #e2e8f0; }
         }
 
-        /* PERBAIKAN: Mengunci seluruh elemen thead sebagai satu kesatuan */
         .sticky-header { position: sticky; top: 0; z-index: 30; }
-        .sticky-header th.sticky-col-1, .sticky-header th.sticky-col-2, 
-        .sticky-header th.sticky-col-3 { z-index: 50 !important; background-color: #ffffff; }
+        .sticky-header th.sticky-col-1, .sticky-header th.sticky-col-2, .sticky-header th.sticky-col-3 { z-index: 50 !important; background-color: #ffffff; }
 
         tbody td.sticky-col-1, tbody td.sticky-col-2, tbody td.sticky-col-3 { background-color: #ffffff; }
         tr:hover td.sticky-col-1, tr:hover td.sticky-col-2, tr:hover td.sticky-col-3 { background-color: #f8fafc; }
 
-        /* Animasi */
         @keyframes slideDown { 0% { transform: translate(-50%, -100%); opacity: 0; } 100% { transform: translate(-50%, 0); opacity: 1; } }
         @keyframes slideUp { 0% { transform: translate(-50%, 0); opacity: 1; } 100% { transform: translate(-50%, -100%); opacity: 0; } }
         .island-active { animation: slideDown 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
@@ -110,46 +104,35 @@
         @keyframes modalZoom { 0% { opacity: 0; transform: scale(0.95); } 100% { opacity: 1; transform: scale(1); } }
         .animate-modal { animation: modalZoom 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 
-        /* Input Form SaaS Style */
-        .input-modern {
-            background-color: #f8fafc; border: 1px solid #e2e8f0; color: #0f172a; transition: all 0.2s ease;
-        }
-        .input-modern:focus {
-            background-color: #ffffff; border-color: #6366f1; outline: none; box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
-        }
-        .label-modern {
-            display: block; font-size: 0.7rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;
-        }
+        .input-modern { background-color: #f8fafc; border: 1px solid #e2e8f0; color: #0f172a; transition: all 0.2s ease; }
+        .input-modern:focus { background-color: #ffffff; border-color: #6366f1; outline: none; box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1); }
+        .label-modern { display: block; font-size: 0.7rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem; }
 
-        /* Toggle Custom Modern iOS Style */
         .toggle-checkbox:checked { right: 0; border-color: #4f46e5; }
         .toggle-checkbox:checked + .toggle-label { background-color: #4f46e5; }
         
-        /* Background Login */
-        .login-bg {
-            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
-            position: relative; overflow: hidden;
-        }
-        .login-bg::before {
-            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-            background: radial-gradient(circle, rgba(99,102,241,0.15) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(236,72,153,0.1) 0%, transparent 50%);
-            z-index: 1; animation: rotateBg 30s linear infinite;
-        }
+        .login-bg { background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%); position: relative; overflow: hidden; }
+        .login-bg::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(99,102,241,0.15) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(236,72,153,0.1) 0%, transparent 50%); z-index: 1; animation: rotateBg 30s linear infinite; }
         @keyframes rotateBg { 100% { transform: rotate(360deg); } }
         
         .pb-safe { padding-bottom: calc(80px + env(safe-area-inset-bottom)); }
+        
+        .utilitas-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 1rem; padding: 1.5rem; margin-bottom: 1.5rem; }
+        .utilitas-card-title { font-weight: 800; color: #0f172a; font-size: 1.1rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; border-bottom: 2px solid #f1f5f9; padding-bottom: 0.5rem; }
     </style>
 </head>
 <body class="antialiased selection:bg-brand-200 selection:text-brand-900 overflow-x-hidden">
 
+    <!-- Notifikasi Dynamic Island -->
     <div id="dynamic-island" class="fixed top-6 sm:top-8 left-1/2 -translate-x-1/2 z-[9999] opacity-0 pointer-events-none transform -translate-y-full">
         <div class="bg-slate-900/90 backdrop-blur-xl shadow-float rounded-full flex items-center overflow-hidden border border-white/10 px-5 py-3" style="min-width: 300px; max-width: 90vw;">
             <div id="island-content" class="flex items-center gap-3 w-full justify-center"></div>
         </div>
     </div>
 
+    <!-- Tampilan Login -->
     <div id="view-login" class="flex min-h-screen relative overflow-hidden bg-white">
-        <!-- Panel Kiri (Visual Abstract Modern) -->
+        <!-- Panel Kiri -->
         <div class="hidden lg:flex lg:w-1/2 login-bg relative items-center justify-center p-12">
             <div class="relative z-10 text-white max-w-lg">
                 <div class="w-16 h-16 bg-white/10 backdrop-blur-xl rounded-2xl flex items-center justify-center border border-white/20 mb-8 shadow-[0_8px_32px_rgba(0,0,0,0.3)]">
@@ -158,7 +141,7 @@
                 <h1 class="text-5xl font-extrabold tracking-tight mb-4 leading-[1.1]">Sistem<br><span class="text-white">Ceklis</span><br><span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-400 to-purple-400">Monitoring.</span></h1>
                 <p class="text-slate-400 text-lg leading-relaxed font-light">Sistem pelaporan cerdas untuk memantau performa area secara real-time. Cepat, akurat, dan terstruktur.</p>
             </div>
-            <!-- Glassmorphism Card Element for aesthetics -->
+            <!-- Elemen Dekorasi -->
             <div class="absolute bottom-12 right-12 z-10 bg-white/5 backdrop-blur-md border border-white/10 p-6 rounded-3xl w-72 shadow-2xl transform rotate-[-5deg]">
                 <div class="flex items-center gap-3 mb-4">
                     <div class="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center"><span class="material-symbols-rounded icon-fill text-emerald-400 text-xl">check_circle</span></div>
@@ -168,7 +151,7 @@
             </div>
         </div>
 
-        <!-- Panel Kanan (Form Login Minimalis) -->
+        <!-- Panel Kanan (Form Login) -->
         <div class="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12 relative bg-surface">
             <div class="absolute top-8 left-8 lg:hidden flex items-center gap-2">
                 <div class="w-8 h-8 rounded-lg bg-brand-600 flex items-center justify-center"><span class="material-symbols-rounded icon-fill text-white text-sm">checklist</span></div>
@@ -185,22 +168,17 @@
                     <div>
                         <label class="label-modern">Username</label>
                         <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                <span class="material-symbols-rounded icon-outline text-slate-400 text-xl">person</span>
-                            </div>
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"><span class="material-symbols-rounded icon-outline text-slate-400 text-xl">person</span></div>
                             <input type="text" id="username" required placeholder="Ketik username Anda" class="input-modern w-full pl-12 pr-4 py-3.5 rounded-xl text-[15px] font-semibold">
                         </div>
                     </div>
                     <div>
                         <label class="label-modern">Kata Sandi</label>
                         <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                <span class="material-symbols-rounded icon-outline text-slate-400 text-xl">lock</span>
-                            </div>
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"><span class="material-symbols-rounded icon-outline text-slate-400 text-xl">lock</span></div>
                             <input type="password" id="password" required placeholder="••••••••" class="input-modern w-full pl-12 pr-4 py-3.5 rounded-xl text-[15px] font-semibold">
                         </div>
                     </div>
-                    
                     <button type="submit" id="btn-login" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 transition-all shadow-md shadow-brand-500/20 mt-8 active:scale-[0.98]">
                         Masuk Sistem <span class="material-symbols-rounded text-xl">arrow_forward</span>
                     </button>
@@ -209,11 +187,11 @@
         </div>
     </div>
 
+    <!-- Tampilan Utama Aplikasi -->
     <div id="view-app" class="hidden h-screen bg-background flex overflow-hidden">
         
-        <!-- Sidebar Kiri (SaaS Clean Style) -->
+        <!-- Sidebar -->
         <aside id="sidebar" class="hidden md:flex w-72 shrink-0 bg-surface border-r border-border flex-col z-40 relative shadow-soft transition-all duration-300 ease-in-out -ml-[18rem]">
-            <!-- Inner wrapper untuk mencegah konten tergencet saat animasi -->
             <div class="w-72 h-full flex flex-col shrink-0 overflow-hidden">
                 <div class="p-6 flex items-center gap-3 shrink-0 border-b border-border">
                     <div class="w-10 h-10 bg-brand-600 rounded-xl flex items-center justify-center shadow-md shadow-brand-500/20">
@@ -247,6 +225,11 @@
                         <span class="material-symbols-rounded icon-fill text-xl text-brand-600">pie_chart</span>
                         <span class="text-sm">Dashboard Rekap</span>
                     </button>
+
+                    <button onclick="switchTab('utilitas')" id="tab-utilitas" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-semibold transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-50 group">
+                        <span class="material-symbols-rounded icon-outline text-xl group-hover:text-slate-800 transition-colors">home_repair_service</span>
+                        <span class="text-sm">Awareness Utilitas & IPL</span>
+                    </button>
                     
                     <button onclick="switchTab('admin-users')" id="tab-admin-users" style="display: none;" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-semibold transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-50 group">
                         <span class="material-symbols-rounded icon-outline text-xl group-hover:text-slate-800 transition-colors">group</span>
@@ -272,17 +255,13 @@
             </div>
         </aside>
 
+        <!-- Area Main -->
         <main class="flex-1 flex flex-col h-screen overflow-hidden relative w-full">
-            
-            <!-- Header (Mobile & Desktop Toggle) -->
             <header class="bg-surface/90 backdrop-blur-md border-b border-border p-4 flex justify-between items-center z-30 sticky top-0 shadow-sm">
                 <div class="flex items-center gap-3 shrink-0">
-                    <!-- Tombol Toggle Sidebar (Desktop Saja) -->
                     <button onclick="toggleSidebar()" class="hidden md:flex w-9 h-9 rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200 items-center justify-center transition-colors active:scale-95">
                         <span id="sidebar-icon" class="material-symbols-rounded">menu</span>
                     </button>
-
-                    <!-- Logo Brand -->
                     <div id="header-logo" class="flex items-center gap-2">
                         <div class="w-8 h-8 bg-brand-600 rounded-lg flex items-center justify-center text-white">
                             <span class="material-symbols-rounded icon-fill text-base">checklist</span>
@@ -291,7 +270,6 @@
                     </div>
                 </div>
                 
-                <!-- Aksi Header -->
                 <div id="header-actions" class="flex items-center gap-2">
                     <button onclick="openChangePasswordModal()" class="w-9 h-9 rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 flex items-center justify-center active:scale-95 transition-colors"><span class="material-symbols-rounded icon-outline text-lg">key</span></button>
                     <button onclick="logout()" class="w-9 h-9 rounded-full bg-rose-50 text-rose-600 hover:bg-rose-100 flex items-center justify-center active:scale-95 transition-colors"><span class="material-symbols-rounded icon-outline text-lg">logout</span></button>
@@ -300,6 +278,68 @@
 
             <div class="flex-1 overflow-y-auto custom-scroll w-full pb-safe md:pb-6 relative z-10" id="main-scroll-area">
                 
+                <!-- Tab: Utilitas & IPL -->
+                <div id="content-utilitas" class="hidden w-full px-4 sm:px-6 lg:px-8 mt-6 sm:mt-8 animate-content max-w-7xl mx-auto">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 mb-6 border-b border-slate-200 pb-4">
+                        <div>
+                            <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight">Awareness Utilitas & IPL</h2>
+                            <p class="text-slate-500 text-sm mt-1 font-medium">Pemantauan fasilitas air, listrik, dan IPL secara mingguan.</p>
+                        </div>
+                        <div class="flex gap-2">
+                            <button id="btn-upload-utilitas" style="display: none;" onclick="openUploadUtilitasModal()" class="bg-indigo-100 hover:bg-indigo-200 text-indigo-700 px-4 py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-transform active:scale-95 shadow-sm border border-indigo-200">
+                                <span class="material-symbols-rounded text-[20px]">upload_file</span> <span class="hidden sm:inline">Upload Data</span>
+                            </button>
+                            <button id="btn-open-utilitas-form" onclick="openUtilitasModal()" class="bg-brand-600 hover:bg-brand-700 text-white px-6 py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-transform active:scale-95 shadow-md">
+                                <span class="material-symbols-rounded text-[20px]">add_task</span> Isi Form Mingguan
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Filter & Tab View -->
+                    <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+                        <div class="flex bg-slate-100 p-1 rounded-xl shadow-inner gap-1">
+                            <button onclick="switchUtilView('air')" id="btn-view-air" class="px-4 py-2 rounded-lg text-sm font-bold bg-white shadow text-blue-600 transition-all">Data Air</button>
+                            <button onclick="switchUtilView('listrik')" id="btn-view-listrik" class="px-4 py-2 rounded-lg text-sm font-bold text-slate-500 hover:text-slate-700 transition-all">Data Listrik</button>
+                            <button onclick="switchUtilView('ipl')" id="btn-view-ipl" class="px-4 py-2 rounded-lg text-sm font-bold text-slate-500 hover:text-slate-700 transition-all">Data IPL</button>
+                        </div>
+                        <div class="flex flex-wrap sm:flex-nowrap gap-2">
+                            <select id="util-filter-bulan" onchange="renderUtilitasTable()" class="input-modern px-4 py-2 rounded-xl text-sm font-bold w-32"><option value="1">Januari</option><option value="2">Februari</option><option value="3">Maret</option><option value="4">April</option><option value="5">Mei</option><option value="6">Juni</option><option value="7">Juli</option><option value="8">Agustus</option><option value="9">September</option><option value="10">Oktober</option><option value="11">November</option><option value="12">Desember</option></select>
+                            <select id="util-filter-tahun" onchange="renderUtilitasTable()" class="input-modern px-4 py-2 rounded-xl text-sm font-bold w-24"><option value="2026">2026</option><option value="2027">2027</option></select>
+                            <select id="util-filter-ssc" onchange="renderUtilitasTable()" class="input-modern px-4 py-2 rounded-xl text-sm font-bold w-32 md:w-40 truncate"><option value="all">Semua Area</option></select>
+                        </div>
+                    </div>
+
+                    <!-- Chart Trafik -->
+                    <div class="bg-surface rounded-3xl shadow-soft border border-slate-200 p-4 mb-6">
+                        <h3 class="font-bold text-slate-800 text-sm mb-4" id="chart-util-title">Total Pemakaian Air (Mingguan)</h3>
+                        <div class="w-full h-[250px]">
+                            <canvas id="utilitasChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Tabel Mingguan -->
+                    <div class="bg-surface rounded-3xl shadow-soft border border-slate-200 overflow-hidden mb-8 flex flex-col">
+                        <div class="overflow-auto custom-scroll w-full h-[50vh] xl:h-[60vh]">
+                            <table class="w-full text-left border-collapse min-w-max text-[11px]">
+                                <thead class="sticky-header">
+                                    <tr class="bg-slate-100 text-slate-600 font-bold border-b border-slate-200 uppercase tracking-wider">
+                                        <th class="p-3 border-r border-slate-200 min-w-[150px] sticky-col-1">Staging & PIC</th>
+                                        <th class="p-3 border-r border-slate-200 text-center w-[150px]">Minggu 1</th>
+                                        <th class="p-3 border-r border-slate-200 text-center w-[150px]">Minggu 2</th>
+                                        <th class="p-3 border-r border-slate-200 text-center w-[150px]">Minggu 3</th>
+                                        <th class="p-3 border-r border-slate-200 text-center w-[150px]">Minggu 4</th>
+                                        <th class="p-3 text-center w-[150px]">Minggu 5</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="utilitas-tbody" class="bg-white divide-y divide-slate-100">
+                                    <tr><td colspan="6" class="p-8 text-center text-slate-400">Memuat data...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab: Manajemen Pengguna -->
                 <div id="content-admin-users" class="hidden w-full px-4 sm:px-6 lg:px-8 mt-6 sm:mt-8 animate-content max-w-7xl mx-auto">
                     <div class="mb-6 border-b border-slate-200 pb-4">
                         <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight">Manajemen Pengguna</h2>
@@ -307,7 +347,6 @@
                     </div>
 
                     <div class="w-full">
-                        <!-- Tabel User -->
                         <div class="bg-surface rounded-3xl shadow-soft border border-slate-200 flex flex-col overflow-hidden min-h-[500px]">
                             <div class="p-6 border-b border-slate-100 bg-surface flex justify-between items-center">
                                 <h3 class="text-lg font-bold text-slate-800">Daftar Pengguna Sistem</h3>
@@ -333,6 +372,7 @@
                     </div>
                 </div>
 
+                <!-- Tab: Format Checklist Inspeksi -->
                 <div id="content-admin-form" class="hidden w-full px-4 sm:px-6 lg:px-8 mt-6 sm:mt-8 animate-content max-w-7xl mx-auto">
                     <div class="mb-6 border-b border-slate-200 pb-4">
                         <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight">Format Checklist Inspeksi</h2>
@@ -340,7 +380,6 @@
                     </div>
 
                     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 h-auto lg:h-[70vh]">
-                        <!-- Kategori Master -->
                         <div class="lg:col-span-4 bg-surface rounded-3xl shadow-soft border border-slate-200 flex flex-col overflow-hidden min-h-[400px]">
                             <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-surface z-10">
                                 <div class="flex items-center gap-3">
@@ -354,7 +393,6 @@
                             <div class="flex-1 overflow-y-auto custom-scroll p-4 space-y-2 bg-slate-50/50" id="admin-category-list"></div>
                         </div>
 
-                        <!-- Item Detail -->
                         <div class="lg:col-span-8 bg-surface rounded-3xl shadow-soft border border-slate-200 flex flex-col overflow-hidden relative min-h-[500px]">
                             <div class="p-6 border-b border-slate-100 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 bg-surface z-10">
                                 <div>
@@ -378,6 +416,7 @@
                     </div>
                 </div>
 
+                <!-- Tab: Dashboard Rekap -->
                 <div id="content-dashboard" class="hidden w-full px-2 sm:px-6 lg:px-8 mt-4 sm:mt-6 animate-content">
                     
                     <div class="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-5 mb-6 px-2">
@@ -392,18 +431,13 @@
                                 <div class="flex items-center pl-3 pr-2 text-slate-400"><span class="material-symbols-rounded icon-outline text-[20px]">tune</span></div>
                                 
                                 <select id="filter-month" onchange="applyFiltersAndRender()" class="px-3 py-2 bg-transparent hover:bg-slate-50 rounded-xl text-sm outline-none font-bold text-slate-700 cursor-pointer transition-colors appearance-none pr-8 bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%24%2024%22%20fill%3D%22none%22%20stroke%3D%22%2394a3b8%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[position:right_0.2rem_center]">
-                                    <option value="all">Semua Bulan</option>
-                                    <option value="1">Januari</option><option value="2">Februari</option><option value="3">Maret</option>
-                                    <option value="4">April</option><option value="5">Mei</option><option value="6">Juni</option>
-                                    <option value="7">Juli</option><option value="8">Agustus</option><option value="9">September</option>
-                                    <option value="10">Oktober</option><option value="11">November</option><option value="12">Desember</option>
+                                    <option value="all">Semua Bulan</option><option value="1">Januari</option><option value="2">Februari</option><option value="3">Maret</option><option value="4">April</option><option value="5">Mei</option><option value="6">Juni</option><option value="7">Juli</option><option value="8">Agustus</option><option value="9">September</option><option value="10">Oktober</option><option value="11">November</option><option value="12">Desember</option>
                                 </select>
                                 
                                 <div class="hidden sm:block w-px h-5 bg-slate-200 mx-1"></div>
                                 
                                 <select id="filter-year" onchange="applyFiltersAndRender()" class="px-3 py-2 bg-transparent hover:bg-slate-50 rounded-xl text-sm outline-none font-bold text-slate-700 cursor-pointer transition-colors appearance-none pr-8 bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%24%2024%22%20fill%3D%22none%22%20stroke%3D%22%2394a3b8%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[position:right_0.2rem_center]">
-                                    <option value="all">Semua Tahun</option>
-                                    <option value="2026">2026</option><option value="2027">2027</option><option value="2028">2028</option><option value="2029">2029</option>
+                                    <option value="all">Semua Tahun</option><option value="2026">2026</option><option value="2027">2027</option><option value="2028">2028</option><option value="2029">2029</option>
                                 </select>
                                 
                                 <div class="hidden md:block w-px h-5 bg-slate-200 mx-1"></div>
@@ -412,23 +446,22 @@
                                     <option value="all">Semua Kategori</option>
                                 </select>
 
-                                <!-- Dropdown Status Laporan -->
                                 <div class="hidden md:block w-px h-5 bg-slate-200 mx-1"></div>
+                                
                                 <select id="filter-status" onchange="applyFiltersAndRender()" class="px-3 py-2 bg-transparent hover:bg-slate-50 rounded-xl text-sm outline-none font-bold text-slate-700 cursor-pointer transition-colors max-w-[150px] sm:max-w-[180px] truncate appearance-none pr-8 bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%24%2024%22%20fill%3D%22none%22%20stroke%3D%22%2394a3b8%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[position:right_0.2rem_center]">
                                     <option value="all">Semua Status</option>
                                     <option value="submitted">Sudah Mengisi</option>
                                     <option value="unsubmitted">Belum Mengisi</option>
                                 </select>
 
-                                <!-- Multi-Select Koordinator Custom -->
                                 <div class="hidden md:block w-px h-5 bg-slate-200 mx-1"></div>
+                                
                                 <div class="relative inline-block text-left" id="ssc-dropdown-container">
                                     <button type="button" onclick="toggleSscDropdown()" id="btn-ssc-text" class="px-3 py-2 bg-transparent hover:bg-slate-50 rounded-xl text-sm outline-none font-bold text-slate-700 cursor-pointer transition-colors max-w-[150px] sm:max-w-[180px] flex items-center justify-between gap-1 border border-transparent">
                                         <span class="truncate">Semua Koordinator</span>
                                         <span class="material-symbols-rounded text-[18px] shrink-0 text-slate-400">expand_more</span>
                                     </button>
                                     <div id="ssc-dropdown-menu" class="hidden absolute right-0 mt-2 w-56 rounded-2xl shadow-float bg-white border border-slate-100 z-50 p-2 max-h-[50vh] overflow-y-auto custom-scroll">
-                                        <!-- Checkboxes otomatis dimuat disini -->
                                     </div>
                                 </div>
                             </div>
@@ -444,7 +477,7 @@
                         </div>
                     </div>
 
-                    <!-- Tabel Master Data (SaaS Style) -->
+                    <!-- Tabel Master Data Laporan -->
                     <div class="bg-surface rounded-3xl shadow-soft border border-slate-200 overflow-hidden mb-8 flex flex-col">
                         <div class="overflow-auto custom-scroll w-full h-[75vh] xl:h-[85vh]">
                             <table class="w-full text-left border-collapse min-w-max text-xs">
@@ -473,10 +506,15 @@
             </div>
         </main>
         
+        <!-- Navbar Mobile -->
         <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-md border-t border-slate-200 z-[100] pb-safe flex justify-around p-2 shadow-[0_-4px_20px_rgba(0,0,0,0.03)]">
             <button onclick="switchTab('dashboard')" id="mob-tab-dashboard" class="flex-1 py-2 flex flex-col items-center gap-1 text-brand-600 transition-colors">
                 <span class="material-symbols-rounded text-[24px]">pie_chart</span>
                 <span class="text-[9px] font-bold uppercase tracking-widest">Rekap</span>
+            </button>
+            <button onclick="switchTab('utilitas')" id="mob-tab-utilitas" class="flex-1 py-2 flex flex-col items-center gap-1 text-slate-400 hover:text-slate-900 transition-colors">
+                <span class="material-symbols-rounded icon-outline text-[24px]">home_repair_service</span>
+                <span class="text-[9px] font-bold uppercase tracking-widest">Utilitas</span>
             </button>
             <button onclick="switchTab('admin-users')" id="mob-tab-admin-users" style="display: none;" class="flex-1 py-2 flex flex-col items-center gap-1 text-slate-400 hover:text-slate-900 transition-colors">
                 <span class="material-symbols-rounded icon-outline text-[24px]">group</span>
@@ -489,12 +527,11 @@
         </nav>
     </div>
 
+    <!-- MODAL: Form Pengisian Checklist -->
     <div id="modal-checklist-form" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[400] flex items-center justify-center p-4 sm:p-6">
         <div class="max-w-4xl w-full bg-background rounded-3xl shadow-float overflow-hidden animate-modal flex flex-col max-h-[90vh] border border-slate-200">
-            
             <div class="p-0 overflow-y-auto custom-scroll flex-1 relative">
-                <!-- Header Form Modern -->
-                <div class="bg-white border-b border-slate-200 p-6 sm:p-8 relative shrink-0 z-10">
+                <div class="bg-white border-b border-slate-200 p-6 sm:p-8 relative shrink-0 z-10 sticky top-0">
                     <div class="flex justify-between items-start mb-6">
                         <div>
                             <div class="flex items-center gap-2 mb-2">
@@ -505,15 +542,11 @@
                         <button onclick="closeChecklistModal()" class="w-10 h-10 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 flex items-center justify-center transition-colors"><span class="material-symbols-rounded">close</span></button>
                     </div>
 
-                    <!-- Khusus Admin: Pilih Target -->
                     <div id="admin-selector-container" class="hidden mb-6 p-4 bg-amber-50 rounded-2xl border border-amber-200">
                         <label class="flex items-center gap-2 text-xs text-amber-700 uppercase font-bold tracking-widest mb-3"><span class="material-symbols-rounded icon-fill text-amber-500 text-lg">workspace_premium</span> Override Admin</label>
-                        <select id="admin-target-select" class="input-modern w-full font-bold bg-white" onchange="updateAdminTargetInfo()">
-                            <option value="">-- Pilih Area Observasi --</option>
-                        </select>
+                        <select id="admin-target-select" class="input-modern w-full font-bold bg-white" onchange="updateAdminTargetInfo()"><option value="">-- Pilih Area Observasi --</option></select>
                     </div>
 
-                    <!-- Info Target Area (Clean Cards) -->
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-200">
                         <div class="flex items-center gap-4">
                             <div class="w-12 h-12 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-brand-600 shadow-sm shrink-0">
@@ -548,7 +581,7 @@
         </div>
     </div>
 
-    <!-- Custom Modal System -->
+    <!-- MODAL: Custom Konfirmasi / Alert -->
     <div id="custom-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[500] flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
         <div id="modal-box" class="max-w-sm w-full bg-surface rounded-3xl shadow-float overflow-hidden transform scale-95 transition-transform duration-300 flex flex-col border border-slate-200">
             <div class="p-8 flex-1 text-center flex flex-col items-center">
@@ -564,7 +597,7 @@
         </div>
     </div>
 
-    <!-- Add User Modal -->
+    <!-- MODAL: Tambah User -->
     <div id="modal-add-user" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[400] flex items-center justify-center p-4">
         <div class="max-w-lg w-full bg-surface rounded-3xl shadow-float overflow-hidden animate-modal flex flex-col border border-slate-200">
             <div class="bg-surface border-b border-slate-100 p-6 flex justify-between items-center shrink-0">
@@ -575,10 +608,8 @@
                 <form id="add-user-form" class="space-y-4">
                     <div>
                         <label class="label-modern">Tipe Akun (Role)</label>
-                        <select id="add-role" required onchange="toggleFormFieldsBasedOnRole()" class="input-modern w-full px-4 py-3 rounded-xl font-bold text-slate-800 cursor-pointer appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%24%2024%22%20fill%3D%22none%22%20stroke%3D%22%2364748b%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[position:right_1rem_center] bg-[length:1.2em_1.2em] pr-10">
-                            <option value="user">User (Petugas Lapangan)</option>
-                            <option value="visitor">Visitor (Hanya Lihat)</option>
-                            <option value="admin">Admin (Akses Penuh)</option>
+                        <select id="add-role" required onchange="toggleFormFieldsBasedOnRole()" class="input-modern w-full px-4 py-3 rounded-xl font-bold text-slate-800 cursor-pointer">
+                            <option value="user">User (Petugas Lapangan)</option><option value="visitor">Visitor (Hanya Lihat)</option><option value="admin">Admin (Akses Penuh)</option>
                         </select>
                     </div>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -586,7 +617,6 @@
                         <div><label class="label-modern">Password</label><input type="text" id="add-pw" required class="input-modern w-full px-4 py-3 rounded-xl font-medium text-sm" /></div>
                     </div>
                     <div><label class="label-modern">Nama Lengkap (PIC)</label><input type="text" id="add-pic" required placeholder="Cth: Budi Santoso" class="input-modern w-full px-4 py-3 rounded-xl font-medium text-sm" /></div>
-                    
                     <div id="fields-lokasi" class="space-y-4 pt-4 mt-2 border-t border-slate-100">
                         <div><label class="label-modern">Stagging Area</label><input type="text" id="add-st" placeholder="Cth: Store Antang" class="input-modern w-full px-4 py-3 rounded-xl font-medium text-sm" /></div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -596,16 +626,14 @@
                     </div>
                     <div class="pt-6 flex justify-end gap-2 border-t border-slate-100 mt-6">
                         <button type="button" onclick="closeAddUserModal()" class="px-5 py-2.5 rounded-xl font-bold text-sm text-slate-600 hover:bg-slate-100 transition-colors">Batal</button>
-                        <button type="submit" id="btn-add-user" class="px-6 py-2.5 rounded-xl font-bold text-sm text-white bg-slate-900 hover:bg-black transition-transform active:scale-95 shadow-md flex items-center gap-2">
-                            <span class="material-symbols-rounded icon-fill text-[18px]">save</span> Simpan Akun
-                        </button>
+                        <button type="submit" id="btn-add-user" class="px-6 py-2.5 rounded-xl font-bold text-sm text-white bg-slate-900 hover:bg-black transition-transform active:scale-95 shadow-md flex items-center gap-2"><span class="material-symbols-rounded icon-fill text-[18px]">save</span> Simpan Akun</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 
-    <!-- Edit User Modal -->
+    <!-- MODAL: Edit User -->
     <div id="modal-edit-user" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[400] flex items-center justify-center p-4">
         <div class="max-w-lg w-full bg-surface rounded-3xl shadow-float overflow-hidden animate-modal flex flex-col border border-slate-200">
             <div class="bg-surface border-b border-slate-100 p-6 flex justify-between items-center shrink-0">
@@ -617,7 +645,7 @@
                     <input type="hidden" id="edit-user-id">
                     <div><label class="label-modern">Username</label><input type="text" id="edit-un" required class="input-modern w-full px-4 py-3 rounded-xl font-medium text-sm"></div>
                     <div><label class="label-modern">Nama Lengkap (PIC)</label><input type="text" id="edit-pic" required class="input-modern w-full px-4 py-3 rounded-xl font-medium text-sm"></div>
-                    <div><label class="label-modern">Kata Sandi Baru (Kosongkan jika tidak diubah)</label><input type="text" id="edit-pw" placeholder="Ketik sandi baru..." class="input-modern w-full px-4 py-3 rounded-xl font-medium text-sm"></div>
+                    <div><label class="label-modern">Kata Sandi Baru</label><input type="text" id="edit-pw" placeholder="Kosongkan jika tak diubah" class="input-modern w-full px-4 py-3 rounded-xl font-medium text-sm"></div>
                     <div>
                         <label class="label-modern">Tipe Akun</label>
                         <select id="edit-role" required onchange="toggleEditFormFields()" class="input-modern w-full px-4 py-3 rounded-xl font-bold text-slate-800">
@@ -640,7 +668,7 @@
         </div>
     </div>
 
-    <!-- Manage Item Modal -->
+    <!-- MODAL: Manage Parameter Checklist -->
     <div id="modal-item-form" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[400] flex items-center justify-center p-4">
         <div class="max-w-lg w-full bg-surface rounded-3xl shadow-float overflow-hidden animate-modal flex flex-col border border-slate-200">
             <div class="bg-surface border-b border-slate-100 p-6 flex justify-between items-center shrink-0">
@@ -674,7 +702,7 @@
         </div>
     </div>
 
-    <!-- Change Password Modal -->
+    <!-- MODAL: Ganti Password -->
     <div id="modal-change-password" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[400] flex items-center justify-center p-4">
         <div class="max-w-sm w-full bg-surface rounded-3xl shadow-float overflow-hidden animate-modal flex flex-col border border-slate-200">
             <div class="p-6 sm:p-8">
@@ -693,7 +721,7 @@
         </div>
     </div>
 
-    <!-- Hapus Data Admin Modal -->
+    <!-- MODAL: Hapus Data Checklist (Khusus Admin) -->
     <div id="modal-hapus-data" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[400] flex items-center justify-center p-4">
         <div class="max-w-md w-full bg-surface rounded-3xl shadow-float overflow-hidden animate-modal flex flex-col border border-rose-200">
             <div class="bg-rose-50 border-b border-rose-100 p-5 flex justify-between items-center shrink-0">
@@ -724,8 +752,383 @@
         </div>
     </div>
 
+    <!-- MODAL: Form Utilitas & IPL -->
+    <div id="modal-utilitas-form" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[400] flex items-center justify-center p-4 sm:p-6">
+        <div class="max-w-3xl w-full bg-background rounded-3xl shadow-float overflow-hidden animate-modal flex flex-col max-h-[90vh] border border-slate-200">
+            <div class="p-0 overflow-y-auto custom-scroll flex-1 relative">
+                <div class="bg-white border-b border-slate-200 p-6 sm:p-8 relative shrink-0 z-10 sticky top-0">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="bg-brand-100 text-brand-700 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-widest border border-brand-200">Formulir Pendataan</span>
+                            </div>
+                            <h2 class="text-2xl font-extrabold tracking-tight text-slate-900">Data Utilitas & IPL</h2>
+                        </div>
+                        <button onclick="closeUtilitasModal()" class="w-10 h-10 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 flex items-center justify-center transition-colors"><span class="material-symbols-rounded">close</span></button>
+                    </div>
+                    
+                    <div id="admin-util-selector-container" class="hidden mt-4 p-4 bg-amber-50 rounded-2xl border border-amber-200">
+                        <label class="flex items-center gap-2 text-xs text-amber-700 uppercase font-bold tracking-widest mb-3"><span class="material-symbols-rounded icon-fill text-amber-500 text-lg">workspace_premium</span> Override Admin (Utilitas)</label>
+                        <div class="space-y-3">
+                            <div>
+                                <label class="text-[10px] font-bold text-amber-700 uppercase tracking-widest block mb-1">Pilih Target Area</label>
+                                <select id="admin-util-target-select" class="input-modern w-full font-bold bg-white" onchange="updateAdminUtilTargetInfo()"><option value="">-- Pilih Area Observasi --</option></select>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold text-amber-700 uppercase tracking-widest block mb-1">Override Tanggal Input (Opsional - Untuk Backdate)</label>
+                                <input type="date" id="admin-util-date-override" class="input-modern w-full font-bold bg-white" onchange="overrideUtilDate()">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 bg-slate-50 p-4 rounded-xl border border-slate-200 flex items-center gap-3">
+                        <span class="material-symbols-rounded text-slate-400">info</span>
+                        <div>
+                            <p class="text-[11px] text-slate-500 uppercase font-bold tracking-widest">Staging Area</p>
+                            <p class="text-sm font-bold text-slate-800"><span id="util-form-stagging">-</span> (<span id="util-form-pic">-</span>)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <form id="utilitas-form" class="p-6 sm:p-8 space-y-6">
+                    
+                    <!-- Periode Input (Otomatis) -->
+                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div>
+                            <label class="label-modern">Tanggal Input</label>
+                            <input type="text" id="u-periode-tanggal-display" readonly class="input-modern w-full px-4 py-3 rounded-xl text-sm font-bold bg-slate-200 text-slate-500 cursor-not-allowed border-transparent shadow-none">
+                        </div>
+                        <div>
+                            <label class="label-modern">Bulan</label>
+                            <input type="text" id="u-periode-bulan-display" readonly class="input-modern w-full px-4 py-3 rounded-xl text-sm font-bold bg-slate-200 text-slate-500 cursor-not-allowed border-transparent shadow-none">
+                            <input type="hidden" id="u-periode-bulan" name="bulan">
+                        </div>
+                        <div>
+                            <label class="label-modern">Tahun</label>
+                            <input type="text" id="u-periode-tahun-display" readonly class="input-modern w-full px-4 py-3 rounded-xl text-sm font-bold bg-slate-200 text-slate-500 cursor-not-allowed border-transparent shadow-none">
+                            <input type="hidden" id="u-periode-tahun" name="tahun">
+                        </div>
+                        <div>
+                            <label class="label-modern">Minggu Ke-</label>
+                            <input type="text" id="u-periode-minggu-display" readonly class="input-modern w-full px-4 py-3 rounded-xl text-sm font-bold bg-slate-200 text-slate-500 cursor-not-allowed border-transparent shadow-none">
+                            <input type="hidden" id="u-periode-minggu" name="minggu">
+                        </div>
+                    </div>
+
+                    <!-- Fasilitas Air -->
+                    <div class="utilitas-card">
+                        <h3 class="utilitas-card-title"><span class="material-symbols-rounded text-blue-500">water_drop</span> 1. Fasilitas Air</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="label-modern mb-2">Sumber Air</label>
+                                <div class="flex flex-wrap gap-2">
+                                    <label class="cursor-pointer">
+                                        <input type="radio" name="air_sumber" value="PDAM" class="peer sr-only" required onchange="toggleAirFields()">
+                                        <div class="px-5 py-2.5 rounded-xl text-sm font-bold bg-slate-50 border-2 border-slate-200 text-slate-600 peer-checked:border-brand-600 peer-checked:bg-brand-50 peer-checked:text-brand-700 transition-all">PDAM</div>
+                                    </label>
+                                    <label class="cursor-pointer">
+                                        <input type="radio" name="air_sumber" value="WTP" class="peer sr-only" required onchange="toggleAirFields()">
+                                        <div class="px-5 py-2.5 rounded-xl text-sm font-bold bg-slate-50 border-2 border-slate-200 text-slate-600 peer-checked:border-brand-600 peer-checked:bg-brand-50 peer-checked:text-brand-700 transition-all">WTP</div>
+                                    </label>
+                                    <label class="cursor-pointer">
+                                        <input type="radio" name="air_sumber" value="Sumur Bor" class="peer sr-only" required onchange="toggleAirFields()">
+                                        <div class="px-5 py-2.5 rounded-xl text-sm font-bold bg-slate-50 border-2 border-slate-200 text-slate-600 peer-checked:border-brand-600 peer-checked:bg-brand-50 peer-checked:text-brand-700 transition-all">Sumur Bor</div>
+                                    </label>
+                                </div>
+                            </div>
+                            <div id="air-pdam-fields" class="hidden space-y-4 p-4 bg-blue-50/50 rounded-xl border border-blue-100 mt-4">
+                                <div><label class="label-modern">Nomor ID Pelanggan (PDAM/WTP)</label><input type="text" id="u-air-id" name="air_id" class="input-modern w-full px-4 py-3 rounded-xl text-sm"></div>
+                                <div><label class="label-modern">Nama Pemilik ID Pelanggan</label><input type="text" id="u-air-nama" name="air_nama" class="input-modern w-full px-4 py-3 rounded-xl text-sm"></div>
+                            </div>
+                            <div id="air-mekanisme-container" class="hidden mt-4">
+                                <label class="label-modern">Mekanisme Pembayaran</label>
+                                <select id="u-air-mekanisme" name="air_mekanisme" class="input-modern w-full px-4 py-3 rounded-xl text-sm font-medium" onchange="toggleAirMekanisme()">
+                                    <option value="">Pilih Mekanisme...</option>
+                                    <option value="Dibayar Ke PDAM/WTP Tiap Bulan (Pemakaian Pribadi)">Dibayar Ke PDAM/WTP Tiap Bulan (Pemakaian Pribadi)</option>
+                                    <option value="Dibagi Dengan Ruko Tetangga (1 Meteran dipakai bersama)">Dibagi Dengan Ruko Tetangga (1 Meteran dipakai bersama)</option>
+                                    <option value="Include / Sudah Termasuk Biaya Sewa Ruko">Include / Sudah Termasuk Biaya Sewa Ruko</option>
+                                    <option value="Lainnya">Lainnya...</option>
+                                </select>
+                                <input type="text" id="u-air-mekanisme-lain" name="air_mekanisme_lain" placeholder="Sebutkan mekanisme lainnya..." class="hidden mt-2 input-modern w-full px-4 py-3 rounded-xl text-sm">
+                            </div>
+                            <div id="air-angka-container" class="hidden mt-4">
+                                <label class="label-modern">Angka Tercatat di Meteran Air</label>
+                                <input type="text" id="u-air-angka" name="air_angka" placeholder="Cth: 1245.5" class="input-modern w-full px-4 py-3 rounded-xl text-sm font-bold">
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 border-t border-slate-100 pt-4 mt-4">
+                                <div>
+                                    <label class="label-modern mb-2">Kondisi Meteran Air</label>
+                                    <div class="flex gap-2">
+                                        <label class="cursor-pointer flex-1">
+                                            <input type="radio" name="air_kondisi_meteran" value="Baik" class="peer sr-only" required onchange="toggleRusak('air_kondisi_meteran', 'air-meteran-rusak')">
+                                            <div class="px-3 py-2 text-center rounded-xl text-sm font-bold bg-slate-50 border-2 border-slate-200 text-slate-600 peer-checked:border-brand-600 peer-checked:bg-brand-50 peer-checked:text-brand-700 transition-all">Baik</div>
+                                        </label>
+                                        <label class="cursor-pointer flex-1">
+                                            <input type="radio" name="air_kondisi_meteran" value="Rusak" class="peer sr-only" required onchange="toggleRusak('air_kondisi_meteran', 'air-meteran-rusak')">
+                                            <div class="px-3 py-2 text-center rounded-xl text-sm font-bold bg-slate-50 border-2 border-slate-200 text-slate-600 peer-checked:border-rose-500 peer-checked:bg-rose-50 peer-checked:text-rose-600 transition-all">Rusak</div>
+                                        </label>
+                                    </div>
+                                    <input type="text" id="air-meteran-rusak" name="air_meteran_rusak" placeholder="Deskripsikan kerusakan..." class="hidden mt-2 input-modern w-full px-3 py-2 rounded-lg text-xs border-amber-300 bg-amber-50">
+                                </div>
+                                <div>
+                                    <label class="label-modern mb-2">Kondisi Pipa & Kran</label>
+                                    <div class="flex gap-2">
+                                        <label class="cursor-pointer flex-1">
+                                            <input type="radio" name="air_kondisi_pipa" value="Baik" class="peer sr-only" required onchange="toggleRusak('air_kondisi_pipa', 'air-pipa-rusak')">
+                                            <div class="px-3 py-2 text-center rounded-xl text-sm font-bold bg-slate-50 border-2 border-slate-200 text-slate-600 peer-checked:border-brand-600 peer-checked:bg-brand-50 peer-checked:text-brand-700 transition-all">Baik</div>
+                                        </label>
+                                        <label class="cursor-pointer flex-1">
+                                            <input type="radio" name="air_kondisi_pipa" value="Rusak" class="peer sr-only" required onchange="toggleRusak('air_kondisi_pipa', 'air-pipa-rusak')">
+                                            <div class="px-3 py-2 text-center rounded-xl text-sm font-bold bg-slate-50 border-2 border-slate-200 text-slate-600 peer-checked:border-rose-500 peer-checked:bg-rose-50 peer-checked:text-rose-600 transition-all">Rusak</div>
+                                        </label>
+                                    </div>
+                                    <input type="text" id="air-pipa-rusak" name="air_pipa_rusak" placeholder="Deskripsikan kerusakan..." class="hidden mt-2 input-modern w-full px-3 py-2 rounded-lg text-xs border-amber-300 bg-amber-50">
+                                </div>
+                            </div>
+                            <div class="border-t border-slate-100 pt-4 space-y-4">
+                                <div>
+                                    <label class="label-modern mb-2">Apakah pakai Tandon?</label>
+                                    <div class="flex gap-2">
+                                        <label class="cursor-pointer">
+                                            <input type="radio" name="air_tandon" value="Ada" class="peer sr-only" required onchange="toggleSubTandon()">
+                                            <div class="px-5 py-2.5 rounded-xl text-sm font-bold bg-slate-50 border-2 border-slate-200 text-slate-600 peer-checked:border-brand-600 peer-checked:bg-brand-50 peer-checked:text-brand-700 transition-all">Ada</div>
+                                        </label>
+                                        <label class="cursor-pointer">
+                                            <input type="radio" name="air_tandon" value="Tidak Ada" class="peer sr-only" required onchange="toggleSubTandon()">
+                                            <div class="px-5 py-2.5 rounded-xl text-sm font-bold bg-slate-50 border-2 border-slate-200 text-slate-600 peer-checked:border-slate-400 peer-checked:bg-slate-100 peer-checked:text-slate-700 transition-all">Tidak Ada</div>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div id="air-tandon-fields" class="hidden pl-4 border-l-2 border-slate-200 space-y-4">
+                                    <div>
+                                        <label class="label-modern mb-2">Kondisi Tandon</label>
+                                        <div class="flex gap-2">
+                                            <label class="cursor-pointer flex-1">
+                                                <input type="radio" name="air_kondisi_tandon" value="Baik" class="peer sr-only" onchange="toggleRusak('air_kondisi_tandon', 'air-tandon-rusak')">
+                                                <div class="px-3 py-2 text-center rounded-xl text-sm font-bold bg-slate-50 border-2 border-slate-200 text-slate-600 peer-checked:border-brand-600 peer-checked:bg-brand-50 peer-checked:text-brand-700 transition-all">Baik</div>
+                                            </label>
+                                            <label class="cursor-pointer flex-1">
+                                                <input type="radio" name="air_kondisi_tandon" value="Rusak" class="peer sr-only" onchange="toggleRusak('air_kondisi_tandon', 'air-tandon-rusak')">
+                                                <div class="px-3 py-2 text-center rounded-xl text-sm font-bold bg-slate-50 border-2 border-slate-200 text-slate-600 peer-checked:border-rose-500 peer-checked:bg-rose-50 peer-checked:text-rose-600 transition-all">Rusak</div>
+                                            </label>
+                                        </div>
+                                        <input type="text" id="air-tandon-rusak" name="air_tandon_rusak" placeholder="Deskripsikan kerusakan..." class="hidden mt-2 input-modern w-full px-3 py-2 rounded-lg text-xs border-amber-300 bg-amber-50">
+                                    </div>
+                                    <div>
+                                        <label class="label-modern mb-2">Apakah Tandon Pakai Otomatis?</label>
+                                        <div class="flex gap-2">
+                                            <label class="cursor-pointer">
+                                                <input type="radio" name="air_otomatis" value="Ada" class="peer sr-only" onchange="toggleSubOtomatis()">
+                                                <div class="px-4 py-2 rounded-xl text-sm font-bold bg-slate-50 border-2 border-slate-200 text-slate-600 peer-checked:border-brand-600 peer-checked:bg-brand-50 peer-checked:text-brand-700 transition-all">Ada</div>
+                                            </label>
+                                            <label class="cursor-pointer">
+                                                <input type="radio" name="air_otomatis" value="Tidak Ada" class="peer sr-only" onchange="toggleSubOtomatis()">
+                                                <div class="px-4 py-2 rounded-xl text-sm font-bold bg-slate-50 border-2 border-slate-200 text-slate-600 peer-checked:border-slate-400 peer-checked:bg-slate-100 peer-checked:text-slate-700 transition-all">Tidak Ada</div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div id="air-otomatis-fields" class="hidden">
+                                        <label class="label-modern mb-2">Kondisi Otomatis</label>
+                                        <div class="flex gap-2">
+                                            <label class="cursor-pointer flex-1">
+                                                <input type="radio" name="air_kondisi_otomatis" value="Baik" class="peer sr-only" onchange="toggleRusak('air_kondisi_otomatis', 'air-otomatis-rusak')">
+                                                <div class="px-3 py-2 text-center rounded-xl text-sm font-bold bg-slate-50 border-2 border-slate-200 text-slate-600 peer-checked:border-brand-600 peer-checked:bg-brand-50 peer-checked:text-brand-700 transition-all">Baik</div>
+                                            </label>
+                                            <label class="cursor-pointer flex-1">
+                                                <input type="radio" name="air_kondisi_otomatis" value="Rusak" class="peer sr-only" onchange="toggleRusak('air_kondisi_otomatis', 'air-otomatis-rusak')">
+                                                <div class="px-3 py-2 text-center rounded-xl text-sm font-bold bg-slate-50 border-2 border-slate-200 text-slate-600 peer-checked:border-rose-500 peer-checked:bg-rose-50 peer-checked:text-rose-600 transition-all">Rusak</div>
+                                            </label>
+                                        </div>
+                                        <input type="text" id="air-otomatis-rusak" name="air_otomatis_rusak" placeholder="Deskripsikan kerusakan..." class="hidden mt-2 input-modern w-full px-3 py-2 rounded-lg text-xs border-amber-300 bg-amber-50">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="border-t border-slate-100 pt-4">
+                                <div>
+                                    <label class="label-modern mb-2">Apakah pakai Mesin Pompa Air?</label>
+                                    <div class="flex gap-2">
+                                        <label class="cursor-pointer">
+                                            <input type="radio" name="air_pompa" value="Ada" class="peer sr-only" required onchange="toggleSubPompa()">
+                                            <div class="px-5 py-2.5 rounded-xl text-sm font-bold bg-slate-50 border-2 border-slate-200 text-slate-600 peer-checked:border-brand-600 peer-checked:bg-brand-50 peer-checked:text-brand-700 transition-all">Ada</div>
+                                        </label>
+                                        <label class="cursor-pointer">
+                                            <input type="radio" name="air_pompa" value="Tidak Ada" class="peer sr-only" required onchange="toggleSubPompa()">
+                                            <div class="px-5 py-2.5 rounded-xl text-sm font-bold bg-slate-50 border-2 border-slate-200 text-slate-600 peer-checked:border-slate-400 peer-checked:bg-slate-100 peer-checked:text-slate-700 transition-all">Tidak Ada</div>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div id="air-pompa-fields" class="hidden pl-4 border-l-2 border-slate-200 mt-4">
+                                    <label class="label-modern mb-2">Kondisi Pompa Air</label>
+                                    <div class="flex gap-2">
+                                        <label class="cursor-pointer flex-1">
+                                            <input type="radio" name="air_kondisi_pompa" value="Baik" class="peer sr-only" onchange="toggleRusak('air_kondisi_pompa', 'air-pompa-rusak')">
+                                            <div class="px-3 py-2 text-center rounded-xl text-sm font-bold bg-slate-50 border-2 border-slate-200 text-slate-600 peer-checked:border-brand-600 peer-checked:bg-brand-50 peer-checked:text-brand-700 transition-all">Baik</div>
+                                        </label>
+                                        <label class="cursor-pointer flex-1">
+                                            <input type="radio" name="air_kondisi_pompa" value="Rusak" class="peer sr-only" onchange="toggleRusak('air_kondisi_pompa', 'air-pompa-rusak')">
+                                            <div class="px-3 py-2 text-center rounded-xl text-sm font-bold bg-slate-50 border-2 border-slate-200 text-slate-600 peer-checked:border-rose-500 peer-checked:bg-rose-50 peer-checked:text-rose-600 transition-all">Rusak</div>
+                                        </label>
+                                    </div>
+                                    <input type="text" id="air-pompa-rusak" name="air_pompa_rusak" placeholder="Deskripsikan kerusakan..." class="hidden mt-2 input-modern w-full px-3 py-2 rounded-lg text-xs border-amber-300 bg-amber-50">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Fasilitas Listrik -->
+                    <div class="utilitas-card">
+                        <h3 class="utilitas-card-title"><span class="material-symbols-rounded text-amber-500">bolt</span> 2. Fasilitas Listrik</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div><label class="label-modern">Nomor ID Pelanggan PLN</label><input type="text" id="u-listrik-id" name="listrik_id" required class="input-modern w-full px-4 py-3 rounded-xl text-sm font-mono"></div>
+                            <div><label class="label-modern">Nama Pemilik ID Pelanggan</label><input type="text" id="u-listrik-nama" name="listrik_nama" required class="input-modern w-full px-4 py-3 rounded-xl text-sm"></div>
+                            <div class="md:col-span-2">
+                                <label class="label-modern mb-2">Kategori ID Pelanggan</label>
+                                <div class="flex flex-wrap gap-2">
+                                    <label class="cursor-pointer">
+                                        <input type="radio" name="listrik_kategori" value="Pra Bayar (Token)" class="peer sr-only" required>
+                                        <div class="px-5 py-2.5 rounded-xl text-sm font-bold bg-slate-50 border-2 border-slate-200 text-slate-600 peer-checked:border-amber-500 peer-checked:bg-amber-50 peer-checked:text-amber-700 transition-all">Pra Bayar (Token)</div>
+                                    </label>
+                                    <label class="cursor-pointer">
+                                        <input type="radio" name="listrik_kategori" value="Pasca Bayar" class="peer sr-only" required>
+                                        <div class="px-5 py-2.5 rounded-xl text-sm font-bold bg-slate-50 border-2 border-slate-200 text-slate-600 peer-checked:border-amber-500 peer-checked:bg-amber-50 peer-checked:text-amber-700 transition-all">Pasca Bayar</div>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="md:col-span-2"><label class="label-modern">Angka di Meteran Saat Ini</label><input type="text" id="u-listrik-angka" name="listrik_angka" required class="input-modern w-full px-4 py-3 rounded-xl text-sm font-bold"></div>
+                        </div>
+                    </div>
+
+                    <!-- Fasilitas IPL -->
+                    <div class="utilitas-card mb-0">
+                        <h3 class="utilitas-card-title"><span class="material-symbols-rounded text-emerald-500">payments</span> 3. Iuran Pemeliharaan Lingkungan (IPL)</h3>
+                        <div class="space-y-6">
+                            <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl">
+                                <h4 class="font-bold text-sm text-slate-800 mb-3">A. IPL Kebersihan</h4>
+                                <div class="flex gap-2 mb-4">
+                                    <label class="cursor-pointer">
+                                        <input type="radio" name="ipl_bersih" value="Ada" class="peer sr-only" required onchange="toggleIpl('ipl_bersih', 'ipl-bersih-fields')">
+                                        <div class="px-5 py-2 rounded-xl text-sm font-bold bg-white border-2 border-slate-200 text-slate-600 peer-checked:border-emerald-500 peer-checked:bg-emerald-50 peer-checked:text-emerald-700 transition-all">Ada</div>
+                                    </label>
+                                    <label class="cursor-pointer">
+                                        <input type="radio" name="ipl_bersih" value="Tidak Ada" class="peer sr-only" required onchange="toggleIpl('ipl_bersih', 'ipl-bersih-fields')">
+                                        <div class="px-5 py-2 rounded-xl text-sm font-bold bg-white border-2 border-slate-200 text-slate-600 peer-checked:border-slate-400 peer-checked:bg-slate-200 peer-checked:text-slate-700 transition-all">Tidak Ada</div>
+                                    </label>
+                                </div>
+                                <div id="ipl-bersih-fields" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-4 border-t border-slate-200 pt-4">
+                                    <div><label class="text-[10px] font-bold text-slate-500 uppercase mb-2 block">Nominal (Rp)</label><input type="number" id="u-ipl-bersih-nom" name="ipl_bersih_nom" placeholder="Cth: 50000" class="input-modern w-full px-3 py-2.5 rounded-lg text-sm"></div>
+                                    <div>
+                                        <label class="text-[10px] font-bold text-slate-500 uppercase mb-2 block">Jadwal Pembayaran</label>
+                                        <div class="flex flex-col gap-2">
+                                            <label class="cursor-pointer">
+                                                <input type="radio" name="ipl_bersih_jadwal" value="1 Kali Seminggu" class="peer sr-only">
+                                                <div class="px-3 py-2 text-center rounded-lg text-xs font-bold bg-white border-2 border-slate-200 text-slate-600 peer-checked:border-brand-600 peer-checked:bg-brand-50 peer-checked:text-brand-700 transition-all">1 Kali Seminggu</div>
+                                            </label>
+                                            <label class="cursor-pointer">
+                                                <input type="radio" name="ipl_bersih_jadwal" value="1 Kali Sebulan" class="peer sr-only">
+                                                <div class="px-3 py-2 text-center rounded-lg text-xs font-bold bg-white border-2 border-slate-200 text-slate-600 peer-checked:border-brand-600 peer-checked:bg-brand-50 peer-checked:text-brand-700 transition-all">1 Kali Sebulan</div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl">
+                                <h4 class="font-bold text-sm text-slate-800 mb-3">B. IPL Keamanan</h4>
+                                <div class="flex gap-2 mb-4">
+                                    <label class="cursor-pointer">
+                                        <input type="radio" name="ipl_aman" value="Ada" class="peer sr-only" required onchange="toggleIpl('ipl_aman', 'ipl-aman-fields')">
+                                        <div class="px-5 py-2 rounded-xl text-sm font-bold bg-white border-2 border-slate-200 text-slate-600 peer-checked:border-emerald-500 peer-checked:bg-emerald-50 peer-checked:text-emerald-700 transition-all">Ada</div>
+                                    </label>
+                                    <label class="cursor-pointer">
+                                        <input type="radio" name="ipl_aman" value="Tidak Ada" class="peer sr-only" required onchange="toggleIpl('ipl_aman', 'ipl-aman-fields')">
+                                        <div class="px-5 py-2 rounded-xl text-sm font-bold bg-white border-2 border-slate-200 text-slate-600 peer-checked:border-slate-400 peer-checked:bg-slate-200 peer-checked:text-slate-700 transition-all">Tidak Ada</div>
+                                    </label>
+                                </div>
+                                <div id="ipl-aman-fields" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-4 border-t border-slate-200 pt-4">
+                                    <div><label class="text-[10px] font-bold text-slate-500 uppercase mb-2 block">Nominal (Rp)</label><input type="number" id="u-ipl-aman-nom" name="ipl_aman_nom" placeholder="Cth: 100000" class="input-modern w-full px-3 py-2.5 rounded-lg text-sm"></div>
+                                    <div>
+                                        <label class="text-[10px] font-bold text-slate-500 uppercase mb-2 block">Jadwal Pembayaran</label>
+                                        <div class="flex flex-col gap-2">
+                                            <label class="cursor-pointer">
+                                                <input type="radio" name="ipl_aman_jadwal" value="1 Kali Seminggu" class="peer sr-only">
+                                                <div class="px-3 py-2 text-center rounded-lg text-xs font-bold bg-white border-2 border-slate-200 text-slate-600 peer-checked:border-brand-600 peer-checked:bg-brand-50 peer-checked:text-brand-700 transition-all">1 Kali Seminggu</div>
+                                            </label>
+                                            <label class="cursor-pointer">
+                                                <input type="radio" name="ipl_aman_jadwal" value="1 Kali Sebulan" class="peer sr-only">
+                                                <div class="px-3 py-2 text-center rounded-lg text-xs font-bold bg-white border-2 border-slate-200 text-slate-600 peer-checked:border-brand-600 peer-checked:bg-brand-50 peer-checked:text-brand-700 transition-all">1 Kali Sebulan</div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 pt-6 border-t border-slate-200 sticky bottom-0 bg-white py-4 z-20">
+                        <button type="submit" id="btn-submit-utilitas" class="w-full bg-slate-900 hover:bg-black text-white font-bold py-4 rounded-2xl shadow-float flex items-center justify-center gap-2 transition-transform transform active:scale-[0.98] text-base">
+                            <span class="material-symbols-rounded icon-fill">cloud_upload</span> <span>Simpan Data Utilitas</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Detail Utilitas -->
+    <div id="modal-detail-utilitas" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[500] flex items-center justify-center p-4">
+        <div class="max-w-md w-full bg-surface rounded-3xl shadow-float overflow-hidden animate-modal flex flex-col border border-slate-200">
+            <div class="bg-surface border-b border-slate-100 p-5 flex justify-between items-center shrink-0">
+                <h3 class="font-bold text-slate-900 text-lg flex items-center gap-2"><span class="material-symbols-rounded text-brand-600">info</span> Detail Laporan</h3>
+                <button onclick="closeUtilitasDetailModal()" class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 flex items-center justify-center transition-colors"><span class="material-symbols-rounded text-sm">close</span></button>
+            </div>
+            <div class="p-6 overflow-y-auto custom-scroll max-h-[70vh]">
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 mb-4 shadow-inner">
+                    <p class="text-[10px] text-slate-500 uppercase font-bold tracking-widest mb-1">Area Staging</p>
+                    <p class="text-sm font-extrabold text-slate-800 mb-2" id="detail-stagging">-</p>
+                    <div class="flex justify-between items-center border-t border-slate-200 pt-2 mt-2">
+                        <div>
+                            <p class="text-[9px] text-slate-400 uppercase font-bold">Penanggung Jawab</p>
+                            <p class="text-xs font-bold text-slate-700" id="detail-pic">-</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-[9px] text-slate-400 uppercase font-bold">Periode Laporan</p>
+                            <p class="text-xs font-bold text-brand-600 bg-brand-50 px-2 py-0.5 rounded border border-brand-100" id="detail-periode">-</p>
+                        </div>
+                    </div>
+                </div>
+                <div id="detail-content" class="text-sm text-slate-700 bg-white p-4 rounded-xl border border-slate-200"></div>
+            </div>
+            <div class="p-4 border-t border-slate-100 bg-slate-50 flex justify-end">
+                <button onclick="closeUtilitasDetailModal()" class="px-5 py-2.5 rounded-xl font-bold text-sm text-slate-600 bg-white border border-slate-200 hover:bg-slate-100 transition-colors shadow-sm">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Upload Data Utilitas -->
+    <div id="modal-upload-utilitas" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[400] flex items-center justify-center p-4">
+        <div class="max-w-md w-full bg-surface rounded-3xl shadow-float overflow-hidden animate-modal flex flex-col border border-slate-200">
+            <div class="bg-indigo-50 border-b border-indigo-100 p-6 flex justify-between items-center shrink-0">
+                <h3 class="font-bold text-indigo-700 text-lg flex items-center gap-2"><span class="material-symbols-rounded icon-fill">upload_file</span> Upload Data Excel</h3>
+                <button onclick="closeUploadUtilitasModal()" class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 hover:bg-indigo-200 flex items-center justify-center transition-colors"><span class="material-symbols-rounded text-sm">close</span></button>
+            </div>
+            <div class="p-6 sm:p-8">
+                <p class="text-slate-600 text-sm mb-4 text-center">Gunakan template yang disediakan untuk menghindari error saat upload data masa lalu.</p>
+                <button onclick="downloadTemplateUtilitas()" class="w-full mb-6 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 px-4 py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-transform active:scale-95 shadow-sm">
+                    <span class="material-symbols-rounded text-[18px]">download</span> Download Template .xlsx
+                </button>
+                <form id="form-upload-utilitas" class="space-y-4">
+                    <div class="border-2 border-dashed border-slate-300 rounded-2xl p-6 text-center hover:bg-slate-50 transition-colors">
+                        <input type="file" id="file-upload-utilitas" accept=".xlsx, .xls" required class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 cursor-pointer"/>
+                    </div>
+                    <div class="pt-4 flex justify-end gap-2 border-t border-slate-100">
+                        <button type="button" onclick="closeUploadUtilitasModal()" class="px-5 py-2.5 rounded-xl font-bold text-sm text-slate-600 hover:bg-slate-100 transition-colors">Batal</button>
+                        <button type="submit" id="btn-process-upload" class="px-6 py-2.5 rounded-xl font-bold text-sm text-white bg-indigo-600 hover:bg-indigo-700 transition-transform active:scale-95 shadow-md flex items-center gap-2"><span class="material-symbols-rounded text-[18px]">cloud_upload</span> Proses Upload</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // Konfigurasi Ikon diupdate untuk Material Symbols Rounded
         const itemTypeConfig = {
             'ok_nonok': { pos: 'OK', neg: 'Non OK', posL: 'OK', negL: 'Non OK', iconPos: 'check', iconNeg: 'close', bgPos: 'bg-emerald-50', textPos: 'text-emerald-700', bgNeg: 'bg-rose-50', textNeg: 'text-rose-700' },
             'ada_tidak': { pos: 'Ada', neg: 'Tidak Ada', posL: 'Ada', negL: 'Tidak Ada', iconPos: 'inventory_2', iconNeg: 'block', bgPos: 'bg-indigo-50', textPos: 'text-indigo-700', bgNeg: 'bg-slate-100', textNeg: 'text-slate-500' },
@@ -785,14 +1188,13 @@
         };
 
         const { createClient } = supabase;
-        const supabaseUrl = 'https://rrxospuiwtpauqwckvnd.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJyeG9zcHVpd3RwYXVxd2Nrdm5kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODExNjQyMDMsImV4cCI6MjA5Njc0MDIwM30.Uh2ruDv1zZVyIE94-FW4L6HZYA8NuTTInJKGKKE3lYM';
+        const supabaseUrl = 'https://ionnazoqvdgbhyakgppm.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlvbm5hem9xdmRnYmh5YWtncHBtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzMjM3MTksImV4cCI6MjA5Njg5OTcxOX0.acFnmFGx4u-9913lPEJMefg4ZBW9uCLVup24C9p76T4';
         const supabaseClient = createClient(supabaseUrl, supabaseKey);
 
         let currentUser = null;
         Island.init();
 
-        // Fitur Toggle Sidebar
         let isSidebarOpen = false;
         window.toggleSidebar = function() {
             isSidebarOpen = !isSidebarOpen;
@@ -802,7 +1204,7 @@
             const headerActions = document.getElementById('header-actions');
             
             if(isSidebarOpen) {
-                sidebar.classList.remove('-ml-[18rem]'); // 18rem = 72 tailwind unit
+                sidebar.classList.remove('-ml-[18rem]'); 
                 headerLogo.classList.add('md:hidden');
                 headerActions.classList.add('md:hidden');
                 icon.textContent = 'menu_open';
@@ -827,7 +1229,7 @@
             } catch(e) { console.error("Inisialisasi DB Error:", e); }
         }
         initDB();
-
+        
         document.getElementById('login-form').addEventListener('submit', async function(e) {
             e.preventDefault();
             const un = document.getElementById('username').value;
@@ -852,7 +1254,6 @@
             document.getElementById('view-app').classList.remove('hidden');
             document.getElementById('view-app').classList.add('flex');
             
-            // Memastikan sidebar tertutup saat login
             isSidebarOpen = false;
             document.getElementById('sidebar').classList.add('-ml-[18rem]');
             document.getElementById('header-logo').classList.remove('md:hidden');
@@ -860,7 +1261,6 @@
             const icon = document.getElementById('sidebar-icon');
             if(icon) icon.textContent = 'menu';
             
-            // Cek jika password masih default
             if (currentUser.password === '123') {
                 Island.show('Wajib ganti sandi default Anda!', 'error', 5000);
                 openChangePasswordModal(true);
@@ -874,18 +1274,25 @@
             document.getElementById('display-username').textContent = currentUser.pic_name || currentUser.username;
             document.getElementById('display-role').textContent = currentUser.role;
             
+            const now = new Date();
+            if(document.getElementById('util-filter-bulan')) document.getElementById('util-filter-bulan').value = now.getMonth() + 1;
+            if(document.getElementById('util-filter-tahun')) document.getElementById('util-filter-tahun').value = now.getFullYear();
+
             const tUsers = document.getElementById('tab-admin-users'); const tAdminForm = document.getElementById('tab-admin-form');
             const mUsers = document.getElementById('mob-tab-admin-users'); const mAdminForm = document.getElementById('mob-tab-admin-form');
             const btnOpenForm = document.getElementById('btn-open-form'); const btnAdminHapus = document.getElementById('btn-admin-hapus-data');
+            const btnUploadUtilitas = document.getElementById('btn-upload-utilitas');
             
             tUsers.style.display = 'none'; tAdminForm.style.display = 'none';
             if(mUsers) mUsers.style.display = 'none'; if(mAdminForm) mAdminForm.style.display = 'none';
             btnOpenForm.style.display = 'none'; if(btnAdminHapus) btnAdminHapus.style.display = 'none';
+            if(btnUploadUtilitas) btnUploadUtilitas.style.display = 'none';
 
             if (currentUser.role === 'admin') {
                 tUsers.style.display = 'flex'; tAdminForm.style.display = 'flex';
                 if(mUsers) mUsers.style.display = 'flex'; if(mAdminForm) mAdminForm.style.display = 'flex';
                 btnOpenForm.style.display = 'flex'; if(btnAdminHapus) btnAdminHapus.style.display = 'flex';
+                if(btnUploadUtilitas) btnUploadUtilitas.style.display = 'flex';
                 switchTab('dashboard'); await renderAdminUsers(); await renderAdminCategoryList();
             } else if (currentUser.role === 'user') {
                 btnOpenForm.style.display = 'flex'; switchTab('dashboard');
@@ -893,8 +1300,20 @@
                 switchTab('dashboard');
             }
             
-            await populateCategoryFilter(); await applyFiltersAndRender();
+            await populateCategoryFilter(); await populateUtilFilters(); await applyFiltersAndRender();
             Island.show(`Selamat bertugas, ${currentUser.pic_name || currentUser.username}!`, 'success');
+        }
+
+        async function populateUtilFilters() {
+            const utilSscSelect = document.getElementById('util-filter-ssc');
+            if (utilSscSelect) {
+                utilSscSelect.innerHTML = '<option value="all">Semua Area</option>';
+                const { data: users } = await supabaseClient.from('users').select('stagging_name').eq('role', 'user');
+                if (users) {
+                    const uniqueStagings = [...new Set(users.map(u => u.stagging_name).filter(Boolean))].sort();
+                    uniqueStagings.forEach(stg => { utilSscSelect.innerHTML += `<option value="${stg}">${stg}</option>`; });
+                }
+            }
         }
 
         function logout() {
@@ -904,18 +1323,16 @@
         }
 
         function switchTab(tabName) {
-            const views = ['admin-users', 'admin-form', 'dashboard'];
+            const views = ['admin-users', 'admin-form', 'dashboard', 'utilitas'];
             views.forEach(v => {
                 const content = document.getElementById(`content-${v}`); if (content) content.classList.add('hidden');
                 
-                // Reset Desktop Tabs
                 const btn = document.getElementById(`tab-${v}`);
                 if(btn) { 
                     btn.classList.remove('text-brand-700', 'bg-brand-50'); btn.classList.add('text-slate-600', 'hover:text-slate-900', 'hover:bg-slate-50'); 
                     const icon = btn.querySelector('span'); if(icon) { icon.classList.replace('icon-fill', 'icon-outline'); icon.classList.replace('text-brand-600', 'group-hover:text-slate-800'); }
                 }
 
-                // Reset Mobile Tabs
                 const mBtn = document.getElementById(`mob-tab-${v}`);
                 if(mBtn) {
                     mBtn.classList.remove('text-brand-600'); mBtn.classList.add('text-slate-400');
@@ -925,14 +1342,12 @@
             
             const activeContent = document.getElementById(`content-${tabName}`); if (activeContent) activeContent.classList.remove('hidden');
             
-            // Set Active Desktop
             const activeBtn = document.getElementById(`tab-${tabName}`);
             if(activeBtn) { 
                 activeBtn.classList.remove('text-slate-600', 'hover:text-slate-900', 'hover:bg-slate-50'); activeBtn.classList.add('text-brand-700', 'bg-brand-50'); 
                 const icon = activeBtn.querySelector('span'); if(icon) { icon.classList.replace('icon-outline', 'icon-fill'); icon.classList.replace('group-hover:text-slate-800', 'text-brand-600'); }
             }
 
-            // Set Active Mobile
             const activeMBtn = document.getElementById(`mob-tab-${tabName}`);
             if(activeMBtn) {
                 activeMBtn.classList.remove('text-slate-400'); activeMBtn.classList.add('text-brand-600');
@@ -942,6 +1357,7 @@
             if (tabName === 'dashboard') applyFiltersAndRender();
             if (tabName === 'admin-users') renderAdminUsers();
             if (tabName === 'admin-form') renderAdminCategoryList();
+            if (tabName === 'utilitas') renderUtilitasTable();
 
             const scrollArea = document.getElementById('main-scroll-area'); if(scrollArea) scrollArea.scrollTop = 0;
         }
@@ -983,7 +1399,710 @@
             }
         });
 
-        // --- HAPUS DATA ---
+        // --- SISTEM UTILITAS & IPL (SUPABASE) ---
+        let currentUtilView = 'air';
+        let utilChartInstance = null;
+        let utilChartMode = 'month';
+        let globalUtilData = [];
+
+        function toggleUtilChartMode(mode) {
+            utilChartMode = mode;
+            const btnMonth = document.getElementById('btn-chart-month');
+            const btnYear = document.getElementById('btn-chart-year');
+            if (mode === 'month') {
+                btnMonth.classList.replace('bg-slate-100', 'bg-brand-600');
+                btnMonth.classList.replace('text-slate-500', 'text-white');
+                btnYear.classList.replace('bg-brand-600', 'bg-slate-100');
+                btnYear.classList.replace('text-white', 'text-slate-500');
+            } else {
+                btnYear.classList.replace('bg-slate-100', 'bg-brand-600');
+                btnYear.classList.replace('text-slate-500', 'text-white');
+                btnMonth.classList.replace('bg-brand-600', 'bg-slate-100');
+                btnMonth.classList.replace('text-white', 'text-slate-500');
+            }
+            renderUtilitasTable();
+        }
+
+        function showUtilitasDetail(id) {
+            const data = globalUtilData.find(d => d.id === id);
+            if (!data) return;
+            
+            document.getElementById('detail-stagging').textContent = data.stagging_name;
+            document.getElementById('detail-pic').textContent = data.pic;
+            document.getElementById('detail-periode').textContent = `Bulan ${data.bulan} - Tahun ${data.tahun} (Minggu ${data.minggu})`;
+            
+            let content = '';
+            const d = data.data;
+            
+            if (currentUtilView === 'air') {
+                content += `<div class="mb-4"><h4 class="font-bold text-sm text-slate-800 border-b pb-1 mb-2">Informasi Umum Air</h4>`;
+                content += `<p class="text-xs mb-1"><span class="font-semibold">Sumber:</span> ${d.air_sumber || '-'}</p>`;
+                if (d.air_sumber === 'PDAM' || d.air_sumber === 'WTP') {
+                    content += `<p class="text-xs mb-1"><span class="font-semibold">ID Pelanggan:</span> ${d.air_id || '-'}</p>`;
+                    content += `<p class="text-xs mb-1"><span class="font-semibold">Nama Pemilik:</span> ${d.air_nama || '-'}</p>`;
+                    content += `<p class="text-xs mb-1"><span class="font-semibold">Mekanisme:</span> ${d.air_mekanisme || '-'}</p>`;
+                }
+                content += `</div>`;
+                
+                content += `<div class="mb-4"><h4 class="font-bold text-sm text-slate-800 border-b pb-1 mb-2">Kondisi Fasilitas</h4>`;
+                content += `<p class="text-xs mb-1"><span class="font-semibold">Meteran:</span> <span class="${d.air_kondisi_meteran === 'Rusak' ? 'text-rose-600 font-bold' : ''}">${d.air_kondisi_meteran || '-'}</span> ${d.air_meteran_rusak ? `(${d.air_meteran_rusak})` : ''}</p>`;
+                content += `<p class="text-xs mb-1"><span class="font-semibold">Pipa & Kran:</span> <span class="${d.air_kondisi_pipa === 'Rusak' ? 'text-rose-600 font-bold' : ''}">${d.air_kondisi_pipa || '-'}</span> ${d.air_pipa_rusak ? `(${d.air_pipa_rusak})` : ''}</p>`;
+                content += `</div>`;
+                
+                if (d.air_tandon === 'Ada') {
+                    content += `<div class="mb-4"><h4 class="font-bold text-sm text-slate-800 border-b pb-1 mb-2">Tandon & Otomatis</h4>`;
+                    content += `<p class="text-xs mb-1"><span class="font-semibold">Kondisi Tandon:</span> <span class="${d.air_kondisi_tandon === 'Rusak' ? 'text-rose-600 font-bold' : ''}">${d.air_kondisi_tandon || '-'}</span> ${d.air_tandon_rusak ? `(${d.air_tandon_rusak})` : ''}</p>`;
+                    if (d.air_otomatis === 'Ada') {
+                        content += `<p class="text-xs mb-1"><span class="font-semibold">Kondisi Otomatis:</span> <span class="${d.air_kondisi_otomatis === 'Rusak' ? 'text-rose-600 font-bold' : ''}">${d.air_kondisi_otomatis || '-'}</span> ${d.air_otomatis_rusak ? `(${d.air_otomatis_rusak})` : ''}</p>`;
+                    }
+                    content += `</div>`;
+                }
+                
+                if (d.air_pompa === 'Ada') {
+                    content += `<div class="mb-4"><h4 class="font-bold text-sm text-slate-800 border-b pb-1 mb-2">Pompa Air</h4>`;
+                    content += `<p class="text-xs mb-1"><span class="font-semibold">Kondisi Pompa:</span> <span class="${d.air_kondisi_pompa === 'Rusak' ? 'text-rose-600 font-bold' : ''}">${d.air_kondisi_pompa || '-'}</span> ${d.air_pompa_rusak ? `(${d.air_pompa_rusak})` : ''}</p>`;
+                    content += `</div>`;
+                }
+            } else if (currentUtilView === 'listrik') {
+                content += `<div class="mb-4"><h4 class="font-bold text-sm text-slate-800 border-b pb-1 mb-2">Informasi Listrik</h4>`;
+                content += `<p class="text-xs mb-1"><span class="font-semibold">ID Pelanggan:</span> ${d.listrik_id || '-'}</p>`;
+                content += `<p class="text-xs mb-1"><span class="font-semibold">Nama Pemilik:</span> ${d.listrik_nama || '-'}</p>`;
+                content += `<p class="text-xs mb-1"><span class="font-semibold">Kategori:</span> ${d.listrik_kategori || '-'}</p>`;
+                content += `</div>`;
+            } else {
+                content += `<div class="mb-4"><h4 class="font-bold text-sm text-slate-800 border-b pb-1 mb-2">Rincian IPL</h4>`;
+                content += `<p class="text-xs mb-1"><span class="font-semibold">IPL Kebersihan:</span> ${d.ipl_bersih || '-'}</p>`;
+                if (d.ipl_bersih === 'Ada') {
+                    content += `<p class="text-xs mb-1 pl-4">- Nominal: Rp ${parseFloat(d.ipl_bersih_nom || 0).toLocaleString('id-ID')}</p>`;
+                    content += `<p class="text-xs mb-1 pl-4">- Jadwal: ${d.ipl_bersih_jadwal || '-'}</p>`;
+                }
+                content += `<p class="text-xs mb-1 mt-2"><span class="font-semibold">IPL Keamanan:</span> ${d.ipl_aman || '-'}</p>`;
+                if (d.ipl_aman === 'Ada') {
+                    content += `<p class="text-xs mb-1 pl-4">- Nominal: Rp ${parseFloat(d.ipl_aman_nom || 0).toLocaleString('id-ID')}</p>`;
+                    content += `<p class="text-xs mb-1 pl-4">- Jadwal: ${d.ipl_aman_jadwal || '-'}</p>`;
+                }
+                content += `</div>`;
+            }
+            
+            document.getElementById('detail-content').innerHTML = content;
+            document.getElementById('modal-detail-utilitas').classList.remove('hidden');
+        }
+
+        function closeUtilitasDetailModal() {
+            document.getElementById('modal-detail-utilitas').classList.add('hidden');
+        }
+
+        function switchUtilView(view) {
+            currentUtilView = view;
+            const views = ['air', 'listrik', 'ipl'];
+            const colors = { air: 'text-blue-600', listrik: 'text-amber-500', ipl: 'text-emerald-600' };
+            views.forEach(v => {
+                const btn = document.getElementById(`btn-view-${v}`);
+                if(v === view) {
+                    btn.classList.add('bg-white', 'shadow', colors[v]);
+                    btn.classList.remove('text-slate-500', 'hover:text-slate-700');
+                } else {
+                    btn.classList.remove('bg-white', 'shadow', 'text-blue-600', 'text-amber-500', 'text-emerald-600');
+                    btn.classList.add('text-slate-500', 'hover:text-slate-700');
+                }
+            });
+            document.getElementById('chart-util-title').textContent = `Total ${view === 'air' ? 'Pemakaian Air' : (view === 'listrik' ? 'Pemakaian Listrik' : 'Tagihan IPL (Rp)')} (Mingguan)`;
+            renderUtilitasTable();
+        }
+
+        async function openUtilitasModal() {
+            const btn = document.getElementById('btn-open-utilitas-form');
+            const originalHtml = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<span class="material-symbols-rounded animate-spin">sync</span> Memeriksa Akses...';
+
+            try {
+                if(currentUser.role !== 'user' && currentUser.role !== 'admin') {
+                    Island.show('Hanya PIC yang bisa mengisi form.', 'error'); return;
+                }
+
+                let uName = currentUser.stagging_name || 'Global';
+                let uPic = currentUser.pic_name || currentUser.username;
+                
+                if (currentUser.role === 'admin') {
+                    uName = 'Staging Dummy (Admin)';
+                    document.getElementById('admin-util-selector-container').classList.remove('hidden');
+                    await loadAdminUtilTargets();
+                } else {
+                    document.getElementById('admin-util-selector-container').classList.add('hidden');
+                    if(!currentUser.stagging_name) { Island.show('Anda tidak memiliki Staging Area.', 'error'); return; }
+                }
+
+                let now; 
+                try { 
+                    const res = await fetch('https://worldtimeapi.org/api/timezone/Asia/Makassar'); 
+                    const timeData = await res.json(); 
+                    now = new Date(timeData.datetime); 
+                } catch(err) { 
+                    now = new Date(); 
+                }
+
+                const d = String(now.getDate()).padStart(2, '0');
+                const m = String(now.getMonth() + 1).padStart(2, '0');
+                const y = now.getFullYear();
+                const w = Math.ceil(now.getDate() / 7);
+                const wDisplay = w > 5 ? 5 : w; 
+                const bulanInt = now.getMonth() + 1;
+
+                if (currentUser.role !== 'admin') {
+                    const { data: existingData } = await supabaseClient
+                        .from('utilitas_data')
+                        .select('id, pic')
+                        .eq('stagging_name', uName)
+                        .eq('bulan', bulanInt)
+                        .eq('tahun', y)
+                        .eq('minggu', wDisplay)
+                        .maybeSingle();
+
+                    if (existingData) {
+                        Modal.warning(
+                            'Periode Sudah Terisi', 
+                            `Data utilitas untuk area ${uName} pada Minggu ke-${wDisplay} ini sudah diinput oleh PIC: ${existingData.pic}. Pengisian hanya diperbolehkan 1 kali per minggu untuk setiap area.`
+                        );
+                        return; 
+                    }
+                }
+
+                document.getElementById('util-form-stagging').textContent = uName;
+                document.getElementById('util-form-pic').textContent = uPic;
+                
+                document.getElementById('utilitas-form').reset();
+                if(document.getElementById('admin-util-date-override')) document.getElementById('admin-util-date-override').value = '';
+                
+                const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+
+                document.getElementById('u-periode-tanggal-display').value = `${d}/${m}/${y}`;
+                document.getElementById('u-periode-bulan-display').value = months[now.getMonth()];
+                document.getElementById('u-periode-tahun-display').value = y;
+                document.getElementById('u-periode-minggu-display').value = `Minggu ${wDisplay}`;
+
+                document.getElementById('u-periode-bulan').value = bulanInt;
+                document.getElementById('u-periode-tahun').value = y;
+                document.getElementById('u-periode-minggu').value = wDisplay;
+
+                toggleAirFields(); toggleAirMekanisme(); toggleSubTandon(); toggleSubPompa(); toggleIpl('ipl_bersih', 'ipl-bersih-fields'); toggleIpl('ipl_aman', 'ipl-aman-fields');
+
+                document.getElementById('modal-utilitas-form').classList.remove('hidden');
+            } catch (err) {
+                console.error(err);
+                Island.show('Gagal memverifikasi data ke server.', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalHtml;
+            }
+        }
+
+        function closeUtilitasModal() { document.getElementById('modal-utilitas-form').classList.add('hidden'); }
+
+        function toggleAirFields() {
+            const s = document.querySelector('input[name="air_sumber"]:checked')?.value || ''; 
+            const f = document.getElementById('air-pdam-fields');
+            const mek = document.getElementById('air-mekanisme-container');
+            const mekInput = document.getElementById('u-air-mekanisme');
+            const angka = document.getElementById('air-angka-container');
+            const angkaInput = document.getElementById('u-air-angka');
+            
+            if(s === 'PDAM' || s === 'WTP') { 
+                f.classList.remove('hidden'); 
+                document.getElementById('u-air-id').required=true; 
+                document.getElementById('u-air-nama').required=true; 
+                mek.classList.remove('hidden');
+                mekInput.required = true;
+                angka.classList.remove('hidden');
+                angkaInput.required = true;
+            } 
+            else { 
+                f.classList.add('hidden'); 
+                document.getElementById('u-air-id').required=false; 
+                document.getElementById('u-air-nama').required=false; 
+                mek.classList.add('hidden');
+                mekInput.required = false;
+                angka.classList.add('hidden');
+                angkaInput.required = false;
+            }
+        }
+        function toggleAirMekanisme() {
+            const s = document.getElementById('u-air-mekanisme').value; const f = document.getElementById('u-air-mekanisme-lain');
+            if(s === 'Lainnya') { f.classList.remove('hidden'); f.required = true; } else { f.classList.add('hidden'); f.required = false; }
+        }
+        function toggleRusak(radioName, inputId) {
+            const val = document.querySelector(`input[name="${radioName}"]:checked`)?.value; 
+            const inp = document.getElementById(inputId);
+            if(val === 'Rusak') { inp.classList.remove('hidden'); inp.required = true; } else { inp.classList.add('hidden'); inp.required = false; }
+        }
+        function toggleSubTandon() {
+            const v = document.querySelector('input[name="air_tandon"]:checked')?.value; 
+            const f = document.getElementById('air-tandon-fields');
+            if(v==='Ada') { f.classList.remove('hidden'); toggleSubOtomatis(); } 
+            else { f.classList.add('hidden'); }
+        }
+        function toggleSubOtomatis() {
+            const v = document.querySelector('input[name="air_otomatis"]:checked')?.value; 
+            const f = document.getElementById('air-otomatis-fields');
+            if(v==='Ada') { f.classList.remove('hidden'); } 
+            else { f.classList.add('hidden'); }
+        }
+        function toggleSubPompa() {
+            const v = document.querySelector('input[name="air_pompa"]:checked')?.value; 
+            const f = document.getElementById('air-pompa-fields');
+            if(v==='Ada') { f.classList.remove('hidden'); } 
+            else { f.classList.add('hidden'); }
+        }
+        function toggleIpl(radioName, fieldId) {
+            const v = document.querySelector(`input[name="${radioName}"]:checked`)?.value; 
+            const f = document.getElementById(fieldId);
+            const inps = f.querySelectorAll('input, select');
+            if(v==='Ada') { f.classList.remove('hidden'); inps.forEach(i=>i.required=true); } 
+            else { f.classList.add('hidden'); inps.forEach(i=>i.required=false); }
+        }
+
+        async function loadAdminUtilTargets() {
+            const select = document.getElementById('admin-util-target-select');
+            select.innerHTML = '<option value="">Sedang memuat data...</option>';
+            if (adminTargetUsers.length === 0) {
+                const { data } = await supabaseClient.from('users').select('*').eq('role', 'user'); 
+                adminTargetUsers = data || [];
+            }
+            select.innerHTML = '<option value="">-- Pilih Area Observasi --</option>';
+            adminTargetUsers.forEach(u => { select.innerHTML += `<option value="${u.id}">${u.stagging_name} (${u.pic_name}) - ${u.ssc}</option>`; });
+        }
+        
+        window.updateAdminUtilTargetInfo = function() {
+            const select = document.getElementById('admin-util-target-select'); 
+            const targetId = select.value;
+            if (!targetId) {
+                document.getElementById('util-form-stagging').textContent = '-';
+                document.getElementById('util-form-pic').textContent = '-';
+                return;
+            }
+            const u = adminTargetUsers.find(x => x.id === targetId);
+            if (u) {
+                document.getElementById('util-form-stagging').textContent = u.stagging_name || '-';
+                document.getElementById('util-form-pic').textContent = u.pic_name || u.username || '-';
+            }
+        }
+
+        window.overrideUtilDate = function() {
+            const dateVal = document.getElementById('admin-util-date-override').value;
+            if(!dateVal) return;
+            const d = new Date(dateVal);
+            
+            const day = String(d.getDate()).padStart(2, '0');
+            const m = String(d.getMonth() + 1).padStart(2, '0');
+            const y = d.getFullYear();
+            const w = Math.ceil(d.getDate() / 7);
+            const wDisplay = w > 5 ? 5 : w; 
+            const bulanInt = d.getMonth() + 1;
+            const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+
+            document.getElementById('u-periode-tanggal-display').value = `${day}/${m}/${y}`;
+            document.getElementById('u-periode-bulan-display').value = months[d.getMonth()];
+            document.getElementById('u-periode-tahun-display').value = y;
+            document.getElementById('u-periode-minggu-display').value = `Minggu ${wDisplay}`;
+
+            document.getElementById('u-periode-bulan').value = bulanInt;
+            document.getElementById('u-periode-tahun').value = y;
+            document.getElementById('u-periode-minggu').value = wDisplay;
+        };
+
+        document.getElementById('utilitas-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const dataObj = Object.fromEntries(formData.entries());
+            
+            if(dataObj.air_mekanisme === 'Lainnya') dataObj.air_mekanisme = dataObj.air_mekanisme_lain;
+
+            let d = new Date();
+            if (currentUser.role === 'admin' && document.getElementById('admin-util-date-override').value) {
+                d = new Date(document.getElementById('admin-util-date-override').value);
+            }
+            const dateStr = `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}, ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+
+            let uName = currentUser.stagging_name || 'Staging Dummy (Admin)';
+            let uPic = currentUser.pic_name || currentUser.username;
+            let uSsc = currentUser.ssc || 'Admin';
+
+            if (currentUser.role === 'admin') {
+                const selectVal = document.getElementById('admin-util-target-select').value;
+                if (!selectVal) { Island.show('Pilih area observasi terlebih dahulu!', 'error'); return; }
+                const u = adminTargetUsers.find(x => x.id === selectVal);
+                if (u) {
+                    uName = u.stagging_name;
+                    uPic = u.pic_name || u.username;
+                    uSsc = u.ssc;
+                }
+            }
+
+            const payload = { 
+                id: 'UTIL' + Date.now(), 
+                user_id: currentUser.id, 
+                pic: uPic, 
+                ssc: uSsc, 
+                stagging_name: uName, 
+                date: dateStr,
+                bulan: dataObj.bulan,
+                tahun: dataObj.tahun,
+                minggu: dataObj.minggu,
+                data: dataObj 
+            };
+
+            const btnSubmit = document.getElementById('btn-submit-utilitas');
+            const originalBtnText = btnSubmit.innerHTML;
+            btnSubmit.disabled = true;
+            btnSubmit.innerHTML = '<span class="material-symbols-rounded animate-spin">sync</span> <span>Menyimpan ke Database...</span>';
+
+            try {
+                const { data: existing } = await supabaseClient
+                    .from('utilitas_data')
+                    .select('id, pic')
+                    .eq('stagging_name', uName)
+                    .eq('bulan', dataObj.bulan)
+                    .eq('tahun', dataObj.tahun)
+                    .eq('minggu', dataObj.minggu)
+                    .maybeSingle();
+
+                if (existing) {
+                    if (currentUser.role === 'admin') {
+                        payload.id = existing.id; 
+                        await supabaseClient.from('utilitas_data').update(payload).eq('id', existing.id);
+                        Island.show('Revisi Data Masa Lalu Berhasil Disimpan.', 'success');
+                    } else {
+                        Island.show(`Gagal! Minggu ini sudah diisi oleh PIC: ${existing.pic}`, 'error');
+                        return;
+                    }
+                } else {
+                    await supabaseClient.from('utilitas_data').insert([payload]);
+                    Island.show('Data Mingguan Berhasil Disimpan.', 'success');
+                }
+
+                closeUtilitasModal();
+                renderUtilitasTable();
+            } catch(error) {
+                console.error(error);
+                Island.show('Gagal menyimpan data server.', 'error');
+            } finally {
+                btnSubmit.disabled = false;
+                btnSubmit.innerHTML = originalBtnText;
+            }
+        });
+
+        async function renderUtilitasTable() {
+            const tbody = document.getElementById('utilitas-tbody');
+            tbody.innerHTML = '<tr><td colspan="6" class="p-8 text-center text-slate-400 font-bold bg-slate-50"><span class="material-symbols-rounded animate-spin align-middle mr-2">sync</span>Memuat data dari server...</td></tr>';
+            
+            const selBulan = parseInt(document.getElementById('util-filter-bulan').value);
+            const selTahun = parseInt(document.getElementById('util-filter-tahun').value);
+            const selStaging = document.getElementById('util-filter-ssc').value;
+
+            const prevMonth = selBulan === 1 ? 12 : selBulan - 1;
+            const prevYear = selBulan === 1 ? selTahun - 1 : selTahun;
+
+            const { data: users } = await supabaseClient.from('users').select('*').eq('role', 'user');
+            let validUsers = (users || []).filter(u => u.stagging_name);
+            
+            if(selStaging !== 'all') {
+                validUsers = validUsers.filter(u => u.stagging_name === selStaging);
+            }
+            
+            // Tarik data Setahun + Tahun Sebelumnya (untuk kalkulasi Januari)
+            const { data: dbData } = await supabaseClient
+                .from('utilitas_data')
+                .select('*')
+                .in('tahun', [selTahun, selTahun - 1]); 
+                
+            const allFetchedData = dbData || [];
+            globalUtilData = allFetchedData; // Simpan ke global untuk modal Detail
+            
+            const utilDataCurrent = allFetchedData.filter(d => parseInt(d.bulan) === selBulan && parseInt(d.tahun) === selTahun);
+            const utilDataPrev = allFetchedData.filter(d => parseInt(d.bulan) === prevMonth && parseInt(d.tahun) === prevYear);
+            
+            let html = '';
+            
+            if(validUsers.length === 0 && utilDataCurrent.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="p-8 text-center text-slate-400 font-bold bg-slate-50">Belum ada data staging bulan ini.</td></tr>';
+                renderUtilitasChart(['Minggu 1', 'Minggu 2', 'Minggu 3', 'Minggu 4', 'Minggu 5'], []);
+                return;
+            }
+
+            validUsers.sort((a, b) => (a.stagging_name || '').localeCompare(b.stagging_name || ''));
+
+            let monthlyTrend = [0, 0, 0, 0, 0];
+            let yearlyTrend = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+
+            validUsers.forEach((u, i) => {
+                const userSubmitsCurrent = utilDataCurrent.filter(d => d.stagging_name === u.stagging_name);
+                const userSubmitsPrev = utilDataPrev.filter(d => d.stagging_name === u.stagging_name);
+                
+                let lastAir = 0; let lastListrik = 0;
+                
+                const sortedPrev = userSubmitsPrev.sort((a,b) => parseInt(b.minggu) - parseInt(a.minggu));
+                if(sortedPrev.length > 0) {
+                    lastAir = parseFloat(sortedPrev[0].data.air_angka) || 0;
+                    lastListrik = parseFloat(sortedPrev[0].data.listrik_angka) || 0;
+                }
+
+                let rowHtml = `<td class="p-3 border-r border-slate-200 sticky-col-1 bg-white"><strong class="text-slate-900 text-xs block mb-0.5">${u.stagging_name}</strong><span class="text-[10px] text-slate-500">${u.pic_name || u.username}</span></td>`;
+
+                for(let m = 1; m <= 5; m++) {
+                    const submit = userSubmitsCurrent.find(d => parseInt(d.minggu) === m);
+                    if(submit) {
+                        const d = submit.data;
+                        const cellClick = `onclick="showUtilitasDetail('${submit.id}')" title="Klik untuk lihat detail form"`;
+                        const cellClasses = `p-2 border-r border-slate-50 text-center relative transition-colors cursor-pointer group`;
+                        const overlayHtml = `<div class="absolute inset-0 bg-black/5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded"><span class="material-symbols-rounded text-slate-700 text-xl drop-shadow-md">open_in_new</span></div>`;
+
+                        if(currentUtilView === 'air') {
+                            let currAir = parseFloat(d.air_angka) || 0;
+                            let pemakaian = null;
+                            if (lastAir > 0 && currAir >= lastAir) pemakaian = currAir - lastAir;
+                            if (pemakaian !== null) monthlyTrend[m-1] += pemakaian;
+                            
+                            rowHtml += `<td class="${cellClasses} hover:bg-blue-50/50" ${cellClick}>
+                                <strong class="text-blue-600 text-[14px] block mb-0.5">${pemakaian !== null ? '+'+pemakaian.toLocaleString('id-ID') : '-'}</strong>
+                                <span class="text-[9px] text-slate-400 block leading-tight font-mono">Mtr: ${currAir.toLocaleString('id-ID')}</span>
+                                ${overlayHtml}
+                            </td>`;
+                            lastAir = currAir;
+                            
+                        } else if(currentUtilView === 'listrik') {
+                            let currListrik = parseFloat(d.listrik_angka) || 0;
+                            let pemakaian = null;
+                            if (lastListrik > 0 && currListrik >= lastListrik) pemakaian = currListrik - lastListrik;
+                            if (pemakaian !== null) monthlyTrend[m-1] += pemakaian;
+                            
+                            rowHtml += `<td class="${cellClasses} hover:bg-amber-50/50" ${cellClick}>
+                                <strong class="text-amber-500 text-[14px] block mb-0.5">${pemakaian !== null ? '+'+pemakaian.toLocaleString('id-ID') : '-'}</strong>
+                                <span class="text-[9px] text-slate-400 block leading-tight font-mono">Mtr: ${currListrik.toLocaleString('id-ID')}</span>
+                                ${overlayHtml}
+                            </td>`;
+                            lastListrik = currListrik;
+                            
+                        } else {
+                            let val = 0; let textB = '-'; let textA = '-';
+                            if(d.ipl_bersih === 'Ada') {
+                                const nom = parseFloat(d.ipl_bersih_nom) || 0; val += nom;
+                                const jad = d.ipl_bersih_jadwal === '1 Kali Sebulan' ? '/bln' : (d.ipl_bersih_jadwal === '1 Kali Seminggu' ? '/mgg' : '');
+                                textB = `Rp${(nom/1000)}k${jad}`;
+                            }
+                            if(d.ipl_aman === 'Ada') {
+                                const nom = parseFloat(d.ipl_aman_nom) || 0; val += nom;
+                                const jad = d.ipl_aman_jadwal === '1 Kali Sebulan' ? '/bln' : (d.ipl_aman_jadwal === '1 Kali Seminggu' ? '/mgg' : '');
+                                textA = `Rp${(nom/1000)}k${jad}`;
+                            }
+                            monthlyTrend[m-1] += val;
+                            
+                            rowHtml += `<td class="p-2 border-r border-slate-100 text-center align-middle hover:bg-emerald-50/50 transition-colors cursor-pointer group relative" ${cellClick}>
+                                <div class="flex flex-col gap-1 items-center justify-center">
+                                    <span class="text-[10px] px-1.5 py-0.5 rounded w-full text-center ${d.ipl_bersih==='Ada'?'bg-emerald-100 text-emerald-700 font-bold':'bg-slate-50 text-slate-400'}">Kbrs: ${textB}</span>
+                                    <span class="text-[10px] px-1.5 py-0.5 rounded w-full text-center ${d.ipl_aman==='Ada'?'bg-emerald-100 text-emerald-700 font-bold':'bg-slate-50 text-slate-400'}">Kmn: ${textA}</span>
+                                </div>
+                                ${overlayHtml}
+                            </td>`;
+                        }
+                    } else {
+                        rowHtml += `<td class="p-3 border-r border-slate-100 text-center text-slate-300 font-bold text-xs bg-slate-50/50">-</td>`;
+                    }
+                }
+
+                html += `<tr class="hover:bg-slate-50/50 border-b border-slate-100 transition-colors">${rowHtml}</tr>`;
+
+                // Kalkulasi untuk Chart Tahunan
+                if (utilChartMode === 'year') {
+                    const userSubmitsYear = allFetchedData.filter(d => d.stagging_name === u.stagging_name && parseInt(d.tahun) === selTahun);
+                    const userSubmitsPrevYear = allFetchedData.filter(d => d.stagging_name === u.stagging_name && parseInt(d.tahun) === selTahun - 1);
+                    
+                    let yLastAir = 0; let yLastListrik = 0;
+                    const prevYearSorted = userSubmitsPrevYear.sort((a,b) => (parseInt(b.bulan)*10 + parseInt(b.minggu)) - (parseInt(a.bulan)*10 + parseInt(a.minggu)));
+                    if(prevYearSorted.length > 0) {
+                        yLastAir = parseFloat(prevYearSorted[0].data.air_angka) || 0;
+                        yLastListrik = parseFloat(prevYearSorted[0].data.listrik_angka) || 0;
+                    }
+
+                    for(let mIdx = 1; mIdx <= 12; mIdx++) {
+                        for(let wIdx = 1; wIdx <= 5; wIdx++) {
+                            const subYear = userSubmitsYear.find(d => parseInt(d.bulan) === mIdx && parseInt(d.minggu) === wIdx);
+                            if(subYear) {
+                                const yD = subYear.data;
+                                if(currentUtilView === 'air') {
+                                    let cAir = parseFloat(yD.air_angka) || 0;
+                                    if(yLastAir > 0 && cAir >= yLastAir) yearlyTrend[mIdx-1] += (cAir - yLastAir);
+                                    yLastAir = cAir;
+                                } else if(currentUtilView === 'listrik') {
+                                    let cLis = parseFloat(yD.listrik_angka) || 0;
+                                    if(yLastListrik > 0 && cLis >= yLastListrik) yearlyTrend[mIdx-1] += (cLis - yLastListrik);
+                                    yLastListrik = cLis;
+                                } else {
+                                    if(yD.ipl_bersih === 'Ada') yearlyTrend[mIdx-1] += parseFloat(yD.ipl_bersih_nom) || 0;
+                                    if(yD.ipl_aman === 'Ada') yearlyTrend[mIdx-1] += parseFloat(yD.ipl_aman_nom) || 0;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            tbody.innerHTML = html;
+
+            let cLabels = []; let cData = [];
+            if (utilChartMode === 'month') {
+                cLabels = ['Minggu 1', 'Minggu 2', 'Minggu 3', 'Minggu 4', 'Minggu 5']; cData = monthlyTrend;
+            } else {
+                cLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agt', 'Sep', 'Okt', 'Nov', 'Des']; cData = yearlyTrend;
+            }
+
+            const hasData = cData.some(v => v > 0);
+            let chartDatasets = [];
+            if (hasData) {
+                let labelName = currentUtilView === 'air' ? 'Total Pemakaian Air' : (currentUtilView === 'listrik' ? 'Total Pemakaian Listrik' : 'Total Tagihan IPL (Rp)');
+                chartDatasets.push({
+                    label: labelName,
+                    data: cData,
+                    borderColor: '#4f46e5',
+                    backgroundColor: 'rgba(79, 70, 229, 0.15)',
+                    borderWidth: 3,
+                    pointRadius: 6,
+                    pointHoverRadius: 8,
+                    pointBackgroundColor: '#ffffff',
+                    pointBorderColor: '#4f46e5',
+                    pointBorderWidth: 2,
+                    tension: 0.4,
+                    fill: true
+                });
+            }
+            renderUtilitasChart(cLabels, chartDatasets);
+        }
+
+        function renderUtilitasChart(labels, datasets) {
+            Chart.register(ChartDataLabels);
+            if (utilChartInstance) { utilChartInstance.destroy(); }
+            
+            const ctx = document.getElementById('utilitasChart').getContext('2d');
+            utilChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: { labels: labels, datasets: datasets },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { mode: 'index', intersect: false, backgroundColor: 'rgba(15, 23, 42, 0.9)', titleFont: { family: "'Figtree', sans-serif", size: 13 }, bodyFont: { family: "'Figtree', sans-serif", size: 13 }, padding: 12, cornerRadius: 8 },
+                        datalabels: {
+                            color: '#4f46e5',
+                            align: 'top',
+                            offset: 5,
+                            font: { family: "'Figtree', sans-serif", weight: 'bold', size: 12 },
+                            formatter: function(value) { return value > 0 ? value.toLocaleString('id-ID') : ''; }
+                        }
+                    },
+                    scales: {
+                        x: { grid: { display: false }, border: { display: false }, ticks: { font: { family: "'Figtree', sans-serif", weight: '600' } } },
+                        y: { display: false, grid: { display: false }, min: 0, suggestedMax: Math.max(...datasets.flatMap(d => d.data)) * 1.3 }
+                    },
+                    interaction: { mode: 'nearest', axis: 'x', intersect: false },
+                    layout: { padding: { top: 30 } }
+                }
+            });
+        }
+
+        function openUploadUtilitasModal() { document.getElementById('modal-upload-utilitas').classList.remove('hidden'); document.getElementById('form-upload-utilitas').reset(); }
+        function closeUploadUtilitasModal() { document.getElementById('modal-upload-utilitas').classList.add('hidden'); }
+
+        function downloadTemplateUtilitas() {
+            const ws_data = [
+                ["Staging Name", "PIC Name", "SSC", "Bulan (Angka 1-12)", "Tahun", "Minggu Ke (Angka 1-5)", "Angka Meteran Air", "Angka Meteran Listrik", "Nominal IPL Kebersihan", "Nominal IPL Keamanan"],
+                ["Contoh Staging A", "Budi Santoso", "SSC MKS", 5, 2026, 1, 1200.5, 4500, 50000, 100000],
+                ["Contoh Staging A", "Budi Santoso", "SSC MKS", 5, 2026, 2, 1210.0, 4550, 0, 100000]
+            ];
+            const ws = XLSX.utils.aoa_to_sheet(ws_data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Template Utilitas");
+            XLSX.writeFile(wb, "Template_Upload_Utilitas.xlsx");
+        }
+
+        const uploadForm = document.getElementById('form-upload-utilitas');
+        if (uploadForm) {
+            uploadForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const fileInput = document.getElementById('file-upload-utilitas');
+                if (!fileInput.files.length) { Island.show('Pilih file terlebih dahulu.', 'error'); return; }
+                
+                const btn = document.getElementById('btn-process-upload');
+                const originalText = btn.innerHTML;
+                btn.disabled = true;
+                btn.innerHTML = '<span class="material-symbols-rounded animate-spin">sync</span> Memproses...';
+
+                const reader = new FileReader();
+                reader.onload = async function(e) {
+                    try {
+                        const data = new Uint8Array(e.target.result);
+                        const workbook = XLSX.read(data, {type: 'array'});
+                        const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                        const jsonData = XLSX.utils.sheet_to_json(firstSheet);
+
+                        if (jsonData.length === 0) { throw new Error("File Excel kosong."); }
+
+                        let payloads = [];
+                        let d = new Date();
+                        const dateStr = `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}, ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+
+                        for (let i = 0; i < jsonData.length; i++) {
+                            const row = jsonData[i];
+                            if(!row['Staging Name'] || !row['Bulan (Angka 1-12)'] || !row['Tahun'] || !row['Minggu Ke (Angka 1-5)']) {
+                                continue;
+                            }
+
+                            const dataObj = {
+                                air_angka: row['Angka Meteran Air'] || 0,
+                                listrik_angka: row['Angka Meteran Listrik'] || 0,
+                                ipl_bersih: (row['Nominal IPL Kebersihan'] > 0) ? 'Ada' : 'Tidak Ada',
+                                ipl_bersih_nom: row['Nominal IPL Kebersihan'] || 0,
+                                ipl_aman: (row['Nominal IPL Keamanan'] > 0) ? 'Ada' : 'Tidak Ada',
+                                ipl_aman_nom: row['Nominal IPL Keamanan'] || 0,
+                                air_sumber: 'Upload Data', listrik_kategori: 'Upload Data'
+                            };
+
+                            payloads.push({
+                                id: 'UTIL-UP-' + Date.now() + i,
+                                user_id: currentUser.id, 
+                                pic: row['PIC Name'] || '-',
+                                ssc: row['SSC'] || '-',
+                                stagging_name: row['Staging Name'],
+                                date: dateStr,
+                                bulan: parseInt(row['Bulan (Angka 1-12)']),
+                                tahun: parseInt(row['Tahun']),
+                                minggu: parseInt(row['Minggu Ke (Angka 1-5)']),
+                                data: dataObj
+                            });
+                        }
+
+                        if (payloads.length === 0) { throw new Error("Tidak ada baris data yang valid (Pastikan nama kolom sesuai template)."); }
+
+                        Island.show(`Memasukkan ${payloads.length} data ke server...`, 'info', 5000);
+                        
+                        const { error } = await supabaseClient.from('utilitas_data').insert(payloads);
+                        if (error) throw error;
+
+                        Island.show('Upload data berhasil!', 'success');
+                        closeUploadUtilitasModal();
+                        renderUtilitasTable();
+
+                    } catch (err) {
+                        console.error(err);
+                        Island.show(err.message || 'Gagal memproses file.', 'error');
+                    } finally {
+                        btn.disabled = false;
+                        btn.innerHTML = originalText;
+                    }
+                };
+                reader.readAsArrayBuffer(fileInput.files[0]);
+            });
+        }
+
         function openAdminHapusModal() {
             const sscSelect = document.getElementById('hapus-ssc'); sscSelect.innerHTML = '<option value="all">Semua Koordinator</option>';
             supabaseClient.from('users').select('ssc').eq('role', 'user').then(({data}) => {
@@ -1015,6 +2134,7 @@
             });
         });
 
+        // --- PENGISIAN CHECKLIST ---
         async function openChecklistModal() {
             const btn = document.getElementById('btn-open-form'); const originalHtml = btn.innerHTML;
             btn.disabled = true; btn.innerHTML = '<span class="material-symbols-rounded animate-spin">sync</span> Verifikasi...';
@@ -1026,8 +2146,6 @@
 
                 if (!isAdmin) {
                     if (currentDay < 20) { Modal.warning('Akses Dikunci', 'Jendela pelaporan hanya dibuka mulai tanggal 20 hingga akhir bulan.'); btn.disabled = false; btn.innerHTML = originalHtml; return; }
-                    
-                    // PERBAIKAN VALIDASI: Cek berdasarkan Staging Area (Bukan berdasarkan Koordinator atau Akun PIC)
                     const { data: subs } = await supabaseClient.from('submissions').select('date').eq('stagging_name', currentUser.stagging_name);
                     if (subs && subs.length > 0) {
                         const hasSubmittedThisMonth = subs.some(sub => { const dateParts = sub.date.split(',')[0].trim().split('/'); return dateParts.length === 3 && dateParts[1] === currentMonthStr && dateParts[2] === String(currentYearStr); });
@@ -1078,16 +2196,35 @@
 
         function closeChecklistModal() { document.getElementById('modal-checklist-form').classList.add('hidden'); }
 
-        function openAddUserModal() {
-            document.getElementById('add-user-form').reset();
-            toggleFormFieldsBasedOnRole();
-            document.getElementById('modal-add-user').classList.remove('hidden');
-        }
+        document.getElementById('checklist-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            let targetData = { id: currentUser.id, pic: currentUser.pic_name || currentUser.username, ssc: currentUser.ssc, province: currentUser.province, stagging_name: currentUser.stagging_name };
 
-        function closeAddUserModal() {
-            document.getElementById('modal-add-user').classList.add('hidden');
-        }
+            if (currentUser.role === 'admin') {
+                const selectVal = document.getElementById('admin-target-select').value;
+                if (!selectVal) { Island.show('Pilih area target!', 'error'); return; }
+                const u = adminTargetUsers.find(x => x.id === selectVal);
+                if (u) { targetData = { id: u.id, pic: u.pic_name || u.username, ssc: u.ssc, province: u.province, stagging_name: u.stagging_name }; }
+            }
 
+            const btn = document.getElementById('btn-submit-form'); btn.disabled = true; btn.innerHTML = '<span class="material-symbols-rounded animate-spin">sync</span> Mengirim...';
+
+            const formData = new FormData(e.target); const answers = {}; const { data } = await supabaseClient.from('checklist_master').select('*');
+            data.forEach(cat => { if(cat.items) cat.items.forEach(item => { const status = formData.get(`status-${item.id}`); const note = formData.get(`note-${item.id}`); if (status) answers[item.id] = { status: status, note: note || '' }; }); });
+
+            let d; try { const res = await fetch('https://worldtimeapi.org/api/timezone/Asia/Makassar'); const timeData = await res.json(); d = new Date(timeData.datetime); } catch(err) { d = new Date(); }
+            const dateStr = `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`; const timeStr = `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+
+            await supabaseClient.from('submissions').insert({ id: Date.now().toString(), user_id: targetData.id, pic: targetData.pic, ssc: targetData.ssc, province: targetData.province, stagging_name: targetData.stagging_name, date: `${dateStr}, ${timeStr}`, answers: answers });
+
+            Island.show('Laporan Terkirim!', 'success'); e.target.reset(); 
+            document.querySelectorAll('[id^="note-container-"]').forEach(el => { el.classList.add('max-h-0', 'opacity-0'); setTimeout(() => el.classList.add('hidden'), 300); });
+            btn.disabled = false; btn.innerHTML = '<span class="material-symbols-rounded icon-fill">send</span> <span>Kirim Laporan Inspeksi</span>';
+            closeChecklistModal(); setTimeout(() => switchTab('dashboard'), 500);
+        });
+
+        function openAddUserModal() { document.getElementById('add-user-form').reset(); toggleFormFieldsBasedOnRole(); document.getElementById('modal-add-user').classList.remove('hidden'); }
+        function closeAddUserModal() { document.getElementById('modal-add-user').classList.add('hidden'); }
         function toggleFormFieldsBasedOnRole() {
             const role = document.getElementById('add-role').value; const locFields = document.getElementById('fields-lokasi');
             if (role === 'user') { locFields.classList.remove('hidden'); document.getElementById('add-st').required = true; document.getElementById('add-pr').required = true; document.getElementById('add-ss').required = true; } 
@@ -1118,7 +2255,6 @@
         }
 
         function closeEditUserModal() { document.getElementById('modal-edit-user').classList.add('hidden'); }
-        
         function toggleEditFormFields() {
             const role = document.getElementById('edit-role').value; const locFields = document.getElementById('edit-fields-lokasi');
             if (role === 'user') { locFields.classList.remove('hidden'); document.getElementById('edit-st').required = true; document.getElementById('edit-pr').required = true; document.getElementById('edit-ss').required = true; } 
@@ -1145,9 +2281,7 @@
             await supabaseClient.from('users').update({ is_active: !u.is_active }).eq('id', userId); Island.show('Status diubah.', 'success'); await renderAdminUsers();
         }
 
-        async function deleteUser(userId) {
-            Modal.danger('Hapus Akun', 'Aksi ini permanen.', async () => { await supabaseClient.from('users').delete().eq('id', userId); Island.show('Akun terhapus.', 'success'); await renderAdminUsers(); });
-        }
+        async function deleteUser(userId) { Modal.danger('Hapus Akun', 'Aksi ini permanen.', async () => { await supabaseClient.from('users').delete().eq('id', userId); Island.show('Akun terhapus.', 'success'); await renderAdminUsers(); }); }
 
         async function renderAdminUsers() {
             const tbody = document.getElementById('users-tbody'); const { data: users } = await supabaseClient.from('users').select('*').order('role', { ascending: true });
@@ -1163,22 +2297,17 @@
 
                 tbody.innerHTML += `
                     <tr class="hover:bg-slate-50 transition-colors">
-                        <td class="p-4">
-                            <div class="font-extrabold text-slate-900 text-sm mb-1">${u.pic_name || u.username}</div>
-                            <div class="text-[11px] font-mono text-slate-500 mb-1">@${u.username}</div>
-                            <div class="text-[11px] font-mono flex items-center gap-1.5 text-slate-400"><span class="material-symbols-rounded text-[14px]">key</span>${u.password}</div>
-                        </td>
+                        <td class="p-4"><div class="font-extrabold text-slate-900 text-sm mb-1">${u.pic_name || u.username}</div><div class="text-[11px] font-mono text-slate-500 mb-1">@${u.username}</div><div class="text-[11px] font-mono flex items-center gap-1.5 text-slate-400"><span class="material-symbols-rounded text-[14px]">key</span>${u.password}</div></td>
                         <td class="p-4"><span class="text-[10px] uppercase font-bold tracking-widest px-2 py-1 rounded border inline-flex items-center gap-1 ${roleColors[u.role]}"><span class="material-symbols-rounded icon-fill text-[14px]">${roleIcon[u.role]}</span>${u.role}</span></td>
-                        <td class="p-4">${area}</td>
-                        <td class="p-4 text-center">${statusBadge}</td>
+                        <td class="p-4">${area}</td><td class="p-4 text-center">${statusBadge}</td>
                         <td class="p-4 text-center">
                             <div class="flex items-center justify-center gap-2">
                                 <div class="relative inline-block w-10 mr-2 align-middle select-none">
                                     <input type="checkbox" id="toggle-${u.id}" class="toggle-checkbox absolute z-10 block w-5 h-5 rounded-full bg-white border border-slate-300 appearance-none cursor-pointer peer transition-all shadow-sm" ${u.is_active ? 'checked' : ''} onchange="toggleUserStatus('${u.id}')"/>
                                     <label for="toggle-${u.id}" class="toggle-label block overflow-hidden h-5 rounded-full bg-slate-200 cursor-pointer peer-checked:bg-emerald-500 transition-colors"></label>
                                 </div>
-                                <button onclick="openEditUserModal('${u.id}')" class="text-brand-600 hover:bg-brand-50 w-8 h-8 rounded-lg transition-colors flex items-center justify-center" title="Edit"><span class="material-symbols-rounded icon-outline text-[20px]">edit</span></button>
-                                <button onclick="deleteUser('${u.id}')" class="text-rose-500 hover:bg-rose-50 w-8 h-8 rounded-lg transition-colors flex items-center justify-center" title="Hapus"><span class="material-symbols-rounded icon-outline text-[20px]">delete</span></button>
+                                <button onclick="openEditUserModal('${u.id}')" class="text-brand-600 hover:bg-brand-50 w-8 h-8 rounded-lg transition-colors flex items-center justify-center"><span class="material-symbols-rounded icon-outline text-[20px]">edit</span></button>
+                                <button onclick="deleteUser('${u.id}')" class="text-rose-500 hover:bg-rose-50 w-8 h-8 rounded-lg transition-colors flex items-center justify-center"><span class="material-symbols-rounded icon-outline text-[20px]">delete</span></button>
                             </div>
                         </td>
                     </tr>`;
@@ -1305,96 +2434,6 @@
             await supabaseClient.from('checklist_master').update({ items: cat.items }).eq('id', catId); renderAdminItems(cat);
         }
 
-        async function generateChecklistForm() {
-            const container = document.getElementById('checklist-container'); container.innerHTML = ''; 
-            const { data } = await supabaseClient.from('checklist_master').select('*').order('id', { ascending: true });
-            if(!data || data.length === 0) { container.innerHTML = `<div class="bg-white p-10 rounded-2xl text-center border border-slate-200 border-dashed"><span class="material-symbols-rounded icon-outline text-5xl text-slate-300 mb-2">folder_open</span><p class="text-slate-500 font-medium">Format laporan belum tersedia.</p></div>`; return; }
-
-            data.forEach((category, catIndex) => {
-                if (!category.items || category.items.length === 0) return;
-                const catDiv = document.createElement('div'); catDiv.className = 'bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden';
-                
-                let html = `<div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center gap-3"><div class="w-6 h-6 rounded bg-slate-800 flex items-center justify-center font-bold text-white text-xs">${catIndex + 1}</div><h3 class="font-extrabold text-slate-900 text-base tracking-tight">${category.category}</h3></div><div class="divide-y divide-slate-100">`;
-
-                const groupedItems = {}; category.items.forEach(item => { const sc = item.subCategory || 'Tanpa Sub Kategori'; if(!groupedItems[sc]) groupedItems[sc] = []; groupedItems[sc].push(item); });
-
-                Object.keys(groupedItems).sort().forEach(subCatName => {
-                    if (subCatName !== 'Tanpa Sub Kategori') { html += `<div class="px-6 py-2 bg-indigo-50/50 flex items-center gap-2 border-y border-indigo-100/50"><span class="material-symbols-rounded icon-outline text-indigo-500 text-[14px]">account_tree</span><h4 class="font-extrabold text-indigo-700 text-[10px] tracking-widest uppercase">${subCatName}</h4></div>`; }
-                    
-                    groupedItems[subCatName].forEach(item => {
-                        const typeDef = itemTypeConfig[item.type || 'ok_nonok'];
-                        html += `
-                            <div class="py-4 px-6 hover:bg-slate-50/50 smooth-transition">
-                                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-                                    <p class="text-slate-800 font-bold text-sm leading-relaxed flex-1">${item.label}</p>
-                                    <div class="flex items-center gap-2 shrink-0 bg-slate-100 p-1 rounded-xl w-full lg:w-auto">
-                                        <label class="cursor-pointer relative flex-1 lg:flex-none">
-                                            <input type="radio" name="status-${item.id}" value="${typeDef.pos}" onchange="handleRadioChange('${item.id}', ${item.requiresNote}, '${typeDef.pos}', '${item.type}')" class="peer sr-only" required>
-                                            <div class="radio-card-pos flex items-center justify-center px-4 py-2 rounded-lg border border-transparent text-slate-500 smooth-transition hover:bg-white bg-transparent text-xs font-bold w-full min-w-[110px]">
-                                                <span class="material-symbols-rounded icon-fill mr-1.5 text-[16px] opacity-70">${typeDef.iconPos}</span>${typeDef.posL}
-                                            </div>
-                                        </label>
-                                        <label class="cursor-pointer relative flex-1 lg:flex-none">
-                                            <input type="radio" name="status-${item.id}" value="${typeDef.neg}" onchange="handleRadioChange('${item.id}', ${item.requiresNote}, '${typeDef.neg}', '${item.type}')" class="peer sr-only" required>
-                                            <div class="radio-card-neg flex items-center justify-center px-4 py-2 rounded-lg border border-transparent text-slate-500 smooth-transition hover:bg-white bg-transparent text-xs font-bold w-full min-w-[110px]">
-                                                <span class="material-symbols-rounded icon-fill mr-1.5 text-[16px] opacity-70">${typeDef.iconNeg}</span>${typeDef.negL}
-                                            </div>
-                                        </label>
-                                    </div>
-                                </div>
-                                <div id="note-container-${item.id}" class="hidden overflow-hidden transition-all duration-300 max-h-0 opacity-0 mt-3 max-w-2xl">
-                                    <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 flex gap-3 items-start">
-                                        <span class="material-symbols-rounded icon-outline text-amber-500 text-[18px] mt-0.5">edit</span>
-                                        <input type="text" id="note-input-${item.id}" name="note-${item.id}" placeholder="Keterangan detail / catatan temuan..." class="w-full text-sm bg-transparent border-b border-amber-200 focus:border-amber-500 outline-none pb-1 text-amber-900 placeholder-amber-400/70 font-medium">
-                                    </div>
-                                </div>
-                            </div>`;
-                    });
-                });
-                html += `</div>`; catDiv.innerHTML = html; container.appendChild(catDiv);
-            });
-        }
-
-        window.handleRadioChange = function(itemId, requiresNote, value, type) {
-            const container = document.getElementById(`note-container-${itemId}`); const input = document.getElementById(`note-input-${itemId}`);
-            if (!container || !input) return;
-            const def = itemTypeConfig[type || 'ok_nonok']; const isNegative = value === def.neg;
-            
-            if (requiresNote && isNegative) {
-                container.classList.remove('hidden'); setTimeout(() => { container.classList.remove('max-h-0', 'opacity-0'); container.classList.add('max-h-[150px]', 'opacity-100'); input.required = true; }, 10);
-            } else {
-                container.classList.remove('max-h-[150px]', 'opacity-100'); container.classList.add('max-h-0', 'opacity-0'); setTimeout(() => { container.classList.add('hidden'); }, 300);
-                input.required = false; input.value = ''; 
-            }
-        }
-
-        document.getElementById('checklist-form').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            let targetData = { id: currentUser.id, pic: currentUser.pic_name || currentUser.username, ssc: currentUser.ssc, province: currentUser.province, stagging_name: currentUser.stagging_name };
-
-            if (currentUser.role === 'admin') {
-                const selectVal = document.getElementById('admin-target-select').value;
-                if (!selectVal) { Island.show('Pilih area target!', 'error'); return; }
-                const u = adminTargetUsers.find(x => x.id === selectVal);
-                if (u) { targetData = { id: u.id, pic: u.pic_name || u.username, ssc: u.ssc, province: u.province, stagging_name: u.stagging_name }; }
-            }
-
-            const btn = document.getElementById('btn-submit-form'); btn.disabled = true; btn.innerHTML = '<span class="material-symbols-rounded animate-spin">sync</span> Mengirim...';
-
-            const formData = new FormData(e.target); const answers = {}; const { data } = await supabaseClient.from('checklist_master').select('*');
-            data.forEach(cat => { if(cat.items) cat.items.forEach(item => { const status = formData.get(`status-${item.id}`); const note = formData.get(`note-${item.id}`); if (status) answers[item.id] = { status: status, note: note || '' }; }); });
-
-            let d; try { const res = await fetch('https://worldtimeapi.org/api/timezone/Asia/Makassar'); const timeData = await res.json(); d = new Date(timeData.datetime); } catch(err) { d = new Date(); }
-            const dateStr = `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`; const timeStr = `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
-
-            await supabaseClient.from('submissions').insert({ id: Date.now().toString(), user_id: targetData.id, pic: targetData.pic, ssc: targetData.ssc, province: targetData.province, stagging_name: targetData.stagging_name, date: `${dateStr}, ${timeStr}`, answers: answers });
-
-            Island.show('Laporan Terkirim!', 'success'); e.target.reset(); 
-            document.querySelectorAll('[id^="note-container-"]').forEach(el => { el.classList.add('max-h-0', 'opacity-0'); setTimeout(() => el.classList.add('hidden'), 300); });
-            btn.disabled = false; btn.innerHTML = '<span class="material-symbols-rounded icon-fill">send</span> <span>Kirim Laporan Inspeksi</span>';
-            closeChecklistModal(); setTimeout(() => switchTab('dashboard'), 500);
-        });
-
         const parseDateObj = d => {
             if(!d || d === '-') return 0;
             try { const [a, b] = d.split(', '); const [day, m, y] = a.split('/'); const [hh, mm] = b.split(':'); return new Date(y, m-1, day, hh, mm).getTime(); } catch(e){ return 0; }
@@ -1407,20 +2446,17 @@
         document.addEventListener('click', function(e) {
             const container = document.getElementById('ssc-dropdown-container');
             if (container && !container.contains(e.target)) {
-                document.getElementById('ssc-dropdown-menu').classList.add('hidden');
+                const menu = document.getElementById('ssc-dropdown-menu');
+                if(menu) menu.classList.add('hidden');
             }
         });
 
         window.handleSscChange = function() {
             const checkboxes = document.querySelectorAll('.ssc-checkbox:checked');
             const btnText = document.getElementById('btn-ssc-text').querySelector('span');
-            if (checkboxes.length === 0) {
-                btnText.textContent = 'Semua Koordinator';
-            } else if (checkboxes.length === 1) {
-                btnText.textContent = checkboxes[0].value;
-            } else {
-                btnText.textContent = `${checkboxes.length} Koordinator`;
-            }
+            if (checkboxes.length === 0) { btnText.textContent = 'Semua Koordinator'; } 
+            else if (checkboxes.length === 1) { btnText.textContent = checkboxes[0].value; } 
+            else { btnText.textContent = `${checkboxes.length} Koordinator`; }
             applyFiltersAndRender();
         };
 
@@ -1481,12 +2517,8 @@
 
             let renderData = Array.from(locationMap.values());
             
-            // Filter berdasarkan Status Laporan
-            if (vStatus === 'submitted') {
-                renderData = renderData.filter(d => d.date !== '-');
-            } else if (vStatus === 'unsubmitted') {
-                renderData = renderData.filter(d => d.date === '-');
-            }
+            if (vStatus === 'submitted') { renderData = renderData.filter(d => d.date !== '-'); } 
+            else if (vStatus === 'unsubmitted') { renderData = renderData.filter(d => d.date === '-'); }
 
             renderData.sort((a, b) => { 
                 if (a.ssc !== b.ssc) return (a.ssc || '').localeCompare(b.ssc || ''); 
@@ -1500,12 +2532,11 @@
         function renderDashboardHeaders(cats) {
             const row1 = document.getElementById('thead-row-1'); const row2 = document.getElementById('thead-row-2'); const row3 = document.getElementById('thead-row-3');
             
-            let h1 = `
-                <th rowspan="3" class="p-2 sticky-col-1 col-w-1 bg-white border-r border-b-2 border-slate-200 text-center hidden md:table-cell">Area SSC</th>
-                <th rowspan="3" class="p-2 sticky-col-2 col-w-2 bg-white border-r border-b-2 border-slate-200 text-center hidden md:table-cell">Provinsi</th>
-                <th rowspan="3" class="p-2 sticky-col-3 col-w-3 bg-white border-r border-b-2 border-slate-200 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] md:shadow-none text-center">Kode SS</th>
-                <th rowspan="3" class="p-2 bg-white border-r border-b-2 border-slate-200 text-center min-w-[140px]">Penanggung Jawab</th>
-                <th rowspan="3" class="p-2 bg-white border-r border-b-2 border-slate-200 text-center min-w-[120px]">Tanggal Pelaporan</th>`;
+            let h1 = `<th rowspan="3" class="p-2 sticky-col-1 col-w-1 bg-white border-r border-b-2 border-slate-200 text-center hidden md:table-cell">Area SSC</th>
+                      <th rowspan="3" class="p-2 sticky-col-2 col-w-2 bg-white border-r border-b-2 border-slate-200 text-center hidden md:table-cell">Provinsi</th>
+                      <th rowspan="3" class="p-2 sticky-col-3 col-w-3 bg-white border-r border-b-2 border-slate-200 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] md:shadow-none text-center">Kode SS</th>
+                      <th rowspan="3" class="p-2 bg-white border-r border-b-2 border-slate-200 text-center min-w-[140px]">Penanggung Jawab</th>
+                      <th rowspan="3" class="p-2 bg-white border-r border-b-2 border-slate-200 text-center min-w-[120px]">Tanggal Pelaporan</th>`;
             let h2 = ``; let h3 = ``;
 
             cats.forEach((cat, idx) => {
@@ -1518,9 +2549,7 @@
                 scKeys.forEach(sc => {
                     const displaySc = sc === 'Tanpa Sub Kategori' ? 'Parameter Umum' : sc;
                     h2 += `<th colspan="${grouped[sc].length}" class="p-1.5 border-r border-b border-slate-200 text-center bg-slate-100 text-slate-600 font-extrabold text-[9px] uppercase tracking-wider">${displaySc}</th>`;
-                    grouped[sc].forEach(item => {
-                        h3 += `<th class="p-1.5 border-r border-slate-100 text-center align-bottom bg-white min-w-[70px] w-[70px]"><div class="w-full mx-auto font-bold text-[9px] whitespace-normal break-words leading-tight pb-1" title="${item.label}">${item.label}</div></th>`;
-                    });
+                    grouped[sc].forEach(item => { h3 += `<th class="p-1.5 border-r border-slate-100 text-center align-bottom bg-white min-w-[70px] w-[70px]"><div class="w-full mx-auto font-bold text-[9px] whitespace-normal break-words leading-tight pb-1" title="${item.label}">${item.label}</div></th>`; });
                 });
             });
             row1.innerHTML = h1; row2.innerHTML = h2; row3.innerHTML = h3;
@@ -1601,6 +2630,69 @@
                 });
             }
             tbody.innerHTML = html; if(noteHtml) { noteSec.classList.remove('hidden'); noteCon.innerHTML = noteHtml; } else noteSec.classList.add('hidden');
+        }
+
+        async function generateChecklistForm() {
+            const container = document.getElementById('checklist-container'); container.innerHTML = ''; 
+            const { data } = await supabaseClient.from('checklist_master').select('*').order('id', { ascending: true });
+            if(!data || data.length === 0) { container.innerHTML = `<div class="bg-white p-10 rounded-2xl text-center border border-slate-200 border-dashed"><span class="material-symbols-rounded icon-outline text-5xl text-slate-300 mb-2">folder_open</span><p class="text-slate-500 font-medium">Format laporan belum tersedia.</p></div>`; return; }
+
+            data.forEach((category, catIndex) => {
+                if (!category.items || category.items.length === 0) return;
+                const catDiv = document.createElement('div'); catDiv.className = 'bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden';
+                
+                let html = `<div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center gap-3"><div class="w-6 h-6 rounded bg-slate-800 flex items-center justify-center font-bold text-white text-xs">${catIndex + 1}</div><h3 class="font-extrabold text-slate-900 text-base tracking-tight">${category.category}</h3></div><div class="divide-y divide-slate-100">`;
+
+                const groupedItems = {}; category.items.forEach(item => { const sc = item.subCategory || 'Tanpa Sub Kategori'; if(!groupedItems[sc]) groupedItems[sc] = []; groupedItems[sc].push(item); });
+
+                Object.keys(groupedItems).sort().forEach(subCatName => {
+                    if (subCatName !== 'Tanpa Sub Kategori') { html += `<div class="px-6 py-2 bg-indigo-50/50 flex items-center gap-2 border-y border-indigo-100/50"><span class="material-symbols-rounded icon-outline text-indigo-500 text-[14px]">account_tree</span><h4 class="font-extrabold text-indigo-700 text-[10px] tracking-widest uppercase">${subCatName}</h4></div>`; }
+                    
+                    groupedItems[subCatName].forEach(item => {
+                        const typeDef = itemTypeConfig[item.type || 'ok_nonok'];
+                        html += `
+                            <div class="py-4 px-6 hover:bg-slate-50/50 smooth-transition">
+                                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                                    <p class="text-slate-800 font-bold text-sm leading-relaxed flex-1">${item.label}</p>
+                                    <div class="flex items-center gap-2 shrink-0 bg-slate-100 p-1 rounded-xl w-full lg:w-auto">
+                                        <label class="cursor-pointer relative flex-1 lg:flex-none">
+                                            <input type="radio" name="status-${item.id}" value="${typeDef.pos}" onchange="handleRadioChange('${item.id}', ${item.requiresNote}, '${typeDef.pos}', '${item.type}')" class="peer sr-only" required>
+                                            <div class="radio-card-pos flex items-center justify-center px-4 py-2 rounded-lg border border-transparent text-slate-500 smooth-transition hover:bg-white bg-transparent text-xs font-bold w-full min-w-[110px]">
+                                                <span class="material-symbols-rounded icon-fill mr-1.5 text-[16px] opacity-70">${typeDef.iconPos}</span>${typeDef.posL}
+                                            </div>
+                                        </label>
+                                        <label class="cursor-pointer relative flex-1 lg:flex-none">
+                                            <input type="radio" name="status-${item.id}" value="${typeDef.neg}" onchange="handleRadioChange('${item.id}', ${item.requiresNote}, '${typeDef.neg}', '${item.type}')" class="peer sr-only" required>
+                                            <div class="radio-card-neg flex items-center justify-center px-4 py-2 rounded-lg border border-transparent text-slate-500 smooth-transition hover:bg-white bg-transparent text-xs font-bold w-full min-w-[110px]">
+                                                <span class="material-symbols-rounded icon-fill mr-1.5 text-[16px] opacity-70">${typeDef.iconNeg}</span>${typeDef.negL}
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div id="note-container-${item.id}" class="hidden overflow-hidden transition-all duration-300 max-h-0 opacity-0 mt-3 max-w-2xl">
+                                    <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 flex gap-3 items-start">
+                                        <span class="material-symbols-rounded icon-outline text-amber-500 text-[18px] mt-0.5">edit</span>
+                                        <input type="text" id="note-input-${item.id}" name="note-${item.id}" placeholder="Keterangan detail / catatan temuan..." class="w-full text-sm bg-transparent border-b border-amber-200 focus:border-amber-500 outline-none pb-1 text-amber-900 placeholder-amber-400/70 font-medium">
+                                    </div>
+                                </div>
+                            </div>`;
+                    });
+                });
+                html += `</div>`; catDiv.innerHTML = html; container.appendChild(catDiv);
+            });
+        }
+
+        window.handleRadioChange = function(itemId, requiresNote, value, type) {
+            const container = document.getElementById(`note-container-${itemId}`); const input = document.getElementById(`note-input-${itemId}`);
+            if (!container || !input) return;
+            const def = itemTypeConfig[type || 'ok_nonok']; const isNegative = value === def.neg;
+            
+            if (requiresNote && isNegative) {
+                container.classList.remove('hidden'); setTimeout(() => { container.classList.remove('max-h-0', 'opacity-0'); container.classList.add('max-h-[150px]', 'opacity-100'); input.required = true; }, 10);
+            } else {
+                container.classList.remove('max-h-[150px]', 'opacity-100'); container.classList.add('max-h-0', 'opacity-0'); setTimeout(() => { container.classList.add('hidden'); }, 300);
+                input.required = false; input.value = ''; 
+            }
         }
     </script>
 </body>
