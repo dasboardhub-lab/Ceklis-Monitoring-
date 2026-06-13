@@ -90,7 +90,8 @@
             .sticky-col-3 { position: sticky !important; left: 0 !important; z-index: 20; border-right: 2px solid #e2e8f0; }
         }
 
-        .sticky-header th { position: sticky; top: 0; z-index: 30; }
+        /* PERBAIKAN: Mengunci seluruh elemen thead sebagai satu kesatuan */
+        .sticky-header { position: sticky; top: 0; z-index: 30; }
         .sticky-header th.sticky-col-1, .sticky-header th.sticky-col-2, 
         .sticky-header th.sticky-col-3 { z-index: 50 !important; background-color: #ffffff; }
 
@@ -411,11 +412,25 @@
                                     <option value="all">Semua Kategori</option>
                                 </select>
 
+                                <!-- Dropdown Status Laporan -->
                                 <div class="hidden md:block w-px h-5 bg-slate-200 mx-1"></div>
-                                
-                                <select id="filter-ssc" onchange="applyFiltersAndRender()" class="px-3 py-2 bg-transparent hover:bg-slate-50 rounded-xl text-sm outline-none font-bold text-slate-700 cursor-pointer transition-colors max-w-[150px] sm:max-w-[180px] truncate appearance-none pr-8 bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%24%2024%22%20fill%3D%22none%22%20stroke%3D%22%2394a3b8%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[position:right_0.2rem_center]">
-                                    <option value="all">Semua Koordinator</option>
+                                <select id="filter-status" onchange="applyFiltersAndRender()" class="px-3 py-2 bg-transparent hover:bg-slate-50 rounded-xl text-sm outline-none font-bold text-slate-700 cursor-pointer transition-colors max-w-[150px] sm:max-w-[180px] truncate appearance-none pr-8 bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%24%2024%22%20fill%3D%22none%22%20stroke%3D%22%2394a3b8%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[position:right_0.2rem_center]">
+                                    <option value="all">Semua Status</option>
+                                    <option value="submitted">Sudah Mengisi</option>
+                                    <option value="unsubmitted">Belum Mengisi</option>
                                 </select>
+
+                                <!-- Multi-Select Koordinator Custom -->
+                                <div class="hidden md:block w-px h-5 bg-slate-200 mx-1"></div>
+                                <div class="relative inline-block text-left" id="ssc-dropdown-container">
+                                    <button type="button" onclick="toggleSscDropdown()" id="btn-ssc-text" class="px-3 py-2 bg-transparent hover:bg-slate-50 rounded-xl text-sm outline-none font-bold text-slate-700 cursor-pointer transition-colors max-w-[150px] sm:max-w-[180px] flex items-center justify-between gap-1 border border-transparent">
+                                        <span class="truncate">Semua Koordinator</span>
+                                        <span class="material-symbols-rounded text-[18px] shrink-0 text-slate-400">expand_more</span>
+                                    </button>
+                                    <div id="ssc-dropdown-menu" class="hidden absolute right-0 mt-2 w-56 rounded-2xl shadow-float bg-white border border-slate-100 z-50 p-2 max-h-[50vh] overflow-y-auto custom-scroll">
+                                        <!-- Checkboxes otomatis dimuat disini -->
+                                    </div>
+                                </div>
                             </div>
 
                             <div class="flex gap-3 w-full sm:w-auto">
@@ -431,7 +446,7 @@
 
                     <!-- Tabel Master Data (SaaS Style) -->
                     <div class="bg-surface rounded-3xl shadow-soft border border-slate-200 overflow-hidden mb-8 flex flex-col">
-                        <div class="overflow-auto custom-scroll w-full h-[65vh] xl:h-[75vh]">
+                        <div class="overflow-auto custom-scroll w-full h-[75vh] xl:h-[85vh]">
                             <table class="w-full text-left border-collapse min-w-max text-xs">
                                 <thead class="sticky-header">
                                     <tr class="bg-slate-100 text-slate-500 text-[10px] uppercase tracking-widest font-extrabold border-b border-slate-200" id="thead-row-1"></tr>
@@ -1385,31 +1400,64 @@
             try { const [a, b] = d.split(', '); const [day, m, y] = a.split('/'); const [hh, mm] = b.split(':'); return new Date(y, m-1, day, hh, mm).getTime(); } catch(e){ return 0; }
         };
 
+        window.toggleSscDropdown = function() {
+            document.getElementById('ssc-dropdown-menu').classList.toggle('hidden');
+        };
+
+        document.addEventListener('click', function(e) {
+            const container = document.getElementById('ssc-dropdown-container');
+            if (container && !container.contains(e.target)) {
+                document.getElementById('ssc-dropdown-menu').classList.add('hidden');
+            }
+        });
+
+        window.handleSscChange = function() {
+            const checkboxes = document.querySelectorAll('.ssc-checkbox:checked');
+            const btnText = document.getElementById('btn-ssc-text').querySelector('span');
+            if (checkboxes.length === 0) {
+                btnText.textContent = 'Semua Koordinator';
+            } else if (checkboxes.length === 1) {
+                btnText.textContent = checkboxes[0].value;
+            } else {
+                btnText.textContent = `${checkboxes.length} Koordinator`;
+            }
+            applyFiltersAndRender();
+        };
+
         async function populateCategoryFilter() {
             const filter = document.getElementById('filter-category'); filter.innerHTML = '<option value="all">Semua Kategori</option>';
             const { data } = await supabaseClient.from('checklist_master').select('*').order('id', { ascending: true });
             if(data) data.forEach(cat => { filter.innerHTML += `<option value="${cat.id}">${cat.category}</option>`; });
 
-            const filterSsc = document.getElementById('filter-ssc');
-            if (filterSsc) {
-                filterSsc.innerHTML = '<option value="all">Semua Koordinator</option>';
+            const menu = document.getElementById('ssc-dropdown-menu');
+            if (menu) {
+                menu.innerHTML = '';
                 const { data: users } = await supabaseClient.from('users').select('ssc').eq('role', 'user');
                 if (users) {
                     const uniqueSsc = [...new Set(users.map(u => u.ssc).filter(Boolean))].sort();
-                    uniqueSsc.forEach(ssc => { filterSsc.innerHTML += `<option value="${ssc}">${ssc}</option>`; });
+                    uniqueSsc.forEach(ssc => { 
+                        menu.innerHTML += `
+                            <label class="flex items-center gap-3 p-2 hover:bg-slate-50 rounded-xl cursor-pointer smooth-transition">
+                                <input type="checkbox" value="${ssc}" class="ssc-checkbox w-4 h-4 text-brand-600 bg-slate-100 border-slate-300 rounded focus:ring-brand-500" onchange="handleSscChange()">
+                                <span class="text-sm font-bold text-slate-700">${ssc}</span>
+                            </label>
+                        `; 
+                    });
                 }
             }
         }
 
         async function applyFiltersAndRender() {
             const vM = document.getElementById('filter-month').value; const vY = document.getElementById('filter-year').value; const vC = document.getElementById('filter-category').value;
-            const vSsc = document.getElementById('filter-ssc').value;
+            const vStatus = document.getElementById('filter-status') ? document.getElementById('filter-status').value : 'all';
             
+            const selectedSSCs = Array.from(document.querySelectorAll('.ssc-checkbox:checked')).map(cb => cb.value);
+
             const { data: allCats } = await supabaseClient.from('checklist_master').select('*').order('id', { ascending: true });
             const safeAllCats = allCats || []; let filteredCats = vC !== 'all' ? safeAllCats.filter(c => c.id === vC) : safeAllCats;
 
             const { data: fieldUsers } = await supabaseClient.from('users').select('*').eq('role', 'user');
-            const validUsers = (fieldUsers || []).filter(u => u.stagging_name && (vSsc === 'all' || u.ssc === vSsc));
+            const validUsers = (fieldUsers || []).filter(u => u.stagging_name && (selectedSSCs.length === 0 || selectedSSCs.includes(u.ssc)));
 
             const { data: submissions } = await supabaseClient.from('submissions').select('*'); const safeSubmissions = submissions || [];
             const sortedAllSubs = [...safeSubmissions].sort((a, b) => parseDateObj(a.date) - parseDateObj(b.date));
@@ -1424,7 +1472,7 @@
 
             safeSubmissions.forEach(sub => {
                 const parts = sub.date.split(',')[0].split('/'); const matchM = (vM === 'all' || parseInt(parts[1]) == vM); const matchY = (vY === 'all' || parseInt(parts[2]) == vY);
-                const matchSsc = (vSsc === 'all' || sub.ssc === vSsc);
+                const matchSsc = (selectedSSCs.length === 0 || selectedSSCs.includes(sub.ssc));
                 if (matchM && matchY && matchSsc) {
                     const key = `${sub.ssc}|${sub.province}|${sub.stagging_name}`; const existing = locationMap.get(key);
                     if (!existing || existing.date === '-' || parseDateObj(sub.date) > parseDateObj(existing.date)) { locationMap.set(key, sub); }
@@ -1432,6 +1480,14 @@
             });
 
             let renderData = Array.from(locationMap.values());
+            
+            // Filter berdasarkan Status Laporan
+            if (vStatus === 'submitted') {
+                renderData = renderData.filter(d => d.date !== '-');
+            } else if (vStatus === 'unsubmitted') {
+                renderData = renderData.filter(d => d.date === '-');
+            }
+
             renderData.sort((a, b) => { 
                 if (a.ssc !== b.ssc) return (a.ssc || '').localeCompare(b.ssc || ''); 
                 if (a.province !== b.province) return (a.province || '').localeCompare(b.province || ''); 
