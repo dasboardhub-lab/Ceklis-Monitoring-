@@ -2,30 +2,21 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ceklis Monitoring | Platform Analisis Data</title>
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%234f46e5'%3E%3Cpath d='M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z'/%3E%3C/svg%3E" type="image/svg+xml">
     
-    <!-- Tipografi Modern: Figtree -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
     
-    <!-- Ikon Modern: Google Material Symbols Rounded -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
 
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
-    <!-- Chart.js & Datalabels -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
-    
-    <!-- SheetJS (Excel Upload) -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
     
     <script>
@@ -141,7 +132,6 @@
                 <h1 class="text-5xl font-extrabold tracking-tight mb-4 leading-[1.1]">Sistem<br><span class="text-white">Ceklis</span><br><span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-400 to-purple-400">Monitoring.</span></h1>
                 <p class="text-slate-400 text-lg leading-relaxed font-light">Sistem pelaporan cerdas untuk memantau performa area secara real-time. Cepat, akurat, dan terstruktur.</p>
             </div>
-            <!-- Elemen Dekorasi -->
             <div class="absolute bottom-12 right-12 z-10 bg-white/5 backdrop-blur-md border border-white/10 p-6 rounded-3xl w-72 shadow-2xl transform rotate-[-5deg]">
                 <div class="flex items-center gap-3 mb-4">
                     <div class="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center"><span class="material-symbols-rounded icon-fill text-emerald-400 text-xl">check_circle</span></div>
@@ -279,7 +269,7 @@
             <div class="flex-1 overflow-y-auto custom-scroll w-full pb-safe md:pb-6 relative z-10" id="main-scroll-area">
                 
                 <!-- Tab: Utilitas & IPL -->
-                <div id="content-utilitas" class="hidden w-full px-4 sm:px-6 lg:px-8 mt-6 sm:mt-8 animate-content max-w-7xl mx-auto">
+                <div id="content-utilitas" class="hidden w-full px-4 sm:px-6 lg:px-8 mt-6 sm:mt-8 animate-content max-w-full mx-auto">
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 mb-6 border-b border-slate-200 pb-4">
                         <div>
                             <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight">Awareness Utilitas & IPL</h2>
@@ -297,37 +287,39 @@
 
                     <!-- Filter & Tab View -->
                     <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
-                        <div class="flex bg-slate-100 p-1 rounded-xl shadow-inner gap-1">
+                        <div class="flex bg-slate-100 p-1 rounded-xl shadow-inner gap-1 flex-wrap">
                             <button onclick="switchUtilView('air')" id="btn-view-air" class="px-4 py-2 rounded-lg text-sm font-bold bg-white shadow text-blue-600 transition-all">Data Air</button>
                             <button onclick="switchUtilView('listrik')" id="btn-view-listrik" class="px-4 py-2 rounded-lg text-sm font-bold text-slate-500 hover:text-slate-700 transition-all">Data Listrik</button>
                             <button onclick="switchUtilView('ipl')" id="btn-view-ipl" class="px-4 py-2 rounded-lg text-sm font-bold text-slate-500 hover:text-slate-700 transition-all">Data IPL</button>
+                            <button onclick="switchUtilView('rekap')" id="btn-view-rekap" class="px-4 py-2 rounded-lg text-sm font-bold text-slate-500 hover:text-slate-700 transition-all">Rekap Lengkap</button>
                         </div>
                         <div class="flex flex-wrap sm:flex-nowrap gap-2">
-                        <select id="util-filter-bulan" onchange="renderUtilitasTable()" class="input-modern px-4 py-2 rounded-xl text-sm font-bold w-32"><option value="1">Januari</option><option value="2">Februari</option><option value="3">Maret</option><option value="4">April</option><option value="5">Mei</option><option value="6">Juni</option><option value="7">Juli</option><option value="8">Agustus</option><option value="9">September</option><option value="10">Oktober</option><option value="11">November</option><option value="12">Desember</option></select>
-                        <select id="util-filter-tahun" onchange="renderUtilitasTable()" class="input-modern px-4 py-2 rounded-xl text-sm font-bold w-24"><option value="2026">2026</option><option value="2027">2027</option></select>
-                        <select id="util-filter-ssc" onchange="renderUtilitasTable()" class="input-modern px-4 py-2 rounded-xl text-sm font-bold w-32 md:w-40 truncate"><option value="all">Semua Area</option></select>
-                    </div>
-                </div>
-
-                <!-- Chart Trafik -->
-                <div class="bg-surface rounded-3xl shadow-soft border border-slate-200 p-4 mb-6">
-                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
-                        <h3 class="font-bold text-slate-800 text-sm" id="chart-util-title">Total Pemakaian Air (Mingguan)</h3>
-                        <div class="flex bg-slate-50 p-1 rounded-lg border border-slate-200 shadow-inner">
-                            <button id="btn-chart-month" onclick="toggleUtilChartMode('month')" class="px-3 py-1.5 text-xs font-bold rounded-md bg-brand-600 text-white transition-colors">Mingguan</button>
-                            <button id="btn-chart-year" onclick="toggleUtilChartMode('year')" class="px-3 py-1.5 text-xs font-bold rounded-md bg-slate-100 text-slate-500 transition-colors">Tahunan</button>
+                            <select id="util-filter-minggu" onchange="renderUtilitasTable()" class="hidden input-modern px-4 py-2 rounded-xl text-sm font-bold w-32"><option value="1">Minggu 1</option><option value="2">Minggu 2</option><option value="3">Minggu 3</option><option value="4">Minggu 4</option><option value="5">Minggu 5</option></select>
+                            <select id="util-filter-bulan" onchange="renderUtilitasTable()" class="input-modern px-4 py-2 rounded-xl text-sm font-bold w-32"><option value="1">Januari</option><option value="2">Februari</option><option value="3">Maret</option><option value="4">April</option><option value="5">Mei</option><option value="6">Juni</option><option value="7">Juli</option><option value="8">Agustus</option><option value="9">September</option><option value="10">Oktober</option><option value="11">November</option><option value="12">Desember</option></select>
+                            <select id="util-filter-tahun" onchange="renderUtilitasTable()" class="input-modern px-4 py-2 rounded-xl text-sm font-bold w-24"><option value="2026">2026</option><option value="2027">2027</option></select>
+                            <select id="util-filter-ssc" onchange="renderUtilitasTable()" class="input-modern px-4 py-2 rounded-xl text-sm font-bold w-32 md:w-40 truncate"><option value="all">Semua Area</option></select>
                         </div>
                     </div>
-                    <div class="w-full h-[250px]">
-                        <canvas id="utilitasChart"></canvas>
-                    </div>
-                </div>
 
-                <!-- Tabel Mingguan -->
-                <div class="bg-surface rounded-3xl shadow-soft border border-slate-200 overflow-hidden mb-8 flex flex-col">
-                    <div class="overflow-auto custom-scroll w-full h-[50vh] xl:h-[60vh]">
+                    <!-- Chart Trafik -->
+                    <div id="utilitas-chart-container" class="bg-white rounded-3xl shadow-soft border border-slate-200 p-6 mb-6">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
+                            <h3 class="font-bold text-slate-800 text-sm" id="chart-util-title">Total Pemakaian Air (Trend Bulan Ini)</h3>
+                            <div class="flex bg-slate-100 p-1 rounded-lg text-xs font-bold shadow-inner">
+                                <button id="btn-scale-mingguan" onclick="switchUtilChartScale('mingguan')" class="px-3 py-1.5 rounded bg-white shadow text-slate-800 transition-all">Bulan Ini</button>
+                                <button id="btn-scale-bulanan" onclick="switchUtilChartScale('bulanan')" class="px-3 py-1.5 rounded text-slate-500 hover:text-slate-700 transition-all">Sepanjang Tahun</button>
+                            </div>
+                        </div>
+                        <div class="w-full h-[250px]">
+                            <canvas id="utilitasChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Tabel Mingguan -->
+                    <div class="bg-surface rounded-3xl shadow-soft border border-slate-200 overflow-hidden mb-8 flex flex-col">
+                        <div class="overflow-auto custom-scroll w-full h-[50vh] xl:h-[60vh]">
                             <table class="w-full text-left border-collapse min-w-max text-[11px]">
-                                <thead class="sticky-header">
+                                <thead class="sticky-header" id="utilitas-thead">
                                     <tr class="bg-slate-100 text-slate-600 font-bold border-b border-slate-200 uppercase tracking-wider">
                                         <th class="p-3 border-r border-slate-200 min-w-[150px] sticky-col-1">Staging & PIC</th>
                                         <th id="th-w1" class="p-3 border-r border-slate-200 text-center w-[150px]">Minggu 1<br><span class="text-[9px] text-slate-500 font-medium">-</span></th>
@@ -346,7 +338,7 @@
                 </div>
 
                 <!-- Tab: Manajemen Pengguna -->
-                <div id="content-admin-users" class="hidden w-full px-4 sm:px-6 lg:px-8 mt-6 sm:mt-8 animate-content max-w-7xl mx-auto">
+                <div id="content-admin-users" class="hidden w-full px-4 sm:px-6 lg:px-8 mt-6 sm:mt-8 animate-content max-w-full mx-auto">
                     <div class="mb-6 border-b border-slate-200 pb-4">
                         <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight">Manajemen Pengguna</h2>
                         <p class="text-slate-500 text-sm mt-1 font-medium">Kelola hak akses, peran, dan penugasan area.</p>
@@ -356,9 +348,14 @@
                         <div class="bg-surface rounded-3xl shadow-soft border border-slate-200 flex flex-col overflow-hidden min-h-[500px]">
                             <div class="p-6 border-b border-slate-100 bg-surface flex justify-between items-center">
                                 <h3 class="text-lg font-bold text-slate-800">Daftar Pengguna Sistem</h3>
-                                <button onclick="openAddUserModal()" class="bg-slate-900 hover:bg-black text-white px-4 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-transform active:scale-95 shadow-md">
-                                    <span class="material-symbols-rounded icon-outline text-[18px]">person_add</span> Tambah Akun Baru
-                                </button>
+                                <div class="flex gap-2">
+                                    <button onclick="exportUsersCSV()" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-600 border border-emerald-200 px-4 py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-colors shadow-sm">
+                                        <span class="material-symbols-rounded text-[18px]">file_download</span> Export CSV
+                                    </button>
+                                    <button onclick="openAddUserModal()" class="bg-slate-900 hover:bg-black text-white px-4 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-transform active:scale-95 shadow-md">
+                                        <span class="material-symbols-rounded icon-outline text-[18px]">person_add</span> Tambah Akun Baru
+                                    </button>
+                                </div>
                             </div>
                             <div class="overflow-x-auto flex-1 custom-scroll p-4 bg-slate-50/50">
                                 <table class="w-full text-left min-w-[800px] bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm">
@@ -379,7 +376,7 @@
                 </div>
 
                 <!-- Tab: Format Checklist Inspeksi -->
-                <div id="content-admin-form" class="hidden w-full px-4 sm:px-6 lg:px-8 mt-6 sm:mt-8 animate-content max-w-7xl mx-auto">
+                <div id="content-admin-form" class="hidden w-full px-4 sm:px-6 lg:px-8 mt-6 sm:mt-8 animate-content max-w-full mx-auto">
                     <div class="mb-6 border-b border-slate-200 pb-4">
                         <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight">Format Checklist Inspeksi</h2>
                         <p class="text-slate-500 text-sm mt-1 font-medium">Strukturisasi kategori dan parameter penilaian laporan.</p>
@@ -392,9 +389,14 @@
                                     <div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center"><span class="material-symbols-rounded icon-fill">layers</span></div>
                                     <h3 class="text-base font-bold text-slate-800">Kategori Utama</h3>
                                 </div>
-                                <button onclick="adminAddCategory()" class="w-9 h-9 rounded-xl bg-slate-900 text-white flex items-center justify-center hover:bg-black transition-colors active:scale-95 shadow-md">
-                                    <span class="material-symbols-rounded icon-outline">add</span>
-                                </button>
+                                <div class="flex gap-2">
+                                    <button onclick="exportFormatCSV()" class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center hover:bg-emerald-100 transition-colors shadow-sm" title="Export Supabase CSV">
+                                        <span class="material-symbols-rounded text-[18px]">file_download</span>
+                                    </button>
+                                    <button onclick="adminAddCategory()" class="w-9 h-9 rounded-xl bg-slate-900 text-white flex items-center justify-center hover:bg-black transition-colors active:scale-95 shadow-md">
+                                        <span class="material-symbols-rounded icon-outline">add</span>
+                                    </button>
+                                </div>
                             </div>
                             <div class="flex-1 overflow-y-auto custom-scroll p-4 space-y-2 bg-slate-50/50" id="admin-category-list"></div>
                         </div>
@@ -1407,9 +1409,28 @@
 
         // --- SISTEM UTILITAS & IPL (SUPABASE) ---
         let currentUtilView = 'air';
+        let utilChartScale = 'mingguan'; // Variabel Skala Grafik
         let utilChartInstance = null;
-        let utilChartMode = 'month';
         let globalUtilData = [];
+
+        function switchUtilChartScale(scale) {
+            utilChartScale = scale;
+            const btnMingguan = document.getElementById('btn-scale-mingguan');
+            const btnBulanan = document.getElementById('btn-scale-bulanan');
+            
+            if (scale === 'mingguan') {
+                btnMingguan.className = 'px-3 py-1.5 rounded bg-white shadow text-slate-800 transition-all';
+                btnBulanan.className = 'px-3 py-1.5 rounded text-slate-500 hover:text-slate-700 transition-all';
+            } else {
+                btnBulanan.className = 'px-3 py-1.5 rounded bg-white shadow text-slate-800 transition-all';
+                btnMingguan.className = 'px-3 py-1.5 rounded text-slate-500 hover:text-slate-700 transition-all';
+            }
+            
+            const titleSuffix = scale === 'mingguan' ? '(Trend Bulan Ini)' : '(Trend Tahun Ini)';
+            document.getElementById('chart-util-title').textContent = `Total ${currentUtilView === 'air' ? 'Pemakaian Air' : (currentUtilView === 'listrik' ? 'Pemakaian Listrik' : 'Tagihan IPL')} ${titleSuffix}`;
+            
+            renderUtilitasTable(); // Proses ulang data
+        }
 
         function getCustomWeekInfo(dateInput) {
             let d = dateInput instanceof Date ? new Date(dateInput) : new Date(dateInput);
@@ -1431,24 +1452,6 @@
             return { bulan: month, tahun: year, minggu: week, rangeStr: rangeStr };
         }
 
-        function toggleUtilChartMode(mode) {
-            utilChartMode = mode;
-            const btnMonth = document.getElementById('btn-chart-month');
-            const btnYear = document.getElementById('btn-chart-year');
-            if (mode === 'month') {
-                btnMonth.classList.replace('bg-slate-100', 'bg-brand-600');
-                btnMonth.classList.replace('text-slate-500', 'text-white');
-                btnYear.classList.replace('bg-brand-600', 'bg-slate-100');
-                btnYear.classList.replace('text-white', 'text-slate-500');
-            } else {
-                btnYear.classList.replace('bg-slate-100', 'bg-brand-600');
-                btnYear.classList.replace('text-slate-500', 'text-white');
-                btnMonth.classList.replace('bg-brand-600', 'bg-slate-100');
-                btnMonth.classList.replace('text-white', 'text-slate-500');
-            }
-            renderUtilitasTable();
-        }
-
         function showUtilitasDetail(id) {
             const data = globalUtilData.find(d => d.id === id);
             if (!data) return;
@@ -1457,7 +1460,11 @@
             document.getElementById('detail-pic').textContent = data.pic;
             document.getElementById('detail-periode').textContent = `Bulan ${data.bulan} - Tahun ${data.tahun} (Minggu ${data.minggu})`;
             
-            let content = '';
+            let content = `<div class="mb-4 bg-slate-50 p-2 rounded border border-slate-200 text-center">
+                <p class="text-[10px] text-slate-400 uppercase font-bold tracking-widest">Waktu Input Sistem</p>
+                <p class="text-xs font-bold text-slate-700">${data.date || '-'}</p>
+            </div>`;
+            
             const d = data.data;
             
             if (currentUtilView === 'air') {
@@ -1520,19 +1527,33 @@
 
         function switchUtilView(view) {
             currentUtilView = view;
-            const views = ['air', 'listrik', 'ipl'];
-            const colors = { air: 'text-blue-600', listrik: 'text-amber-500', ipl: 'text-emerald-600' };
+            const views = ['air', 'listrik', 'ipl', 'rekap'];
+            const colors = { air: 'text-blue-600', listrik: 'text-amber-500', ipl: 'text-emerald-600', rekap: 'text-purple-600' };
             views.forEach(v => {
                 const btn = document.getElementById(`btn-view-${v}`);
+                if(!btn) return;
                 if(v === view) {
                     btn.classList.add('bg-white', 'shadow', colors[v]);
                     btn.classList.remove('text-slate-500', 'hover:text-slate-700');
                 } else {
-                    btn.classList.remove('bg-white', 'shadow', 'text-blue-600', 'text-amber-500', 'text-emerald-600');
+                    btn.classList.remove('bg-white', 'shadow', 'text-blue-600', 'text-amber-500', 'text-emerald-600', 'text-purple-600');
                     btn.classList.add('text-slate-500', 'hover:text-slate-700');
                 }
             });
-            document.getElementById('chart-util-title').textContent = `Total ${view === 'air' ? 'Pemakaian Air' : (view === 'listrik' ? 'Pemakaian Listrik' : 'Tagihan IPL (Rp)')} (Mingguan)`;
+
+            const chartContainer = document.getElementById('utilitas-chart-container');
+            const weekFilter = document.getElementById('util-filter-minggu');
+
+            if (view === 'rekap') {
+                if(chartContainer) chartContainer.classList.add('hidden');
+                if(weekFilter) weekFilter.classList.remove('hidden');
+            } else {
+                if(chartContainer) chartContainer.classList.remove('hidden');
+                if(weekFilter) weekFilter.classList.add('hidden');
+                const titleSuffix = utilChartScale === 'mingguan' ? '(Trend Bulan Ini)' : '(Trend Tahun Ini)';
+                document.getElementById('chart-util-title').textContent = `Total ${view === 'air' ? 'Pemakaian Air' : (view === 'listrik' ? 'Pemakaian Listrik' : 'Tagihan IPL')} ${titleSuffix}`;
+            }
+
             renderUtilitasTable();
         }
 
@@ -1681,6 +1702,7 @@
             else { f.classList.add('hidden'); inps.forEach(i=>i.required=false); }
         }
 
+        let adminTargetUsers = [];
         async function loadAdminUtilTargets() {
             const select = document.getElementById('admin-util-target-select');
             select.innerHTML = '<option value="">Sedang memuat data...</option>';
@@ -1785,7 +1807,7 @@
                     if (currentUser.role === 'admin') {
                         payload.id = existing.id; 
                         await supabaseClient.from('utilitas_data').update(payload).eq('id', existing.id);
-                        Island.show('Revisi Data Masa Lalu Berhasil Disimpan.', 'success');
+                        Island.show('Revisi Data Berhasil Disimpan.', 'success');
                     } else {
                         Island.show(`Gagal! Minggu ini sudah diisi oleh PIC: ${existing.pic}`, 'error');
                         return;
@@ -1808,7 +1830,8 @@
 
         async function renderUtilitasTable() {
             const tbody = document.getElementById('utilitas-tbody');
-            tbody.innerHTML = '<tr><td colspan="6" class="p-8 text-center text-slate-400 font-bold bg-slate-50"><span class="material-symbols-rounded animate-spin align-middle mr-2">sync</span>Memuat data dari server...</td></tr>';
+            const thead = document.getElementById('utilitas-thead');
+            tbody.innerHTML = '<tr><td colspan="10" class="p-8 text-center text-slate-400 font-bold bg-slate-50"><span class="material-symbols-rounded animate-spin align-middle mr-2">sync</span>Memuat data dari server...</td></tr>';
             
             const selBulan = parseInt(document.getElementById('util-filter-bulan').value);
             const selTahun = parseInt(document.getElementById('util-filter-tahun').value);
@@ -1816,32 +1839,6 @@
 
             const prevMonth = selBulan === 1 ? 12 : selBulan - 1;
             const prevYear = selBulan === 1 ? selTahun - 1 : selTahun;
-
-            let saturdays = [];
-            for(let d=1; d<=31; d++) {
-                let tempDate = new Date(selTahun, selBulan - 1, d);
-                if(tempDate.getMonth() !== selBulan - 1) break; 
-                if(tempDate.getDay() === 6) saturdays.push(tempDate.getDate());
-            }
-            
-            const shortMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agt', 'Sep', 'Okt', 'Nov', 'Des'];
-            let monthLabels = [];
-            for(let i=1; i<=5; i++) {
-                const th = document.getElementById('th-w'+i);
-                if(saturdays[i-1]) {
-                    let satDate = new Date(selTahun, selBulan - 1, saturdays[i-1]);
-                    let monDate = new Date(satDate); monDate.setDate(satDate.getDate() - 5);
-                    let sunDate = new Date(satDate); sunDate.setDate(satDate.getDate() + 1);
-                    let monStr = `${monDate.getDate()} ${shortMonths[monDate.getMonth()]}`;
-                    let sunStr = `${sunDate.getDate()} ${shortMonths[sunDate.getMonth()]}`;
-                    
-                    if(th) th.innerHTML = `Minggu ${i}<br><span class="text-[9px] text-slate-500 font-medium">${monStr} - ${sunStr}</span>`;
-                    monthLabels.push(`Mg ${i} (${monDate.getDate()}/${monDate.getMonth()+1})`);
-                } else {
-                    if(th) th.innerHTML = `Minggu ${i}<br><span class="text-[9px] text-slate-500 font-medium">-</span>`;
-                    monthLabels.push(`Mg ${i} (-)`);
-                }
-            }
 
             const { data: users } = await supabaseClient.from('users').select('*').eq('role', 'user');
             let validUsers = (users || []).filter(u => u.stagging_name);
@@ -1853,229 +1850,219 @@
             const { data: dbData } = await supabaseClient
                 .from('utilitas_data')
                 .select('*')
-                .in('tahun', [selTahun, selTahun - 1]); 
+                .in('tahun', [selTahun, prevYear]); 
                 
             const allFetchedData = dbData || [];
-            globalUtilData = allFetchedData;
+            globalUtilData = allFetchedData; // Untuk modal detail
             
             const utilDataCurrent = allFetchedData.filter(d => parseInt(d.bulan) === selBulan && parseInt(d.tahun) === selTahun);
             const utilDataPrev = allFetchedData.filter(d => parseInt(d.bulan) === prevMonth && parseInt(d.tahun) === prevYear);
             
-            let topUsers = [];
-            if (currentUtilView === 'air' || currentUtilView === 'listrik') {
-                let usageTotals = validUsers.map(u => {
-                    const userSubmitsCurrent = utilDataCurrent.filter(d => d.stagging_name === u.stagging_name);
-                    const userSubmitsPrev = utilDataPrev.filter(d => d.stagging_name === u.stagging_name);
-                    let lastVal = 0;
-                    const sortedPrev = userSubmitsPrev.sort((a,b) => parseInt(b.minggu) - parseInt(a.minggu));
-                    if(sortedPrev.length > 0) {
-                        lastVal = parseFloat(sortedPrev[0].data[`${currentUtilView}_angka`]) || 0;
+            let html = '';
+
+            // LOGIKA TABEL "REKAP LENGKAP" (DETAIL MINGGUAN KHUSUS)
+            if (currentUtilView === 'rekap') {
+                const selMinggu = document.getElementById('util-filter-minggu').value;
+                
+                thead.innerHTML = `
+                    <tr class="bg-slate-100 text-slate-600 font-bold border-b border-slate-200 uppercase tracking-wider text-[10px]">
+                        <th class="p-3 border-r border-slate-200 min-w-[150px] sticky-col-1" rowspan="2">Staging & PIC</th>
+                        <th class="p-3 border-r border-slate-200 text-center min-w-[110px]" rowspan="2">Tgl Input</th>
+                        <th class="p-2 border-r border-slate-200 text-center bg-blue-50 text-blue-700" colspan="4">Fasilitas Air</th>
+                        <th class="p-2 border-r border-slate-200 text-center bg-amber-50 text-amber-700" colspan="2">Fasilitas Listrik</th>
+                        <th class="p-2 text-center bg-emerald-50 text-emerald-700" colspan="2">Data IPL</th>
+                    </tr>
+                    <tr class="bg-slate-50 text-slate-500 font-bold border-b border-slate-200 uppercase tracking-wider text-[9px]">
+                        <th class="p-2 border-r border-slate-200 text-center min-w-[100px]">Sumber & Mtr</th>
+                        <th class="p-2 border-r border-slate-200 text-center min-w-[100px]">Kondisi Mtr/Pipa</th>
+                        <th class="p-2 border-r border-slate-200 text-center min-w-[100px]">Tandon & Oto</th>
+                        <th class="p-2 border-r border-slate-200 text-center min-w-[90px]">Mesin Pompa</th>
+                        <th class="p-2 border-r border-slate-200 text-center min-w-[100px]">Kategori & ID</th>
+                        <th class="p-2 border-r border-slate-200 text-center min-w-[90px]">Meteran</th>
+                        <th class="p-2 border-r border-slate-200 text-center min-w-[90px]">Kebersihan</th>
+                        <th class="p-2 text-center min-w-[90px]">Keamanan</th>
+                    </tr>
+                `;
+
+                if(validUsers.length === 0 && utilDataCurrent.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="10" class="p-8 text-center text-slate-400 font-bold bg-slate-50">Belum ada data staging bulan ini.</td></tr>`;
+                    return;
+                }
+
+                validUsers.sort((a, b) => (a.stagging_name || '').localeCompare(b.stagging_name || ''));
+
+                validUsers.forEach(u => {
+                    const submit = utilDataCurrent.find(d => d.stagging_name === u.stagging_name && parseInt(d.minggu) === parseInt(selMinggu));
+                    
+                    let rowHtml = `<td class="p-3 border-r border-slate-200 sticky-col-1 bg-white">
+                        <strong class="text-slate-900 text-xs block mb-0.5">${u.stagging_name}</strong>
+                        <span class="text-[10px] text-slate-500">${u.pic_name || u.username}</span>
+                    </td>`;
+
+                    if (submit) {
+                        const d = submit.data;
+                        const dateStr = submit.date ? submit.date.replace(', ', '<br><span class="text-brand-600">') + '</span>' : '-';
+                        
+                        const airKondisi = `Mtr: <span class="${d.air_kondisi_meteran==='Rusak'?'text-rose-500':'text-slate-700'}">${d.air_kondisi_meteran||'-'}</span><br>Pipa: <span class="${d.air_kondisi_pipa==='Rusak'?'text-rose-500':'text-slate-700'}">${d.air_kondisi_pipa||'-'}</span>`;
+                        const tandonInfo = d.air_tandon === 'Ada' ? `Tdn: <span class="${d.air_kondisi_tandon==='Rusak'?'text-rose-500':'text-slate-700'}">${d.air_kondisi_tandon||'-'}</span><br>Oto: <span class="${d.air_kondisi_otomatis==='Rusak'?'text-rose-500':'text-slate-700'}">${d.air_otomatis==='Ada'?d.air_kondisi_otomatis||'-':'-'}</span>` : 'Tidak Ada';
+                        const pompaInfo = d.air_pompa === 'Ada' ? `<span class="${d.air_kondisi_pompa==='Rusak'?'text-rose-500':'text-slate-700'}">${d.air_kondisi_pompa||'-'}</span>` : 'Tidak Ada';
+
+                        rowHtml += `
+                            <td class="p-2 border-r border-slate-100 text-center text-[9px] font-bold text-slate-500 bg-slate-50">${dateStr}</td>
+                            <td class="p-2 border-r border-slate-100 text-center text-[10px]"><span class="font-bold text-blue-600">${d.air_sumber||'-'}</span><br>Mtr: ${parseFloat(d.air_angka||0).toLocaleString('id-ID')}</td>
+                            <td class="p-2 border-r border-slate-100 text-center text-[10px] leading-tight">${airKondisi}</td>
+                            <td class="p-2 border-r border-slate-100 text-center text-[10px] leading-tight">${tandonInfo}</td>
+                            <td class="p-2 border-r border-slate-100 text-center text-[10px] leading-tight">${pompaInfo}</td>
+                            <td class="p-2 border-r border-slate-100 text-center text-[10px]"><span class="font-bold text-amber-600">${d.listrik_id||'-'}</span><br>${d.listrik_kategori||'-'}</td>
+                            <td class="p-2 border-r border-slate-100 text-center text-[12px] font-bold text-slate-700">${parseFloat(d.listrik_angka||0).toLocaleString('id-ID')}</td>
+                            <td class="p-2 border-r border-slate-100 text-center text-[10px] font-bold text-emerald-600">${d.ipl_bersih==='Ada'? 'Rp '+(parseFloat(d.ipl_bersih_nom)||0).toLocaleString('id-ID'):'<span class="text-slate-300">-</span>'}</td>
+                            <td class="p-2 text-center text-[10px] font-bold text-emerald-600">${d.ipl_aman==='Ada'? 'Rp '+(parseFloat(d.ipl_aman_nom)||0).toLocaleString('id-ID'):'<span class="text-slate-300">-</span>'}</td>
+                        `;
+                    } else {
+                        rowHtml += `<td colspan="9" class="p-4 text-center text-slate-400 font-bold text-xs bg-slate-50/50">Belum ada input di Minggu ${selMinggu}</td>`;
                     }
-                    let totalUsage = 0;
-                    for(let m = 1; m <= 5; m++) {
-                        const submit = userSubmitsCurrent.find(d => parseInt(d.minggu) === m);
-                        if(submit) {
-                            let currVal = parseFloat(submit.data[`${currentUtilView}_angka`]) || 0;
-                            if (lastVal > 0 && currVal !== lastVal) totalUsage += Math.abs(currVal - lastVal);
-                            lastVal = currVal;
-                        }
-                    }
-                    return { name: u.stagging_name, usage: totalUsage };
+                    html += `<tr class="hover:bg-slate-50 border-b border-slate-100 transition-colors">${rowHtml}</tr>`;
                 });
-                usageTotals.sort((a, b) => b.usage - a.usage);
-                topUsers = usageTotals.filter(u => u.usage > 0).slice(0, 3).map(u => u.name);
+                
+                tbody.innerHTML = html;
+                return; 
             }
 
-            let html = '';
-            
+            // KEMBALIKAN HEADER KE STANDAR JIKA BUKAN REKAP LENGKAP
+            thead.innerHTML = `
+                <tr class="bg-slate-100 text-slate-600 font-bold border-b border-slate-200 uppercase tracking-wider">
+                    <th class="p-3 border-r border-slate-200 min-w-[150px] sticky-col-1">Staging & PIC</th>
+                    <th class="p-3 border-r border-slate-200 text-center w-[150px]">Minggu 1</th>
+                    <th class="p-3 border-r border-slate-200 text-center w-[150px]">Minggu 2</th>
+                    <th class="p-3 border-r border-slate-200 text-center w-[150px]">Minggu 3</th>
+                    <th class="p-3 border-r border-slate-200 text-center w-[150px]">Minggu 4</th>
+                    <th class="p-3 text-center w-[150px]">Minggu 5</th>
+                </tr>
+            `;
+
             if(validUsers.length === 0 && utilDataCurrent.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="6" class="p-8 text-center text-slate-400 font-bold bg-slate-50">Belum ada data staging bulan ini.</td></tr>';
-                renderUtilitasChart(monthLabels, []);
+                renderUtilitasChart([], []);
                 return;
             }
 
             validUsers.sort((a, b) => (a.stagging_name || '').localeCompare(b.stagging_name || ''));
 
-            let monthlyTrend = [0, 0, 0, 0, 0];
-            let yearlyTrend = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-            let yearlyUsage = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-            let yearlyDays = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+            let chartLabels = ['Minggu 1', 'Minggu 2', 'Minggu 3', 'Minggu 4', 'Minggu 5'];
+            let chartDatasets = [];
+            let aggregatedTrend = [0, 0, 0, 0, 0];
 
             validUsers.forEach((u, i) => {
                 const userSubmitsCurrent = utilDataCurrent.filter(d => d.stagging_name === u.stagging_name);
                 const userSubmitsPrev = utilDataPrev.filter(d => d.stagging_name === u.stagging_name);
                 
                 let lastAir = 0; let lastListrik = 0;
-                
                 const sortedPrev = userSubmitsPrev.sort((a,b) => parseInt(b.minggu) - parseInt(a.minggu));
                 if(sortedPrev.length > 0) {
                     lastAir = parseFloat(sortedPrev[0].data.air_angka) || 0;
                     lastListrik = parseFloat(sortedPrev[0].data.listrik_angka) || 0;
                 }
 
-                let isTop = topUsers.includes(u.stagging_name);
-                let rowBg = isTop ? 'bg-rose-50' : 'bg-white';
-                let textName = isTop ? 'text-rose-700' : 'text-slate-900';
-                let textPic = isTop ? 'text-rose-500' : 'text-slate-500';
-                let topBadge = isTop ? `<span class="mt-1 bg-rose-500 text-white text-[8px] font-extrabold px-1.5 py-0.5 rounded block text-center uppercase tracking-widest shadow-sm">Top Pemakaian</span>` : '';
-
-                let rowHtml = `<td class="p-3 border-r border-slate-200 sticky-col-1 ${rowBg}">
-                    <strong class="${textName} text-xs block mb-0.5">${u.stagging_name}</strong>
-                    <span class="text-[10px] ${textPic}">${u.pic_name || u.username}</span>
-                    ${topBadge}
-                </td>`;
+                let rowHtml = `<td class="p-3 border-r border-slate-200 sticky-col-1 bg-white"><strong class="text-slate-900 text-xs block mb-0.5">${u.stagging_name}</strong><span class="text-[10px] text-slate-500">${u.pic_name || u.username}</span></td>`;
 
                 for(let m = 1; m <= 5; m++) {
                     const submit = userSubmitsCurrent.find(d => parseInt(d.minggu) === m);
                     if(submit) {
                         const d = submit.data;
                         const cellClick = `onclick="showUtilitasDetail('${submit.id}')" title="Klik untuk lihat detail form"`;
-                        const cellClasses = `p-2 border-r border-slate-50 text-center relative transition-colors cursor-pointer group`;
-                        const overlayHtml = `<div class="absolute inset-0 bg-black/5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded"><span class="material-symbols-rounded text-slate-700 text-xl drop-shadow-md">open_in_new</span></div>`;
-
-                        let hasRusak = Object.values(d).some(v => v === 'Rusak');
-                        let warningHtml = hasRusak ? `<span class="material-symbols-rounded text-rose-500 text-[14px] absolute top-1 right-1 drop-shadow-sm" title="Ada fasilitas rusak">warning</span>` : '';
-
+                        
                         if(currentUtilView === 'air') {
                             let currAir = parseFloat(d.air_angka) || 0;
                             let pemakaian = null;
-                            if (lastAir > 0 && currAir !== lastAir) pemakaian = Math.abs(currAir - lastAir);
-                            if (pemakaian !== null) monthlyTrend[m-1] += pemakaian;
+                            if (lastAir > 0 && currAir >= lastAir) pemakaian = currAir - lastAir;
+                            if (pemakaian !== null) aggregatedTrend[m-1] += pemakaian;
                             
-                            rowHtml += `<td class="${cellClasses} hover:bg-blue-50/50" ${cellClick}>
-                                ${warningHtml}
-                                <strong class="text-blue-600 text-[14px] block mb-0.5">${pemakaian !== null ? '+'+pemakaian.toLocaleString('id-ID', {maximumFractionDigits: 1}) : '-'}</strong>
+                            rowHtml += `<td class="p-2 border-r border-slate-50 text-center relative hover:bg-blue-50/50 transition-colors cursor-pointer" ${cellClick}>
+                                <strong class="text-blue-600 text-[14px] block mb-0.5">${pemakaian !== null ? '+'+pemakaian.toLocaleString('id-ID') : '-'}</strong>
                                 <span class="text-[9px] text-slate-400 block leading-tight font-mono">Mtr: ${currAir.toLocaleString('id-ID')}</span>
-                                ${overlayHtml}
                             </td>`;
                             lastAir = currAir;
                             
                         } else if(currentUtilView === 'listrik') {
                             let currListrik = parseFloat(d.listrik_angka) || 0;
                             let pemakaian = null;
-                            if (lastListrik > 0 && currListrik !== lastListrik) pemakaian = Math.abs(currListrik - lastListrik);
-                            if (pemakaian !== null) monthlyTrend[m-1] += pemakaian;
+                            if (lastListrik > 0 && currListrik >= lastListrik) pemakaian = currListrik - lastListrik;
+                            if (pemakaian !== null) aggregatedTrend[m-1] += pemakaian;
                             
-                            rowHtml += `<td class="${cellClasses} hover:bg-amber-50/50" ${cellClick}>
-                                ${warningHtml}
-                                <strong class="text-amber-500 text-[14px] block mb-0.5">${pemakaian !== null ? '+'+pemakaian.toLocaleString('id-ID', {maximumFractionDigits: 1}) : '-'}</strong>
+                            rowHtml += `<td class="p-2 border-r border-slate-50 text-center relative hover:bg-amber-50/50 transition-colors cursor-pointer" ${cellClick}>
+                                <strong class="text-amber-500 text-[14px] block mb-0.5">${pemakaian !== null ? '+'+pemakaian.toLocaleString('id-ID') : '-'}</strong>
                                 <span class="text-[9px] text-slate-400 block leading-tight font-mono">Mtr: ${currListrik.toLocaleString('id-ID')}</span>
-                                ${overlayHtml}
                             </td>`;
                             lastListrik = currListrik;
                             
                         } else {
-                            let val = 0; let textB = '-'; let textA = '-';
-                            if(d.ipl_bersih === 'Ada') {
-                                const nom = parseFloat(d.ipl_bersih_nom) || 0; val += nom;
-                                const jad = d.ipl_bersih_jadwal === '1 Kali Sebulan' ? '/bln' : (d.ipl_bersih_jadwal === '1 Kali Seminggu' ? '/mgg' : '');
-                                textB = `Rp${(nom/1000)}k${jad}`;
-                            }
-                            if(d.ipl_aman === 'Ada') {
-                                const nom = parseFloat(d.ipl_aman_nom) || 0; val += nom;
-                                const jad = d.ipl_aman_jadwal === '1 Kali Sebulan' ? '/bln' : (d.ipl_aman_jadwal === '1 Kali Seminggu' ? '/mgg' : '');
-                                textA = `Rp${(nom/1000)}k${jad}`;
-                            }
-                            monthlyTrend[m-1] += val;
-                            
-                            rowHtml += `<td class="p-2 border-r border-slate-100 text-center align-middle hover:bg-emerald-50/50 transition-colors cursor-pointer group relative" ${cellClick}>
-                                ${warningHtml}
-                                <div class="flex flex-col gap-1 items-center justify-center mt-1">
-                                    <span class="text-[10px] px-1.5 py-0.5 rounded w-full text-center ${d.ipl_bersih==='Ada'?'bg-emerald-100 text-emerald-700 font-bold':'bg-slate-50 text-slate-400'}">Kbrs: ${textB}</span>
-                                    <span class="text-[10px] px-1.5 py-0.5 rounded w-full text-center ${d.ipl_aman==='Ada'?'bg-emerald-100 text-emerald-700 font-bold':'bg-slate-50 text-slate-400'}">Kmn: ${textA}</span>
-                                </div>
-                                ${overlayHtml}
-                            </td>`;
+                            let val = 0;
+                            if(d.ipl_bersih === 'Ada') val += (parseFloat(d.ipl_bersih_nom) || 0);
+                            if(d.ipl_aman === 'Ada') val += (parseFloat(d.ipl_aman_nom) || 0);
+                            aggregatedTrend[m-1] += val;
+                            rowHtml += `<td class="p-2 border-r border-slate-100 text-center cursor-pointer hover:bg-emerald-50/50" ${cellClick}><span class="text-[10px] font-bold ${d.ipl_bersih==='Ada'?'text-emerald-600':'text-slate-400'}">B: ${d.ipl_bersih==='Ada'?'Rp'+(d.ipl_bersih_nom/1000)+'k':'-'}</span><br><span class="text-[10px] font-bold ${d.ipl_aman==='Ada'?'text-emerald-600':'text-slate-400'}">A: ${d.ipl_aman==='Ada'?'Rp'+(d.ipl_aman_nom/1000)+'k':'-'}</span></td>`;
                         }
                     } else {
-                        // Empty cell placeholder based on logic
-                        if(!saturdays[m-1]) {
-                            rowHtml += `<td class="p-3 border-r border-slate-100 text-center text-slate-200 font-medium text-[9px] bg-slate-50/50">-</td>`;
-                        } else {
-                            rowHtml += `<td class="p-3 border-r border-slate-100 text-center text-slate-300 font-bold text-xs bg-slate-50/50">-</td>`;
-                        }
+                        rowHtml += `<td class="p-3 border-r border-slate-100 text-center text-slate-300 font-bold text-xs bg-slate-50/50">-</td>`;
                     }
                 }
 
                 html += `<tr class="hover:bg-slate-50/50 border-b border-slate-100 transition-colors">${rowHtml}</tr>`;
-
-                // Kalkulasi Logika Rata-Rata Harian untuk Chart Tahunan
-                if (utilChartMode === 'year') {
-                    let userAllSubs = allFetchedData.filter(d => d.stagging_name === u.stagging_name)
-                        .map(d => ({...d, parsedTs: parseDateObj(d.date)}))
-                        .filter(d => d.parsedTs > 0)
-                        .sort((a,b) => a.parsedTs - b.parsedTs);
-
-                    let prevAir = null; let prevDateAir = null;
-                    let prevListrik = null; let prevDateListrik = null;
-
-                    userAllSubs.forEach(sub => {
-                        const y = parseInt(sub.tahun);
-                        const mIdx = parseInt(sub.bulan) - 1;
-                        const dAir = parseFloat(sub.data.air_angka) || 0;
-                        const dLis = parseFloat(sub.data.listrik_angka) || 0;
-                        const currDate = sub.parsedTs;
-
-                        if (currentUtilView === 'air') {
-                            if (prevAir !== null && prevDateAir !== null && y === selTahun) {
-                                let usage = Math.abs(dAir - prevAir);
-                                let days = (currDate - prevDateAir) / (1000 * 60 * 60 * 24);
-                                if (days > 0) {
-                                    yearlyUsage[mIdx] += usage;
-                                    yearlyDays[mIdx] += days;
-                                }
-                            }
-                            if (dAir > 0) { prevAir = dAir; prevDateAir = currDate; }
-                        } else if (currentUtilView === 'listrik') {
-                            if (prevListrik !== null && prevDateListrik !== null && y === selTahun) {
-                                let usage = Math.abs(dLis - prevListrik);
-                                let days = (currDate - prevDateListrik) / (1000 * 60 * 60 * 24);
-                                if (days > 0) {
-                                    yearlyUsage[mIdx] += usage;
-                                    yearlyDays[mIdx] += days;
-                                }
-                            }
-                            if (dLis > 0) { prevListrik = dLis; prevDateListrik = currDate; }
-                        } else {
-                            if (y === selTahun) {
-                                if(sub.data.ipl_bersih === 'Ada') yearlyTrend[mIdx] += parseFloat(sub.data.ipl_bersih_nom) || 0;
-                                if(sub.data.ipl_aman === 'Ada') yearlyTrend[mIdx] += parseFloat(sub.data.ipl_aman_nom) || 0;
-                            }
-                        }
-                    });
-                }
             });
             
-            if (utilChartMode === 'year' && (currentUtilView === 'air' || currentUtilView === 'listrik')) {
-                for(let i=0; i<12; i++) {
-                    yearlyTrend[i] = yearlyDays[i] > 0 ? (yearlyUsage[i] / yearlyDays[i]) : 0;
-                }
-            }
+            // --- LOGIKA SKALA GRAFIK (MINGGUAN VS TAHUNAN) ---
+            let finalTrendData = [];
             
-            tbody.innerHTML = html;
-
-            let cLabels = []; let cData = [];
-            if (utilChartMode === 'month') {
-                cLabels = monthLabels; cData = monthlyTrend;
+            if (utilChartScale === 'mingguan') {
+                chartLabels = ['Minggu 1', 'Minggu 2', 'Minggu 3', 'Minggu 4', 'Minggu 5'];
+                finalTrendData = aggregatedTrend; // Ambil hitungan mingguan yang diproses dari tabel di atas
             } else {
-                cLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agt', 'Sep', 'Okt', 'Nov', 'Des']; cData = yearlyTrend;
+                chartLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agt', 'Sep', 'Okt', 'Nov', 'Des'];
+                finalTrendData = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+                
+                validUsers.forEach(u => {
+                    let lastAir = 0; let lastListrik = 0;
+                    
+                    // Ambil angka pengurang (awal modal) dari akhir tahun lalu
+                    const userPrevYear = allFetchedData.filter(d => d.stagging_name === u.stagging_name && parseInt(d.tahun) === prevYear);
+                    const sortedPrevYear = userPrevYear.sort((a,b) => (parseInt(b.bulan)*10 + parseInt(b.minggu)) - (parseInt(a.bulan)*10 + parseInt(a.minggu)));
+                    if(sortedPrevYear.length > 0) {
+                        lastAir = parseFloat(sortedPrevYear[0].data.air_angka) || 0;
+                        lastListrik = parseFloat(sortedPrevYear[0].data.listrik_angka) || 0;
+                    }
+
+                    // Loop kalkulasi akumulasi dari bulan Jan hingga Des untuk tahun terpilih
+                    for(let b = 1; b <= 12; b++) {
+                        const submitsMonth = allFetchedData.filter(d => d.stagging_name === u.stagging_name && parseInt(d.tahun) === selTahun && parseInt(d.bulan) === b);
+                        const sortedSubmits = submitsMonth.sort((a,b) => parseInt(a.minggu) - parseInt(b.minggu));
+                        
+                        sortedSubmits.forEach(submit => {
+                            const d = submit.data;
+                            if(currentUtilView === 'air') {
+                                let currAir = parseFloat(d.air_angka) || 0;
+                                if (lastAir > 0 && currAir >= lastAir) finalTrendData[b-1] += (currAir - lastAir);
+                                lastAir = currAir;
+                            } else if(currentUtilView === 'listrik') {
+                                let currListrik = parseFloat(d.listrik_angka) || 0;
+                                if (lastListrik > 0 && currListrik >= lastListrik) finalTrendData[b-1] += (currListrik - lastListrik);
+                                lastListrik = currListrik;
+                            } else {
+                                let val = 0;
+                                if(d.ipl_bersih === 'Ada') val += (parseFloat(d.ipl_bersih_nom) || 0);
+                                if(d.ipl_aman === 'Ada') val += (parseFloat(d.ipl_aman_nom) || 0);
+                                finalTrendData[b-1] += val;
+                            }
+                        });
+                    }
+                });
             }
 
-            const hasData = cData.some(v => v > 0);
-            let chartDatasets = [];
+            const hasData = finalTrendData.some(v => v > 0);
             if (hasData) {
-                let labelName = '';
-                if (utilChartMode === 'year' && (currentUtilView === 'air' || currentUtilView === 'listrik')) {
-                    labelName = currentUtilView === 'air' ? 'Rata-rata Pemakaian Harian Air' : 'Rata-rata Pemakaian Harian Listrik';
-                    document.getElementById('chart-util-title').textContent = labelName + ' (Tahun ' + selTahun + ')';
-                } else {
-                    labelName = currentUtilView === 'air' ? 'Total Pemakaian Air' : (currentUtilView === 'listrik' ? 'Total Pemakaian Listrik' : 'Total Tagihan IPL (Rp)');
-                    document.getElementById('chart-util-title').textContent = labelName + (utilChartMode === 'month' ? ' (Mingguan)' : ' (Bulanan)');
-                }
-                
+                let labelName = currentUtilView === 'air' ? 'Total Pemakaian Air' : (currentUtilView === 'listrik' ? 'Total Pemakaian Listrik' : 'Total Tagihan IPL');
                 chartDatasets.push({
                     label: labelName,
-                    data: cData,
+                    data: finalTrendData,
                     borderColor: '#4f46e5',
                     backgroundColor: 'rgba(79, 70, 229, 0.15)',
                     borderWidth: 3,
@@ -2087,41 +2074,73 @@
                     tension: 0.4,
                     fill: true
                 });
-            } else {
-                document.getElementById('chart-util-title').textContent = currentUtilView === 'air' ? 'Total Pemakaian Air' : (currentUtilView === 'listrik' ? 'Total Pemakaian Listrik' : 'Total Tagihan IPL (Rp)');
             }
-            renderUtilitasChart(cLabels, chartDatasets);
+            
+            tbody.innerHTML = html;
+            renderUtilitasChart(chartLabels, chartDatasets);
         }
 
         function renderUtilitasChart(labels, datasets) {
-            Chart.register(ChartDataLabels);
-            if (utilChartInstance) { utilChartInstance.destroy(); }
+            const ctx = document.getElementById('utilitasChart');
+            if (!ctx) return;
             
-            const ctx = document.getElementById('utilitasChart').getContext('2d');
+            if (utilChartInstance) {
+                utilChartInstance.destroy();
+            }
+
+            if (datasets.length === 0) {
+                ctx.parentElement.classList.add('hidden');
+                return;
+            } else {
+                ctx.parentElement.classList.remove('hidden');
+            }
+
             utilChartInstance = new Chart(ctx, {
                 type: 'line',
                 data: { labels: labels, datasets: datasets },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: {
+                    layout: { padding: { top: 35, right: 25, left: 25, bottom: 10 } },
+                    plugins: { 
                         legend: { display: false },
-                        tooltip: { mode: 'index', intersect: false, backgroundColor: 'rgba(15, 23, 42, 0.9)', titleFont: { family: "'Figtree', sans-serif", size: 13 }, bodyFont: { family: "'Figtree', sans-serif", size: 13 }, padding: 12, cornerRadius: 8 },
-                        datalabels: {
-                            color: '#4f46e5',
-                            align: 'top',
-                            offset: 5,
-                            font: { family: "'Figtree', sans-serif", weight: 'bold', size: 12 },
-                            formatter: function(value) { return value > 0 ? value.toLocaleString('id-ID', {maximumFractionDigits: 1}) : ''; }
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    if (currentUtilView === 'ipl') return 'Rp ' + context.parsed.y.toLocaleString('id-ID');
+                                    return context.parsed.y.toLocaleString('id-ID');
+                                }
+                            }
                         }
                     },
-                    scales: {
-                        x: { grid: { display: false }, border: { display: false }, ticks: { font: { family: "'Figtree', sans-serif", weight: '600' } } },
-                        y: { display: false, grid: { display: false }, min: 0, suggestedMax: Math.max(...datasets.flatMap(d => d.data)) * 1.3 }
-                    },
-                    interaction: { mode: 'nearest', axis: 'x', intersect: false },
-                    layout: { padding: { top: 30 } }
-                }
+                    scales: { 
+                        x: { grid: { display: false }, border: { display: false } },
+                        y: { display: false, beginAtZero: true } 
+                    }
+                },
+                plugins: [{
+                    id: 'customDataLabels',
+                    afterDatasetsDraw(chart) {
+                        const { ctx, data } = chart;
+                        ctx.save();
+                        ctx.font = 'bold 12px Figtree';
+                        ctx.fillStyle = '#4f46e5'; 
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'bottom';
+                        data.datasets.forEach((dataset, i) => {
+                            const meta = chart.getDatasetMeta(i);
+                            meta.data.forEach((datapoint, index) => {
+                                const value = dataset.data[index];
+                                if(value > 0) {
+                                    let text = value.toLocaleString('id-ID');
+                                    if(currentUtilView === 'ipl') text = 'Rp ' + (value/1000).toLocaleString('id-ID') + 'k';
+                                    ctx.fillText(text, datapoint.x, datapoint.y - 12);
+                                }
+                            });
+                        });
+                        ctx.restore();
+                    }
+                }]
             });
         }
 
@@ -2196,7 +2215,7 @@
                             });
                         }
 
-                        if (payloads.length === 0) { throw new Error("Tidak ada baris data yang valid (Pastikan nama kolom sesuai template)."); }
+                        if (payloads.length === 0) { throw new Error("Tidak ada baris data yang valid."); }
 
                         Island.show(`Memasukkan ${payloads.length} data ke server...`, 'info', 5000);
                         
@@ -2287,7 +2306,6 @@
             } catch (err) { Island.show('Gagal memverifikasi akses.', 'error'); } finally { btn.disabled = false; btn.innerHTML = originalHtml; }
         }
 
-        let adminTargetUsers = [];
         async function loadAdminTargets() {
             const select = document.getElementById('admin-target-select'); select.innerHTML = '<option value="">Sedang memuat data...</option>';
             const { data } = await supabaseClient.from('users').select('*').eq('role', 'user'); adminTargetUsers = data || [];
@@ -2548,6 +2566,71 @@
             const { data: cat } = await supabaseClient.from('checklist_master').select('*').eq('id', catId).single();
             const item = cat.items.find(i => i.id === itemId); item.requiresNote = !item.requiresNote;
             await supabaseClient.from('checklist_master').update({ items: cat.items }).eq('id', catId); renderAdminItems(cat);
+        }
+
+        function downloadCSV(csv, filename) {
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            if (link.download !== undefined) {
+                const url = URL.createObjectURL(blob);
+                link.setAttribute("href", url);
+                link.setAttribute("download", filename);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+        }
+
+        function escapeCSV(val) {
+            if (val === null || val === undefined) return '';
+            const str = String(val);
+            if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+                return `"${str.replace(/"/g, '""')}"`;
+            }
+            return str;
+        }
+
+        async function exportUsersCSV() {
+            Island.show('Menyiapkan file CSV...', 'info');
+            const { data } = await supabaseClient.from('users').select('*').order('role', { ascending: true });
+            if (!data || data.length === 0) {
+                Island.show('Tidak ada data pengguna', 'error'); return;
+            }
+
+            const headers = ['id', 'username', 'password', 'pic_name', 'role', 'stagging_name', 'province', 'ssc', 'is_active'];
+            let csv = headers.join(',') + '\n';
+            
+            data.forEach(u => {
+                const row = headers.map(header => escapeCSV(u[header]));
+                csv += row.join(',') + '\n';
+            });
+
+            downloadCSV(csv, `Data_Pengguna_${new Date().getTime()}.csv`);
+            Island.show('Berhasil mendownload CSV', 'success');
+        }
+
+        async function exportFormatCSV() {
+            Island.show('Menyiapkan file CSV...', 'info');
+            const { data } = await supabaseClient.from('checklist_master').select('*').order('id', { ascending: true });
+            if (!data || data.length === 0) {
+                Island.show('Tidak ada format checklist', 'error'); return;
+            }
+
+            const headers = ['id', 'category', 'items'];
+            let csv = headers.join(',') + '\n';
+            
+            data.forEach(cat => {
+                const row = [
+                    escapeCSV(cat.id),
+                    escapeCSV(cat.category),
+                    escapeCSV(JSON.stringify(cat.items || [])) 
+                ];
+                csv += row.join(',') + '\n';
+            });
+
+            downloadCSV(csv, `Supabase_Checklist_Master_${new Date().getTime()}.csv`);
+            Island.show('Berhasil mendownload CSV Supabase', 'success');
         }
 
         const parseDateObj = d => {
