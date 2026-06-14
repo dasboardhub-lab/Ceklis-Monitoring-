@@ -1750,6 +1750,9 @@
             if (u) {
                 document.getElementById('util-form-stagging').textContent = u.stagging_name || '-';
                 document.getElementById('util-form-pic').textContent = u.pic_name || u.username || '-';
+                
+                // GANTI DROPDOWN HISTORI BERDASARKAN AREA YANG DIPILIH ADMIN
+                populateUtilitasHistory(u.stagging_name);
             }
         }
 
