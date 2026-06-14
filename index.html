@@ -132,6 +132,7 @@
                 <h1 class="text-5xl font-extrabold tracking-tight mb-4 leading-[1.1]">Sistem<br><span class="text-white">Ceklis</span><br><span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-400 to-purple-400">Monitoring.</span></h1>
                 <p class="text-slate-400 text-lg leading-relaxed font-light">Sistem pelaporan cerdas untuk memantau performa area secara real-time. Cepat, akurat, dan terstruktur.</p>
             </div>
+            <!-- Elemen Dekorasi -->
             <div class="absolute bottom-12 right-12 z-10 bg-white/5 backdrop-blur-md border border-white/10 p-6 rounded-3xl w-72 shadow-2xl transform rotate-[-5deg]">
                 <div class="flex items-center gap-3 mb-4">
                     <div class="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center"><span class="material-symbols-rounded icon-fill text-emerald-400 text-xl">check_circle</span></div>
@@ -764,18 +765,21 @@
     <div id="modal-utilitas-form" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[400] flex items-center justify-center p-4 sm:p-6">
         <div class="max-w-3xl w-full bg-background rounded-3xl shadow-float overflow-hidden animate-modal flex flex-col max-h-[90vh] border border-slate-200">
             <div class="p-0 overflow-y-auto custom-scroll flex-1 relative">
-                <div class="bg-white border-b border-slate-200 p-6 sm:p-8 relative shrink-0 z-10 sticky top-0">
-                    <div class="flex justify-between items-start">
+                <div class="bg-white border-b border-slate-200 p-4 sm:p-6 relative shrink-0 z-10 sticky top-0 shadow-sm">
+                    <div class="flex justify-between items-center">
                         <div>
-                            <div class="flex items-center gap-2 mb-2">
-                                <span class="bg-brand-100 text-brand-700 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-widest border border-brand-200">Formulir Pendataan</span>
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="bg-brand-100 text-brand-700 text-[9px] font-bold px-2 py-0.5 rounded uppercase tracking-widest border border-brand-200">Formulir Pendataan</span>
                             </div>
-                            <h2 class="text-2xl font-extrabold tracking-tight text-slate-900">Data Utilitas & IPL</h2>
+                            <h2 class="text-xl font-extrabold tracking-tight text-slate-900">Data Utilitas & IPL</h2>
                         </div>
-                        <button onclick="closeUtilitasModal()" class="w-10 h-10 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 flex items-center justify-center transition-colors"><span class="material-symbols-rounded">close</span></button>
+                        <button onclick="closeUtilitasModal()" class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 flex items-center justify-center transition-colors"><span class="material-symbols-rounded text-sm">close</span></button>
                     </div>
+                </div>
+
+                <form id="utilitas-form" class="p-4 sm:p-6 space-y-6">
                     
-                    <div id="admin-util-selector-container" class="hidden mt-4 p-4 bg-amber-50 rounded-2xl border border-amber-200">
+                    <div id="admin-util-selector-container" class="hidden p-4 bg-amber-50 rounded-2xl border border-amber-200">
                         <label class="flex items-center gap-2 text-xs text-amber-700 uppercase font-bold tracking-widest mb-3"><span class="material-symbols-rounded icon-fill text-amber-500 text-lg">workspace_premium</span> Override Admin (Utilitas)</label>
                         <div class="space-y-3">
                             <div>
@@ -789,36 +793,33 @@
                         </div>
                     </div>
 
-                    <div class="mt-4 bg-slate-50 p-4 rounded-xl border border-slate-200 flex items-center gap-3">
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 flex items-center gap-3">
                         <span class="material-symbols-rounded text-slate-400">info</span>
                         <div>
                             <p class="text-[11px] text-slate-500 uppercase font-bold tracking-widest">Staging Area</p>
                             <p class="text-sm font-bold text-slate-800"><span id="util-form-stagging">-</span> (<span id="util-form-pic">-</span>)</p>
                         </div>
                     </div>
-                </div>
 
-                <form id="utilitas-form" class="p-6 sm:p-8 space-y-6">
-                    
                     <!-- Periode Input (Otomatis) -->
-                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 grid grid-cols-2 md:grid-cols-4 gap-4">
                         <div>
                             <label class="label-modern">Tanggal Input</label>
-                            <input type="text" id="u-periode-tanggal-display" readonly class="input-modern w-full px-4 py-3 rounded-xl text-sm font-bold bg-slate-200 text-slate-500 cursor-not-allowed border-transparent shadow-none">
+                            <input type="text" id="u-periode-tanggal-display" readonly class="input-modern w-full px-2 py-3 md:px-4 rounded-xl text-xs md:text-sm font-bold bg-slate-200 text-slate-500 cursor-not-allowed border-transparent shadow-none truncate">
                         </div>
                         <div>
                             <label class="label-modern">Bulan</label>
-                            <input type="text" id="u-periode-bulan-display" readonly class="input-modern w-full px-4 py-3 rounded-xl text-sm font-bold bg-slate-200 text-slate-500 cursor-not-allowed border-transparent shadow-none">
+                            <input type="text" id="u-periode-bulan-display" readonly class="input-modern w-full px-2 py-3 md:px-4 rounded-xl text-xs md:text-sm font-bold bg-slate-200 text-slate-500 cursor-not-allowed border-transparent shadow-none truncate">
                             <input type="hidden" id="u-periode-bulan" name="bulan">
                         </div>
                         <div>
                             <label class="label-modern">Tahun</label>
-                            <input type="text" id="u-periode-tahun-display" readonly class="input-modern w-full px-4 py-3 rounded-xl text-sm font-bold bg-slate-200 text-slate-500 cursor-not-allowed border-transparent shadow-none">
+                            <input type="text" id="u-periode-tahun-display" readonly class="input-modern w-full px-2 py-3 md:px-4 rounded-xl text-xs md:text-sm font-bold bg-slate-200 text-slate-500 cursor-not-allowed border-transparent shadow-none truncate">
                             <input type="hidden" id="u-periode-tahun" name="tahun">
                         </div>
-                        <div>
+                        <div class="col-span-2 md:col-span-1">
                             <label class="label-modern">Minggu Ke-</label>
-                            <input type="text" id="u-periode-minggu-display" readonly class="input-modern w-full px-4 py-3 rounded-xl text-sm font-bold bg-slate-200 text-slate-500 cursor-not-allowed border-transparent shadow-none">
+                            <input type="text" id="u-periode-minggu-display" readonly class="input-modern w-full px-2 py-3 md:px-4 rounded-xl text-xs md:text-sm font-bold bg-slate-200 text-slate-500 cursor-not-allowed border-transparent shadow-none truncate">
                             <input type="hidden" id="u-periode-minggu" name="minggu">
                         </div>
                     </div>
@@ -1137,6 +1138,13 @@
     </div>
 
     <script>
+        let currentUtilView = 'air';
+        let utilChartScale = 'mingguan';
+        let utilChartInstance = null;
+        let globalUtilData = [];
+        let adminTargetUsers = [];
+        let activeAdminCategoryId = null;
+
         const itemTypeConfig = {
             'ok_nonok': { pos: 'OK', neg: 'Non OK', posL: 'OK', negL: 'Non OK', iconPos: 'check', iconNeg: 'close', bgPos: 'bg-emerald-50', textPos: 'text-emerald-700', bgNeg: 'bg-rose-50', textNeg: 'text-rose-700' },
             'ada_tidak': { pos: 'Ada', neg: 'Tidak Ada', posL: 'Ada', negL: 'Tidak Ada', iconPos: 'inventory_2', iconNeg: 'block', bgPos: 'bg-indigo-50', textPos: 'text-indigo-700', bgNeg: 'bg-slate-100', textNeg: 'text-slate-500' },
@@ -1407,12 +1415,6 @@
             }
         });
 
-        // --- SISTEM UTILITAS & IPL (SUPABASE) ---
-        let currentUtilView = 'air';
-        let utilChartScale = 'mingguan'; // Variabel Skala Grafik
-        let utilChartInstance = null;
-        let globalUtilData = [];
-
         function switchUtilChartScale(scale) {
             utilChartScale = scale;
             const btnMingguan = document.getElementById('btn-scale-mingguan');
@@ -1429,7 +1431,7 @@
             const titleSuffix = scale === 'mingguan' ? '(Trend Bulan Ini)' : '(Trend Tahun Ini)';
             document.getElementById('chart-util-title').textContent = `Total ${currentUtilView === 'air' ? 'Pemakaian Air' : (currentUtilView === 'listrik' ? 'Pemakaian Listrik' : 'Tagihan IPL')} ${titleSuffix}`;
             
-            renderUtilitasTable(); // Proses ulang data
+            renderUtilitasTable();
         }
 
         function getCustomWeekInfo(dateInput) {
@@ -1702,7 +1704,6 @@
             else { f.classList.add('hidden'); inps.forEach(i=>i.required=false); }
         }
 
-        let adminTargetUsers = [];
         async function loadAdminUtilTargets() {
             const select = document.getElementById('admin-util-target-select');
             select.innerHTML = '<option value="">Sedang memuat data...</option>';
@@ -1816,7 +1817,7 @@
                     await supabaseClient.from('utilitas_data').insert([payload]);
                     Island.show('Data Mingguan Berhasil Disimpan.', 'success');
                 }
-
+                
                 closeUtilitasModal();
                 renderUtilitasTable();
             } catch(error) {
@@ -1828,6 +1829,17 @@
             }
         });
 
+        function parseSafeNumber(val) {
+            if (!val) return 0;
+            let s = String(val).replace(/[^0-9,.-]/g, '');
+            if (s.indexOf('.') > -1 && s.indexOf(',') > -1) {
+                s = s.replace(/\./g, '').replace(',', '.');
+            } else if (s.indexOf(',') > -1) {
+                s = s.replace(',', '.');
+            }
+            return parseFloat(s) || 0;
+        }
+
         async function renderUtilitasTable() {
             const tbody = document.getElementById('utilitas-tbody');
             const thead = document.getElementById('utilitas-thead');
@@ -1838,7 +1850,35 @@
             const selStaging = document.getElementById('util-filter-ssc').value;
 
             const prevMonth = selBulan === 1 ? 12 : selBulan - 1;
-            const prevYear = selBulan === 1 ? selTahun - 1 : selTahun;
+            const prevMonthYear = selBulan === 1 ? selTahun - 1 : selTahun; 
+            const actualPrevYear = selTahun - 1; 
+
+            // Definisi variabel saturdays di tingkat tertinggi fungsi agar dapat diakses semua loop
+            let saturdays = [];
+            for(let d=1; d<=31; d++) {
+                let tempDate = new Date(selTahun, selBulan - 1, d);
+                if(tempDate.getMonth() !== selBulan - 1) break; 
+                if(tempDate.getDay() === 6) saturdays.push(tempDate.getDate());
+            }
+            
+            const shortMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agt', 'Sep', 'Okt', 'Nov', 'Des'];
+            let monthLabels = [];
+            for(let i=1; i<=5; i++) {
+                const th = document.getElementById('th-w'+i);
+                if(saturdays[i-1]) {
+                    let satDate = new Date(selTahun, selBulan - 1, saturdays[i-1]);
+                    let monDate = new Date(satDate); monDate.setDate(satDate.getDate() - 5);
+                    let sunDate = new Date(satDate); sunDate.setDate(satDate.getDate() + 1);
+                    let monStr = `${monDate.getDate()} ${shortMonths[monDate.getMonth()]}`;
+                    let sunStr = `${sunDate.getDate()} ${shortMonths[sunDate.getMonth()]}`;
+                    
+                    if(th) th.innerHTML = `Minggu ${i}<br><span class="text-[9px] text-slate-500 font-medium">${monStr} - ${sunStr}</span>`;
+                    monthLabels.push(`Mg ${i} (${monDate.getDate()}/${monDate.getMonth()+1})`);
+                } else {
+                    if(th) th.innerHTML = `Minggu ${i}<br><span class="text-[9px] text-slate-500 font-medium">-</span>`;
+                    monthLabels.push(`Mg ${i} (-)`);
+                }
+            }
 
             const { data: users } = await supabaseClient.from('users').select('*').eq('role', 'user');
             let validUsers = (users || []).filter(u => u.stagging_name);
@@ -1849,100 +1889,51 @@
             
             const { data: dbData } = await supabaseClient
                 .from('utilitas_data')
-                .select('*')
-                .in('tahun', [selTahun, prevYear]); 
+                .select('*'); 
                 
             const allFetchedData = dbData || [];
-            globalUtilData = allFetchedData; // Untuk modal detail
+            globalUtilData = allFetchedData; 
             
             const utilDataCurrent = allFetchedData.filter(d => parseInt(d.bulan) === selBulan && parseInt(d.tahun) === selTahun);
-            const utilDataPrev = allFetchedData.filter(d => parseInt(d.bulan) === prevMonth && parseInt(d.tahun) === prevYear);
+            const utilDataPrev = allFetchedData.filter(d => parseInt(d.bulan) === prevMonth && parseInt(d.tahun) === prevMonthYear);
             
-            let html = '';
+            const getOrderScore = d => parseInt(d.tahun) * 1000 + parseInt(d.bulan) * 10 + parseInt(d.minggu);
 
-            // LOGIKA TABEL "REKAP LENGKAP" (DETAIL MINGGUAN KHUSUS)
-            if (currentUtilView === 'rekap') {
-                const selMinggu = document.getElementById('util-filter-minggu').value;
-                
-                thead.innerHTML = `
-                    <tr class="bg-slate-100 text-slate-600 font-bold border-b border-slate-200 uppercase tracking-wider text-[10px]">
-                        <th class="p-3 border-r border-slate-200 min-w-[150px] sticky-col-1" rowspan="2">Staging & PIC</th>
-                        <th class="p-3 border-r border-slate-200 text-center min-w-[110px]" rowspan="2">Tgl Input</th>
-                        <th class="p-2 border-r border-slate-200 text-center bg-blue-50 text-blue-700" colspan="4">Fasilitas Air</th>
-                        <th class="p-2 border-r border-slate-200 text-center bg-amber-50 text-amber-700" colspan="2">Fasilitas Listrik</th>
-                        <th class="p-2 text-center bg-emerald-50 text-emerald-700" colspan="2">Data IPL</th>
-                    </tr>
-                    <tr class="bg-slate-50 text-slate-500 font-bold border-b border-slate-200 uppercase tracking-wider text-[9px]">
-                        <th class="p-2 border-r border-slate-200 text-center min-w-[100px]">Sumber & Mtr</th>
-                        <th class="p-2 border-r border-slate-200 text-center min-w-[100px]">Kondisi Mtr/Pipa</th>
-                        <th class="p-2 border-r border-slate-200 text-center min-w-[100px]">Tandon & Oto</th>
-                        <th class="p-2 border-r border-slate-200 text-center min-w-[90px]">Mesin Pompa</th>
-                        <th class="p-2 border-r border-slate-200 text-center min-w-[100px]">Kategori & ID</th>
-                        <th class="p-2 border-r border-slate-200 text-center min-w-[90px]">Meteran</th>
-                        <th class="p-2 border-r border-slate-200 text-center min-w-[90px]">Kebersihan</th>
-                        <th class="p-2 text-center min-w-[90px]">Keamanan</th>
-                    </tr>
-                `;
-
-                if(validUsers.length === 0 && utilDataCurrent.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="10" class="p-8 text-center text-slate-400 font-bold bg-slate-50">Belum ada data staging bulan ini.</td></tr>`;
-                    return;
-                }
-
-                validUsers.sort((a, b) => (a.stagging_name || '').localeCompare(b.stagging_name || ''));
-
-                validUsers.forEach(u => {
-                    const submit = utilDataCurrent.find(d => d.stagging_name === u.stagging_name && parseInt(d.minggu) === parseInt(selMinggu));
-                    
-                    let rowHtml = `<td class="p-3 border-r border-slate-200 sticky-col-1 bg-white">
-                        <strong class="text-slate-900 text-xs block mb-0.5">${u.stagging_name}</strong>
-                        <span class="text-[10px] text-slate-500">${u.pic_name || u.username}</span>
-                    </td>`;
-
-                    if (submit) {
-                        const d = submit.data;
-                        const dateStr = submit.date ? submit.date.replace(', ', '<br><span class="text-brand-600">') + '</span>' : '-';
+            let topUsers = [];
+            if (currentUtilView === 'air' || currentUtilView === 'listrik') {
+                let usageTotals = validUsers.map(u => {
+                    let totalUsage = 0;
+                    let userAllSubs = allFetchedData.filter(d => d.stagging_name === u.stagging_name)
+                        .sort((a,b) => getOrderScore(a) - getOrderScore(b));
                         
-                        const airKondisi = `Mtr: <span class="${d.air_kondisi_meteran==='Rusak'?'text-rose-500':'text-slate-700'}">${d.air_kondisi_meteran||'-'}</span><br>Pipa: <span class="${d.air_kondisi_pipa==='Rusak'?'text-rose-500':'text-slate-700'}">${d.air_kondisi_pipa||'-'}</span>`;
-                        const tandonInfo = d.air_tandon === 'Ada' ? `Tdn: <span class="${d.air_kondisi_tandon==='Rusak'?'text-rose-500':'text-slate-700'}">${d.air_kondisi_tandon||'-'}</span><br>Oto: <span class="${d.air_kondisi_otomatis==='Rusak'?'text-rose-500':'text-slate-700'}">${d.air_otomatis==='Ada'?d.air_kondisi_otomatis||'-':'-'}</span>` : 'Tidak Ada';
-                        const pompaInfo = d.air_pompa === 'Ada' ? `<span class="${d.air_kondisi_pompa==='Rusak'?'text-rose-500':'text-slate-700'}">${d.air_kondisi_pompa||'-'}</span>` : 'Tidak Ada';
+                    for(let m = 1; m <= 5; m++) {
+                        const submit = utilDataCurrent.find(d => d.stagging_name === u.stagging_name && parseInt(d.minggu) === m);
+                        if(submit) {
+                            const currentIndex = userAllSubs.findIndex(s => s.id === submit.id);
+                            let prevSubmit = currentIndex > 0 ? userAllSubs[currentIndex - 1] : null;
 
-                        rowHtml += `
-                            <td class="p-2 border-r border-slate-100 text-center text-[9px] font-bold text-slate-500 bg-slate-50">${dateStr}</td>
-                            <td class="p-2 border-r border-slate-100 text-center text-[10px]"><span class="font-bold text-blue-600">${d.air_sumber||'-'}</span><br>Mtr: ${parseFloat(d.air_angka||0).toLocaleString('id-ID')}</td>
-                            <td class="p-2 border-r border-slate-100 text-center text-[10px] leading-tight">${airKondisi}</td>
-                            <td class="p-2 border-r border-slate-100 text-center text-[10px] leading-tight">${tandonInfo}</td>
-                            <td class="p-2 border-r border-slate-100 text-center text-[10px] leading-tight">${pompaInfo}</td>
-                            <td class="p-2 border-r border-slate-100 text-center text-[10px]"><span class="font-bold text-amber-600">${d.listrik_id||'-'}</span><br>${d.listrik_kategori||'-'}</td>
-                            <td class="p-2 border-r border-slate-100 text-center text-[12px] font-bold text-slate-700">${parseFloat(d.listrik_angka||0).toLocaleString('id-ID')}</td>
-                            <td class="p-2 border-r border-slate-100 text-center text-[10px] font-bold text-emerald-600">${d.ipl_bersih==='Ada'? 'Rp '+(parseFloat(d.ipl_bersih_nom)||0).toLocaleString('id-ID'):'<span class="text-slate-300">-</span>'}</td>
-                            <td class="p-2 text-center text-[10px] font-bold text-emerald-600">${d.ipl_aman==='Ada'? 'Rp '+(parseFloat(d.ipl_aman_nom)||0).toLocaleString('id-ID'):'<span class="text-slate-300">-</span>'}</td>
-                        `;
-                    } else {
-                        rowHtml += `<td colspan="9" class="p-4 text-center text-slate-400 font-bold text-xs bg-slate-50/50">Belum ada input di Minggu ${selMinggu}</td>`;
+                            if (prevSubmit) {
+                                let currVal = parseSafeNumber(submit.data[`${currentUtilView}_angka`]);
+                                let prevVal = parseSafeNumber(prevSubmit.data[`${currentUtilView}_angka`]);
+                                if (currentUtilView === 'listrik' && submit.data.listrik_kategori === 'Pra Bayar (Token)') {
+                                    if (prevVal >= currVal) totalUsage += (prevVal - currVal);
+                                } else {
+                                    if (currVal >= prevVal) totalUsage += (currVal - prevVal);
+                                }
+                            }
+                        }
                     }
-                    html += `<tr class="hover:bg-slate-50 border-b border-slate-100 transition-colors">${rowHtml}</tr>`;
+                    return { name: u.stagging_name, usage: totalUsage };
                 });
-                
-                tbody.innerHTML = html;
-                return; 
+                usageTotals.sort((a, b) => b.usage - a.usage);
+                topUsers = usageTotals.filter(u => u.usage > 0).slice(0, 3).map(u => u.name);
             }
 
-            // KEMBALIKAN HEADER KE STANDAR JIKA BUKAN REKAP LENGKAP
-            thead.innerHTML = `
-                <tr class="bg-slate-100 text-slate-600 font-bold border-b border-slate-200 uppercase tracking-wider">
-                    <th class="p-3 border-r border-slate-200 min-w-[150px] sticky-col-1">Staging & PIC</th>
-                    <th class="p-3 border-r border-slate-200 text-center w-[150px]">Minggu 1</th>
-                    <th class="p-3 border-r border-slate-200 text-center w-[150px]">Minggu 2</th>
-                    <th class="p-3 border-r border-slate-200 text-center w-[150px]">Minggu 3</th>
-                    <th class="p-3 border-r border-slate-200 text-center w-[150px]">Minggu 4</th>
-                    <th class="p-3 text-center w-[150px]">Minggu 5</th>
-                </tr>
-            `;
-
+            let html = '';
+            
             if(validUsers.length === 0 && utilDataCurrent.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="6" class="p-8 text-center text-slate-400 font-bold bg-slate-50">Belum ada data staging bulan ini.</td></tr>';
-                renderUtilitasChart([], []);
+                renderUtilitasChart(monthLabels, []);
                 return;
             }
 
@@ -1954,16 +1945,21 @@
 
             validUsers.forEach((u, i) => {
                 const userSubmitsCurrent = utilDataCurrent.filter(d => d.stagging_name === u.stagging_name);
-                const userSubmitsPrev = utilDataPrev.filter(d => d.stagging_name === u.stagging_name);
                 
-                let lastAir = 0; let lastListrik = 0;
-                const sortedPrev = userSubmitsPrev.sort((a,b) => parseInt(b.minggu) - parseInt(a.minggu));
-                if(sortedPrev.length > 0) {
-                    lastAir = parseFloat(sortedPrev[0].data.air_angka) || 0;
-                    lastListrik = parseFloat(sortedPrev[0].data.listrik_angka) || 0;
-                }
+                let userAllSubs = allFetchedData.filter(d => d.stagging_name === u.stagging_name)
+                    .sort((a,b) => getOrderScore(a) - getOrderScore(b));
 
-                let rowHtml = `<td class="p-3 border-r border-slate-200 sticky-col-1 bg-white"><strong class="text-slate-900 text-xs block mb-0.5">${u.stagging_name}</strong><span class="text-[10px] text-slate-500">${u.pic_name || u.username}</span></td>`;
+                let isTop = topUsers.includes(u.stagging_name);
+                let rowBg = isTop ? 'bg-rose-50' : 'bg-white';
+                let textName = isTop ? 'text-rose-700' : 'text-slate-900';
+                let textPic = isTop ? 'text-rose-500' : 'text-slate-500';
+                let topBadge = isTop ? `<span class="mt-1 bg-rose-500 text-white text-[8px] font-extrabold px-1.5 py-0.5 rounded block text-center uppercase tracking-widest shadow-sm">Top Pemakaian</span>` : '';
+
+                let rowHtml = `<td class="p-3 border-r border-slate-200 sticky-col-1 ${rowBg}">
+                    <strong class="${textName} text-xs block mb-0.5">${u.stagging_name}</strong>
+                    <span class="text-[10px] ${textPic}">${u.pic_name || u.username}</span>
+                    ${topBadge}
+                </td>`;
 
                 for(let m = 1; m <= 5; m++) {
                     const submit = userSubmitsCurrent.find(d => parseInt(d.minggu) === m);
@@ -1971,39 +1967,105 @@
                         const d = submit.data;
                         const cellClick = `onclick="showUtilitasDetail('${submit.id}')" title="Klik untuk lihat detail form"`;
                         
+                        let hasRusak = Object.values(d).some(v => v === 'Rusak');
+                        let warningHtml = hasRusak ? `<span class="material-symbols-rounded text-rose-500 text-[14px] absolute top-1 right-1 drop-shadow-sm" title="Ada fasilitas rusak">warning</span>` : '';
+
+                        submit.parsedTs = parseDateObj(submit.date);
+                        const currentIndex = userAllSubs.findIndex(s => s.id === submit.id);
+                        let prevSubmit = currentIndex > 0 ? userAllSubs[currentIndex - 1] : null;
+
+                        let diffDays = 0;
+                        if (prevSubmit) {
+                            let ts1 = parseDateObj(submit.date);
+                            let ts2 = parseDateObj(prevSubmit.date);
+                            diffDays = (ts1 - ts2) / (1000 * 60 * 60 * 24);
+                            if (diffDays <= 0) diffDays = 7;
+                        }
+
                         if(currentUtilView === 'air') {
-                            let currAir = parseFloat(d.air_angka) || 0;
+                            let currAir = parseSafeNumber(d.air_angka);
                             let pemakaian = null;
-                            if (lastAir > 0 && currAir >= lastAir) pemakaian = currAir - lastAir;
-                            if (pemakaian !== null) aggregatedTrend[m-1] += pemakaian;
+                            let avg = null;
+                            
+                            if (prevSubmit) {
+                                let lastAir = parseSafeNumber(prevSubmit.data.air_angka);
+                                if (currAir >= lastAir) {
+                                    pemakaian = currAir - lastAir;
+                                    avg = pemakaian / diffDays;
+                                    aggregatedTrend[m-1] += pemakaian;
+                                }
+                            }
+                            
+                            let diffHtml = pemakaian !== null 
+                                ? `<strong class="text-blue-600 text-[14px] block mb-0.5" title="${diffDays.toFixed(0)} Hari">+${pemakaian.toLocaleString('id-ID')} <span class="text-[9px] text-slate-400 font-semibold block leading-none">(${avg.toLocaleString('id-ID', {maximumFractionDigits:1})}/hr)</span></strong>` 
+                                : (prevSubmit && currAir < parseSafeNumber(prevSubmit.data.air_angka) ? `<strong class="text-slate-400 text-[10px] uppercase tracking-widest block mb-0.5 mt-1" title="Reset Meteran">Reset</strong>` : `<strong class="text-slate-400 text-[10px] uppercase tracking-widest block mb-0.5 mt-1">Start</strong>`);
                             
                             rowHtml += `<td class="p-2 border-r border-slate-50 text-center relative hover:bg-blue-50/50 transition-colors cursor-pointer" ${cellClick}>
-                                <strong class="text-blue-600 text-[14px] block mb-0.5">${pemakaian !== null ? '+'+pemakaian.toLocaleString('id-ID') : '-'}</strong>
-                                <span class="text-[9px] text-slate-400 block leading-tight font-mono">Mtr: ${currAir.toLocaleString('id-ID')}</span>
+                                ${warningHtml}
+                                ${diffHtml}
+                                <span class="text-[9px] text-slate-400 block leading-tight font-mono mt-0.5">Mtr: ${currAir.toLocaleString('id-ID')}</span>
                             </td>`;
-                            lastAir = currAir;
                             
                         } else if(currentUtilView === 'listrik') {
-                            let currListrik = parseFloat(d.listrik_angka) || 0;
+                            let currListrik = parseSafeNumber(d.listrik_angka);
                             let pemakaian = null;
-                            if (lastListrik > 0 && currListrik >= lastListrik) pemakaian = currListrik - lastListrik;
-                            if (pemakaian !== null) aggregatedTrend[m-1] += pemakaian;
+                            let avg = null;
+                            let isTopUp = false;
+                            
+                            if (prevSubmit) {
+                                let lastListrik = parseSafeNumber(prevSubmit.data.listrik_angka);
+                                if (d.listrik_kategori === 'Pra Bayar (Token)') {
+                                    if (currListrik > lastListrik) {
+                                        isTopUp = true;
+                                    } else {
+                                        pemakaian = lastListrik - currListrik;
+                                        avg = pemakaian / diffDays;
+                                        aggregatedTrend[m-1] += pemakaian;
+                                    }
+                                } else {
+                                    if (currListrik >= lastListrik) {
+                                        pemakaian = currListrik - lastListrik;
+                                        avg = pemakaian / diffDays;
+                                        aggregatedTrend[m-1] += pemakaian;
+                                    }
+                                }
+                            }
+                            
+                            let diffHtml = '';
+                            if (isTopUp) {
+                                diffHtml = `<strong class="text-emerald-600 text-[10px] block mb-0.5 mt-1 bg-emerald-50 rounded border border-emerald-200 uppercase tracking-widest" title="Token Bertambah">Isi Token</strong>`;
+                            } else if (pemakaian !== null) {
+                                diffHtml = `<strong class="text-amber-500 text-[14px] block mb-0.5" title="${diffDays.toFixed(0)} Hari">+${pemakaian.toLocaleString('id-ID')} <span class="text-[9px] text-slate-400 font-semibold block leading-none">(${avg.toLocaleString('id-ID', {maximumFractionDigits:1})}/hr)</span></strong>`;
+                            } else {
+                                diffHtml = `<strong class="text-slate-400 text-[10px] uppercase tracking-widest block mb-0.5 mt-1">Start</strong>`;
+                            }
                             
                             rowHtml += `<td class="p-2 border-r border-slate-50 text-center relative hover:bg-amber-50/50 transition-colors cursor-pointer" ${cellClick}>
-                                <strong class="text-amber-500 text-[14px] block mb-0.5">${pemakaian !== null ? '+'+pemakaian.toLocaleString('id-ID') : '-'}</strong>
-                                <span class="text-[9px] text-slate-400 block leading-tight font-mono">Mtr: ${currListrik.toLocaleString('id-ID')}</span>
+                                ${warningHtml}
+                                ${diffHtml}
+                                <span class="text-[9px] text-slate-400 block leading-tight font-mono mt-0.5">Mtr: ${currListrik.toLocaleString('id-ID')}</span>
                             </td>`;
-                            lastListrik = currListrik;
                             
                         } else {
                             let val = 0;
-                            if(d.ipl_bersih === 'Ada') val += (parseFloat(d.ipl_bersih_nom) || 0);
-                            if(d.ipl_aman === 'Ada') val += (parseFloat(d.ipl_aman_nom) || 0);
+                            if(d.ipl_bersih === 'Ada') val += parseSafeNumber(d.ipl_bersih_nom);
+                            if(d.ipl_aman === 'Ada') val += parseSafeNumber(d.ipl_aman_nom);
                             aggregatedTrend[m-1] += val;
-                            rowHtml += `<td class="p-2 border-r border-slate-100 text-center cursor-pointer hover:bg-emerald-50/50" ${cellClick}><span class="text-[10px] font-bold ${d.ipl_bersih==='Ada'?'text-emerald-600':'text-slate-400'}">B: ${d.ipl_bersih==='Ada'?'Rp'+(d.ipl_bersih_nom/1000)+'k':'-'}</span><br><span class="text-[10px] font-bold ${d.ipl_aman==='Ada'?'text-emerald-600':'text-slate-400'}">A: ${d.ipl_aman==='Ada'?'Rp'+(d.ipl_aman_nom/1000)+'k':'-'}</span></td>`;
+                            rowHtml += `<td class="p-2 border-r border-slate-100 text-center relative cursor-pointer hover:bg-emerald-50/50" ${cellClick}>
+                                ${warningHtml}
+                                <div class="mt-1">
+                                    <span class="text-[10px] font-bold ${d.ipl_bersih==='Ada'?'text-emerald-600':'text-slate-400'} block">B: ${d.ipl_bersih==='Ada'?'Rp'+(parseSafeNumber(d.ipl_bersih_nom)/1000)+'k':'-'}</span>
+                                    <span class="text-[10px] font-bold ${d.ipl_aman==='Ada'?'text-emerald-600':'text-slate-400'} block">A: ${d.ipl_aman==='Ada'?'Rp'+(parseSafeNumber(d.ipl_aman_nom)/1000)+'k':'-'}</span>
+                                </div>
+                            </td>`;
                         }
                     } else {
-                        rowHtml += `<td class="p-3 border-r border-slate-100 text-center text-slate-300 font-bold text-xs bg-slate-50/50">-</td>`;
+                        // Empty cell placeholder based on logic
+                        if(!saturdays[m-1]) {
+                            rowHtml += `<td class="p-3 border-r border-slate-100 text-center text-slate-200 font-medium text-[9px] bg-slate-50/50">-</td>`;
+                        } else {
+                            rowHtml += `<td class="p-3 border-r border-slate-100 text-center text-slate-300 font-bold text-xs bg-slate-50/50">-</td>`;
+                        }
                     }
                 }
 
@@ -2014,52 +2076,49 @@
             let finalTrendData = [];
             
             if (utilChartScale === 'mingguan') {
-                chartLabels = ['Minggu 1', 'Minggu 2', 'Minggu 3', 'Minggu 4', 'Minggu 5'];
-                finalTrendData = aggregatedTrend; // Ambil hitungan mingguan yang diproses dari tabel di atas
+                chartLabels = monthLabels;
+                finalTrendData = aggregatedTrend; 
             } else {
                 chartLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agt', 'Sep', 'Okt', 'Nov', 'Des'];
                 finalTrendData = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
                 
                 validUsers.forEach(u => {
-                    let lastAir = 0; let lastListrik = 0;
-                    
-                    // Ambil angka pengurang (awal modal) dari akhir tahun lalu
-                    const userPrevYear = allFetchedData.filter(d => d.stagging_name === u.stagging_name && parseInt(d.tahun) === prevYear);
-                    const sortedPrevYear = userPrevYear.sort((a,b) => (parseInt(b.bulan)*10 + parseInt(b.minggu)) - (parseInt(a.bulan)*10 + parseInt(a.minggu)));
-                    if(sortedPrevYear.length > 0) {
-                        lastAir = parseFloat(sortedPrevYear[0].data.air_angka) || 0;
-                        lastListrik = parseFloat(sortedPrevYear[0].data.listrik_angka) || 0;
-                    }
+                    let userAllSubs = allFetchedData.filter(d => d.stagging_name === u.stagging_name)
+                        .sort((a,b) => getOrderScore(a) - getOrderScore(b));
 
-                    // Loop kalkulasi akumulasi dari bulan Jan hingga Des untuk tahun terpilih
-                    for(let b = 1; b <= 12; b++) {
-                        const submitsMonth = allFetchedData.filter(d => d.stagging_name === u.stagging_name && parseInt(d.tahun) === selTahun && parseInt(d.bulan) === b);
-                        const sortedSubmits = submitsMonth.sort((a,b) => parseInt(a.minggu) - parseInt(b.minggu));
-                        
-                        sortedSubmits.forEach(submit => {
-                            const d = submit.data;
-                            if(currentUtilView === 'air') {
-                                let currAir = parseFloat(d.air_angka) || 0;
-                                if (lastAir > 0 && currAir >= lastAir) finalTrendData[b-1] += (currAir - lastAir);
-                                lastAir = currAir;
-                            } else if(currentUtilView === 'listrik') {
-                                let currListrik = parseFloat(d.listrik_angka) || 0;
-                                if (lastListrik > 0 && currListrik >= lastListrik) finalTrendData[b-1] += (currListrik - lastListrik);
-                                lastListrik = currListrik;
-                            } else {
+                    if(currentUtilView === 'ipl') {
+                        userAllSubs.forEach((submit) => {
+                            if (parseInt(submit.tahun) === selTahun) {
+                                let bIdx = parseInt(submit.bulan) - 1;
                                 let val = 0;
-                                if(d.ipl_bersih === 'Ada') val += (parseFloat(d.ipl_bersih_nom) || 0);
-                                if(d.ipl_aman === 'Ada') val += (parseFloat(d.ipl_aman_nom) || 0);
-                                finalTrendData[b-1] += val;
+                                if(submit.data.ipl_bersih === 'Ada') val += parseSafeNumber(submit.data.ipl_bersih_nom);
+                                if(submit.data.ipl_aman === 'Ada') val += parseSafeNumber(submit.data.ipl_aman_nom);
+                                finalTrendData[bIdx] += val;
+                            }
+                        });
+                    } else {
+                        userAllSubs.forEach((submit, idx) => {
+                            if (parseInt(submit.tahun) === selTahun && idx > 0) {
+                                let prevSubmit = userAllSubs[idx - 1];
+                                let bIdx = parseInt(submit.bulan) - 1;
+                                let curr = parseSafeNumber(submit.data[`${currentUtilView}_angka`]);
+                                let prev = parseSafeNumber(prevSubmit.data[`${currentUtilView}_angka`]);
+                                
+                                if (currentUtilView === 'listrik' && submit.data.listrik_kategori === 'Pra Bayar (Token)') {
+                                    if (prev >= curr) finalTrendData[bIdx] += (prev - curr);
+                                } else {
+                                    if (curr >= prev) finalTrendData[bIdx] += (curr - prev);
+                                }
                             }
                         });
                     }
                 });
             }
 
-            const hasData = finalTrendData.some(v => v > 0);
-            if (hasData) {
-                let labelName = currentUtilView === 'air' ? 'Total Pemakaian Air' : (currentUtilView === 'listrik' ? 'Total Pemakaian Listrik' : 'Total Tagihan IPL');
+            // Grafik TIDAK AKAN HILANG selama ada data apapun di bulan ini
+            const hasAnyDataThisMonth = utilDataCurrent.length > 0;
+            if (hasAnyDataThisMonth) {
+                let labelName = currentUtilView === 'air' ? 'Selisih Pemakaian Air' : (currentUtilView === 'listrik' ? 'Selisih Pemakaian Listrik' : 'Total Tagihan IPL');
                 chartDatasets.push({
                     label: labelName,
                     data: finalTrendData,
@@ -2447,8 +2506,6 @@
                     </tr>`;
             });
         }
-
-        let activeAdminCategoryId = null;
 
         async function renderAdminCategoryList() {
             const list = document.getElementById('admin-category-list'); const { data } = await supabaseClient.from('checklist_master').select('*').order('id', { ascending: true });
