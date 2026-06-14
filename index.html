@@ -1469,54 +1469,62 @@
             
             const d = data.data;
             
-            if (currentUtilView === 'air') {
-                content += `<div class="mb-4"><h4 class="font-bold text-sm text-slate-800 border-b pb-1 mb-2">Informasi Umum Air</h4>`;
-                content += `<p class="text-xs mb-1"><span class="font-semibold">Sumber:</span> ${d.air_sumber || '-'}</p>`;
+            const renderAir = () => {
+                let h = `<div class="mb-4"><h4 class="font-bold text-sm text-blue-600 border-b border-blue-100 pb-1 mb-2 flex items-center gap-1"><span class="material-symbols-rounded text-[16px]">water_drop</span> Informasi Air</h4>`;
+                h += `<p class="text-xs mb-1"><span class="font-semibold">Sumber:</span> ${d.air_sumber || '-'}</p>`;
                 if (d.air_sumber === 'PDAM' || d.air_sumber === 'WTP') {
-                    content += `<p class="text-xs mb-1"><span class="font-semibold">ID Pelanggan:</span> ${d.air_id || '-'}</p>`;
-                    content += `<p class="text-xs mb-1"><span class="font-semibold">Nama Pemilik:</span> ${d.air_nama || '-'}</p>`;
-                    content += `<p class="text-xs mb-1"><span class="font-semibold">Mekanisme:</span> ${d.air_mekanisme || '-'}</p>`;
+                    h += `<p class="text-xs mb-1"><span class="font-semibold">ID Pelanggan:</span> ${d.air_id || '-'}</p>`;
+                    h += `<p class="text-xs mb-1"><span class="font-semibold">Nama Pemilik:</span> ${d.air_nama || '-'}</p>`;
+                    h += `<p class="text-xs mb-1"><span class="font-semibold">Mekanisme:</span> ${d.air_mekanisme || '-'}</p>`;
                 }
-                content += `</div>`;
-                
-                content += `<div class="mb-4"><h4 class="font-bold text-sm text-slate-800 border-b pb-1 mb-2">Kondisi Fasilitas</h4>`;
-                content += `<p class="text-xs mb-1"><span class="font-semibold">Meteran:</span> <span class="${d.air_kondisi_meteran === 'Rusak' ? 'text-rose-600 font-bold' : ''}">${d.air_kondisi_meteran || '-'}</span> ${d.air_meteran_rusak ? `(${d.air_meteran_rusak})` : ''}</p>`;
-                content += `<p class="text-xs mb-1"><span class="font-semibold">Pipa & Kran:</span> <span class="${d.air_kondisi_pipa === 'Rusak' ? 'text-rose-600 font-bold' : ''}">${d.air_kondisi_pipa || '-'}</span> ${d.air_pipa_rusak ? `(${d.air_pipa_rusak})` : ''}</p>`;
-                content += `</div>`;
-                
+                h += `<p class="text-xs mb-1 mt-2"><span class="font-semibold">Kondisi Meteran:</span> <span class="${d.air_kondisi_meteran === 'Rusak' ? 'text-rose-600 font-bold' : ''}">${d.air_kondisi_meteran || '-'}</span> ${d.air_meteran_rusak ? `(${d.air_meteran_rusak})` : ''}</p>`;
+                h += `<p class="text-xs mb-1"><span class="font-semibold">Kondisi Pipa:</span> <span class="${d.air_kondisi_pipa === 'Rusak' ? 'text-rose-600 font-bold' : ''}">${d.air_kondisi_pipa || '-'}</span> ${d.air_pipa_rusak ? `(${d.air_pipa_rusak})` : ''}</p>`;
                 if (d.air_tandon === 'Ada') {
-                    content += `<div class="mb-4"><h4 class="font-bold text-sm text-slate-800 border-b pb-1 mb-2">Tandon & Otomatis</h4>`;
-                    content += `<p class="text-xs mb-1"><span class="font-semibold">Kondisi Tandon:</span> <span class="${d.air_kondisi_tandon === 'Rusak' ? 'text-rose-600 font-bold' : ''}">${d.air_kondisi_tandon || '-'}</span> ${d.air_tandon_rusak ? `(${d.air_tandon_rusak})` : ''}</p>`;
+                    h += `<p class="text-xs mb-1 mt-2"><span class="font-semibold">Kondisi Tandon:</span> <span class="${d.air_kondisi_tandon === 'Rusak' ? 'text-rose-600 font-bold' : ''}">${d.air_kondisi_tandon || '-'}</span> ${d.air_tandon_rusak ? `(${d.air_tandon_rusak})` : ''}</p>`;
                     if (d.air_otomatis === 'Ada') {
-                        content += `<p class="text-xs mb-1"><span class="font-semibold">Kondisi Otomatis:</span> <span class="${d.air_kondisi_otomatis === 'Rusak' ? 'text-rose-600 font-bold' : ''}">${d.air_kondisi_otomatis || '-'}</span> ${d.air_otomatis_rusak ? `(${d.air_otomatis_rusak})` : ''}</p>`;
+                        h += `<p class="text-xs mb-1"><span class="font-semibold">Otomatis Tandon:</span> <span class="${d.air_kondisi_otomatis === 'Rusak' ? 'text-rose-600 font-bold' : ''}">${d.air_kondisi_otomatis || '-'}</span> ${d.air_otomatis_rusak ? `(${d.air_otomatis_rusak})` : ''}</p>`;
                     }
-                    content += `</div>`;
                 }
-                
                 if (d.air_pompa === 'Ada') {
-                    content += `<div class="mb-4"><h4 class="font-bold text-sm text-slate-800 border-b pb-1 mb-2">Pompa Air</h4>`;
-                    content += `<p class="text-xs mb-1"><span class="font-semibold">Kondisi Pompa:</span> <span class="${d.air_kondisi_pompa === 'Rusak' ? 'text-rose-600 font-bold' : ''}">${d.air_kondisi_pompa || '-'}</span> ${d.air_pompa_rusak ? `(${d.air_pompa_rusak})` : ''}</p>`;
-                    content += `</div>`;
+                    h += `<p class="text-xs mb-1"><span class="font-semibold">Pompa Air:</span> <span class="${d.air_kondisi_pompa === 'Rusak' ? 'text-rose-600 font-bold' : ''}">${d.air_kondisi_pompa || '-'}</span> ${d.air_pompa_rusak ? `(${d.air_pompa_rusak})` : ''}</p>`;
                 }
-            } else if (currentUtilView === 'listrik') {
-                content += `<div class="mb-4"><h4 class="font-bold text-sm text-slate-800 border-b pb-1 mb-2">Informasi Listrik</h4>`;
-                content += `<p class="text-xs mb-1"><span class="font-semibold">ID Pelanggan:</span> ${d.listrik_id || '-'}</p>`;
-                content += `<p class="text-xs mb-1"><span class="font-semibold">Nama Pemilik:</span> ${d.listrik_nama || '-'}</p>`;
-                content += `<p class="text-xs mb-1"><span class="font-semibold">Kategori:</span> ${d.listrik_kategori || '-'}</p>`;
-                content += `</div>`;
-            } else {
-                content += `<div class="mb-4"><h4 class="font-bold text-sm text-slate-800 border-b pb-1 mb-2">Rincian IPL</h4>`;
-                content += `<p class="text-xs mb-1"><span class="font-semibold">IPL Kebersihan:</span> ${d.ipl_bersih || '-'}</p>`;
+                h += `</div>`;
+                return h;
+            };
+
+            const renderListrik = () => {
+                let h = `<div class="mb-4"><h4 class="font-bold text-sm text-amber-500 border-b border-amber-100 pb-1 mb-2 flex items-center gap-1"><span class="material-symbols-rounded text-[16px]">bolt</span> Informasi Listrik</h4>`;
+                h += `<p class="text-xs mb-1"><span class="font-semibold">ID Pelanggan:</span> ${d.listrik_id || '-'}</p>`;
+                h += `<p class="text-xs mb-1"><span class="font-semibold">Nama Pemilik:</span> ${d.listrik_nama || '-'}</p>`;
+                h += `<p class="text-xs mb-1"><span class="font-semibold">Kategori:</span> ${d.listrik_kategori || '-'}</p>`;
+                h += `</div>`;
+                return h;
+            };
+
+            const renderIpl = () => {
+                let h = `<div class="mb-4"><h4 class="font-bold text-sm text-emerald-500 border-b border-emerald-100 pb-1 mb-2 flex items-center gap-1"><span class="material-symbols-rounded text-[16px]">payments</span> Rincian IPL</h4>`;
+                h += `<p class="text-xs mb-1"><span class="font-semibold">IPL Kebersihan:</span> ${d.ipl_bersih || '-'}</p>`;
                 if (d.ipl_bersih === 'Ada') {
-                    content += `<p class="text-xs mb-1 pl-4">- Nominal: Rp ${parseFloat(d.ipl_bersih_nom || 0).toLocaleString('id-ID')}</p>`;
-                    content += `<p class="text-xs mb-1 pl-4">- Jadwal: ${d.ipl_bersih_jadwal || '-'}</p>`;
+                    h += `<p class="text-xs mb-1 pl-4">- Nominal: Rp ${parseFloat(d.ipl_bersih_nom || 0).toLocaleString('id-ID')}</p>`;
+                    h += `<p class="text-xs mb-1 pl-4">- Jadwal: ${d.ipl_bersih_jadwal || '-'}</p>`;
                 }
-                content += `<p class="text-xs mb-1 mt-2"><span class="font-semibold">IPL Keamanan:</span> ${d.ipl_aman || '-'}</p>`;
+                h += `<p class="text-xs mb-1 mt-2"><span class="font-semibold">IPL Keamanan:</span> ${d.ipl_aman || '-'}</p>`;
                 if (d.ipl_aman === 'Ada') {
-                    content += `<p class="text-xs mb-1 pl-4">- Nominal: Rp ${parseFloat(d.ipl_aman_nom || 0).toLocaleString('id-ID')}</p>`;
-                    content += `<p class="text-xs mb-1 pl-4">- Jadwal: ${d.ipl_aman_jadwal || '-'}</p>`;
+                    h += `<p class="text-xs mb-1 pl-4">- Nominal: Rp ${parseFloat(d.ipl_aman_nom || 0).toLocaleString('id-ID')}</p>`;
+                    h += `<p class="text-xs mb-1 pl-4">- Jadwal: ${d.ipl_aman_jadwal || '-'}</p>`;
                 }
-                content += `</div>`;
+                h += `</div>`;
+                return h;
+            };
+
+            if (currentUtilView === 'air') {
+                content += renderAir();
+            } else if (currentUtilView === 'listrik') {
+                content += renderListrik();
+            } else if (currentUtilView === 'ipl') {
+                content += renderIpl();
+            } else {
+                content += renderAir() + renderListrik() + renderIpl();
             }
             
             document.getElementById('detail-content').innerHTML = content;
@@ -1848,12 +1856,12 @@
             const selBulan = parseInt(document.getElementById('util-filter-bulan').value);
             const selTahun = parseInt(document.getElementById('util-filter-tahun').value);
             const selStaging = document.getElementById('util-filter-ssc').value;
+            const selMinggu = parseInt(document.getElementById('util-filter-minggu').value) || 1;
 
             const prevMonth = selBulan === 1 ? 12 : selBulan - 1;
             const prevMonthYear = selBulan === 1 ? selTahun - 1 : selTahun; 
             const actualPrevYear = selTahun - 1; 
 
-            // Definisi variabel saturdays di tingkat tertinggi fungsi agar dapat diakses semua loop
             let saturdays = [];
             for(let d=1; d<=31; d++) {
                 let tempDate = new Date(selTahun, selBulan - 1, d);
@@ -1863,20 +1871,42 @@
             
             const shortMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agt', 'Sep', 'Okt', 'Nov', 'Des'];
             let monthLabels = [];
-            for(let i=1; i<=5; i++) {
-                const th = document.getElementById('th-w'+i);
-                if(saturdays[i-1]) {
-                    let satDate = new Date(selTahun, selBulan - 1, saturdays[i-1]);
-                    let monDate = new Date(satDate); monDate.setDate(satDate.getDate() - 5);
-                    let sunDate = new Date(satDate); sunDate.setDate(satDate.getDate() + 1);
-                    let monStr = `${monDate.getDate()} ${shortMonths[monDate.getMonth()]}`;
-                    let sunStr = `${sunDate.getDate()} ${shortMonths[sunDate.getMonth()]}`;
-                    
-                    if(th) th.innerHTML = `Minggu ${i}<br><span class="text-[9px] text-slate-500 font-medium">${monStr} - ${sunStr}</span>`;
-                    monthLabels.push(`Mg ${i} (${monDate.getDate()}/${monDate.getMonth()+1})`);
-                } else {
-                    if(th) th.innerHTML = `Minggu ${i}<br><span class="text-[9px] text-slate-500 font-medium">-</span>`;
-                    monthLabels.push(`Mg ${i} (-)`);
+
+            if (currentUtilView === 'rekap') {
+                thead.innerHTML = `
+                    <tr class="bg-slate-100 text-slate-600 font-bold border-b border-slate-200 uppercase tracking-wider text-[10px]">
+                        <th class="p-3 border-r border-slate-200 sticky-col-1 min-w-[150px]">Staging & PIC</th>
+                        <th class="p-3 border-r border-slate-200 min-w-[200px]">Fasilitas Air</th>
+                        <th class="p-3 border-r border-slate-200 min-w-[200px]">Fasilitas Listrik</th>
+                        <th class="p-3 min-w-[200px]">Data IPL</th>
+                    </tr>
+                `;
+            } else {
+                thead.innerHTML = `
+                    <tr class="bg-slate-100 text-slate-600 font-bold border-b border-slate-200 uppercase tracking-wider">
+                        <th class="p-3 border-r border-slate-200 min-w-[150px] sticky-col-1">Staging & PIC</th>
+                        <th id="th-w1" class="p-3 border-r border-slate-200 text-center w-[150px]">Minggu 1<br><span class="text-[9px] text-slate-500 font-medium">-</span></th>
+                        <th id="th-w2" class="p-3 border-r border-slate-200 text-center w-[150px]">Minggu 2<br><span class="text-[9px] text-slate-500 font-medium">-</span></th>
+                        <th id="th-w3" class="p-3 border-r border-slate-200 text-center w-[150px]">Minggu 3<br><span class="text-[9px] text-slate-500 font-medium">-</span></th>
+                        <th id="th-w4" class="p-3 border-r border-slate-200 text-center w-[150px]">Minggu 4<br><span class="text-[9px] text-slate-500 font-medium">-</span></th>
+                        <th id="th-w5" class="p-3 text-center w-[150px]">Minggu 5<br><span class="text-[9px] text-slate-500 font-medium">-</span></th>
+                    </tr>
+                `;
+                for(let i=1; i<=5; i++) {
+                    const th = document.getElementById('th-w'+i);
+                    if(saturdays[i-1]) {
+                        let satDate = new Date(selTahun, selBulan - 1, saturdays[i-1]);
+                        let monDate = new Date(satDate); monDate.setDate(satDate.getDate() - 5);
+                        let sunDate = new Date(satDate); sunDate.setDate(satDate.getDate() + 1);
+                        let monStr = `${monDate.getDate()} ${shortMonths[monDate.getMonth()]}`;
+                        let sunStr = `${sunDate.getDate()} ${shortMonths[sunDate.getMonth()]}`;
+                        
+                        if(th) th.innerHTML = `Minggu ${i}<br><span class="text-[9px] text-slate-500 font-medium">${monStr} - ${sunStr}</span>`;
+                        monthLabels.push(`Mg ${i} (${monDate.getDate()}/${monDate.getMonth()+1})`);
+                    } else {
+                        if(th) th.innerHTML = `Minggu ${i}<br><span class="text-[9px] text-slate-500 font-medium">-</span>`;
+                        monthLabels.push(`Mg ${i} (-)`);
+                    }
                 }
             }
 
@@ -1933,7 +1963,7 @@
             
             if(validUsers.length === 0 && utilDataCurrent.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="6" class="p-8 text-center text-slate-400 font-bold bg-slate-50">Belum ada data staging bulan ini.</td></tr>';
-                renderUtilitasChart(monthLabels, []);
+                if (currentUtilView !== 'rekap') renderUtilitasChart(monthLabels, []);
                 return;
             }
 
@@ -1955,188 +1985,230 @@
                 let textPic = isTop ? 'text-rose-500' : 'text-slate-500';
                 let topBadge = isTop ? `<span class="mt-1 bg-rose-500 text-white text-[8px] font-extrabold px-1.5 py-0.5 rounded block text-center uppercase tracking-widest shadow-sm">Top Pemakaian</span>` : '';
 
-                let rowHtml = `<td class="p-3 border-r border-slate-200 sticky-col-1 ${rowBg}">
-                    <strong class="${textName} text-xs block mb-0.5">${u.stagging_name}</strong>
-                    <span class="text-[10px] ${textPic}">${u.pic_name || u.username}</span>
-                    ${topBadge}
-                </td>`;
+                if (currentUtilView === 'rekap') {
+                    const submit = userSubmitsCurrent.find(d => parseInt(d.minggu) === selMinggu);
+                    let rowHtml = `<td class="p-3 border-r border-slate-200 sticky-col-1 bg-white">
+                        <strong class="text-slate-900 text-xs block mb-0.5">${u.stagging_name}</strong>
+                        <span class="text-[10px] text-slate-500">${u.pic_name || u.username}</span>
+                    </td>`;
 
-                for(let m = 1; m <= 5; m++) {
-                    const submit = userSubmitsCurrent.find(d => parseInt(d.minggu) === m);
-                    if(submit) {
+                    if (submit) {
                         const d = submit.data;
-                        const cellClick = `onclick="showUtilitasDetail('${submit.id}')" title="Klik untuk lihat detail form"`;
+                        const cellClick = `onclick="showUtilitasDetail('${submit.id}')" title="Klik untuk lihat detail form" class="cursor-pointer hover:bg-slate-50 transition-colors p-3 border-r border-slate-100 align-top"`;
                         
-                        let hasRusak = Object.values(d).some(v => v === 'Rusak');
-                        let warningHtml = hasRusak ? `<span class="material-symbols-rounded text-rose-500 text-[14px] absolute top-1 right-1 drop-shadow-sm" title="Ada fasilitas rusak">warning</span>` : '';
+                        const airHtml = `
+                            <div class="grid grid-cols-2 gap-x-2 gap-y-1 text-[10px]">
+                                <div class="text-slate-500 font-bold">Sumber</div><div class="font-semibold">${d.air_sumber || '-'}</div>
+                                <div class="text-slate-500 font-bold">Angka</div><div class="text-blue-600 font-bold">${parseSafeNumber(d.air_angka).toLocaleString('id-ID')}</div>
+                                <div class="text-slate-500 font-bold">Meteran</div><div class="font-semibold ${d.air_kondisi_meteran==='Rusak'?'text-rose-600':''}">${d.air_kondisi_meteran || '-'}</div>
+                                <div class="text-slate-500 font-bold">Pipa</div><div class="font-semibold ${d.air_kondisi_pipa==='Rusak'?'text-rose-600':''}">${d.air_kondisi_pipa || '-'}</div>
+                                <div class="text-slate-500 font-bold">Tandon</div><div class="font-semibold ${d.air_kondisi_tandon==='Rusak'?'text-rose-600':''}">${d.air_tandon === 'Ada' ? (d.air_kondisi_tandon || '-') : 'Tidak Ada'}</div>
+                                <div class="text-slate-500 font-bold">Pompa</div><div class="font-semibold ${d.air_kondisi_pompa==='Rusak'?'text-rose-600':''}">${d.air_pompa === 'Ada' ? (d.air_kondisi_pompa || '-') : 'Tidak Ada'}</div>
+                            </div>
+                        `;
 
-                        submit.parsedTs = parseDateObj(submit.date);
-                        const currentIndex = userAllSubs.findIndex(s => s.id === submit.id);
-                        let prevSubmit = currentIndex > 0 ? userAllSubs[currentIndex - 1] : null;
+                        const listrikHtml = `
+                            <div class="grid grid-cols-2 gap-x-2 gap-y-1 text-[10px]">
+                                <div class="text-slate-500 font-bold">ID PLN</div><div class="font-semibold break-all">${d.listrik_id || '-'}</div>
+                                <div class="text-slate-500 font-bold">Kategori</div><div class="font-semibold">${d.listrik_kategori || '-'}</div>
+                                <div class="text-slate-500 font-bold">Angka</div><div class="text-amber-500 font-bold">${parseSafeNumber(d.listrik_angka).toLocaleString('id-ID')}</div>
+                            </div>
+                        `;
 
-                        let diffDays = 0;
-                        if (prevSubmit) {
-                            let ts1 = parseDateObj(submit.date);
-                            let ts2 = parseDateObj(prevSubmit.date);
-                            diffDays = (ts1 - ts2) / (1000 * 60 * 60 * 24);
-                            if (diffDays <= 0) diffDays = 7;
-                        }
+                        const iplHtml = `
+                            <div class="grid grid-cols-2 gap-x-2 gap-y-1 text-[10px]">
+                                <div class="text-slate-500 font-bold">Kebersihan</div><div class="font-semibold ${d.ipl_bersih==='Ada'?'text-emerald-600':''}">${d.ipl_bersih==='Ada' ? 'Rp'+parseSafeNumber(d.ipl_bersih_nom).toLocaleString('id-ID') : 'Tidak Ada'}</div>
+                                <div class="text-slate-500 font-bold">Keamanan</div><div class="font-semibold ${d.ipl_aman==='Ada'?'text-emerald-600':''}">${d.ipl_aman==='Ada' ? 'Rp'+parseSafeNumber(d.ipl_aman_nom).toLocaleString('id-ID') : 'Tidak Ada'}</div>
+                            </div>
+                        `;
 
-                        if(currentUtilView === 'air') {
-                            let currAir = parseSafeNumber(d.air_angka);
-                            let pemakaian = null;
-                            let avg = null;
-                            
-                            if (prevSubmit) {
-                                let lastAir = parseSafeNumber(prevSubmit.data.air_angka);
-                                if (currAir >= lastAir) {
-                                    pemakaian = currAir - lastAir;
-                                    avg = pemakaian / diffDays;
-                                    aggregatedTrend[m-1] += pemakaian;
-                                }
-                            }
-                            
-                            let diffHtml = pemakaian !== null 
-                                ? `<strong class="text-blue-600 text-[14px] block mb-0.5" title="${diffDays.toFixed(0)} Hari">+${pemakaian.toLocaleString('id-ID')} <span class="text-[9px] text-slate-400 font-semibold block leading-none">(${avg.toLocaleString('id-ID', {maximumFractionDigits:1})}/hr)</span></strong>` 
-                                : (prevSubmit && currAir < parseSafeNumber(prevSubmit.data.air_angka) ? `<strong class="text-slate-400 text-[10px] uppercase tracking-widest block mb-0.5 mt-1" title="Reset Meteran">Reset</strong>` : `<strong class="text-slate-400 text-[10px] uppercase tracking-widest block mb-0.5 mt-1">Start</strong>`);
-                            
-                            rowHtml += `<td class="p-2 border-r border-slate-50 text-center relative hover:bg-blue-50/50 transition-colors cursor-pointer" ${cellClick}>
-                                ${warningHtml}
-                                ${diffHtml}
-                                <span class="text-[9px] text-slate-400 block leading-tight font-mono mt-0.5">Mtr: ${currAir.toLocaleString('id-ID')}</span>
-                            </td>`;
-                            
-                        } else if(currentUtilView === 'listrik') {
-                            let currListrik = parseSafeNumber(d.listrik_angka);
-                            let pemakaian = null;
-                            let avg = null;
-                            let isTopUp = false;
-                            
-                            if (prevSubmit) {
-                                let lastListrik = parseSafeNumber(prevSubmit.data.listrik_angka);
-                                if (d.listrik_kategori === 'Pra Bayar (Token)') {
-                                    if (currListrik > lastListrik) {
-                                        isTopUp = true;
-                                    } else {
-                                        pemakaian = lastListrik - currListrik;
-                                        avg = pemakaian / diffDays;
-                                        aggregatedTrend[m-1] += pemakaian;
-                                    }
-                                } else {
-                                    if (currListrik >= lastListrik) {
-                                        pemakaian = currListrik - lastListrik;
-                                        avg = pemakaian / diffDays;
-                                        aggregatedTrend[m-1] += pemakaian;
-                                    }
-                                }
-                            }
-                            
-                            let diffHtml = '';
-                            if (isTopUp) {
-                                diffHtml = `<strong class="text-emerald-600 text-[10px] block mb-0.5 mt-1 bg-emerald-50 rounded border border-emerald-200 uppercase tracking-widest" title="Token Bertambah">Isi Token</strong>`;
-                            } else if (pemakaian !== null) {
-                                diffHtml = `<strong class="text-amber-500 text-[14px] block mb-0.5" title="${diffDays.toFixed(0)} Hari">+${pemakaian.toLocaleString('id-ID')} <span class="text-[9px] text-slate-400 font-semibold block leading-none">(${avg.toLocaleString('id-ID', {maximumFractionDigits:1})}/hr)</span></strong>`;
-                            } else {
-                                diffHtml = `<strong class="text-slate-400 text-[10px] uppercase tracking-widest block mb-0.5 mt-1">Start</strong>`;
-                            }
-                            
-                            rowHtml += `<td class="p-2 border-r border-slate-50 text-center relative hover:bg-amber-50/50 transition-colors cursor-pointer" ${cellClick}>
-                                ${warningHtml}
-                                ${diffHtml}
-                                <span class="text-[9px] text-slate-400 block leading-tight font-mono mt-0.5">Mtr: ${currListrik.toLocaleString('id-ID')}</span>
-                            </td>`;
-                            
-                        } else {
-                            let val = 0;
-                            if(d.ipl_bersih === 'Ada') val += parseSafeNumber(d.ipl_bersih_nom);
-                            if(d.ipl_aman === 'Ada') val += parseSafeNumber(d.ipl_aman_nom);
-                            aggregatedTrend[m-1] += val;
-                            rowHtml += `<td class="p-2 border-r border-slate-100 text-center relative cursor-pointer hover:bg-emerald-50/50" ${cellClick}>
-                                ${warningHtml}
-                                <div class="mt-1">
-                                    <span class="text-[10px] font-bold ${d.ipl_bersih==='Ada'?'text-emerald-600':'text-slate-400'} block">B: ${d.ipl_bersih==='Ada'?'Rp'+(parseSafeNumber(d.ipl_bersih_nom)/1000)+'k':'-'}</span>
-                                    <span class="text-[10px] font-bold ${d.ipl_aman==='Ada'?'text-emerald-600':'text-slate-400'} block">A: ${d.ipl_aman==='Ada'?'Rp'+(parseSafeNumber(d.ipl_aman_nom)/1000)+'k':'-'}</span>
-                                </div>
-                            </td>`;
-                        }
+                        rowHtml += `<td ${cellClick}>${airHtml}</td><td ${cellClick}>${listrikHtml}</td><td ${cellClick}>${iplHtml}</td>`;
                     } else {
-                        // Empty cell placeholder based on logic
-                        if(!saturdays[m-1]) {
-                            rowHtml += `<td class="p-3 border-r border-slate-100 text-center text-slate-200 font-medium text-[9px] bg-slate-50/50">-</td>`;
+                        rowHtml += `<td colspan="3" class="p-4 text-center text-slate-400 font-bold text-[10px] bg-slate-50/50">Belum ada data pengisian di Minggu ${selMinggu}</td>`;
+                    }
+                    html += `<tr class="border-b border-slate-100 hover:bg-slate-50/50 transition-colors">${rowHtml}</tr>`;
+
+                } else {
+                    let rowHtml = `<td class="p-3 border-r border-slate-200 sticky-col-1 ${rowBg}">
+                        <strong class="${textName} text-xs block mb-0.5">${u.stagging_name}</strong>
+                        <span class="text-[10px] ${textPic}">${u.pic_name || u.username}</span>
+                        ${topBadge}
+                    </td>`;
+
+                    for(let m = 1; m <= 5; m++) {
+                        const submit = userSubmitsCurrent.find(d => parseInt(d.minggu) === m);
+                        if(submit) {
+                            const d = submit.data;
+                            const cellClick = `onclick="showUtilitasDetail('${submit.id}')" title="Klik untuk lihat detail form"`;
+                            
+                            let hasRusak = Object.values(d).some(v => v === 'Rusak');
+                            let warningHtml = hasRusak ? `<span class="material-symbols-rounded text-rose-500 text-[14px] absolute top-1 right-1 drop-shadow-sm" title="Ada fasilitas rusak">warning</span>` : '';
+
+                            submit.parsedTs = parseDateObj(submit.date);
+                            const currentIndex = userAllSubs.findIndex(s => s.id === submit.id);
+                            let prevSubmit = currentIndex > 0 ? userAllSubs[currentIndex - 1] : null;
+
+                            let diffDays = 0;
+                            if (prevSubmit) {
+                                let ts1 = parseDateObj(submit.date);
+                                let ts2 = parseDateObj(prevSubmit.date);
+                                diffDays = (ts1 - ts2) / (1000 * 60 * 60 * 24);
+                                if (diffDays <= 0) diffDays = 7;
+                            }
+
+                            if(currentUtilView === 'air') {
+                                let currAir = parseSafeNumber(d.air_angka);
+                                let pemakaian = null;
+                                let avg = null;
+                                
+                                if (prevSubmit) {
+                                    let lastAir = parseSafeNumber(prevSubmit.data.air_angka);
+                                    if (currAir >= lastAir) {
+                                        pemakaian = currAir - lastAir;
+                                        avg = pemakaian / diffDays;
+                                        aggregatedTrend[m-1] += pemakaian;
+                                    }
+                                }
+                                
+                                let diffHtml = pemakaian !== null 
+                                    ? `<strong class="text-blue-600 text-[14px] block mb-0.5" title="${diffDays.toFixed(0)} Hari">+${pemakaian.toLocaleString('id-ID')} <span class="text-[9px] text-slate-400 font-semibold block leading-none">(${avg.toLocaleString('id-ID', {maximumFractionDigits:1})}/hr)</span></strong>` 
+                                    : (prevSubmit && currAir < parseSafeNumber(prevSubmit.data.air_angka) ? `<strong class="text-slate-400 text-[10px] uppercase tracking-widest block mb-0.5 mt-1" title="Reset Meteran">Reset</strong>` : `<strong class="text-slate-400 text-[10px] uppercase tracking-widest block mb-0.5 mt-1">Start</strong>`);
+                                
+                                rowHtml += `<td class="p-2 border-r border-slate-50 text-center relative hover:bg-blue-50/50 transition-colors cursor-pointer" ${cellClick}>
+                                    ${warningHtml}
+                                    ${diffHtml}
+                                    <span class="text-[9px] text-slate-400 block leading-tight font-mono mt-0.5">Mtr: ${currAir.toLocaleString('id-ID')}</span>
+                                </td>`;
+                                
+                            } else if(currentUtilView === 'listrik') {
+                                let currListrik = parseSafeNumber(d.listrik_angka);
+                                let pemakaian = null;
+                                let avg = null;
+                                let isTopUp = false;
+                                
+                                if (prevSubmit) {
+                                    let lastListrik = parseSafeNumber(prevSubmit.data.listrik_angka);
+                                    if (d.listrik_kategori === 'Pra Bayar (Token)') {
+                                        if (currListrik > lastListrik) {
+                                            isTopUp = true;
+                                        } else {
+                                            pemakaian = lastListrik - currListrik;
+                                            avg = pemakaian / diffDays;
+                                            aggregatedTrend[m-1] += pemakaian;
+                                        }
+                                    } else {
+                                        if (currListrik >= lastListrik) {
+                                            pemakaian = currListrik - lastListrik;
+                                            avg = pemakaian / diffDays;
+                                            aggregatedTrend[m-1] += pemakaian;
+                                        }
+                                    }
+                                }
+                                
+                                let diffHtml = '';
+                                if (isTopUp) {
+                                    diffHtml = `<strong class="text-emerald-600 text-[10px] block mb-0.5 mt-1 bg-emerald-50 rounded border border-emerald-200 uppercase tracking-widest" title="Token Bertambah">Isi Token</strong>`;
+                                } else if (pemakaian !== null) {
+                                    diffHtml = `<strong class="text-amber-500 text-[14px] block mb-0.5" title="${diffDays.toFixed(0)} Hari">+${pemakaian.toLocaleString('id-ID')} <span class="text-[9px] text-slate-400 font-semibold block leading-none">(${avg.toLocaleString('id-ID', {maximumFractionDigits:1})}/hr)</span></strong>`;
+                                } else {
+                                    diffHtml = `<strong class="text-slate-400 text-[10px] uppercase tracking-widest block mb-0.5 mt-1">Start</strong>`;
+                                }
+                                
+                                rowHtml += `<td class="p-2 border-r border-slate-50 text-center relative hover:bg-amber-50/50 transition-colors cursor-pointer" ${cellClick}>
+                                    ${warningHtml}
+                                    ${diffHtml}
+                                    <span class="text-[9px] text-slate-400 block leading-tight font-mono mt-0.5">Mtr: ${currListrik.toLocaleString('id-ID')}</span>
+                                </td>`;
+                                
+                            } else {
+                                let val = 0;
+                                if(d.ipl_bersih === 'Ada') val += parseSafeNumber(d.ipl_bersih_nom);
+                                if(d.ipl_aman === 'Ada') val += parseSafeNumber(d.ipl_aman_nom);
+                                aggregatedTrend[m-1] += val;
+                                rowHtml += `<td class="p-2 border-r border-slate-100 text-center relative cursor-pointer hover:bg-emerald-50/50" ${cellClick}>
+                                    ${warningHtml}
+                                    <div class="mt-1">
+                                        <span class="text-[10px] font-bold ${d.ipl_bersih==='Ada'?'text-emerald-600':'text-slate-400'} block">B: ${d.ipl_bersih==='Ada'?'Rp'+(parseSafeNumber(d.ipl_bersih_nom)/1000)+'k':'-'}</span>
+                                        <span class="text-[10px] font-bold ${d.ipl_aman==='Ada'?'text-emerald-600':'text-slate-400'} block">A: ${d.ipl_aman==='Ada'?'Rp'+(parseSafeNumber(d.ipl_aman_nom)/1000)+'k':'-'}</span>
+                                    </div>
+                                </td>`;
+                            }
                         } else {
-                            rowHtml += `<td class="p-3 border-r border-slate-100 text-center text-slate-300 font-bold text-xs bg-slate-50/50">-</td>`;
+                            if(!saturdays[m-1]) {
+                                rowHtml += `<td class="p-3 border-r border-slate-100 text-center text-slate-200 font-medium text-[9px] bg-slate-50/50">-</td>`;
+                            } else {
+                                rowHtml += `<td class="p-3 border-r border-slate-100 text-center text-slate-300 font-bold text-xs bg-slate-50/50">-</td>`;
+                            }
                         }
                     }
+                    html += `<tr class="hover:bg-slate-50/50 border-b border-slate-100 transition-colors">${rowHtml}</tr>`;
                 }
-
-                html += `<tr class="hover:bg-slate-50/50 border-b border-slate-100 transition-colors">${rowHtml}</tr>`;
             });
             
-            // --- LOGIKA SKALA GRAFIK (MINGGUAN VS TAHUNAN) ---
-            let finalTrendData = [];
-            
-            if (utilChartScale === 'mingguan') {
-                chartLabels = monthLabels;
-                finalTrendData = aggregatedTrend; 
-            } else {
-                chartLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agt', 'Sep', 'Okt', 'Nov', 'Des'];
-                finalTrendData = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-                
-                validUsers.forEach(u => {
-                    let userAllSubs = allFetchedData.filter(d => d.stagging_name === u.stagging_name)
-                        .sort((a,b) => getOrderScore(a) - getOrderScore(b));
-
-                    if(currentUtilView === 'ipl') {
-                        userAllSubs.forEach((submit) => {
-                            if (parseInt(submit.tahun) === selTahun) {
-                                let bIdx = parseInt(submit.bulan) - 1;
-                                let val = 0;
-                                if(submit.data.ipl_bersih === 'Ada') val += parseSafeNumber(submit.data.ipl_bersih_nom);
-                                if(submit.data.ipl_aman === 'Ada') val += parseSafeNumber(submit.data.ipl_aman_nom);
-                                finalTrendData[bIdx] += val;
-                            }
-                        });
-                    } else {
-                        userAllSubs.forEach((submit, idx) => {
-                            if (parseInt(submit.tahun) === selTahun && idx > 0) {
-                                let prevSubmit = userAllSubs[idx - 1];
-                                let bIdx = parseInt(submit.bulan) - 1;
-                                let curr = parseSafeNumber(submit.data[`${currentUtilView}_angka`]);
-                                let prev = parseSafeNumber(prevSubmit.data[`${currentUtilView}_angka`]);
-                                
-                                if (currentUtilView === 'listrik' && submit.data.listrik_kategori === 'Pra Bayar (Token)') {
-                                    if (prev >= curr) finalTrendData[bIdx] += (prev - curr);
-                                } else {
-                                    if (curr >= prev) finalTrendData[bIdx] += (curr - prev);
-                                }
-                            }
-                        });
-                    }
-                });
-            }
-
-            // Grafik TIDAK AKAN HILANG selama ada data apapun di bulan ini
-            const hasAnyDataThisMonth = utilDataCurrent.length > 0;
-            if (hasAnyDataThisMonth) {
-                let labelName = currentUtilView === 'air' ? 'Selisih Pemakaian Air' : (currentUtilView === 'listrik' ? 'Selisih Pemakaian Listrik' : 'Total Tagihan IPL');
-                chartDatasets.push({
-                    label: labelName,
-                    data: finalTrendData,
-                    borderColor: '#4f46e5',
-                    backgroundColor: 'rgba(79, 70, 229, 0.15)',
-                    borderWidth: 3,
-                    pointRadius: 6,
-                    pointHoverRadius: 8,
-                    pointBackgroundColor: '#ffffff',
-                    pointBorderColor: '#4f46e5',
-                    pointBorderWidth: 2,
-                    tension: 0.4,
-                    fill: true
-                });
-            }
-            
             tbody.innerHTML = html;
-            renderUtilitasChart(chartLabels, chartDatasets);
+
+            if (currentUtilView !== 'rekap') {
+                let finalTrendData = [];
+                if (utilChartScale === 'mingguan') {
+                    chartLabels = monthLabels;
+                    finalTrendData = aggregatedTrend; 
+                } else {
+                    chartLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agt', 'Sep', 'Okt', 'Nov', 'Des'];
+                    finalTrendData = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+                    
+                    validUsers.forEach(u => {
+                        let userAllSubs = allFetchedData.filter(d => d.stagging_name === u.stagging_name)
+                            .sort((a,b) => getOrderScore(a) - getOrderScore(b));
+
+                        if(currentUtilView === 'ipl') {
+                            userAllSubs.forEach((submit) => {
+                                if (parseInt(submit.tahun) === selTahun) {
+                                    let bIdx = parseInt(submit.bulan) - 1;
+                                    let val = 0;
+                                    if(submit.data.ipl_bersih === 'Ada') val += parseSafeNumber(submit.data.ipl_bersih_nom);
+                                    if(submit.data.ipl_aman === 'Ada') val += parseSafeNumber(submit.data.ipl_aman_nom);
+                                    finalTrendData[bIdx] += val;
+                                }
+                            });
+                        } else {
+                            userAllSubs.forEach((submit, idx) => {
+                                if (parseInt(submit.tahun) === selTahun && idx > 0) {
+                                    let prevSubmit = userAllSubs[idx - 1];
+                                    let bIdx = parseInt(submit.bulan) - 1;
+                                    let curr = parseSafeNumber(submit.data[`${currentUtilView}_angka`]);
+                                    let prev = parseSafeNumber(prevSubmit.data[`${currentUtilView}_angka`]);
+                                    
+                                    if (currentUtilView === 'listrik' && submit.data.listrik_kategori === 'Pra Bayar (Token)') {
+                                        if (prev >= curr) finalTrendData[bIdx] += (prev - curr);
+                                    } else {
+                                        if (curr >= prev) finalTrendData[bIdx] += (curr - prev);
+                                    }
+                                }
+                            });
+                        }
+                    });
+                }
+
+                const hasAnyDataThisMonth = utilDataCurrent.length > 0;
+                if (hasAnyDataThisMonth) {
+                    let labelName = currentUtilView === 'air' ? 'Selisih Pemakaian Air' : (currentUtilView === 'listrik' ? 'Selisih Pemakaian Listrik' : 'Total Tagihan IPL');
+                    chartDatasets.push({
+                        label: labelName,
+                        data: finalTrendData,
+                        borderColor: '#4f46e5',
+                        backgroundColor: 'rgba(79, 70, 229, 0.15)',
+                        borderWidth: 3,
+                        pointRadius: 6,
+                        pointHoverRadius: 8,
+                        pointBackgroundColor: '#ffffff',
+                        pointBorderColor: '#4f46e5',
+                        pointBorderWidth: 2,
+                        tension: 0.4,
+                        fill: true
+                    });
+                }
+                renderUtilitasChart(chartLabels, chartDatasets);
+            }
         }
 
         function renderUtilitasChart(labels, datasets) {
