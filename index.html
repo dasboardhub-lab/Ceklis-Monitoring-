@@ -986,24 +986,32 @@
 
                     <!-- Fasilitas Listrik -->
                     <div class="utilitas-card">
-                        <h3 class="utilitas-card-title"><span class="material-symbols-rounded text-amber-500">bolt</span> 2. Fasilitas Listrik</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div><label class="label-modern">Nomor ID Pelanggan PLN</label><input type="text" id="u-listrik-id" name="listrik_id" required class="input-modern w-full px-4 py-3 rounded-xl text-sm font-mono"></div>
-                            <div><label class="label-modern">Nama Pemilik ID Pelanggan</label><input type="text" id="u-listrik-nama" name="listrik_nama" required class="input-modern w-full px-4 py-3 rounded-xl text-sm"></div>
-                            <div class="md:col-span-2">
-                                <label class="label-modern mb-2">Kategori ID Pelanggan</label>
-                                <div class="flex flex-wrap gap-2">
-                                    <label class="cursor-pointer">
-                                        <input type="radio" name="listrik_kategori" value="Pra Bayar (Token)" class="peer sr-only" required>
-                                        <div class="px-5 py-2.5 rounded-xl text-sm font-bold bg-slate-50 border-2 border-slate-200 text-slate-600 peer-checked:border-amber-500 peer-checked:bg-amber-50 peer-checked:text-amber-700 transition-all">Pra Bayar (Token)</div>
-                                    </label>
-                                    <label class="cursor-pointer">
-                                        <input type="radio" name="listrik_kategori" value="Pasca Bayar" class="peer sr-only" required>
-                                        <div class="px-5 py-2.5 rounded-xl text-sm font-bold bg-slate-50 border-2 border-slate-200 text-slate-600 peer-checked:border-amber-500 peer-checked:bg-amber-50 peer-checked:text-amber-700 transition-all">Pasca Bayar</div>
-                                    </label>
+                        <div class="flex justify-between items-center mb-4 border-b-2 border-slate-100 pb-3">
+                            <h3 class="utilitas-card-title border-none p-0 m-0"><span class="material-symbols-rounded text-amber-500">bolt</span> 2. Fasilitas Listrik</h3>
+                            <button type="button" onclick="addListrikMeter()" class="bg-amber-100 text-amber-700 hover:bg-amber-200 px-3 py-1.5 rounded-lg text-[10px] font-bold transition-colors flex items-center gap-1 uppercase tracking-widest shadow-sm"><span class="material-symbols-rounded text-[16px]">add</span> Tambah Meteran</button>
+                        </div>
+                        <div id="listrik-meters-container" class="space-y-6">
+                            <div class="listrik-item relative bg-slate-50 p-4 rounded-xl border border-slate-200 shadow-sm" id="listrik-item-0">
+                                <h4 class="text-[10px] font-extrabold text-amber-600 uppercase tracking-widest mb-3 bg-amber-100 inline-block px-2 py-1 rounded">Meteran 1</h4>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div><label class="label-modern">Nomor ID Pelanggan PLN</label><input type="text" id="u-listrik-id-0" name="listrik_id_0" required class="input-modern w-full px-4 py-3 rounded-xl text-sm font-mono"></div>
+                                    <div><label class="label-modern">Nama Pemilik ID Pelanggan</label><input type="text" id="u-listrik-nama-0" name="listrik_nama_0" required class="input-modern w-full px-4 py-3 rounded-xl text-sm"></div>
+                                    <div class="md:col-span-2">
+                                        <label class="label-modern mb-2">Kategori ID Pelanggan</label>
+                                        <div class="flex flex-wrap gap-2">
+                                            <label class="cursor-pointer">
+                                                <input type="radio" name="listrik_kategori_0" value="Pra Bayar (Token)" class="peer sr-only" required>
+                                                <div class="px-5 py-2.5 rounded-xl text-sm font-bold bg-white border-2 border-slate-200 text-slate-600 peer-checked:border-amber-500 peer-checked:bg-amber-50 peer-checked:text-amber-700 transition-all">Pra Bayar (Token)</div>
+                                            </label>
+                                            <label class="cursor-pointer">
+                                                <input type="radio" name="listrik_kategori_0" value="Pasca Bayar" class="peer sr-only" required>
+                                                <div class="px-5 py-2.5 rounded-xl text-sm font-bold bg-white border-2 border-slate-200 text-slate-600 peer-checked:border-amber-500 peer-checked:bg-amber-50 peer-checked:text-amber-700 transition-all">Pasca Bayar</div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="md:col-span-2"><label class="label-modern">Angka di Meteran Saat Ini</label><input type="text" id="u-listrik-angka-0" name="listrik_angka_0" required class="input-modern w-full px-4 py-3 rounded-xl text-sm font-bold"></div>
                                 </div>
                             </div>
-                            <div class="md:col-span-2"><label class="label-modern">Angka di Meteran Saat Ini</label><input type="text" id="u-listrik-angka" name="listrik_angka" required class="input-modern w-full px-4 py-3 rounded-xl text-sm font-bold"></div>
                         </div>
                     </div>
 
@@ -1493,10 +1501,17 @@
             };
 
             const renderListrik = () => {
-                let h = `<div class="mb-4"><h4 class="font-bold text-sm text-amber-500 border-b border-amber-100 pb-1 mb-2 flex items-center gap-1"><span class="material-symbols-rounded text-[16px]">bolt</span> Informasi Listrik</h4>`;
-                h += `<p class="text-xs mb-1"><span class="font-semibold">ID Pelanggan:</span> ${d.listrik_id || '-'}</p>`;
-                h += `<p class="text-xs mb-1"><span class="font-semibold">Nama Pemilik:</span> ${d.listrik_nama || '-'}</p>`;
-                h += `<p class="text-xs mb-1"><span class="font-semibold">Kategori:</span> ${d.listrik_kategori || '-'}</p>`;
+                let cmArr = d.listrik_meters || [{id: d.listrik_id, nama: d.listrik_nama, kategori: d.listrik_kategori, angka: d.listrik_angka}];
+                let h = `<div class="mb-4"><h4 class="font-bold text-sm text-amber-500 border-b border-amber-100 pb-1 mb-2 flex items-center gap-1"><span class="material-symbols-rounded text-[16px]">bolt</span> Informasi Listrik (${cmArr.length} Meteran)</h4>`;
+                cmArr.forEach((m, i) => {
+                    h += `<div class="bg-amber-50 p-3 rounded-xl mb-2 border border-amber-100 shadow-sm">
+                            <p class="text-[10px] font-extrabold text-amber-600 mb-1.5 uppercase tracking-widest">Meteran ${i+1}</p>
+                            <p class="text-xs mb-1"><span class="font-semibold text-slate-500">ID Pelanggan:</span> <span class="font-bold break-all">${m.id || '-'}</span></p>
+                            <p class="text-xs mb-1"><span class="font-semibold text-slate-500">Nama:</span> <span class="font-bold">${m.nama || '-'}</span></p>
+                            <p class="text-xs mb-1"><span class="font-semibold text-slate-500">Kategori:</span> <span class="font-bold">${m.kategori || '-'}</span></p>
+                            <p class="text-xs mb-0 mt-2 border-t border-amber-200 pt-1.5"><span class="font-semibold text-slate-500">Angka Terakhir:</span> <span class="font-extrabold text-amber-600">${parseSafeNumber(m.angka).toLocaleString('id-ID')}</span></p>
+                          </div>`;
+                });
                 h += `</div>`;
                 return h;
             };
@@ -1735,6 +1750,9 @@
             if (u) {
                 document.getElementById('util-form-stagging').textContent = u.stagging_name || '-';
                 document.getElementById('util-form-pic').textContent = u.pic_name || u.username || '-';
+                
+                // GANTI DROPDOWN HISTORI BERDASARKAN AREA YANG DIPILIH ADMIN
+                populateUtilitasHistory(u.stagging_name);
             }
         }
 
@@ -2787,6 +2805,89 @@
             else { btnText.textContent = `${checkboxes.length} Koordinator`; }
             applyFiltersAndRender();
         };
+
+        let listrikMeterCount = 1;
+        window.addListrikMeter = function() {
+            const container = document.getElementById('listrik-meters-container');
+            const idx = listrikMeterCount++;
+            const html = `
+                <div class="listrik-item relative bg-slate-50 p-4 rounded-xl border border-slate-200 mt-4 shadow-sm" id="listrik-item-${idx}">
+                    <button type="button" onclick="removeListrikMeter(${idx})" class="absolute top-3 right-3 text-rose-500 hover:bg-rose-100 p-1.5 rounded-lg transition-colors"><span class="material-symbols-rounded text-[18px]">delete</span></button>
+                    <h4 class="text-[10px] font-extrabold text-amber-600 uppercase tracking-widest mb-3 bg-amber-100 inline-block px-2 py-1 rounded">Meteran Tambahan</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div><label class="label-modern">Nomor ID Pelanggan PLN</label><input type="text" id="u-listrik-id-${idx}" name="listrik_id_${idx}" list="history-listrik-id" autocomplete="off" required class="input-modern w-full px-4 py-3 rounded-xl text-sm font-mono"></div>
+                        <div><label class="label-modern">Nama Pemilik ID Pelanggan</label><input type="text" id="u-listrik-nama-${idx}" name="listrik_nama_${idx}" list="history-listrik-nama" autocomplete="off" required class="input-modern w-full px-4 py-3 rounded-xl text-sm"></div>
+                        <div class="md:col-span-2">
+                            <label class="label-modern mb-2">Kategori ID Pelanggan</label>
+                            <div class="flex flex-wrap gap-2">
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="listrik_kategori_${idx}" value="Pra Bayar (Token)" class="peer sr-only" required>
+                                    <div class="px-5 py-2.5 rounded-xl text-sm font-bold bg-white border-2 border-slate-200 text-slate-600 peer-checked:border-amber-500 peer-checked:bg-amber-50 peer-checked:text-amber-700 transition-all">Pra Bayar (Token)</div>
+                                </label>
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="listrik_kategori_${idx}" value="Pasca Bayar" class="peer sr-only" required>
+                                    <div class="px-5 py-2.5 rounded-xl text-sm font-bold bg-white border-2 border-slate-200 text-slate-600 peer-checked:border-amber-500 peer-checked:bg-amber-50 peer-checked:text-amber-700 transition-all">Pasca Bayar</div>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="md:col-span-2"><label class="label-modern">Angka di Meteran Saat Ini</label><input type="text" id="u-listrik-angka-${idx}" name="listrik_angka_${idx}" required class="input-modern w-full px-4 py-3 rounded-xl text-sm font-bold"></div>
+                    </div>
+                </div>
+            `;
+            container.insertAdjacentHTML('beforeend', html);
+        };
+
+        window.removeListrikMeter = function(idx) {
+            const el = document.getElementById(`listrik-item-${idx}`);
+            if(el) el.remove();
+        };
+
+        // FUNGSI BARU: Mengambil histori ID dan Nama untuk Autocomplete (Drop Down Saran Kata)
+        async function populateUtilitasHistory(stagingName) {
+            if (!stagingName || stagingName === 'Staging Dummy (Admin)' || stagingName === 'Global') return;
+            
+            try {
+                // Tarik data staging tersebut dari database
+                const { data } = await supabaseClient
+                    .from('utilitas_data')
+                    .select('data')
+                    .eq('stagging_name', stagingName);
+                    
+                if (!data) return;
+
+                // Gunakan Set() agar ID yang sama tidak muncul dobel
+                const airIds = new Set();
+                const airNamas = new Set();
+                const listrikIds = new Set();
+                const listrikNamas = new Set();
+
+                // Kumpulkan semua ID yang pernah diinput
+                data.forEach(row => {
+                    const d = row.data;
+                    if (d.air_id) airIds.add(d.air_id);
+                    if (d.air_nama) airNamas.add(d.air_nama);
+
+                    // Listrik bisa dinamis (banyak meteran), looping property-nya
+                    Object.keys(d).forEach(key => {
+                        if (key.startsWith('listrik_id_') && d[key]) listrikIds.add(d[key]);
+                        if (key.startsWith('listrik_nama_') && d[key]) listrikNamas.add(d[key]);
+                    });
+                });
+
+                // Cetak list ke dalam elemen <datalist> di HTML
+                const populateList = (id, set) => {
+                    const el = document.getElementById(id);
+                    if (el) el.innerHTML = Array.from(set).map(val => `<option value="${val}">`).join('');
+                };
+
+                populateList('history-air-id', airIds);
+                populateList('history-air-nama', airNamas);
+                populateList('history-listrik-id', listrikIds);
+                populateList('history-listrik-nama', listrikNamas);
+            } catch (e) {
+                console.error("Gagal memuat histori utilitas:", e);
+            }
+        }
 
         async function populateCategoryFilter() {
             const filter = document.getElementById('filter-category'); filter.innerHTML = '<option value="all">Semua Kategori</option>';
