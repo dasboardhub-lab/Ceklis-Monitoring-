@@ -329,6 +329,15 @@
                             
                             <select id="util-filter-tahun" onchange="renderUtilitasTable()" class="input-modern px-4 py-2 rounded-xl text-sm font-bold w-24"><option value="2026">2026</option><option value="2027">2027</option></select>
                             
+                            <div class="relative inline-block text-left" id="util-koor-dropdown-container">
+                                <button type="button" onclick="toggleUtilKoorDropdown()" id="btn-util-koor-text" class="input-modern px-4 py-2 rounded-xl text-sm font-bold w-36 md:w-40 truncate flex items-center justify-between gap-1 bg-white">
+                                    <span class="truncate">Semua Koordinator</span>
+                                    <span class="material-symbols-rounded text-[18px] shrink-0 text-slate-400">expand_more</span>
+                                </button>
+                                <div id="util-koor-dropdown-menu" class="hidden absolute right-0 mt-2 w-56 rounded-2xl shadow-float bg-white border border-slate-100 z-50 p-2 max-h-[50vh] overflow-y-auto custom-scroll">
+                                </div>
+                            </div>
+
                             <div class="relative inline-block text-left" id="util-ssc-dropdown-container">
                                 <button type="button" onclick="toggleUtilSscDropdown()" id="btn-util-ssc-text" class="input-modern px-4 py-2 rounded-xl text-sm font-bold w-36 md:w-40 truncate flex items-center justify-between gap-1 bg-white">
                                     <span class="truncate">Semua Area</span>
@@ -1060,6 +1069,7 @@
         let globalUtilData = [];
         let adminTargetUsers = [];
         let activeAdminCategoryId = null;
+        let globalFieldUsers = [];
 
         const itemTypeConfig = {
             'ok_nonok': { pos: 'OK', neg: 'Non OK', posL: 'OK', negL: 'Non OK', iconPos: 'check', iconNeg: 'close', bgPos: 'bg-emerald-50', textPos: 'text-emerald-700', bgNeg: 'bg-rose-50', textNeg: 'text-rose-700' },
@@ -1243,17 +1253,38 @@
         }
 
         async function populateUtilFilters() {
-            const utilSscMenu = document.getElementById('util-ssc-dropdown-menu');
-            if (utilSscMenu) {
-                utilSscMenu.innerHTML = '';
-                const { data: users } = await supabaseClient.from('users').select('stagging_name').eq('role', 'user');
-                if (users) {
-                    const uniqueStagings = [...new Set(users.map(u => u.stagging_name).filter(Boolean))].sort();
-                    uniqueStagings.forEach(stg => { 
-                        utilSscMenu.innerHTML += `<label class="flex items-center gap-3 p-2 hover:bg-slate-50 rounded-xl cursor-pointer smooth-transition"><input type="checkbox" value="${stg}" class="util-ssc-checkbox w-4 h-4 text-brand-600 bg-slate-100 border-slate-300 rounded focus:ring-brand-500" onchange="handleUtilSscChange()"><span class="text-sm font-bold text-slate-700">${stg}</span></label>`;
-                    });
-                }
+            const { data: users } = await supabaseClient.from('users').select('ssc, stagging_name').eq('role', 'user');
+            if (users) {
+                globalFieldUsers = users;
+                buildUtilKoorMenu();
+                buildUtilAreaMenu();
             }
+        }
+
+        function buildUtilKoorMenu() {
+            const menu = document.getElementById('util-koor-dropdown-menu');
+            if (!menu) return;
+            menu.innerHTML = '';
+            const uniqueSsc = [...new Set(globalFieldUsers.map(u => u.ssc).filter(Boolean))].sort();
+            uniqueSsc.forEach(ssc => {
+                menu.innerHTML += `<label class="flex items-center gap-3 p-2 hover:bg-slate-50 rounded-xl cursor-pointer smooth-transition"><input type="checkbox" value="${ssc}" class="util-koor-checkbox w-4 h-4 text-brand-600 bg-slate-100 border-slate-300 rounded focus:ring-brand-500" onchange="handleUtilKoorChange()"><span class="text-sm font-bold text-slate-700">${ssc}</span></label>`;
+            });
+        }
+
+        function buildUtilAreaMenu(selectedSscs = []) {
+            const menu = document.getElementById('util-ssc-dropdown-menu');
+            if (!menu) return;
+            menu.innerHTML = '';
+            let filteredUsers = globalFieldUsers;
+            if (selectedSscs.length > 0) {
+                filteredUsers = globalFieldUsers.filter(u => selectedSscs.includes(u.ssc));
+            }
+            const uniqueStagings = [...new Set(filteredUsers.map(u => u.stagging_name).filter(Boolean))].sort();
+            uniqueStagings.forEach(stg => { 
+                menu.innerHTML += `<label class="flex items-center gap-3 p-2 hover:bg-slate-50 rounded-xl cursor-pointer smooth-transition"><input type="checkbox" value="${stg}" class="util-ssc-checkbox w-4 h-4 text-brand-600 bg-slate-100 border-slate-300 rounded focus:ring-brand-500" onchange="handleUtilSscChange()"><span class="text-sm font-bold text-slate-700">${stg}</span></label>`;
+            });
+            const btnText = document.getElementById('btn-util-ssc-text');
+            if(btnText) btnText.querySelector('span').textContent = 'Semua Area';
         }
 
         function logout() {
@@ -1994,6 +2025,7 @@
             if (selBulans.length === 0) selBulans = [1,2,3,4,5,6,7,8,9,10,11,12]; 
             selBulans.sort((a, b) => a - b);
             const selTahun = parseInt(document.getElementById('util-filter-tahun').value);
+            const selKoor = Array.from(document.querySelectorAll('.util-koor-checkbox:checked')).map(cb => cb.value);
             const selStagings = Array.from(document.querySelectorAll('.util-ssc-checkbox:checked')).map(cb => cb.value);
             const selMinggu = parseInt(document.getElementById('util-filter-minggu').value) || 1;
 
@@ -2049,6 +2081,9 @@
             const { data: users } = await supabaseClient.from('users').select('*').eq('role', 'user');
             let validUsers = (users || []).filter(u => u.stagging_name);
             
+            if(selKoor.length > 0) {
+                validUsers = validUsers.filter(u => selKoor.includes(u.ssc));
+            }
             if(selStagings.length > 0) {
                 validUsers = validUsers.filter(u => selStagings.includes(u.stagging_name));
             }
@@ -3016,6 +3051,10 @@
             document.getElementById('util-bulan-dropdown-menu').classList.toggle('hidden');
         };
 
+        window.toggleUtilKoorDropdown = function() {
+            document.getElementById('util-koor-dropdown-menu').classList.toggle('hidden');
+        };
+
         window.toggleUtilSscDropdown = function() {
             document.getElementById('util-ssc-dropdown-menu').classList.toggle('hidden');
         };
@@ -3030,6 +3069,12 @@
             const utilBulanContainer = document.getElementById('util-bulan-dropdown-container');
             if (utilBulanContainer && !utilBulanContainer.contains(e.target)) {
                 const menu = document.getElementById('util-bulan-dropdown-menu');
+                if(menu) menu.classList.add('hidden');
+            }
+
+            const utilKoorContainer = document.getElementById('util-koor-dropdown-container');
+            if (utilKoorContainer && !utilKoorContainer.contains(e.target)) {
+                const menu = document.getElementById('util-koor-dropdown-menu');
                 if(menu) menu.classList.add('hidden');
             }
 
@@ -3049,6 +3094,19 @@
                 btnText.textContent = monthNames[parseInt(checkboxes[0].value)-1]; 
             } 
             else { btnText.textContent = `${checkboxes.length} Bulan`; }
+            renderUtilitasTable();
+        };
+
+        window.handleUtilKoorChange = function() {
+            const checkboxes = document.querySelectorAll('.util-koor-checkbox:checked');
+            const btnText = document.getElementById('btn-util-koor-text').querySelector('span');
+            const selectedSscs = Array.from(checkboxes).map(cb => cb.value);
+
+            if (checkboxes.length === 0) { btnText.textContent = 'Semua Koordinator'; } 
+            else if (checkboxes.length === 1) { btnText.textContent = checkboxes[0].value; } 
+            else { btnText.textContent = `${checkboxes.length} Koordinator`; }
+            
+            buildUtilAreaMenu(selectedSscs);
             renderUtilitasTable();
         };
 
