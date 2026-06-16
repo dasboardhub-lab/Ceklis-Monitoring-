@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -307,9 +306,38 @@
                         </div>
                         <div class="flex flex-wrap sm:flex-nowrap gap-2">
                             <select id="util-filter-minggu" onchange="renderUtilitasTable()" class="hidden input-modern px-4 py-2 rounded-xl text-sm font-bold w-32"><option value="1">Minggu 1</option><option value="2">Minggu 2</option><option value="3">Minggu 3</option><option value="4">Minggu 4</option><option value="5">Minggu 5</option></select>
-                            <select id="util-filter-bulan" onchange="renderUtilitasTable()" class="input-modern px-4 py-2 rounded-xl text-sm font-bold w-32"><option value="1">Januari</option><option value="2">Februari</option><option value="3">Maret</option><option value="4">April</option><option value="5">Mei</option><option value="6">Juni</option><option value="7">Juli</option><option value="8">Agustus</option><option value="9">September</option><option value="10">Oktober</option><option value="11">November</option><option value="12">Desember</option></select>
+                            
+                            <div class="relative inline-block text-left" id="util-bulan-dropdown-container">
+                                <button type="button" onclick="toggleUtilBulanDropdown()" id="btn-util-bulan-text" class="input-modern px-4 py-2 rounded-xl text-sm font-bold w-36 md:w-40 flex items-center justify-between gap-1 bg-white">
+                                    <span class="truncate">Pilih Bulan</span>
+                                    <span class="material-symbols-rounded text-[18px] shrink-0 text-slate-400">expand_more</span>
+                                </button>
+                                <div id="util-bulan-dropdown-menu" class="hidden absolute left-0 mt-2 w-48 rounded-2xl shadow-float bg-white border border-slate-100 z-50 p-2 max-h-[50vh] overflow-y-auto custom-scroll">
+                                    <label class="flex items-center gap-3 p-2 hover:bg-slate-50 rounded-xl cursor-pointer smooth-transition"><input type="checkbox" value="1" class="util-bulan-checkbox w-4 h-4 text-brand-600 bg-slate-100 border-slate-300 rounded focus:ring-brand-500" onchange="handleUtilBulanChange()"><span class="text-sm font-bold text-slate-700">Januari</span></label>
+                                    <label class="flex items-center gap-3 p-2 hover:bg-slate-50 rounded-xl cursor-pointer smooth-transition"><input type="checkbox" value="2" class="util-bulan-checkbox w-4 h-4 text-brand-600 bg-slate-100 border-slate-300 rounded focus:ring-brand-500" onchange="handleUtilBulanChange()"><span class="text-sm font-bold text-slate-700">Februari</span></label>
+                                    <label class="flex items-center gap-3 p-2 hover:bg-slate-50 rounded-xl cursor-pointer smooth-transition"><input type="checkbox" value="3" class="util-bulan-checkbox w-4 h-4 text-brand-600 bg-slate-100 border-slate-300 rounded focus:ring-brand-500" onchange="handleUtilBulanChange()"><span class="text-sm font-bold text-slate-700">Maret</span></label>
+                                    <label class="flex items-center gap-3 p-2 hover:bg-slate-50 rounded-xl cursor-pointer smooth-transition"><input type="checkbox" value="4" class="util-bulan-checkbox w-4 h-4 text-brand-600 bg-slate-100 border-slate-300 rounded focus:ring-brand-500" onchange="handleUtilBulanChange()"><span class="text-sm font-bold text-slate-700">April</span></label>
+                                    <label class="flex items-center gap-3 p-2 hover:bg-slate-50 rounded-xl cursor-pointer smooth-transition"><input type="checkbox" value="5" class="util-bulan-checkbox w-4 h-4 text-brand-600 bg-slate-100 border-slate-300 rounded focus:ring-brand-500" onchange="handleUtilBulanChange()"><span class="text-sm font-bold text-slate-700">Mei</span></label>
+                                    <label class="flex items-center gap-3 p-2 hover:bg-slate-50 rounded-xl cursor-pointer smooth-transition"><input type="checkbox" value="6" class="util-bulan-checkbox w-4 h-4 text-brand-600 bg-slate-100 border-slate-300 rounded focus:ring-brand-500" onchange="handleUtilBulanChange()"><span class="text-sm font-bold text-slate-700">Juni</span></label>
+                                    <label class="flex items-center gap-3 p-2 hover:bg-slate-50 rounded-xl cursor-pointer smooth-transition"><input type="checkbox" value="7" class="util-bulan-checkbox w-4 h-4 text-brand-600 bg-slate-100 border-slate-300 rounded focus:ring-brand-500" onchange="handleUtilBulanChange()"><span class="text-sm font-bold text-slate-700">Juli</span></label>
+                                    <label class="flex items-center gap-3 p-2 hover:bg-slate-50 rounded-xl cursor-pointer smooth-transition"><input type="checkbox" value="8" class="util-bulan-checkbox w-4 h-4 text-brand-600 bg-slate-100 border-slate-300 rounded focus:ring-brand-500" onchange="handleUtilBulanChange()"><span class="text-sm font-bold text-slate-700">Agustus</span></label>
+                                    <label class="flex items-center gap-3 p-2 hover:bg-slate-50 rounded-xl cursor-pointer smooth-transition"><input type="checkbox" value="9" class="util-bulan-checkbox w-4 h-4 text-brand-600 bg-slate-100 border-slate-300 rounded focus:ring-brand-500" onchange="handleUtilBulanChange()"><span class="text-sm font-bold text-slate-700">September</span></label>
+                                    <label class="flex items-center gap-3 p-2 hover:bg-slate-50 rounded-xl cursor-pointer smooth-transition"><input type="checkbox" value="10" class="util-bulan-checkbox w-4 h-4 text-brand-600 bg-slate-100 border-slate-300 rounded focus:ring-brand-500" onchange="handleUtilBulanChange()"><span class="text-sm font-bold text-slate-700">Oktober</span></label>
+                                    <label class="flex items-center gap-3 p-2 hover:bg-slate-50 rounded-xl cursor-pointer smooth-transition"><input type="checkbox" value="11" class="util-bulan-checkbox w-4 h-4 text-brand-600 bg-slate-100 border-slate-300 rounded focus:ring-brand-500" onchange="handleUtilBulanChange()"><span class="text-sm font-bold text-slate-700">November</span></label>
+                                    <label class="flex items-center gap-3 p-2 hover:bg-slate-50 rounded-xl cursor-pointer smooth-transition"><input type="checkbox" value="12" class="util-bulan-checkbox w-4 h-4 text-brand-600 bg-slate-100 border-slate-300 rounded focus:ring-brand-500" onchange="handleUtilBulanChange()"><span class="text-sm font-bold text-slate-700">Desember</span></label>
+                                </div>
+                            </div>
+                            
                             <select id="util-filter-tahun" onchange="renderUtilitasTable()" class="input-modern px-4 py-2 rounded-xl text-sm font-bold w-24"><option value="2026">2026</option><option value="2027">2027</option></select>
-                            <select id="util-filter-ssc" onchange="renderUtilitasTable()" class="input-modern px-4 py-2 rounded-xl text-sm font-bold w-32 md:w-40 truncate"><option value="all">Semua Area</option></select>
+                            
+                            <div class="relative inline-block text-left" id="util-ssc-dropdown-container">
+                                <button type="button" onclick="toggleUtilSscDropdown()" id="btn-util-ssc-text" class="input-modern px-4 py-2 rounded-xl text-sm font-bold w-36 md:w-40 truncate flex items-center justify-between gap-1 bg-white">
+                                    <span class="truncate">Semua Area</span>
+                                    <span class="material-symbols-rounded text-[18px] shrink-0 text-slate-400">expand_more</span>
+                                </button>
+                                <div id="util-ssc-dropdown-menu" class="hidden absolute right-0 mt-2 w-56 rounded-2xl shadow-float bg-white border border-slate-100 z-50 p-2 max-h-[50vh] overflow-y-auto custom-scroll">
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -1180,7 +1208,13 @@
             document.getElementById('display-role').textContent = currentUser.role;
             
             const now = new Date();
-            if(document.getElementById('util-filter-bulan')) document.getElementById('util-filter-bulan').value = now.getMonth() + 1;
+            const currentMonthStr = String(now.getMonth() + 1);
+            const utilBulanCb = document.querySelector(`.util-bulan-checkbox[value="${currentMonthStr}"]`);
+            if(utilBulanCb) { 
+                utilBulanCb.checked = true; 
+                const monthNames = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+                document.getElementById('btn-util-bulan-text').querySelector('span').textContent = monthNames[now.getMonth()];
+            }
             if(document.getElementById('util-filter-tahun')) document.getElementById('util-filter-tahun').value = now.getFullYear();
 
             const tUsers = document.getElementById('tab-admin-users'); const tAdminForm = document.getElementById('tab-admin-form');
@@ -1210,13 +1244,15 @@
         }
 
         async function populateUtilFilters() {
-            const utilSscSelect = document.getElementById('util-filter-ssc');
-            if (utilSscSelect) {
-                utilSscSelect.innerHTML = '<option value="all">Semua Area</option>';
+            const utilSscMenu = document.getElementById('util-ssc-dropdown-menu');
+            if (utilSscMenu) {
+                utilSscMenu.innerHTML = '';
                 const { data: users } = await supabaseClient.from('users').select('stagging_name').eq('role', 'user');
                 if (users) {
                     const uniqueStagings = [...new Set(users.map(u => u.stagging_name).filter(Boolean))].sort();
-                    uniqueStagings.forEach(stg => { utilSscSelect.innerHTML += `<option value="${stg}">${stg}</option>`; });
+                    uniqueStagings.forEach(stg => { 
+                        utilSscMenu.innerHTML += `<label class="flex items-center gap-3 p-2 hover:bg-slate-50 rounded-xl cursor-pointer smooth-transition"><input type="checkbox" value="${stg}" class="util-ssc-checkbox w-4 h-4 text-brand-600 bg-slate-100 border-slate-300 rounded focus:ring-brand-500" onchange="handleUtilSscChange()"><span class="text-sm font-bold text-slate-700">${stg}</span></label>`;
+                    });
                 }
             }
         }
@@ -1955,24 +1991,28 @@
             const thead = document.getElementById('utilitas-thead');
             tbody.innerHTML = '<tr><td colspan="10" class="p-8 text-center text-slate-400 font-bold bg-slate-50"><span class="material-symbols-rounded animate-spin align-middle mr-2">sync</span>Memuat data dari server...</td></tr>';
             
-            const selBulan = parseInt(document.getElementById('util-filter-bulan').value);
+            let selBulans = Array.from(document.querySelectorAll('.util-bulan-checkbox:checked')).map(cb => parseInt(cb.value));
+            if (selBulans.length === 0) selBulans = [1,2,3,4,5,6,7,8,9,10,11,12]; 
+            selBulans.sort((a, b) => a - b);
             const selTahun = parseInt(document.getElementById('util-filter-tahun').value);
-            const selStaging = document.getElementById('util-filter-ssc').value;
+            const selStagings = Array.from(document.querySelectorAll('.util-ssc-checkbox:checked')).map(cb => cb.value);
             const selMinggu = parseInt(document.getElementById('util-filter-minggu').value) || 1;
 
-            const prevMonth = selBulan === 1 ? 12 : selBulan - 1;
-            const prevMonthYear = selBulan === 1 ? selTahun - 1 : selTahun; 
-            const actualPrevYear = selTahun - 1; 
-
-            let saturdays = [];
-            for(let d=1; d<=31; d++) {
-                let tempDate = new Date(selTahun, selBulan - 1, d);
-                if(tempDate.getMonth() !== selBulan - 1) break; 
-                if(tempDate.getDay() === 6) saturdays.push(tempDate.getDate());
-            }
-            
             const shortMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agt', 'Sep', 'Okt', 'Nov', 'Des'];
             let monthLabels = [];
+            let weekIterators = [];
+
+            selBulans.forEach(bulan => {
+                let saturdays = [];
+                for(let d=1; d<=31; d++) {
+                    let tempDate = new Date(selTahun, bulan - 1, d);
+                    if(tempDate.getMonth() !== bulan - 1) break; 
+                    if(tempDate.getDay() === 6) saturdays.push(tempDate.getDate());
+                }
+                for(let m=1; m<=5; m++) {
+                    weekIterators.push({ bulan, minggu: m, saturdays, monthNameShort: shortMonths[bulan-1] });
+                }
+            });
 
             if (currentUtilView === 'rekap') {
                 thead.innerHTML = `
@@ -1984,39 +2024,34 @@
                     </tr>
                 `;
             } else {
-                thead.innerHTML = `
+                let theadHtml = `
                     <tr class="bg-slate-100 text-slate-600 font-bold border-b border-slate-200 uppercase tracking-wider">
-                        <th class="p-3 border-r border-slate-200 min-w-[150px] sticky-col-1">Staging & PIC</th>
-                        <th id="th-w1" class="p-3 border-r border-slate-200 text-center w-[150px]">Minggu 1<br><span class="text-[9px] text-slate-500 font-medium">-</span></th>
-                        <th id="th-w2" class="p-3 border-r border-slate-200 text-center w-[150px]">Minggu 2<br><span class="text-[9px] text-slate-500 font-medium">-</span></th>
-                        <th id="th-w3" class="p-3 border-r border-slate-200 text-center w-[150px]">Minggu 3<br><span class="text-[9px] text-slate-500 font-medium">-</span></th>
-                        <th id="th-w4" class="p-3 border-r border-slate-200 text-center w-[150px]">Minggu 4<br><span class="text-[9px] text-slate-500 font-medium">-</span></th>
-                        <th id="th-w5" class="p-3 text-center w-[150px]">Minggu 5<br><span class="text-[9px] text-slate-500 font-medium">-</span></th>
-                    </tr>
-                `;
-                for(let i=1; i<=5; i++) {
-                    const th = document.getElementById('th-w'+i);
-                    if(saturdays[i-1]) {
-                        let satDate = new Date(selTahun, selBulan - 1, saturdays[i-1]);
+                        <th class="p-3 border-r border-slate-200 min-w-[150px] sticky-col-1 z-50 bg-slate-100">Staging & PIC</th>`;
+                
+                weekIterators.forEach((w) => {
+                    if(w.saturdays[w.minggu-1]) {
+                        let satDate = new Date(selTahun, w.bulan - 1, w.saturdays[w.minggu-1]);
                         let monDate = new Date(satDate); monDate.setDate(satDate.getDate() - 5);
                         let sunDate = new Date(satDate); sunDate.setDate(satDate.getDate() + 1);
-                        let monStr = `${monDate.getDate()} ${shortMonths[monDate.getMonth()]}`;
-                        let sunStr = `${sunDate.getDate()} ${shortMonths[sunDate.getMonth()]}`;
+                        let monStr = `${monDate.getDate()} ${w.monthNameShort}`;
+                        let sunStr = `${sunDate.getDate()} ${w.monthNameShort}`;
                         
-                        if(th) th.innerHTML = `Minggu ${i}<br><span class="text-[9px] text-slate-500 font-medium">${monStr} - ${sunStr}</span>`;
-                        monthLabels.push(`Mg ${i} (${monDate.getDate()}/${monDate.getMonth()+1})`);
+                        theadHtml += `<th class="p-3 border-r border-slate-200 text-center min-w-[140px]">${w.monthNameShort} M${w.minggu}<br><span class="text-[9px] text-slate-500 font-medium">${monStr} - ${sunStr}</span></th>`;
+                        monthLabels.push(`${w.monthNameShort} M${w.minggu}`);
                     } else {
-                        if(th) th.innerHTML = `Minggu ${i}<br><span class="text-[9px] text-slate-500 font-medium">-</span>`;
-                        monthLabels.push(`Mg ${i} (-)`);
+                        theadHtml += `<th class="p-3 border-r border-slate-200 text-center min-w-[140px]">${w.monthNameShort} M${w.minggu}<br><span class="text-[9px] text-slate-500 font-medium">-</span></th>`;
+                        monthLabels.push(`${w.monthNameShort} M${w.minggu}`);
                     }
-                }
+                });
+                theadHtml += `</tr>`;
+                thead.innerHTML = theadHtml;
             }
 
             const { data: users } = await supabaseClient.from('users').select('*').eq('role', 'user');
             let validUsers = (users || []).filter(u => u.stagging_name);
             
-            if(selStaging !== 'all') {
-                validUsers = validUsers.filter(u => u.stagging_name === selStaging);
+            if(selStagings.length > 0) {
+                validUsers = validUsers.filter(u => selStagings.includes(u.stagging_name));
             }
             
             const { data: dbData } = await supabaseClient
@@ -2026,8 +2061,7 @@
             const allFetchedData = dbData || [];
             globalUtilData = allFetchedData; 
             
-            const utilDataCurrent = allFetchedData.filter(d => parseInt(d.bulan) === selBulan && parseInt(d.tahun) === selTahun);
-            const utilDataPrev = allFetchedData.filter(d => parseInt(d.bulan) === prevMonth && parseInt(d.tahun) === prevMonthYear);
+            const utilDataCurrent = allFetchedData.filter(d => selBulans.includes(parseInt(d.bulan)) && parseInt(d.tahun) === selTahun);
             
             const getOrderScore = d => parseInt(d.tahun) * 1000 + parseInt(d.bulan) * 10 + parseInt(d.minggu);
 
@@ -2038,8 +2072,8 @@
                     let userAllSubs = allFetchedData.filter(d => d.stagging_name === u.stagging_name)
                         .sort((a,b) => getOrderScore(a) - getOrderScore(b));
                         
-                    for(let m = 1; m <= 5; m++) {
-                        const submit = utilDataCurrent.find(d => d.stagging_name === u.stagging_name && parseInt(d.minggu) === m);
+                    weekIterators.forEach(w => {
+                        const submit = utilDataCurrent.find(d => d.stagging_name === u.stagging_name && parseInt(d.minggu) === w.minggu && parseInt(d.bulan) === w.bulan);
                         if(submit) {
                             const currentIndex = userAllSubs.findIndex(s => s.id === submit.id);
                             let prevSubmit = currentIndex > 0 ? userAllSubs[currentIndex - 1] : null;
@@ -2063,12 +2097,10 @@
                             } else {
                                 let currVal = parseSafeNumber(submit.data[`${currentUtilView}_angka`]);
                                 let prevVal = prevSubmit ? parseSafeNumber(prevSubmit.data[`${currentUtilView}_angka`]) : 0;
-                                if (prevSubmit) {
-                                    if (currVal >= prevVal) totalUsage += (currVal - prevVal);
-                                }
+                                if (currVal >= prevVal) totalUsage += (currVal - prevVal);
                             }
                         }
-                    }
+                    });
                     return { name: u.stagging_name, usage: totalUsage };
                 });
                 usageTotals.sort((a, b) => b.usage - a.usage);
@@ -2085,9 +2117,9 @@
 
             validUsers.sort((a, b) => (a.stagging_name || '').localeCompare(b.stagging_name || ''));
 
-            let chartLabels = ['Minggu 1', 'Minggu 2', 'Minggu 3', 'Minggu 4', 'Minggu 5'];
+            let chartLabels = [];
             let chartDatasets = [];
-            let aggregatedTrend = [0, 0, 0, 0, 0];
+            let aggregatedTrend = new Array(weekIterators.length).fill(0);
 
             validUsers.forEach((u, i) => {
                 const userSubmitsCurrent = utilDataCurrent.filter(d => d.stagging_name === u.stagging_name);
@@ -2102,7 +2134,10 @@
                 let topBadge = isTop ? `<span class="mt-1 bg-rose-500 text-white text-[8px] font-extrabold px-1.5 py-0.5 rounded block text-center uppercase tracking-widest shadow-sm">Top Pemakaian</span>` : '';
 
                 if (currentUtilView === 'rekap') {
-                    const submit = userSubmitsCurrent.find(d => parseInt(d.minggu) === selMinggu);
+                    let submitsForMinggu = userSubmitsCurrent.filter(d => parseInt(d.minggu) === selMinggu);
+                    submitsForMinggu.sort((a,b) => parseInt(b.bulan) - parseInt(a.bulan));
+                    const submit = submitsForMinggu.length > 0 ? submitsForMinggu[0] : null;
+                    
                     let rowHtml = `<td class="p-3 border-r border-slate-200 sticky-col-1 bg-white">
                         <strong class="text-slate-900 text-xs block mb-0.5">${u.stagging_name}</strong>
                         <span class="text-[10px] text-slate-500">${u.pic_name || u.username}</span>
@@ -2154,18 +2189,23 @@
                         ${topBadge}
                     </td>`;
 
-                    for(let m = 1; m <= 5; m++) {
-                        const submit = userSubmitsCurrent.find(d => parseInt(d.minggu) === m);
+                    weekIterators.forEach((w, wIdx) => {
+                        let submitsForMinggu = userSubmitsCurrent.filter(d => parseInt(d.minggu) === w.minggu && parseInt(d.bulan) === w.bulan);
+                        submitsForMinggu.sort((a,b) => parseInt(b.bulan) - parseInt(a.bulan));
+                        const submit = submitsForMinggu.length > 0 ? submitsForMinggu[0] : null;
+                        
                         if(submit) {
                             const d = submit.data;
-                            const cellClick = `onclick="showUtilitasDetail('${submit.id}')" title="Klik untuk lihat detail form"`;
-                            
-                            let hasRusak = Object.values(d).some(v => v === 'Rusak');
-                            let warningHtml = hasRusak ? `<span class="material-symbols-rounded text-rose-500 text-[14px] absolute top-1 right-1 drop-shadow-sm" title="Ada fasilitas rusak">warning</span>` : '';
+                            const cellClick = `onclick="showUtilitasDetail('${submit.id}')" title="Klik untuk lihat detail form" class="cursor-pointer hover:bg-slate-50 transition-colors p-3 border-r border-slate-100 align-top"`;
 
                             submit.parsedTs = parseDateObj(submit.date);
                             const currentIndex = userAllSubs.findIndex(s => s.id === submit.id);
                             let prevSubmit = currentIndex > 0 ? userAllSubs[currentIndex - 1] : null;
+
+                            let warningHtml = '';
+                            if (d.air_kondisi_meteran === 'Rusak' || d.air_kondisi_pipa === 'Rusak' || d.air_kondisi_pompa === 'Rusak' || d.air_kondisi_tandon === 'Rusak' || d.air_kondisi_otomatis === 'Rusak') {
+                                warningHtml = `<span class="absolute top-1 right-1 material-symbols-rounded text-rose-500 text-[14px]" title="Ada Fasilitas Rusak">warning</span>`;
+                            }
 
                             let diffDays = 0;
                             if (prevSubmit) {
@@ -2185,7 +2225,7 @@
                                     if (currAir >= lastAir) {
                                         pemakaian = currAir - lastAir;
                                         avg = pemakaian / diffDays;
-                                        aggregatedTrend[m-1] += pemakaian;
+                                        aggregatedTrend[wIdx] += pemakaian;
                                     }
                                 }
                                 
@@ -2235,7 +2275,7 @@
                                     if (hasDiff) {
                                         pemakaian = tempPemakaian; // Total pemakaian semua meteran pada Staging (SS) ini
                                         avg = pemakaian / diffDays;
-                                        aggregatedTrend[m-1] += pemakaian;
+                                        aggregatedTrend[wIdx] += pemakaian;
                                     }
                                 }
                                 
@@ -2260,7 +2300,7 @@
                                 let val = 0;
                                 if(d.ipl_bersih === 'Ada') val += parseSafeNumber(d.ipl_bersih_nom);
                                 if(d.ipl_aman === 'Ada') val += parseSafeNumber(d.ipl_aman_nom);
-                                aggregatedTrend[m-1] += val;
+                                aggregatedTrend[wIdx] += val;
                                 rowHtml += `<td class="p-2 border-r border-slate-100 text-center relative cursor-pointer hover:bg-emerald-50/50" ${cellClick}>
                                     ${warningHtml}
                                     <div class="mt-1">
@@ -2270,13 +2310,13 @@
                                 </td>`;
                             }
                         } else {
-                            if(!saturdays[m-1]) {
+                            if(!w.saturdays[w.minggu-1]) {
                                 rowHtml += `<td class="p-3 border-r border-slate-100 text-center text-slate-200 font-medium text-[9px] bg-slate-50/50">-</td>`;
                             } else {
                                 rowHtml += `<td class="p-3 border-r border-slate-100 text-center text-slate-300 font-bold text-xs bg-slate-50/50">-</td>`;
                             }
                         }
-                    }
+                    });
                     html += `<tr class="hover:bg-slate-50/50 border-b border-slate-100 transition-colors">${rowHtml}</tr>`;
                 }
             });
@@ -2289,8 +2329,8 @@
                     chartLabels = monthLabels;
                     finalTrendData = aggregatedTrend; 
                 } else {
-                    chartLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agt', 'Sep', 'Okt', 'Nov', 'Des'];
-                    finalTrendData = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+                    chartLabels = selBulans.map(b => shortMonths[b-1]);
+                    finalTrendData = new Array(selBulans.length).fill(0);
                     
                     validUsers.forEach(u => {
                         let userAllSubs = allFetchedData.filter(d => d.stagging_name === u.stagging_name)
@@ -2298,8 +2338,8 @@
 
                         if(currentUtilView === 'ipl') {
                             userAllSubs.forEach((submit) => {
-                                if (parseInt(submit.tahun) === selTahun) {
-                                    let bIdx = parseInt(submit.bulan) - 1;
+                                if (parseInt(submit.tahun) === selTahun && selBulans.includes(parseInt(submit.bulan))) {
+                                    let bIdx = selBulans.indexOf(parseInt(submit.bulan));
                                     let val = 0;
                                     if(submit.data.ipl_bersih === 'Ada') val += parseSafeNumber(submit.data.ipl_bersih_nom);
                                     if(submit.data.ipl_aman === 'Ada') val += parseSafeNumber(submit.data.ipl_aman_nom);
@@ -2308,9 +2348,9 @@
                             });
                         } else {
                             userAllSubs.forEach((submit, idx) => {
-                                if (parseInt(submit.tahun) === selTahun && idx > 0) {
+                                if (parseInt(submit.tahun) === selTahun && selBulans.includes(parseInt(submit.bulan)) && idx > 0) {
                                     let prevSubmit = userAllSubs[idx - 1];
-                                    let bIdx = parseInt(submit.bulan) - 1;
+                                    let bIdx = selBulans.indexOf(parseInt(submit.bulan));
                                     
                                     if (currentUtilView === 'listrik') {
                                         let currMeters = extractListrikMeters(submit.data);
@@ -2318,12 +2358,9 @@
                                         currMeters.forEach(cm => {
                                             let pm = prevMeters.find(m => m.id === cm.id);
                                             if (pm) {
-                                                // PRA BAYAR (Token): Pemakaian = Minggu Lalu - Minggu Ini
                                                 if (cm.kategori === 'Pra Bayar (Token)') {
                                                     if (pm.angka >= cm.angka) finalTrendData[bIdx] += (pm.angka - cm.angka);
-                                                } 
-                                                // PASCA BAYAR: Pemakaian = Minggu Ini - Minggu Lalu
-                                                else {
+                                                } else {
                                                     if (cm.angka >= pm.angka) finalTrendData[bIdx] += (cm.angka - pm.angka);
                                                 }
                                             }
@@ -2921,13 +2958,54 @@
             document.getElementById('ssc-dropdown-menu').classList.toggle('hidden');
         };
 
+        window.toggleUtilBulanDropdown = function() {
+            document.getElementById('util-bulan-dropdown-menu').classList.toggle('hidden');
+        };
+
+        window.toggleUtilSscDropdown = function() {
+            document.getElementById('util-ssc-dropdown-menu').classList.toggle('hidden');
+        };
+
         document.addEventListener('click', function(e) {
             const container = document.getElementById('ssc-dropdown-container');
             if (container && !container.contains(e.target)) {
                 const menu = document.getElementById('ssc-dropdown-menu');
                 if(menu) menu.classList.add('hidden');
             }
+            
+            const utilBulanContainer = document.getElementById('util-bulan-dropdown-container');
+            if (utilBulanContainer && !utilBulanContainer.contains(e.target)) {
+                const menu = document.getElementById('util-bulan-dropdown-menu');
+                if(menu) menu.classList.add('hidden');
+            }
+
+            const utilSscContainer = document.getElementById('util-ssc-dropdown-container');
+            if (utilSscContainer && !utilSscContainer.contains(e.target)) {
+                const menu = document.getElementById('util-ssc-dropdown-menu');
+                if(menu) menu.classList.add('hidden');
+            }
         });
+
+        window.handleUtilBulanChange = function() {
+            const checkboxes = document.querySelectorAll('.util-bulan-checkbox:checked');
+            const btnText = document.getElementById('btn-util-bulan-text').querySelector('span');
+            if (checkboxes.length === 0) { btnText.textContent = 'Semua Bulan'; } 
+            else if (checkboxes.length === 1) { 
+                const monthNames = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+                btnText.textContent = monthNames[parseInt(checkboxes[0].value)-1]; 
+            } 
+            else { btnText.textContent = `${checkboxes.length} Bulan`; }
+            renderUtilitasTable();
+        };
+
+        window.handleUtilSscChange = function() {
+            const checkboxes = document.querySelectorAll('.util-ssc-checkbox:checked');
+            const btnText = document.getElementById('btn-util-ssc-text').querySelector('span');
+            if (checkboxes.length === 0) { btnText.textContent = 'Semua Area'; } 
+            else if (checkboxes.length === 1) { btnText.textContent = checkboxes[0].value; } 
+            else { btnText.textContent = `${checkboxes.length} Area`; }
+            renderUtilitasTable();
+        };
 
         window.handleSscChange = function() {
             const checkboxes = document.querySelectorAll('.ssc-checkbox:checked');
