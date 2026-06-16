@@ -110,6 +110,16 @@
         
         .utilitas-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 1rem; padding: 1.5rem; margin-bottom: 1.5rem; }
         .utilitas-card-title { font-weight: 800; color: #0f172a; font-size: 1.1rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; border-bottom: 2px solid #f1f5f9; padding-bottom: 0.5rem; }
+        
+        /* Menyembunyikan spinner pada input bertipe number */
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+            -webkit-appearance: none; 
+            margin: 0; 
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
     </style>
 </head>
 <body class="antialiased selection:bg-brand-200 selection:text-brand-900 overflow-x-hidden">
@@ -778,6 +788,7 @@
                 </div>
 
                 <form id="utilitas-form" class="p-4 sm:p-6 space-y-6">
+                    <input type="hidden" id="u-edit-id" name="edit_id" value="">
                     
                     <div id="admin-util-selector-container" class="hidden p-4 bg-amber-50 rounded-2xl border border-amber-200">
                         <label class="flex items-center gap-2 text-xs text-amber-700 uppercase font-bold tracking-widest mb-3"><span class="material-symbols-rounded icon-fill text-amber-500 text-lg">workspace_premium</span> Override Admin (Utilitas)</label>
@@ -787,300 +798,169 @@
                                 <select id="admin-util-target-select" class="input-modern w-full font-bold bg-white" onchange="updateAdminUtilTargetInfo()"><option value="">-- Pilih Area Observasi --</option></select>
                             </div>
                             <div>
-                                <label class="text-[10px] font-bold text-amber-700 uppercase tracking-widest block mb-1">Override Tanggal Input (Opsional - Untuk Backdate)</label>
-                                <input type="date" id="admin-util-date-override" class="input-modern w-full font-bold bg-white" onchange="overrideUtilDate()">
+                                <label class="text-[10px] font-bold text-amber-700 uppercase tracking-widest block mb-1">Override Tanggal</label>
+                                <input type="datetime-local" id="admin-util-date-override" onchange="overrideUtilDate()" class="input-modern w-full px-3 py-2 rounded-xl text-sm font-bold bg-white">
                             </div>
                         </div>
                     </div>
 
-                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 flex items-center gap-3">
-                        <span class="material-symbols-rounded text-slate-400">info</span>
-                        <div>
-                            <p class="text-[11px] text-slate-500 uppercase font-bold tracking-widest">Staging Area</p>
-                            <p class="text-sm font-bold text-slate-800"><span id="util-form-stagging">-</span> (<span id="util-form-pic">-</span>)</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="col-span-1 md:col-span-2">
+                            <label class="label-modern">Informasi Staging Area</label>
+                            <div class="flex flex-col sm:flex-row sm:items-center gap-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                                <div><p class="text-[10px] text-slate-500 uppercase font-bold tracking-widest mb-0.5">Nama Area</p><p id="util-form-stagging" class="text-sm font-extrabold text-slate-900">-</p></div>
+                                <div class="hidden sm:block w-px h-8 bg-slate-200 mx-2"></div>
+                                <div><p class="text-[10px] text-slate-500 uppercase font-bold tracking-widest mb-0.5">Penanggung Jawab</p><p id="util-form-pic" class="text-sm font-extrabold text-slate-900">-</p></div>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Periode Input (Otomatis) -->
-                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <div>
-                            <label class="label-modern">Tanggal Input</label>
-                            <input type="text" id="u-periode-tanggal-display" readonly class="input-modern w-full px-2 py-3 md:px-4 rounded-xl text-xs md:text-sm font-bold bg-slate-200 text-slate-500 cursor-not-allowed border-transparent shadow-none truncate">
-                        </div>
-                        <div>
-                            <label class="label-modern">Bulan</label>
-                            <input type="text" id="u-periode-bulan-display" readonly class="input-modern w-full px-2 py-3 md:px-4 rounded-xl text-xs md:text-sm font-bold bg-slate-200 text-slate-500 cursor-not-allowed border-transparent shadow-none truncate">
-                            <input type="hidden" id="u-periode-bulan" name="bulan">
-                        </div>
-                        <div>
-                            <label class="label-modern">Tahun</label>
-                            <input type="text" id="u-periode-tahun-display" readonly class="input-modern w-full px-2 py-3 md:px-4 rounded-xl text-xs md:text-sm font-bold bg-slate-200 text-slate-500 cursor-not-allowed border-transparent shadow-none truncate">
-                            <input type="hidden" id="u-periode-tahun" name="tahun">
-                        </div>
-                        <div class="col-span-2 md:col-span-1">
-                            <label class="label-modern">Minggu Ke-</label>
-                            <input type="text" id="u-periode-minggu-display" readonly class="input-modern w-full px-2 py-3 md:px-4 rounded-xl text-xs md:text-sm font-bold bg-slate-200 text-slate-500 cursor-not-allowed border-transparent shadow-none truncate">
-                            <input type="hidden" id="u-periode-minggu" name="minggu">
-                        </div>
+                    <input type="hidden" id="u-periode-bulan" name="bulan">
+                    <input type="hidden" id="u-periode-tahun" name="tahun">
+                    <input type="hidden" id="u-periode-minggu" name="minggu">
+
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200">
+                        <div><label class="label-modern">Tanggal Input</label><input type="text" id="u-periode-tanggal-display" readonly class="w-full bg-transparent border-none text-sm font-bold text-slate-800 outline-none p-0"></div>
+                        <div><label class="label-modern">Bulan</label><input type="text" id="u-periode-bulan-display" readonly class="w-full bg-transparent border-none text-sm font-bold text-slate-800 outline-none p-0"></div>
+                        <div><label class="label-modern">Tahun</label><input type="text" id="u-periode-tahun-display" readonly class="w-full bg-transparent border-none text-sm font-bold text-slate-800 outline-none p-0"></div>
+                        <div><label class="label-modern">Minggu Ke</label><input type="text" id="u-periode-minggu-display" readonly class="w-full bg-transparent border-none text-sm font-bold text-slate-800 outline-none p-0 text-brand-600"></div>
                     </div>
 
-                    <!-- Fasilitas Air -->
-                    <div class="utilitas-card">
-                        <h3 class="utilitas-card-title"><span class="material-symbols-rounded text-blue-500">water_drop</span> 1. Fasilitas Air</h3>
-                        <div class="space-y-4">
-                            <div>
-                                <label class="label-modern mb-2">Sumber Air</label>
-                                <div class="flex flex-wrap gap-2">
-                                    <label class="cursor-pointer">
-                                        <input type="radio" name="air_sumber" value="PDAM" class="peer sr-only" required onchange="toggleAirFields()">
-                                        <div class="px-5 py-2.5 rounded-xl text-sm font-bold bg-slate-50 border-2 border-slate-200 text-slate-600 peer-checked:border-brand-600 peer-checked:bg-brand-50 peer-checked:text-brand-700 transition-all">PDAM</div>
-                                    </label>
-                                    <label class="cursor-pointer">
-                                        <input type="radio" name="air_sumber" value="WTP" class="peer sr-only" required onchange="toggleAirFields()">
-                                        <div class="px-5 py-2.5 rounded-xl text-sm font-bold bg-slate-50 border-2 border-slate-200 text-slate-600 peer-checked:border-brand-600 peer-checked:bg-brand-50 peer-checked:text-brand-700 transition-all">WTP</div>
-                                    </label>
-                                    <label class="cursor-pointer">
-                                        <input type="radio" name="air_sumber" value="Sumur Bor" class="peer sr-only" required onchange="toggleAirFields()">
-                                        <div class="px-5 py-2.5 rounded-xl text-sm font-bold bg-slate-50 border-2 border-slate-200 text-slate-600 peer-checked:border-brand-600 peer-checked:bg-brand-50 peer-checked:text-brand-700 transition-all">Sumur Bor</div>
-                                    </label>
-                                </div>
+                    <div class="space-y-4 pt-4 border-t border-slate-200">
+                        <h3 class="font-bold text-slate-800 flex items-center gap-2"><span class="material-symbols-rounded text-blue-500">water_drop</span> Pemakaian Air</h3>
+                        <div>
+                            <label class="label-modern mb-2">Sumber Air</label>
+                            <div class="flex gap-4">
+                                <label class="cursor-pointer"><input type="radio" name="air_sumber" value="PDAM" class="peer sr-only" required onchange="toggleAirFields()"><div class="px-4 py-2 rounded-lg text-sm font-bold border-2 border-slate-200 peer-checked:border-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700">PDAM</div></label>
+                                <label class="cursor-pointer"><input type="radio" name="air_sumber" value="WTP" class="peer sr-only" required onchange="toggleAirFields()"><div class="px-4 py-2 rounded-lg text-sm font-bold border-2 border-slate-200 peer-checked:border-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700">WTP</div></label>
+                                <label class="cursor-pointer"><input type="radio" name="air_sumber" value="Sumur Bor" class="peer sr-only" required onchange="toggleAirFields()"><div class="px-4 py-2 rounded-lg text-sm font-bold border-2 border-slate-200 peer-checked:border-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700">Sumur Bor</div></label>
                             </div>
-                            <div id="air-pdam-fields" class="hidden space-y-4 p-4 bg-blue-50/50 rounded-xl border border-blue-100 mt-4">
-                                <div><label class="label-modern">Nomor ID Pelanggan (PDAM/WTP)</label><input type="text" id="u-air-id" name="air_id" class="input-modern w-full px-4 py-3 rounded-xl text-sm"></div>
-                                <div><label class="label-modern">Nama Pemilik ID Pelanggan</label><input type="text" id="u-air-nama" name="air_nama" class="input-modern w-full px-4 py-3 rounded-xl text-sm"></div>
+                        </div>
+
+                        <div id="air-pdam-fields" class="hidden space-y-4 bg-blue-50/50 p-4 rounded-xl border border-blue-100">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div><label class="label-modern">Nomor ID Pelanggan Air</label><input type="text" id="u-air-id" name="air_id" list="history-air-id" autocomplete="off" class="input-modern w-full px-4 py-3 rounded-xl text-sm font-mono"></div>
+                                <div><label class="label-modern">Nama Pemilik ID</label><input type="text" id="u-air-nama" name="air_nama" list="history-air-nama" autocomplete="off" class="input-modern w-full px-4 py-3 rounded-xl text-sm"></div>
                             </div>
-                            <div id="air-mekanisme-container" class="hidden mt-4">
-                                <label class="label-modern">Mekanisme Pembayaran</label>
-                                <select id="u-air-mekanisme" name="air_mekanisme" class="input-modern w-full px-4 py-3 rounded-xl text-sm font-medium" onchange="toggleAirMekanisme()">
-                                    <option value="">Pilih Mekanisme...</option>
-                                    <option value="Dibayar Ke PDAM/WTP Tiap Bulan (Pemakaian Pribadi)">Dibayar Ke PDAM/WTP Tiap Bulan (Pemakaian Pribadi)</option>
-                                    <option value="Dibagi Dengan Ruko Tetangga (1 Meteran dipakai bersama)">Dibagi Dengan Ruko Tetangga (1 Meteran dipakai bersama)</option>
-                                    <option value="Include / Sudah Termasuk Biaya Sewa Ruko">Include / Sudah Termasuk Biaya Sewa Ruko</option>
-                                    <option value="Lainnya">Lainnya...</option>
+                        </div>
+                        
+                        <div id="air-mekanisme-container" class="hidden">
+                            <label class="label-modern">Mekanisme Pembayaran</label>
+                            <div class="flex gap-2">
+                                <select id="u-air-mekanisme" name="air_mekanisme" class="input-modern w-full px-4 py-3 rounded-xl font-bold text-sm" onchange="toggleAirMekanisme()">
+                                    <option value="">-- Pilih --</option>
+                                    <option value="Dibayar Ke PDAM Atau WTP Tiap Bulannya, Hanya Pemakaian Pribadi Staging">Dibayar Ke PDAM Atau WTP Tiap Bulannya, Hanya Pemakaian Pribadi Staging</option>
+                                    <option value="Dibagi Dengan Ruko Tetangga, Karena 1 Meteran PDAM Dipakai Lebih Dari 1 Ruko">Dibagi Dengan Ruko Tetangga, Karena 1 Meteran PDAM Dipakai Lebih Dari 1 Ruko</option>
+                                    <option value="Dibayarkan Include Atau Sudah Termasuk Dengan Biaya Sewa Ruko">Dibayarkan Include Atau Sudah Termasuk Dengan Biaya Sewa Ruko</option>
+                                    <option value="Sumur Bor">Sumur Bor</option>
+                                    <option value="Lainnya">Yang lain...</option>
                                 </select>
-                                <input type="text" id="u-air-mekanisme-lain" name="air_mekanisme_lain" placeholder="Sebutkan mekanisme lainnya..." class="hidden mt-2 input-modern w-full px-4 py-3 rounded-xl text-sm">
+                                <input type="text" id="u-air-mekanisme-lain" name="air_mekanisme_lain" placeholder="Sebutkan..." class="hidden input-modern w-full px-4 py-3 rounded-xl text-sm">
                             </div>
-                            <div id="air-angka-container" class="hidden mt-4">
-                                <label class="label-modern">Angka Tercatat di Meteran Air</label>
-                                <input type="text" id="u-air-angka" name="air_angka" placeholder="Cth: 1245.5" class="input-modern w-full px-4 py-3 rounded-xl text-sm font-bold">
+                        </div>
+
+                        <div id="air-angka-container" class="hidden">
+                            <label class="label-modern">Angka Meteran Air Saat Ini</label>
+                            <input type="text" id="u-air-angka" name="air_angka" class="input-modern w-full px-4 py-3 rounded-xl font-bold text-sm text-blue-700">
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="label-modern mb-2">Kondisi Meteran Air</label>
+                                <div class="flex gap-2"><label class="cursor-pointer flex-1"><input type="radio" name="air_kondisi_meteran" value="Normal" class="peer sr-only" required onchange="toggleRusak('air_kondisi_meteran', 'air-meteran-rusak')"><div class="text-center px-3 py-2 rounded-lg text-xs font-bold border-2 border-slate-200 peer-checked:border-teal-500 peer-checked:bg-teal-50 peer-checked:text-teal-700">Normal</div></label><label class="cursor-pointer flex-1"><input type="radio" name="air_kondisi_meteran" value="Rusak" class="peer sr-only" required onchange="toggleRusak('air_kondisi_meteran', 'air-meteran-rusak')"><div class="text-center px-3 py-2 rounded-lg text-xs font-bold border-2 border-slate-200 peer-checked:border-rose-500 peer-checked:bg-rose-50 peer-checked:text-rose-700">Rusak</div></label></div>
+                                <input type="text" id="air-meteran-rusak" name="air_meteran_rusak" placeholder="Keterangan Rusak..." class="hidden mt-2 input-modern w-full px-3 py-2 rounded-lg text-xs border-rose-300">
                             </div>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 border-t border-slate-100 pt-4 mt-4">
+                            <div>
+                                <label class="label-modern mb-2">Kondisi Jalur Pipa</label>
+                                <div class="flex gap-2"><label class="cursor-pointer flex-1"><input type="radio" name="air_kondisi_pipa" value="Normal" class="peer sr-only" required onchange="toggleRusak('air_kondisi_pipa', 'air-pipa-rusak')"><div class="text-center px-3 py-2 rounded-lg text-xs font-bold border-2 border-slate-200 peer-checked:border-teal-500 peer-checked:bg-teal-50 peer-checked:text-teal-700">Normal</div></label><label class="cursor-pointer flex-1"><input type="radio" name="air_kondisi_pipa" value="Rusak" class="peer sr-only" required onchange="toggleRusak('air_kondisi_pipa', 'air-pipa-rusak')"><div class="text-center px-3 py-2 rounded-lg text-xs font-bold border-2 border-slate-200 peer-checked:border-rose-500 peer-checked:bg-rose-50 peer-checked:text-rose-700">Rusak / Bocor</div></label></div>
+                                <input type="text" id="air-pipa-rusak" name="air_pipa_rusak" placeholder="Keterangan Rusak..." class="hidden mt-2 input-modern w-full px-3 py-2 rounded-lg text-xs border-rose-300">
+                            </div>
+                        </div>
+                        
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-4">
+                            <div>
+                                <label class="label-modern mb-2">Apakah ada Tandon Air?</label>
+                                <div class="flex gap-2"><label class="cursor-pointer w-24"><input type="radio" name="air_tandon" value="Ada" class="peer sr-only" required onchange="toggleSubTandon()"><div class="text-center px-3 py-2 rounded-lg text-xs font-bold border-2 border-slate-200 peer-checked:border-indigo-500 peer-checked:bg-indigo-50 peer-checked:text-indigo-700">Ada</div></label><label class="cursor-pointer w-24"><input type="radio" name="air_tandon" value="Tidak" class="peer sr-only" required onchange="toggleSubTandon()"><div class="text-center px-3 py-2 rounded-lg text-xs font-bold border-2 border-slate-200 peer-checked:border-slate-400 peer-checked:bg-slate-100 peer-checked:text-slate-600">Tidak</div></label></div>
+                            </div>
+                            <div id="air-tandon-fields" class="hidden space-y-4 border-t border-slate-200 pt-3">
                                 <div>
-                                    <label class="label-modern mb-2">Kondisi Meteran Air</label>
-                                    <div class="flex gap-2">
-                                        <label class="cursor-pointer flex-1">
-                                            <input type="radio" name="air_kondisi_meteran" value="Baik" class="peer sr-only" required onchange="toggleRusak('air_kondisi_meteran', 'air-meteran-rusak')">
-                                            <div class="px-3 py-2 text-center rounded-xl text-sm font-bold bg-slate-50 border-2 border-slate-200 text-slate-600 peer-checked:border-brand-600 peer-checked:bg-brand-50 peer-checked:text-brand-700 transition-all">Baik</div>
-                                        </label>
-                                        <label class="cursor-pointer flex-1">
-                                            <input type="radio" name="air_kondisi_meteran" value="Rusak" class="peer sr-only" required onchange="toggleRusak('air_kondisi_meteran', 'air-meteran-rusak')">
-                                            <div class="px-3 py-2 text-center rounded-xl text-sm font-bold bg-slate-50 border-2 border-slate-200 text-slate-600 peer-checked:border-rose-500 peer-checked:bg-rose-50 peer-checked:text-rose-600 transition-all">Rusak</div>
-                                        </label>
-                                    </div>
-                                    <input type="text" id="air-meteran-rusak" name="air_meteran_rusak" placeholder="Deskripsikan kerusakan..." class="hidden mt-2 input-modern w-full px-3 py-2 rounded-lg text-xs border-amber-300 bg-amber-50">
+                                    <label class="label-modern mb-2">Kondisi Tandon</label>
+                                    <div class="flex gap-2"><label class="cursor-pointer w-24"><input type="radio" name="air_kondisi_tandon" value="Normal" class="peer sr-only" onchange="toggleRusak('air_kondisi_tandon', 'air-tandon-rusak')"><div class="text-center px-3 py-2 rounded-lg text-xs font-bold border-2 border-slate-200 peer-checked:border-teal-500 peer-checked:bg-teal-50 peer-checked:text-teal-700">Normal</div></label><label class="cursor-pointer w-24"><input type="radio" name="air_kondisi_tandon" value="Rusak" class="peer sr-only" onchange="toggleRusak('air_kondisi_tandon', 'air-tandon-rusak')"><div class="text-center px-3 py-2 rounded-lg text-xs font-bold border-2 border-slate-200 peer-checked:border-rose-500 peer-checked:bg-rose-50 peer-checked:text-rose-700">Bocor</div></label></div>
+                                    <input type="text" id="air-tandon-rusak" name="air_tandon_rusak" placeholder="Keterangan..." class="hidden mt-2 input-modern w-full px-3 py-2 rounded-lg text-xs border-rose-300">
                                 </div>
                                 <div>
-                                    <label class="label-modern mb-2">Kondisi Pipa & Kran</label>
-                                    <div class="flex gap-2">
-                                        <label class="cursor-pointer flex-1">
-                                            <input type="radio" name="air_kondisi_pipa" value="Baik" class="peer sr-only" required onchange="toggleRusak('air_kondisi_pipa', 'air-pipa-rusak')">
-                                            <div class="px-3 py-2 text-center rounded-xl text-sm font-bold bg-slate-50 border-2 border-slate-200 text-slate-600 peer-checked:border-brand-600 peer-checked:bg-brand-50 peer-checked:text-brand-700 transition-all">Baik</div>
-                                        </label>
-                                        <label class="cursor-pointer flex-1">
-                                            <input type="radio" name="air_kondisi_pipa" value="Rusak" class="peer sr-only" required onchange="toggleRusak('air_kondisi_pipa', 'air-pipa-rusak')">
-                                            <div class="px-3 py-2 text-center rounded-xl text-sm font-bold bg-slate-50 border-2 border-slate-200 text-slate-600 peer-checked:border-rose-500 peer-checked:bg-rose-50 peer-checked:text-rose-600 transition-all">Rusak</div>
-                                        </label>
-                                    </div>
-                                    <input type="text" id="air-pipa-rusak" name="air_pipa_rusak" placeholder="Deskripsikan kerusakan..." class="hidden mt-2 input-modern w-full px-3 py-2 rounded-lg text-xs border-amber-300 bg-amber-50">
+                                    <label class="label-modern mb-2">Apakah ada Otomatis Tandon (Radar)?</label>
+                                    <div class="flex gap-2"><label class="cursor-pointer w-24"><input type="radio" name="air_otomatis" value="Ada" class="peer sr-only" onchange="toggleSubOtomatis()"><div class="text-center px-3 py-2 rounded-lg text-xs font-bold border-2 border-slate-200 peer-checked:border-indigo-500 peer-checked:bg-indigo-50 peer-checked:text-indigo-700">Ada</div></label><label class="cursor-pointer w-24"><input type="radio" name="air_otomatis" value="Tidak" class="peer sr-only" onchange="toggleSubOtomatis()"><div class="text-center px-3 py-2 rounded-lg text-xs font-bold border-2 border-slate-200 peer-checked:border-slate-400 peer-checked:bg-slate-100 peer-checked:text-slate-600">Tidak</div></label></div>
                                 </div>
-                            </div>
-                            <div class="border-t border-slate-100 pt-4 space-y-4">
-                                <div>
-                                    <label class="label-modern mb-2">Apakah pakai Tandon?</label>
-                                    <div class="flex gap-2">
-                                        <label class="cursor-pointer">
-                                            <input type="radio" name="air_tandon" value="Ada" class="peer sr-only" required onchange="toggleSubTandon()">
-                                            <div class="px-5 py-2.5 rounded-xl text-sm font-bold bg-slate-50 border-2 border-slate-200 text-slate-600 peer-checked:border-brand-600 peer-checked:bg-brand-50 peer-checked:text-brand-700 transition-all">Ada</div>
-                                        </label>
-                                        <label class="cursor-pointer">
-                                            <input type="radio" name="air_tandon" value="Tidak Ada" class="peer sr-only" required onchange="toggleSubTandon()">
-                                            <div class="px-5 py-2.5 rounded-xl text-sm font-bold bg-slate-50 border-2 border-slate-200 text-slate-600 peer-checked:border-slate-400 peer-checked:bg-slate-100 peer-checked:text-slate-700 transition-all">Tidak Ada</div>
-                                        </label>
-                                    </div>
-                                </div>
-                                <div id="air-tandon-fields" class="hidden pl-4 border-l-2 border-slate-200 space-y-4">
-                                    <div>
-                                        <label class="label-modern mb-2">Kondisi Tandon</label>
-                                        <div class="flex gap-2">
-                                            <label class="cursor-pointer flex-1">
-                                                <input type="radio" name="air_kondisi_tandon" value="Baik" class="peer sr-only" onchange="toggleRusak('air_kondisi_tandon', 'air-tandon-rusak')">
-                                                <div class="px-3 py-2 text-center rounded-xl text-sm font-bold bg-slate-50 border-2 border-slate-200 text-slate-600 peer-checked:border-brand-600 peer-checked:bg-brand-50 peer-checked:text-brand-700 transition-all">Baik</div>
-                                            </label>
-                                            <label class="cursor-pointer flex-1">
-                                                <input type="radio" name="air_kondisi_tandon" value="Rusak" class="peer sr-only" onchange="toggleRusak('air_kondisi_tandon', 'air-tandon-rusak')">
-                                                <div class="px-3 py-2 text-center rounded-xl text-sm font-bold bg-slate-50 border-2 border-slate-200 text-slate-600 peer-checked:border-rose-500 peer-checked:bg-rose-50 peer-checked:text-rose-600 transition-all">Rusak</div>
-                                            </label>
-                                        </div>
-                                        <input type="text" id="air-tandon-rusak" name="air_tandon_rusak" placeholder="Deskripsikan kerusakan..." class="hidden mt-2 input-modern w-full px-3 py-2 rounded-lg text-xs border-amber-300 bg-amber-50">
-                                    </div>
-                                    <div>
-                                        <label class="label-modern mb-2">Apakah Tandon Pakai Otomatis?</label>
-                                        <div class="flex gap-2">
-                                            <label class="cursor-pointer">
-                                                <input type="radio" name="air_otomatis" value="Ada" class="peer sr-only" onchange="toggleSubOtomatis()">
-                                                <div class="px-4 py-2 rounded-xl text-sm font-bold bg-slate-50 border-2 border-slate-200 text-slate-600 peer-checked:border-brand-600 peer-checked:bg-brand-50 peer-checked:text-brand-700 transition-all">Ada</div>
-                                            </label>
-                                            <label class="cursor-pointer">
-                                                <input type="radio" name="air_otomatis" value="Tidak Ada" class="peer sr-only" onchange="toggleSubOtomatis()">
-                                                <div class="px-4 py-2 rounded-xl text-sm font-bold bg-slate-50 border-2 border-slate-200 text-slate-600 peer-checked:border-slate-400 peer-checked:bg-slate-100 peer-checked:text-slate-700 transition-all">Tidak Ada</div>
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div id="air-otomatis-fields" class="hidden">
-                                        <label class="label-modern mb-2">Kondisi Otomatis</label>
-                                        <div class="flex gap-2">
-                                            <label class="cursor-pointer flex-1">
-                                                <input type="radio" name="air_kondisi_otomatis" value="Baik" class="peer sr-only" onchange="toggleRusak('air_kondisi_otomatis', 'air-otomatis-rusak')">
-                                                <div class="px-3 py-2 text-center rounded-xl text-sm font-bold bg-slate-50 border-2 border-slate-200 text-slate-600 peer-checked:border-brand-600 peer-checked:bg-brand-50 peer-checked:text-brand-700 transition-all">Baik</div>
-                                            </label>
-                                            <label class="cursor-pointer flex-1">
-                                                <input type="radio" name="air_kondisi_otomatis" value="Rusak" class="peer sr-only" onchange="toggleRusak('air_kondisi_otomatis', 'air-otomatis-rusak')">
-                                                <div class="px-3 py-2 text-center rounded-xl text-sm font-bold bg-slate-50 border-2 border-slate-200 text-slate-600 peer-checked:border-rose-500 peer-checked:bg-rose-50 peer-checked:text-rose-600 transition-all">Rusak</div>
-                                            </label>
-                                        </div>
-                                        <input type="text" id="air-otomatis-rusak" name="air_otomatis_rusak" placeholder="Deskripsikan kerusakan..." class="hidden mt-2 input-modern w-full px-3 py-2 rounded-lg text-xs border-amber-300 bg-amber-50">
-                                    </div>
+                                <div id="air-otomatis-fields" class="hidden">
+                                    <label class="label-modern mb-2">Kondisi Otomatis</label>
+                                    <div class="flex gap-2"><label class="cursor-pointer w-24"><input type="radio" name="air_kondisi_otomatis" value="Normal" class="peer sr-only" onchange="toggleRusak('air_kondisi_otomatis', 'air-otomatis-rusak')"><div class="text-center px-3 py-2 rounded-lg text-xs font-bold border-2 border-slate-200 peer-checked:border-teal-500 peer-checked:bg-teal-50 peer-checked:text-teal-700">Normal</div></label><label class="cursor-pointer w-24"><input type="radio" name="air_kondisi_otomatis" value="Rusak" class="peer sr-only" onchange="toggleRusak('air_kondisi_otomatis', 'air-otomatis-rusak')"><div class="text-center px-3 py-2 rounded-lg text-xs font-bold border-2 border-slate-200 peer-checked:border-rose-500 peer-checked:bg-rose-50 peer-checked:text-rose-700">Rusak</div></label></div>
+                                    <input type="text" id="air-otomatis-rusak" name="air_otomatis_rusak" placeholder="Keterangan..." class="hidden mt-2 input-modern w-full px-3 py-2 rounded-lg text-xs border-rose-300">
                                 </div>
                             </div>
-                            <div class="border-t border-slate-100 pt-4">
-                                <div>
-                                    <label class="label-modern mb-2">Apakah pakai Mesin Pompa Air?</label>
-                                    <div class="flex gap-2">
-                                        <label class="cursor-pointer">
-                                            <input type="radio" name="air_pompa" value="Ada" class="peer sr-only" required onchange="toggleSubPompa()">
-                                            <div class="px-5 py-2.5 rounded-xl text-sm font-bold bg-slate-50 border-2 border-slate-200 text-slate-600 peer-checked:border-brand-600 peer-checked:bg-brand-50 peer-checked:text-brand-700 transition-all">Ada</div>
-                                        </label>
-                                        <label class="cursor-pointer">
-                                            <input type="radio" name="air_pompa" value="Tidak Ada" class="peer sr-only" required onchange="toggleSubPompa()">
-                                            <div class="px-5 py-2.5 rounded-xl text-sm font-bold bg-slate-50 border-2 border-slate-200 text-slate-600 peer-checked:border-slate-400 peer-checked:bg-slate-100 peer-checked:text-slate-700 transition-all">Tidak Ada</div>
-                                        </label>
-                                    </div>
-                                </div>
-                                <div id="air-pompa-fields" class="hidden pl-4 border-l-2 border-slate-200 mt-4">
-                                    <label class="label-modern mb-2">Kondisi Pompa Air</label>
-                                    <div class="flex gap-2">
-                                        <label class="cursor-pointer flex-1">
-                                            <input type="radio" name="air_kondisi_pompa" value="Baik" class="peer sr-only" onchange="toggleRusak('air_kondisi_pompa', 'air-pompa-rusak')">
-                                            <div class="px-3 py-2 text-center rounded-xl text-sm font-bold bg-slate-50 border-2 border-slate-200 text-slate-600 peer-checked:border-brand-600 peer-checked:bg-brand-50 peer-checked:text-brand-700 transition-all">Baik</div>
-                                        </label>
-                                        <label class="cursor-pointer flex-1">
-                                            <input type="radio" name="air_kondisi_pompa" value="Rusak" class="peer sr-only" onchange="toggleRusak('air_kondisi_pompa', 'air-pompa-rusak')">
-                                            <div class="px-3 py-2 text-center rounded-xl text-sm font-bold bg-slate-50 border-2 border-slate-200 text-slate-600 peer-checked:border-rose-500 peer-checked:bg-rose-50 peer-checked:text-rose-600 transition-all">Rusak</div>
-                                        </label>
-                                    </div>
-                                    <input type="text" id="air-pompa-rusak" name="air_pompa_rusak" placeholder="Deskripsikan kerusakan..." class="hidden mt-2 input-modern w-full px-3 py-2 rounded-lg text-xs border-amber-300 bg-amber-50">
-                                </div>
+                        </div>
+
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-4">
+                            <div>
+                                <label class="label-modern mb-2">Apakah ada Pompa Air?</label>
+                                <div class="flex gap-2"><label class="cursor-pointer w-24"><input type="radio" name="air_pompa" value="Ada" class="peer sr-only" required onchange="toggleSubPompa()"><div class="text-center px-3 py-2 rounded-lg text-xs font-bold border-2 border-slate-200 peer-checked:border-indigo-500 peer-checked:bg-indigo-50 peer-checked:text-indigo-700">Ada</div></label><label class="cursor-pointer w-24"><input type="radio" name="air_pompa" value="Tidak" class="peer sr-only" required onchange="toggleSubPompa()"><div class="text-center px-3 py-2 rounded-lg text-xs font-bold border-2 border-slate-200 peer-checked:border-slate-400 peer-checked:bg-slate-100 peer-checked:text-slate-600">Tidak</div></label></div>
+                            </div>
+                            <div id="air-pompa-fields" class="hidden border-t border-slate-200 pt-3">
+                                <label class="label-modern mb-2">Kondisi Pompa Air</label>
+                                <div class="flex gap-2"><label class="cursor-pointer w-24"><input type="radio" name="air_kondisi_pompa" value="Normal" class="peer sr-only" onchange="toggleRusak('air_kondisi_pompa', 'air-pompa-rusak')"><div class="text-center px-3 py-2 rounded-lg text-xs font-bold border-2 border-slate-200 peer-checked:border-teal-500 peer-checked:bg-teal-50 peer-checked:text-teal-700">Normal</div></label><label class="cursor-pointer w-24"><input type="radio" name="air_kondisi_pompa" value="Rusak" class="peer sr-only" onchange="toggleRusak('air_kondisi_pompa', 'air-pompa-rusak')"><div class="text-center px-3 py-2 rounded-lg text-xs font-bold border-2 border-slate-200 peer-checked:border-rose-500 peer-checked:bg-rose-50 peer-checked:text-rose-700">Rusak</div></label></div>
+                                <input type="text" id="air-pompa-rusak" name="air_pompa_rusak" placeholder="Keterangan..." class="hidden mt-2 input-modern w-full px-3 py-2 rounded-lg text-xs border-rose-300">
                             </div>
                         </div>
                     </div>
 
-                    <!-- Fasilitas Listrik -->
-                    <div class="utilitas-card">
-                        <div class="flex justify-between items-center mb-4 border-b-2 border-slate-100 pb-3">
-                            <h3 class="utilitas-card-title border-none p-0 m-0"><span class="material-symbols-rounded text-amber-500">bolt</span> 2. Fasilitas Listrik</h3>
+                    <div class="space-y-4 pt-6 border-t border-slate-200">
+                        <div class="flex justify-between items-center mb-2">
+                            <h3 class="font-bold text-slate-800 flex items-center gap-2"><span class="material-symbols-rounded text-amber-500">bolt</span> Pemakaian Listrik</h3>
                             <button type="button" onclick="addListrikMeter()" class="bg-amber-100 text-amber-700 hover:bg-amber-200 px-3 py-1.5 rounded-lg text-[10px] font-bold transition-colors flex items-center gap-1 uppercase tracking-widest shadow-sm"><span class="material-symbols-rounded text-[16px]">add</span> Tambah Meteran</button>
                         </div>
-                        <div id="listrik-meters-container" class="space-y-6">
-                            <div class="listrik-item relative bg-slate-50 p-4 rounded-xl border border-slate-200 shadow-sm" id="listrik-item-0">
-                                <h4 class="text-[10px] font-extrabold text-amber-600 uppercase tracking-widest mb-3 bg-amber-100 inline-block px-2 py-1 rounded">Meteran 1</h4>
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div><label class="label-modern">Nomor ID Pelanggan PLN</label><input type="text" id="u-listrik-id" name="listrik_id" list="history-listrik-id" autocomplete="off" required class="input-modern w-full px-4 py-3 rounded-xl text-sm font-mono"></div>
-                                    <div><label class="label-modern">Nama Pemilik ID Pelanggan</label><input type="text" id="u-listrik-nama" name="listrik_nama" list="history-listrik-nama" autocomplete="off" required class="input-modern w-full px-4 py-3 rounded-xl text-sm"></div>
-                                    <div class="md:col-span-2">
-                                        <label class="label-modern mb-2">Kategori ID Pelanggan</label>
-                                        <div class="flex flex-wrap gap-2">
-                                            <label class="cursor-pointer">
-                                                <input type="radio" name="listrik_kategori" value="Pra Bayar (Token)" class="peer sr-only" required>
-                                                <div class="px-5 py-2.5 rounded-xl text-sm font-bold bg-white border-2 border-slate-200 text-slate-600 peer-checked:border-amber-500 peer-checked:bg-amber-50 peer-checked:text-amber-700 transition-all">Pra Bayar (Token)</div>
-                                            </label>
-                                            <label class="cursor-pointer">
-                                                <input type="radio" name="listrik_kategori" value="Pasca Bayar" class="peer sr-only" required>
-                                                <div class="px-5 py-2.5 rounded-xl text-sm font-bold bg-white border-2 border-slate-200 text-slate-600 peer-checked:border-amber-500 peer-checked:bg-amber-50 peer-checked:text-amber-700 transition-all">Pasca Bayar</div>
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="md:col-span-2"><label class="label-modern">Angka di Meteran Saat Ini</label><input type="text" id="u-listrik-angka" name="listrik_angka" required class="input-modern w-full px-4 py-3 rounded-xl text-sm font-bold"></div>
+                        <div id="listrik-meters-container" class="space-y-6"></div>
+                    </div>
+                    
+                    <div class="space-y-4 pt-6 border-t border-slate-200">
+                        <h3 class="font-bold text-slate-800 flex items-center gap-2"><span class="material-symbols-rounded text-emerald-500">payments</span> Rincian IPL Mingguan</h3>
+                        <div class="bg-emerald-50/50 p-4 rounded-xl border border-emerald-100 space-y-4">
+                            <div>
+                                <label class="label-modern mb-2">Tagihan Kebersihan/Sampah (Minggu Ini)</label>
+                                <div class="flex gap-2"><label class="cursor-pointer w-24"><input type="radio" name="ipl_bersih" value="Ada" class="peer sr-only" required onchange="toggleIpl('ipl_bersih', 'ipl-bersih-fields')"><div class="text-center px-3 py-2 rounded-lg text-xs font-bold border-2 border-slate-200 peer-checked:border-emerald-500 peer-checked:bg-emerald-50 peer-checked:text-emerald-700">Ada</div></label><label class="cursor-pointer w-24"><input type="radio" name="ipl_bersih" value="Tidak Ada" class="peer sr-only" required onchange="toggleIpl('ipl_bersih', 'ipl-bersih-fields')"><div class="text-center px-3 py-2 rounded-lg text-xs font-bold border-2 border-slate-200 peer-checked:border-slate-400 peer-checked:bg-slate-100 peer-checked:text-slate-600">Tidak Ada</div></label></div>
+                            </div>
+                            <div id="ipl-bersih-fields" class="hidden grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div><label class="label-modern">Nominal Rp</label><input type="number" id="u-ipl-bersih-nom" name="ipl_bersih_nom" class="input-modern w-full px-4 py-3 rounded-xl font-bold text-sm text-emerald-700"></div>
+                                <div>
+                                    <label class="label-modern">Jadwal Pembayaran</label>
+                                    <select name="ipl_bersih_jadwal" class="input-modern w-full px-4 py-3 rounded-xl font-bold text-sm">
+                                        <option value="">-- Pilih --</option>
+                                        <option value="1 Kali Seminggu">1 Kali Seminggu</option>
+                                        <option value="1 Kali Sebulan">1 Kali Sebulan</option>
+                                        <option value="Tidak Ada IPL Kebersihan">Tidak Ada IPL Kebersihan</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="border-t border-emerald-200/50 pt-4">
+                                <label class="label-modern mb-2">Tagihan Keamanan/Preman (Minggu Ini)</label>
+                                <div class="flex gap-2"><label class="cursor-pointer w-24"><input type="radio" name="ipl_aman" value="Ada" class="peer sr-only" required onchange="toggleIpl('ipl_aman', 'ipl-aman-fields')"><div class="text-center px-3 py-2 rounded-lg text-xs font-bold border-2 border-slate-200 peer-checked:border-emerald-500 peer-checked:bg-emerald-50 peer-checked:text-emerald-700">Ada</div></label><label class="cursor-pointer w-24"><input type="radio" name="ipl_aman" value="Tidak Ada" class="peer sr-only" required onchange="toggleIpl('ipl_aman', 'ipl-aman-fields')"><div class="text-center px-3 py-2 rounded-lg text-xs font-bold border-2 border-slate-200 peer-checked:border-slate-400 peer-checked:bg-slate-100 peer-checked:text-slate-600">Tidak Ada</div></label></div>
+                            </div>
+                            <div id="ipl-aman-fields" class="hidden grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div><label class="label-modern">Nominal Rp</label><input type="number" id="u-ipl-aman-nom" name="ipl_aman_nom" class="input-modern w-full px-4 py-3 rounded-xl font-bold text-sm text-emerald-700"></div>
+                                <div>
+                                    <label class="label-modern">Jadwal Pembayaran</label>
+                                    <select name="ipl_aman_jadwal" class="input-modern w-full px-4 py-3 rounded-xl font-bold text-sm">
+                                        <option value="">-- Pilih --</option>
+                                        <option value="1 Kali Seminggu">1 Kali Seminggu</option>
+                                        <option value="1 Kali Sebulan">1 Kali Sebulan</option>
+                                        <option value="Tidak Ada IPL Keamanan">Tidak Ada IPL Keamanan</option>
+                                    </select>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Fasilitas IPL -->
-                    <div class="utilitas-card mb-0">
-                        <h3 class="utilitas-card-title"><span class="material-symbols-rounded text-emerald-500">payments</span> 3. Iuran Pemeliharaan Lingkungan (IPL)</h3>
-                        <div class="space-y-6">
-                            <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl">
-                                <h4 class="font-bold text-sm text-slate-800 mb-3">A. IPL Kebersihan</h4>
-                                <div class="flex gap-2 mb-4">
-                                    <label class="cursor-pointer">
-                                        <input type="radio" name="ipl_bersih" value="Ada" class="peer sr-only" required onchange="toggleIpl('ipl_bersih', 'ipl-bersih-fields')">
-                                        <div class="px-5 py-2 rounded-xl text-sm font-bold bg-white border-2 border-slate-200 text-slate-600 peer-checked:border-emerald-500 peer-checked:bg-emerald-50 peer-checked:text-emerald-700 transition-all">Ada</div>
-                                    </label>
-                                    <label class="cursor-pointer">
-                                        <input type="radio" name="ipl_bersih" value="Tidak Ada" class="peer sr-only" required onchange="toggleIpl('ipl_bersih', 'ipl-bersih-fields')">
-                                        <div class="px-5 py-2 rounded-xl text-sm font-bold bg-white border-2 border-slate-200 text-slate-600 peer-checked:border-slate-400 peer-checked:bg-slate-200 peer-checked:text-slate-700 transition-all">Tidak Ada</div>
-                                    </label>
-                                </div>
-                                <div id="ipl-bersih-fields" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-4 border-t border-slate-200 pt-4">
-                                    <div><label class="text-[10px] font-bold text-slate-500 uppercase mb-2 block">Nominal (Rp)</label><input type="number" id="u-ipl-bersih-nom" name="ipl_bersih_nom" placeholder="Cth: 50000" class="input-modern w-full px-3 py-2.5 rounded-lg text-sm"></div>
-                                    <div>
-                                        <label class="text-[10px] font-bold text-slate-500 uppercase mb-2 block">Jadwal Pembayaran</label>
-                                        <div class="flex flex-col gap-2">
-                                            <label class="cursor-pointer">
-                                                <input type="radio" name="ipl_bersih_jadwal" value="1 Kali Seminggu" class="peer sr-only">
-                                                <div class="px-3 py-2 text-center rounded-lg text-xs font-bold bg-white border-2 border-slate-200 text-slate-600 peer-checked:border-brand-600 peer-checked:bg-brand-50 peer-checked:text-brand-700 transition-all">1 Kali Seminggu</div>
-                                            </label>
-                                            <label class="cursor-pointer">
-                                                <input type="radio" name="ipl_bersih_jadwal" value="1 Kali Sebulan" class="peer sr-only">
-                                                <div class="px-3 py-2 text-center rounded-lg text-xs font-bold bg-white border-2 border-slate-200 text-slate-600 peer-checked:border-brand-600 peer-checked:bg-brand-50 peer-checked:text-brand-700 transition-all">1 Kali Sebulan</div>
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl">
-                                <h4 class="font-bold text-sm text-slate-800 mb-3">B. IPL Keamanan</h4>
-                                <div class="flex gap-2 mb-4">
-                                    <label class="cursor-pointer">
-                                        <input type="radio" name="ipl_aman" value="Ada" class="peer sr-only" required onchange="toggleIpl('ipl_aman', 'ipl-aman-fields')">
-                                        <div class="px-5 py-2 rounded-xl text-sm font-bold bg-white border-2 border-slate-200 text-slate-600 peer-checked:border-emerald-500 peer-checked:bg-emerald-50 peer-checked:text-emerald-700 transition-all">Ada</div>
-                                    </label>
-                                    <label class="cursor-pointer">
-                                        <input type="radio" name="ipl_aman" value="Tidak Ada" class="peer sr-only" required onchange="toggleIpl('ipl_aman', 'ipl-aman-fields')">
-                                        <div class="px-5 py-2 rounded-xl text-sm font-bold bg-white border-2 border-slate-200 text-slate-600 peer-checked:border-slate-400 peer-checked:bg-slate-200 peer-checked:text-slate-700 transition-all">Tidak Ada</div>
-                                    </label>
-                                </div>
-                                <div id="ipl-aman-fields" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-4 border-t border-slate-200 pt-4">
-                                    <div><label class="text-[10px] font-bold text-slate-500 uppercase mb-2 block">Nominal (Rp)</label><input type="number" id="u-ipl-aman-nom" name="ipl_aman_nom" placeholder="Cth: 100000" class="input-modern w-full px-3 py-2.5 rounded-lg text-sm"></div>
-                                    <div>
-                                        <label class="text-[10px] font-bold text-slate-500 uppercase mb-2 block">Jadwal Pembayaran</label>
-                                        <div class="flex flex-col gap-2">
-                                            <label class="cursor-pointer">
-                                                <input type="radio" name="ipl_aman_jadwal" value="1 Kali Seminggu" class="peer sr-only">
-                                                <div class="px-3 py-2 text-center rounded-lg text-xs font-bold bg-white border-2 border-slate-200 text-slate-600 peer-checked:border-brand-600 peer-checked:bg-brand-50 peer-checked:text-brand-700 transition-all">1 Kali Seminggu</div>
-                                            </label>
-                                            <label class="cursor-pointer">
-                                                <input type="radio" name="ipl_aman_jadwal" value="1 Kali Sebulan" class="peer sr-only">
-                                                <div class="px-3 py-2 text-center rounded-lg text-xs font-bold bg-white border-2 border-slate-200 text-slate-600 peer-checked:border-brand-600 peer-checked:bg-brand-50 peer-checked:text-brand-700 transition-all">1 Kali Sebulan</div>
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mt-8 pt-6 border-t border-slate-200 sticky bottom-0 bg-white py-4 z-20">
+                    <div class="mt-8 pt-6 border-t border-slate-200 sticky bottom-0 bg-white pb-4 z-20">
                         <button type="submit" id="btn-submit-utilitas" class="w-full bg-slate-900 hover:bg-black text-white font-bold py-4 rounded-2xl shadow-float flex items-center justify-center gap-2 transition-transform transform active:scale-[0.98] text-base">
                             <span class="material-symbols-rounded icon-fill">cloud_upload</span> <span>Simpan Data Utilitas</span>
                         </button>
@@ -1090,31 +970,31 @@
         </div>
     </div>
 
-    <!-- MODAL: Detail Utilitas -->
+    <!-- MODAL: Detail Utilitas (Untuk View dan Edit) -->
     <div id="modal-detail-utilitas" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[500] flex items-center justify-center p-4">
-        <div class="max-w-md w-full bg-surface rounded-3xl shadow-float overflow-hidden animate-modal flex flex-col border border-slate-200">
-            <div class="bg-surface border-b border-slate-100 p-5 flex justify-between items-center shrink-0">
-                <h3 class="font-bold text-slate-900 text-lg flex items-center gap-2"><span class="material-symbols-rounded text-brand-600">info</span> Detail Laporan</h3>
+        <div class="max-w-md w-full bg-surface rounded-3xl shadow-float overflow-hidden animate-modal flex flex-col max-h-[85vh] border border-slate-200">
+            <div class="bg-surface border-b border-slate-100 p-5 flex justify-between items-center shrink-0 z-10 sticky top-0">
+                <h3 class="font-bold text-slate-900 text-lg flex items-center gap-2"><span class="material-symbols-rounded icon-fill text-brand-600">analytics</span> Rincian Utilitas</h3>
                 <button onclick="closeUtilitasDetailModal()" class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 flex items-center justify-center transition-colors"><span class="material-symbols-rounded text-sm">close</span></button>
             </div>
-            <div class="p-6 overflow-y-auto custom-scroll max-h-[70vh]">
-                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 mb-4 shadow-inner">
-                    <p class="text-[10px] text-slate-500 uppercase font-bold tracking-widest mb-1">Area Staging</p>
-                    <p class="text-sm font-extrabold text-slate-800 mb-2" id="detail-stagging">-</p>
-                    <div class="flex justify-between items-center border-t border-slate-200 pt-2 mt-2">
-                        <div>
-                            <p class="text-[9px] text-slate-400 uppercase font-bold">Penanggung Jawab</p>
-                            <p class="text-xs font-bold text-slate-700" id="detail-pic">-</p>
-                        </div>
-                        <div class="text-right">
-                            <p class="text-[9px] text-slate-400 uppercase font-bold">Periode Laporan</p>
-                            <p class="text-xs font-bold text-brand-600 bg-brand-50 px-2 py-0.5 rounded border border-brand-100" id="detail-periode">-</p>
-                        </div>
+            
+            <div class="p-5 overflow-y-auto custom-scroll flex-1 bg-white">
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 mb-4 flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center shrink-0"><span class="material-symbols-rounded text-slate-500">storefront</span></div>
+                    <div class="overflow-hidden">
+                        <p id="detail-stagging" class="font-extrabold text-sm text-slate-800 truncate">-</p>
+                        <p id="detail-pic" class="text-xs text-slate-500 truncate">-</p>
                     </div>
                 </div>
-                <div id="detail-content" class="text-sm text-slate-700 bg-white p-4 rounded-xl border border-slate-200"></div>
+                
+                <div class="mb-5 flex justify-center">
+                    <span id="detail-periode" class="bg-brand-50 text-brand-700 text-xs font-bold px-3 py-1 rounded-full border border-brand-200">Periode</span>
+                </div>
+                
+                <div id="detail-content" class="space-y-2"></div>
             </div>
-            <div class="p-4 border-t border-slate-100 bg-slate-50 flex justify-end">
+            <div class="p-4 border-t border-slate-100 bg-slate-50 flex justify-end gap-2" id="detail-modal-footer">
+                <button id="btn-edit-detail" class="hidden px-5 py-2.5 rounded-xl font-bold text-sm text-white bg-brand-600 hover:bg-brand-700 transition-colors shadow-sm items-center gap-2"><span class="material-symbols-rounded text-[18px]">edit</span> Edit Data</button>
                 <button onclick="closeUtilitasDetailModal()" class="px-5 py-2.5 rounded-xl font-bold text-sm text-slate-600 bg-white border border-slate-200 hover:bg-slate-100 transition-colors shadow-sm">Tutup</button>
             </div>
         </div>
@@ -1569,11 +1449,153 @@
             }
             
             document.getElementById('detail-content').innerHTML = content;
+            
+            const btnEdit = document.getElementById('btn-edit-detail');
+            if (btnEdit) {
+                if (currentUser.role === 'admin' || currentUser.stagging_name === data.stagging_name) {
+                    btnEdit.classList.remove('hidden');
+                    btnEdit.classList.add('flex');
+                    btnEdit.onclick = () => editUtilitasData(id);
+                } else {
+                    btnEdit.classList.add('hidden');
+                    btnEdit.classList.remove('flex');
+                }
+            }
+
             document.getElementById('modal-detail-utilitas').classList.remove('hidden');
         }
 
         function closeUtilitasDetailModal() {
             document.getElementById('modal-detail-utilitas').classList.add('hidden');
+        }
+
+        window.editUtilitasData = function(id) {
+            const data = globalUtilData.find(d => d.id === id);
+            if (!data) return;
+
+            closeUtilitasDetailModal();
+            
+            document.getElementById('utilitas-form').reset();
+            document.getElementById('u-edit-id').value = data.id;
+            
+            if (currentUser.role === 'admin') {
+                document.getElementById('admin-util-selector-container').classList.remove('hidden');
+                const select = document.getElementById('admin-util-target-select');
+                if(adminTargetUsers.length === 0) {
+                    loadAdminUtilTargets().then(() => {
+                        const u = adminTargetUsers.find(x => x.stagging_name === data.stagging_name);
+                        if(u) select.value = u.id;
+                        updateAdminUtilTargetInfo();
+                    });
+                } else {
+                    const u = adminTargetUsers.find(x => x.stagging_name === data.stagging_name);
+                    if(u) select.value = u.id;
+                    updateAdminUtilTargetInfo();
+                }
+            } else {
+                document.getElementById('admin-util-selector-container').classList.add('hidden');
+            }
+
+            document.getElementById('util-form-stagging').textContent = data.stagging_name;
+            document.getElementById('util-form-pic').textContent = data.pic;
+            
+            document.getElementById('u-periode-bulan').value = data.bulan;
+            document.getElementById('u-periode-tahun').value = data.tahun;
+            document.getElementById('u-periode-minggu').value = data.minggu;
+            
+            const shortMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agt', 'Sep', 'Okt', 'Nov', 'Des'];
+            document.getElementById('u-periode-tanggal-display').value = data.date ? data.date.split(',')[0] : '';
+            document.getElementById('u-periode-bulan-display').value = shortMonths[data.bulan - 1] || '';
+            document.getElementById('u-periode-tahun-display').value = data.tahun;
+            document.getElementById('u-periode-minggu-display').value = `Minggu ${data.minggu}`;
+
+            const d = data.data;
+            
+            if(d.air_sumber) { const el = document.querySelector(`input[name="air_sumber"][value="${d.air_sumber}"]`); if(el) el.checked = true; }
+            toggleAirFields();
+            document.getElementById('u-air-id').value = d.air_id || '';
+            document.getElementById('u-air-nama').value = d.air_nama || '';
+            if (d.air_mekanisme) {
+                const mekOpts = Array.from(document.getElementById('u-air-mekanisme').options).map(o => o.value);
+                if(mekOpts.includes(d.air_mekanisme)) { document.getElementById('u-air-mekanisme').value = d.air_mekanisme; } 
+                else { document.getElementById('u-air-mekanisme').value = 'Lainnya'; document.getElementById('u-air-mekanisme-lain').value = d.air_mekanisme; }
+            }
+            toggleAirMekanisme();
+            document.getElementById('u-air-angka').value = d.air_angka || '';
+            
+            if(d.air_kondisi_meteran) { const el = document.querySelector(`input[name="air_kondisi_meteran"][value="${d.air_kondisi_meteran}"]`); if(el) el.checked = true; }
+            document.getElementById('air-meteran-rusak').value = d.air_meteran_rusak || ''; toggleRusak('air_kondisi_meteran', 'air-meteran-rusak');
+            
+            if(d.air_kondisi_pipa) { const el = document.querySelector(`input[name="air_kondisi_pipa"][value="${d.air_kondisi_pipa}"]`); if(el) el.checked = true; }
+            document.getElementById('air-pipa-rusak').value = d.air_pipa_rusak || ''; toggleRusak('air_kondisi_pipa', 'air-pipa-rusak');
+
+            if(d.air_tandon) { const el = document.querySelector(`input[name="air_tandon"][value="${d.air_tandon}"]`); if(el) el.checked = true; }
+            toggleSubTandon();
+            if(d.air_kondisi_tandon) { const el = document.querySelector(`input[name="air_kondisi_tandon"][value="${d.air_kondisi_tandon}"]`); if(el) el.checked = true; }
+            document.getElementById('air-tandon-rusak').value = d.air_tandon_rusak || ''; toggleRusak('air_kondisi_tandon', 'air-tandon-rusak');
+
+            if(d.air_otomatis) { const el = document.querySelector(`input[name="air_otomatis"][value="${d.air_otomatis}"]`); if(el) el.checked = true; }
+            toggleSubOtomatis();
+            if(d.air_kondisi_otomatis) { const el = document.querySelector(`input[name="air_kondisi_otomatis"][value="${d.air_kondisi_otomatis}"]`); if(el) el.checked = true; }
+            document.getElementById('air-otomatis-rusak').value = d.air_otomatis_rusak || ''; toggleRusak('air_kondisi_otomatis', 'air-otomatis-rusak');
+
+            if(d.air_pompa) { const el = document.querySelector(`input[name="air_pompa"][value="${d.air_pompa}"]`); if(el) el.checked = true; }
+            toggleSubPompa();
+            if(d.air_kondisi_pompa) { const el = document.querySelector(`input[name="air_kondisi_pompa"][value="${d.air_kondisi_pompa}"]`); if(el) el.checked = true; }
+            document.getElementById('air-pompa-rusak').value = d.air_pompa_rusak || ''; toggleRusak('air_kondisi_pompa', 'air-pompa-rusak');
+
+            document.getElementById('listrik-meters-container').innerHTML = `
+                <div class="listrik-item relative bg-slate-50 p-4 rounded-xl border border-slate-200 shadow-sm" id="listrik-item-0">
+                    <h4 class="text-[10px] font-extrabold text-amber-600 uppercase tracking-widest mb-3 bg-amber-100 inline-block px-2 py-1 rounded">Meteran 1</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div><label class="label-modern">Nomor ID Pelanggan PLN</label><input type="text" id="u-listrik-id" name="listrik_id" list="history-listrik-id" autocomplete="off" required class="input-modern w-full px-4 py-3 rounded-xl text-sm font-mono"></div>
+                        <div><label class="label-modern">Nama Pemilik ID Pelanggan</label><input type="text" id="u-listrik-nama" name="listrik_nama" list="history-listrik-nama" autocomplete="off" required class="input-modern w-full px-4 py-3 rounded-xl text-sm"></div>
+                        <div class="md:col-span-2">
+                            <label class="label-modern mb-2">Kategori ID Pelanggan</label>
+                            <div class="flex flex-wrap gap-2">
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="listrik_kategori" value="Pra Bayar (Token)" class="peer sr-only" required>
+                                    <div class="px-5 py-2.5 rounded-xl text-sm font-bold bg-white border-2 border-slate-200 text-slate-600 peer-checked:border-amber-500 peer-checked:bg-amber-50 peer-checked:text-amber-700 transition-all">Pra Bayar (Token)</div>
+                                </label>
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="listrik_kategori" value="Pasca Bayar" class="peer sr-only" required>
+                                    <div class="px-5 py-2.5 rounded-xl text-sm font-bold bg-white border-2 border-slate-200 text-slate-600 peer-checked:border-amber-500 peer-checked:bg-amber-50 peer-checked:text-amber-700 transition-all">Pasca Bayar</div>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="md:col-span-2"><label class="label-modern">Angka di Meteran Saat Ini</label><input type="text" id="u-listrik-angka" name="listrik_angka" required class="input-modern w-full px-4 py-3 rounded-xl text-sm font-bold"></div>
+                    </div>
+                </div>
+            `;
+            listrikMeterCount = 1;
+            
+            let meters = extractListrikMeters(d);
+            meters.forEach((m, i) => {
+                if (i > 0) addListrikMeter();
+                const idName = i === 0 ? 'listrik_id' : `listrik_id_${i}`;
+                const namaName = i === 0 ? 'listrik_nama' : `listrik_nama_${i}`;
+                const angkaName = i === 0 ? 'listrik_angka' : `listrik_angka_${i}`;
+                const katName = i === 0 ? 'listrik_kategori' : `listrik_kategori_${i}`;
+                
+                document.querySelector(`input[name="${idName}"]`).value = m.id === 'Meteran Utama' || m.id.startsWith('Meteran Tambahan') ? '' : m.id;
+                document.querySelector(`input[name="${namaName}"]`).value = m.nama === '-' ? '' : m.nama;
+                document.querySelector(`input[name="${angkaName}"]`).value = m.angka || '';
+                const catEl = document.querySelector(`input[name="${katName}"][value="${m.kategori}"]`);
+                if(catEl) catEl.checked = true;
+            });
+
+            if(d.ipl_bersih) { const el = document.querySelector(`input[name="ipl_bersih"][value="${d.ipl_bersih}"]`); if(el) el.checked = true; }
+            toggleIpl('ipl_bersih', 'ipl-bersih-fields');
+            document.getElementById('u-ipl-bersih-nom').value = d.ipl_bersih_nom || '';
+            if(d.ipl_bersih_jadwal) { const el = document.querySelector(`input[name="ipl_bersih_jadwal"][value="${d.ipl_bersih_jadwal}"]`); if(el) el.checked = true; }
+
+            if(d.ipl_aman) { const el = document.querySelector(`input[name="ipl_aman"][value="${d.ipl_aman}"]`); if(el) el.checked = true; }
+            toggleIpl('ipl_aman', 'ipl-aman-fields');
+            document.getElementById('u-ipl-aman-nom').value = d.ipl_aman_nom || '';
+            if(d.ipl_aman_jadwal) { const el = document.querySelector(`input[name="ipl_aman_jadwal"][value="${d.ipl_aman_jadwal}"]`); if(el) el.checked = true; }
+
+            document.getElementById('btn-submit-utilitas').innerHTML = '<span class="material-symbols-rounded icon-fill">edit_square</span> <span>Perbarui Data Utilitas</span>';
+            document.getElementById('modal-utilitas-form').classList.remove('hidden');
         }
 
         function switchUtilView(view) {
@@ -1666,6 +1688,34 @@
                 document.getElementById('util-form-pic').textContent = uPic;
                 
                 document.getElementById('utilitas-form').reset();
+                if(document.getElementById('u-edit-id')) document.getElementById('u-edit-id').value = '';
+                document.getElementById('btn-submit-utilitas').innerHTML = '<span class="material-symbols-rounded icon-fill">cloud_upload</span> <span>Simpan Data Utilitas</span>';
+                
+                document.getElementById('listrik-meters-container').innerHTML = `
+                    <div class="listrik-item relative bg-slate-50 p-4 rounded-xl border border-slate-200 shadow-sm" id="listrik-item-0">
+                        <h4 class="text-[10px] font-extrabold text-amber-600 uppercase tracking-widest mb-3 bg-amber-100 inline-block px-2 py-1 rounded">Meteran 1</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div><label class="label-modern">Nomor ID Pelanggan PLN</label><input type="text" id="u-listrik-id" name="listrik_id" list="history-listrik-id" autocomplete="off" required class="input-modern w-full px-4 py-3 rounded-xl text-sm font-mono"></div>
+                            <div><label class="label-modern">Nama Pemilik ID Pelanggan</label><input type="text" id="u-listrik-nama" name="listrik_nama" list="history-listrik-nama" autocomplete="off" required class="input-modern w-full px-4 py-3 rounded-xl text-sm"></div>
+                            <div class="md:col-span-2">
+                                <label class="label-modern mb-2">Kategori ID Pelanggan</label>
+                                <div class="flex flex-wrap gap-2">
+                                    <label class="cursor-pointer">
+                                        <input type="radio" name="listrik_kategori" value="Pra Bayar (Token)" class="peer sr-only" required>
+                                        <div class="px-5 py-2.5 rounded-xl text-sm font-bold bg-white border-2 border-slate-200 text-slate-600 peer-checked:border-amber-500 peer-checked:bg-amber-50 peer-checked:text-amber-700 transition-all">Pra Bayar (Token)</div>
+                                    </label>
+                                    <label class="cursor-pointer">
+                                        <input type="radio" name="listrik_kategori" value="Pasca Bayar" class="peer sr-only" required>
+                                        <div class="px-5 py-2.5 rounded-xl text-sm font-bold bg-white border-2 border-slate-200 text-slate-600 peer-checked:border-amber-500 peer-checked:bg-amber-50 peer-checked:text-amber-700 transition-all">Pasca Bayar</div>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="md:col-span-2"><label class="label-modern">Angka di Meteran Saat Ini</label><input type="text" id="u-listrik-angka" name="listrik_angka" required class="input-modern w-full px-4 py-3 rounded-xl text-sm font-bold"></div>
+                        </div>
+                    </div>
+                `;
+                listrikMeterCount = 1;
+
                 if(document.getElementById('admin-util-date-override')) document.getElementById('admin-util-date-override').value = '';
                 
                 document.getElementById('u-periode-tanggal-display').value = `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth()+1).padStart(2, '0')}/${now.getFullYear()}`;
@@ -1805,6 +1855,9 @@
             const formData = new FormData(e.target);
             const dataObj = Object.fromEntries(formData.entries());
             
+            const editId = dataObj.edit_id;
+            delete dataObj.edit_id;
+
             if(dataObj.air_mekanisme === 'Lainnya') dataObj.air_mekanisme = dataObj.air_mekanisme_lain;
 
             let d = new Date();
@@ -1856,7 +1909,7 @@
                     .eq('minggu', dataObj.minggu)
                     .maybeSingle();
 
-                if (existing) {
+                if (existing && existing.id !== editId) {
                     if (currentUser.role === 'admin') {
                         payload.id = existing.id; 
                         await supabaseClient.from('utilitas_data').update(payload).eq('id', existing.id);
@@ -1865,6 +1918,10 @@
                         Island.show(`Gagal! Minggu ini sudah diisi oleh PIC: ${existing.pic}`, 'error');
                         return;
                     }
+                } else if (editId) {
+                    payload.id = editId;
+                    await supabaseClient.from('utilitas_data').update(payload).eq('id', editId);
+                    Island.show('Revisi Data Berhasil Disimpan.', 'success');
                 } else {
                     await supabaseClient.from('utilitas_data').insert([payload]);
                     Island.show('Data Mingguan Berhasil Disimpan.', 'success');
