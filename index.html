@@ -994,22 +994,22 @@
                             <div class="listrik-item relative bg-slate-50 p-4 rounded-xl border border-slate-200 shadow-sm" id="listrik-item-0">
                                 <h4 class="text-[10px] font-extrabold text-amber-600 uppercase tracking-widest mb-3 bg-amber-100 inline-block px-2 py-1 rounded">Meteran 1</h4>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div><label class="label-modern">Nomor ID Pelanggan PLN</label><input type="text" id="u-listrik-id-0" name="listrik_id_0" required class="input-modern w-full px-4 py-3 rounded-xl text-sm font-mono"></div>
-                                    <div><label class="label-modern">Nama Pemilik ID Pelanggan</label><input type="text" id="u-listrik-nama-0" name="listrik_nama_0" required class="input-modern w-full px-4 py-3 rounded-xl text-sm"></div>
+                                    <div><label class="label-modern">Nomor ID Pelanggan PLN</label><input type="text" id="u-listrik-id" name="listrik_id" list="history-listrik-id" autocomplete="off" required class="input-modern w-full px-4 py-3 rounded-xl text-sm font-mono"></div>
+                                    <div><label class="label-modern">Nama Pemilik ID Pelanggan</label><input type="text" id="u-listrik-nama" name="listrik_nama" list="history-listrik-nama" autocomplete="off" required class="input-modern w-full px-4 py-3 rounded-xl text-sm"></div>
                                     <div class="md:col-span-2">
                                         <label class="label-modern mb-2">Kategori ID Pelanggan</label>
                                         <div class="flex flex-wrap gap-2">
                                             <label class="cursor-pointer">
-                                                <input type="radio" name="listrik_kategori_0" value="Pra Bayar (Token)" class="peer sr-only" required>
+                                                <input type="radio" name="listrik_kategori" value="Pra Bayar (Token)" class="peer sr-only" required>
                                                 <div class="px-5 py-2.5 rounded-xl text-sm font-bold bg-white border-2 border-slate-200 text-slate-600 peer-checked:border-amber-500 peer-checked:bg-amber-50 peer-checked:text-amber-700 transition-all">Pra Bayar (Token)</div>
                                             </label>
                                             <label class="cursor-pointer">
-                                                <input type="radio" name="listrik_kategori_0" value="Pasca Bayar" class="peer sr-only" required>
+                                                <input type="radio" name="listrik_kategori" value="Pasca Bayar" class="peer sr-only" required>
                                                 <div class="px-5 py-2.5 rounded-xl text-sm font-bold bg-white border-2 border-slate-200 text-slate-600 peer-checked:border-amber-500 peer-checked:bg-amber-50 peer-checked:text-amber-700 transition-all">Pasca Bayar</div>
                                             </label>
                                         </div>
                                     </div>
-                                    <div class="md:col-span-2"><label class="label-modern">Angka di Meteran Saat Ini</label><input type="text" id="u-listrik-angka-0" name="listrik_angka_0" required class="input-modern w-full px-4 py-3 rounded-xl text-sm font-bold"></div>
+                                    <div class="md:col-span-2"><label class="label-modern">Angka di Meteran Saat Ini</label><input type="text" id="u-listrik-angka" name="listrik_angka" required class="input-modern w-full px-4 py-3 rounded-xl text-sm font-bold"></div>
                                 </div>
                             </div>
                         </div>
@@ -1462,6 +1462,32 @@
             return { bulan: month, tahun: year, minggu: week, rangeStr: rangeStr };
         }
 
+        // Fungsi Helper untuk menarik semua data Listrik dalam bentuk Array dari data JSON
+        function extractListrikMeters(d) {
+            let meters = [];
+            // Meteran Utama (Nomor ID Pelanggan pertama)
+            if (d.listrik_id || d.listrik_id_0 || d.listrik_angka || d.listrik_angka_0) {
+                meters.push({ 
+                    id: d.listrik_id || d.listrik_id_0 || 'Meteran Utama', 
+                    nama: d.listrik_nama || d.listrik_nama_0 || '-',
+                    kategori: d.listrik_kategori || d.listrik_kategori_0 || '-', 
+                    angka: parseSafeNumber(d.listrik_angka || d.listrik_angka_0) 
+                });
+            }
+            // Meteran Tambahan 1, 2, 3 dst (listrik_id_1, listrik_id_2, dst)
+            for (let i = 1; i <= 20; i++) {
+                if (d[`listrik_id_${i}`] || d[`listrik_angka_${i}`]) {
+                    meters.push({ 
+                        id: d[`listrik_id_${i}`] || `Meteran Tambahan ${i}`, 
+                        nama: d[`listrik_nama_${i}`] || '-',
+                        kategori: d[`listrik_kategori_${i}`] || '-', 
+                        angka: parseSafeNumber(d[`listrik_angka_${i}`]) 
+                    });
+                }
+            }
+            return meters;
+        }
+
         function showUtilitasDetail(id) {
             const data = globalUtilData.find(d => d.id === id);
             if (!data) return;
@@ -1501,7 +1527,7 @@
             };
 
             const renderListrik = () => {
-                let cmArr = d.listrik_meters || [{id: d.listrik_id, nama: d.listrik_nama, kategori: d.listrik_kategori, angka: d.listrik_angka}];
+                let cmArr = d.listrik_meters || extractListrikMeters(d);
                 let h = `<div class="mb-4"><h4 class="font-bold text-sm text-amber-500 border-b border-amber-100 pb-1 mb-2 flex items-center gap-1"><span class="material-symbols-rounded text-[16px]">bolt</span> Informasi Listrik (${cmArr.length} Meteran)</h4>`;
                 cmArr.forEach((m, i) => {
                     h += `<div class="bg-amber-50 p-3 rounded-xl mb-2 border border-amber-100 shadow-sm">
@@ -1960,12 +1986,26 @@
                             const currentIndex = userAllSubs.findIndex(s => s.id === submit.id);
                             let prevSubmit = currentIndex > 0 ? userAllSubs[currentIndex - 1] : null;
 
-                            if (prevSubmit) {
+                            if (currentUtilView === 'listrik') {
+                                let currMeters = extractListrikMeters(submit.data);
+                                let prevMeters = prevSubmit ? extractListrikMeters(prevSubmit.data) : [];
+                                currMeters.forEach(cm => {
+                                    let pm = prevMeters.find(meter => meter.id === cm.id);
+                                    if (pm) {
+                                        // PRA BAYAR (Token): Angka setiap minggu BERKURANG. Pemakaian = Minggu Lalu - Minggu Ini
+                                        if (cm.kategori === 'Pra Bayar (Token)') {
+                                            if (pm.angka >= cm.angka) totalUsage += (pm.angka - cm.angka);
+                                        } 
+                                        // PASCA BAYAR: Angka setiap minggu BERTAMBAH/NAIK. Pemakaian = Minggu Ini - Minggu Lalu
+                                        else {
+                                            if (cm.angka >= pm.angka) totalUsage += (cm.angka - pm.angka);
+                                        }
+                                    }
+                                });
+                            } else {
                                 let currVal = parseSafeNumber(submit.data[`${currentUtilView}_angka`]);
-                                let prevVal = parseSafeNumber(prevSubmit.data[`${currentUtilView}_angka`]);
-                                if (currentUtilView === 'listrik' && submit.data.listrik_kategori === 'Pra Bayar (Token)') {
-                                    if (prevVal >= currVal) totalUsage += (prevVal - currVal);
-                                } else {
+                                let prevVal = prevSubmit ? parseSafeNumber(prevSubmit.data[`${currentUtilView}_angka`]) : 0;
+                                if (prevSubmit) {
                                     if (currVal >= prevVal) totalUsage += (currVal - prevVal);
                                 }
                             }
@@ -2026,10 +2066,13 @@
                         `;
 
                         const listrikHtml = `
-                            <div class="grid grid-cols-2 gap-x-2 gap-y-1 text-[10px]">
-                                <div class="text-slate-500 font-bold">ID PLN</div><div class="font-semibold break-all">${d.listrik_id || '-'}</div>
-                                <div class="text-slate-500 font-bold">Kategori</div><div class="font-semibold">${d.listrik_kategori || '-'}</div>
-                                <div class="text-slate-500 font-bold">Angka</div><div class="text-amber-500 font-bold">${parseSafeNumber(d.listrik_angka).toLocaleString('id-ID')}</div>
+                            <div class="flex flex-col gap-2 text-[10px]">
+                                ${extractListrikMeters(d).map((m, idx) => `
+                                    <div class="bg-amber-50 p-1.5 rounded border border-amber-100">
+                                        <div class="font-semibold break-all text-amber-700">${m.id || '-'} <span class="text-[9px] font-medium text-amber-600 opacity-80">(${m.kategori})</span></div>
+                                        <div class="text-amber-600 font-extrabold text-xs mt-0.5">Mtr: ${m.angka.toLocaleString('id-ID')}</div>
+                                    </div>
+                                `).join('')}
                             </div>
                         `;
 
@@ -2099,43 +2142,60 @@
                                 </td>`;
                                 
                             } else if(currentUtilView === 'listrik') {
-                                let currListrik = parseSafeNumber(d.listrik_angka);
+                                let currMeters = extractListrikMeters(d);
+                                let prevMeters = prevSubmit ? extractListrikMeters(prevSubmit.data) : [];
+                                
                                 let pemakaian = null;
                                 let avg = null;
                                 let isTopUp = false;
                                 
                                 if (prevSubmit) {
-                                    let lastListrik = parseSafeNumber(prevSubmit.data.listrik_angka);
-                                    if (d.listrik_kategori === 'Pra Bayar (Token)') {
-                                        if (currListrik > lastListrik) {
-                                            isTopUp = true;
-                                        } else {
-                                            pemakaian = lastListrik - currListrik;
-                                            avg = pemakaian / diffDays;
-                                            aggregatedTrend[m-1] += pemakaian;
+                                    let hasDiff = false;
+                                    let tempPemakaian = 0;
+                                    // Menghitung selisih antar ID dan dijumlahkan untuk semua meteran di Staging Area ini
+                                    currMeters.forEach(cm => {
+                                        let pm = prevMeters.find(m => m.id === cm.id);
+                                        if (pm) {
+                                            // PRA BAYAR (Token): Angka pasti selalu berkurang
+                                            if (cm.kategori === 'Pra Bayar (Token)') {
+                                                if (pm.angka >= cm.angka) {
+                                                    tempPemakaian += (pm.angka - cm.angka); // Hitung selisih Token
+                                                    hasDiff = true;
+                                                } else {
+                                                    isTopUp = true; // Jika angka minggu ini lebih besar, berarti token baru diisi
+                                                }
+                                            } 
+                                            // PASCA BAYAR: Angka pasti selalu naik
+                                            else {
+                                                if (cm.angka >= pm.angka) {
+                                                    tempPemakaian += (cm.angka - pm.angka); // Hitung selisih Pasca
+                                                    hasDiff = true;
+                                                }
+                                            }
                                         }
-                                    } else {
-                                        if (currListrik >= lastListrik) {
-                                            pemakaian = currListrik - lastListrik;
-                                            avg = pemakaian / diffDays;
-                                            aggregatedTrend[m-1] += pemakaian;
-                                        }
+                                    });
+                                    if (hasDiff) {
+                                        pemakaian = tempPemakaian; // Total pemakaian semua meteran pada Staging (SS) ini
+                                        avg = pemakaian / diffDays;
+                                        aggregatedTrend[m-1] += pemakaian;
                                     }
                                 }
                                 
                                 let diffHtml = '';
-                                if (isTopUp) {
+                                if (isTopUp && pemakaian === null) {
                                     diffHtml = `<strong class="text-emerald-600 text-[10px] block mb-0.5 mt-1 bg-emerald-50 rounded border border-emerald-200 uppercase tracking-widest" title="Token Bertambah">Isi Token</strong>`;
                                 } else if (pemakaian !== null) {
                                     diffHtml = `<strong class="text-amber-500 text-[14px] block mb-0.5" title="${diffDays.toFixed(0)} Hari">+${pemakaian.toLocaleString('id-ID')} <span class="text-[9px] text-slate-400 font-semibold block leading-none">(${avg.toLocaleString('id-ID', {maximumFractionDigits:1})}/hr)</span></strong>`;
                                 } else {
-                                    diffHtml = `<strong class="text-slate-400 text-[10px] uppercase tracking-widest block mb-0.5 mt-1">Start</strong>`;
+                                    diffHtml = `<strong class="text-slate-400 text-[10px] uppercase tracking-widest block mb-0.5 mt-1">Start / Reset</strong>`;
                                 }
+                                
+                                let meterTexts = currMeters.map((cm, idx) => `<span class="text-[9px] text-slate-400 block leading-tight font-mono mt-0.5" title="${cm.id}">${currMeters.length > 1 ? 'M'+(idx+1) : 'Mtr'}: ${cm.angka.toLocaleString('id-ID')}</span>`).join('');
                                 
                                 rowHtml += `<td class="p-2 border-r border-slate-50 text-center relative hover:bg-amber-50/50 transition-colors cursor-pointer" ${cellClick}>
                                     ${warningHtml}
                                     ${diffHtml}
-                                    <span class="text-[9px] text-slate-400 block leading-tight font-mono mt-0.5">Mtr: ${currListrik.toLocaleString('id-ID')}</span>
+                                    <div class="mt-1">${meterTexts}</div>
                                 </td>`;
                                 
                             } else {
@@ -2193,12 +2253,26 @@
                                 if (parseInt(submit.tahun) === selTahun && idx > 0) {
                                     let prevSubmit = userAllSubs[idx - 1];
                                     let bIdx = parseInt(submit.bulan) - 1;
-                                    let curr = parseSafeNumber(submit.data[`${currentUtilView}_angka`]);
-                                    let prev = parseSafeNumber(prevSubmit.data[`${currentUtilView}_angka`]);
                                     
-                                    if (currentUtilView === 'listrik' && submit.data.listrik_kategori === 'Pra Bayar (Token)') {
-                                        if (prev >= curr) finalTrendData[bIdx] += (prev - curr);
+                                    if (currentUtilView === 'listrik') {
+                                        let currMeters = extractListrikMeters(submit.data);
+                                        let prevMeters = extractListrikMeters(prevSubmit.data);
+                                        currMeters.forEach(cm => {
+                                            let pm = prevMeters.find(m => m.id === cm.id);
+                                            if (pm) {
+                                                // PRA BAYAR (Token): Pemakaian = Minggu Lalu - Minggu Ini
+                                                if (cm.kategori === 'Pra Bayar (Token)') {
+                                                    if (pm.angka >= cm.angka) finalTrendData[bIdx] += (pm.angka - cm.angka);
+                                                } 
+                                                // PASCA BAYAR: Pemakaian = Minggu Ini - Minggu Lalu
+                                                else {
+                                                    if (cm.angka >= pm.angka) finalTrendData[bIdx] += (cm.angka - pm.angka);
+                                                }
+                                            }
+                                        });
                                     } else {
+                                        let curr = parseSafeNumber(submit.data[`${currentUtilView}_angka`]);
+                                        let prev = parseSafeNumber(prevSubmit.data[`${currentUtilView}_angka`]);
                                         if (curr >= prev) finalTrendData[bIdx] += (curr - prev);
                                     }
                                 }
