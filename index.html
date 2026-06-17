@@ -301,6 +301,7 @@
                         <div class="flex bg-slate-100 p-1 rounded-xl shadow-inner gap-1 flex-wrap">
                             <button onclick="switchUtilView('air')" id="btn-view-air" class="px-4 py-2 rounded-lg text-sm font-bold bg-white shadow text-blue-600 transition-all">Data Air</button>
                             <button onclick="switchUtilView('listrik')" id="btn-view-listrik" class="px-4 py-2 rounded-lg text-sm font-bold text-slate-500 hover:text-slate-700 transition-all">Data Listrik</button>
+                            <button onclick="switchUtilView('ipl')" id="btn-view-ipl" class="px-4 py-2 rounded-lg text-sm font-bold text-slate-500 hover:text-slate-700 transition-all">Data IPL</button>
                             <button onclick="switchUtilView('rekap')" id="btn-view-rekap" class="px-4 py-2 rounded-lg text-sm font-bold text-slate-500 hover:text-slate-700 transition-all">Rekap Lengkap</button>
                         </div>
                         <div class="flex flex-wrap sm:flex-nowrap gap-2">
@@ -966,15 +967,19 @@
                                 <div class="flex gap-2"><label class="cursor-pointer w-24"><input type="radio" name="ipl_bersih" value="Ada" class="peer sr-only" required onchange="toggleIpl('ipl_bersih', 'ipl-bersih-fields')"><div class="text-center px-3 py-2 rounded-lg text-xs font-bold border-2 border-slate-200 peer-checked:border-emerald-500 peer-checked:bg-emerald-50 peer-checked:text-emerald-700">Ada</div></label><label class="cursor-pointer w-24"><input type="radio" name="ipl_bersih" value="Tidak Ada" class="peer sr-only" required onchange="toggleIpl('ipl_bersih', 'ipl-bersih-fields')"><div class="text-center px-3 py-2 rounded-lg text-xs font-bold border-2 border-slate-200 peer-checked:border-slate-400 peer-checked:bg-slate-100 peer-checked:text-slate-600">Tidak Ada</div></label></div>
                             </div>
                             <div id="ipl-bersih-fields" class="hidden grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div><label class="label-modern">Nominal Rp</label><input type="number" id="u-ipl-bersih-nom" name="ipl_bersih_nom" class="input-modern w-full px-4 py-3 rounded-xl font-bold text-sm text-emerald-700"></div>
+                                <div><label class="label-modern">Nominal Rp</label><input type="text" id="u-ipl-bersih-nom" name="ipl_bersih_nom" oninput="formatRupiahInput(this)" class="input-modern w-full px-4 py-3 rounded-xl font-bold text-sm text-emerald-700"></div>
                                 <div>
-                                    <label class="label-modern">Jadwal Pembayaran</label>
-                                    <select name="ipl_bersih_jadwal" class="input-modern w-full px-4 py-3 rounded-xl font-bold text-sm">
-                                        <option value="">-- Pilih --</option>
-                                        <option value="1 Kali Seminggu">1 Kali Seminggu</option>
-                                        <option value="1 Kali Sebulan">1 Kali Sebulan</option>
-                                        <option value="Tidak Ada IPL Kebersihan">Tidak Ada IPL Kebersihan</option>
-                                    </select>
+                                    <label class="label-modern mb-2">Jadwal Pembayaran</label>
+                                    <div class="flex gap-2">
+                                        <label class="cursor-pointer flex-1">
+                                            <input type="radio" name="ipl_bersih_jadwal" value="1 Kali Seminggu" class="peer sr-only" required>
+                                            <div class="text-center px-2 py-3 rounded-xl text-xs font-bold border-2 border-slate-200 peer-checked:border-emerald-500 peer-checked:bg-emerald-50 peer-checked:text-emerald-700 transition-all shadow-sm">Mingguan</div>
+                                        </label>
+                                        <label class="cursor-pointer flex-1">
+                                            <input type="radio" name="ipl_bersih_jadwal" value="1 Kali Sebulan" class="peer sr-only" required>
+                                            <div class="text-center px-2 py-3 rounded-xl text-xs font-bold border-2 border-slate-200 peer-checked:border-emerald-500 peer-checked:bg-emerald-50 peer-checked:text-emerald-700 transition-all shadow-sm">Bulanan</div>
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
 
@@ -983,15 +988,19 @@
                                 <div class="flex gap-2"><label class="cursor-pointer w-24"><input type="radio" name="ipl_aman" value="Ada" class="peer sr-only" required onchange="toggleIpl('ipl_aman', 'ipl-aman-fields')"><div class="text-center px-3 py-2 rounded-lg text-xs font-bold border-2 border-slate-200 peer-checked:border-emerald-500 peer-checked:bg-emerald-50 peer-checked:text-emerald-700">Ada</div></label><label class="cursor-pointer w-24"><input type="radio" name="ipl_aman" value="Tidak Ada" class="peer sr-only" required onchange="toggleIpl('ipl_aman', 'ipl-aman-fields')"><div class="text-center px-3 py-2 rounded-lg text-xs font-bold border-2 border-slate-200 peer-checked:border-slate-400 peer-checked:bg-slate-100 peer-checked:text-slate-600">Tidak Ada</div></label></div>
                             </div>
                             <div id="ipl-aman-fields" class="hidden grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div><label class="label-modern">Nominal Rp</label><input type="number" id="u-ipl-aman-nom" name="ipl_aman_nom" class="input-modern w-full px-4 py-3 rounded-xl font-bold text-sm text-emerald-700"></div>
+                                <div><label class="label-modern">Nominal Rp</label><input type="text" id="u-ipl-aman-nom" name="ipl_aman_nom" oninput="formatRupiahInput(this)" class="input-modern w-full px-4 py-3 rounded-xl font-bold text-sm text-emerald-700"></div>
                                 <div>
-                                    <label class="label-modern">Jadwal Pembayaran</label>
-                                    <select name="ipl_aman_jadwal" class="input-modern w-full px-4 py-3 rounded-xl font-bold text-sm">
-                                        <option value="">-- Pilih --</option>
-                                        <option value="1 Kali Seminggu">1 Kali Seminggu</option>
-                                        <option value="1 Kali Sebulan">1 Kali Sebulan</option>
-                                        <option value="Tidak Ada IPL Keamanan">Tidak Ada IPL Keamanan</option>
-                                    </select>
+                                    <label class="label-modern mb-2">Jadwal Pembayaran</label>
+                                    <div class="flex gap-2">
+                                        <label class="cursor-pointer flex-1">
+                                            <input type="radio" name="ipl_aman_jadwal" value="1 Kali Seminggu" class="peer sr-only" required>
+                                            <div class="text-center px-2 py-3 rounded-xl text-xs font-bold border-2 border-slate-200 peer-checked:border-emerald-500 peer-checked:bg-emerald-50 peer-checked:text-emerald-700 transition-all shadow-sm">Mingguan</div>
+                                        </label>
+                                        <label class="cursor-pointer flex-1">
+                                            <input type="radio" name="ipl_aman_jadwal" value="1 Kali Sebulan" class="peer sr-only" required>
+                                            <div class="text-center px-2 py-3 rounded-xl text-xs font-bold border-2 border-slate-200 peer-checked:border-emerald-500 peer-checked:bg-emerald-50 peer-checked:text-emerald-700 transition-all shadow-sm">Bulanan</div>
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -1653,12 +1662,12 @@
 
             if(d.ipl_bersih) { const el = document.querySelector(`input[name="ipl_bersih"][value="${d.ipl_bersih}"]`); if(el) el.checked = true; }
             toggleIpl('ipl_bersih', 'ipl-bersih-fields');
-            document.getElementById('u-ipl-bersih-nom').value = d.ipl_bersih_nom || '';
+            document.getElementById('u-ipl-bersih-nom').value = d.ipl_bersih_nom ? parseSafeNumber(d.ipl_bersih_nom).toLocaleString('id-ID') : '';
             if(d.ipl_bersih_jadwal) { const el = document.querySelector(`input[name="ipl_bersih_jadwal"][value="${d.ipl_bersih_jadwal}"]`); if(el) el.checked = true; }
 
             if(d.ipl_aman) { const el = document.querySelector(`input[name="ipl_aman"][value="${d.ipl_aman}"]`); if(el) el.checked = true; }
             toggleIpl('ipl_aman', 'ipl-aman-fields');
-            document.getElementById('u-ipl-aman-nom').value = d.ipl_aman_nom || '';
+            document.getElementById('u-ipl-aman-nom').value = d.ipl_aman_nom ? parseSafeNumber(d.ipl_aman_nom).toLocaleString('id-ID') : '';
             if(d.ipl_aman_jadwal) { const el = document.querySelector(`input[name="ipl_aman_jadwal"][value="${d.ipl_aman_jadwal}"]`); if(el) el.checked = true; }
 
             document.getElementById('btn-submit-utilitas').innerHTML = '<span class="material-symbols-rounded icon-fill">edit_square</span> <span>Perbarui Data Utilitas</span>';
@@ -1667,8 +1676,8 @@
 
         function switchUtilView(view) {
             currentUtilView = view;
-            const views = ['air', 'listrik', 'rekap'];
-            const colors = { air: 'text-blue-600', listrik: 'text-amber-500', rekap: 'text-purple-600' };
+            const views = ['air', 'listrik', 'ipl', 'rekap'];
+            const colors = { air: 'text-blue-600', listrik: 'text-amber-500', ipl: 'text-emerald-500', rekap: 'text-purple-600' };
             views.forEach(v => {
                 const btn = document.getElementById(`btn-view-${v}`);
                 if(!btn) return;
@@ -1676,7 +1685,7 @@
                     btn.classList.add('bg-white', 'shadow', colors[v]);
                     btn.classList.remove('text-slate-500', 'hover:text-slate-700');
                 } else {
-                    btn.classList.remove('bg-white', 'shadow', 'text-blue-600', 'text-amber-500', 'text-purple-600');
+                    btn.classList.remove('bg-white', 'shadow', 'text-blue-600', 'text-amber-500', 'text-emerald-500', 'text-purple-600');
                     btn.classList.add('text-slate-500', 'hover:text-slate-700');
                 }
             });
@@ -1691,7 +1700,7 @@
                 if(chartContainer) chartContainer.classList.remove('hidden');
                 if(weekFilter) weekFilter.classList.add('hidden');
                 const titleSuffix = utilChartScale === 'mingguan' ? '(Trend Bulan Ini)' : '(Trend Tahun Ini)';
-                document.getElementById('chart-util-title').textContent = `Total ${view === 'air' ? 'Pemakaian Air' : 'Pemakaian Listrik'} ${titleSuffix}`;
+                document.getElementById('chart-util-title').textContent = `Total ${view === 'air' ? 'Pemakaian Air' : (view === 'listrik' ? 'Pemakaian Listrik' : 'Tagihan IPL')} ${titleSuffix}`;
             }
 
             renderUtilitasTable();
@@ -1926,6 +1935,8 @@
             delete dataObj.edit_id;
 
             if(dataObj.air_mekanisme === 'Lainnya') dataObj.air_mekanisme = dataObj.air_mekanisme_lain;
+            if(dataObj.ipl_bersih_nom) dataObj.ipl_bersih_nom = parseSafeNumber(dataObj.ipl_bersih_nom);
+            if(dataObj.ipl_aman_nom) dataObj.ipl_aman_nom = parseSafeNumber(dataObj.ipl_aman_nom);
 
             let d = new Date();
             if (currentUser.role === 'admin' && document.getElementById('admin-util-date-override').value) {
@@ -2007,13 +2018,14 @@
 
         function parseSafeNumber(val) {
             if (!val) return 0;
-            let s = String(val).replace(/[^0-9,.-]/g, '');
-            if (s.indexOf('.') > -1 && s.indexOf(',') > -1) {
-                s = s.replace(/\./g, '').replace(',', '.');
-            } else if (s.indexOf(',') > -1) {
-                s = s.replace(',', '.');
-            }
+            let s = String(val).replace(/\./g, '').replace(/,/g, '.').replace(/[^0-9.-]/g, '');
             return parseFloat(s) || 0;
+        }
+
+        window.formatRupiahInput = function(input) {
+            let val = input.value.replace(/[^0-9]/g, '');
+            if(val !== '') val = parseInt(val, 10).toLocaleString('id-ID');
+            input.value = val;
         }
 
         async function renderUtilitasTable() {
@@ -2169,6 +2181,27 @@
                 let textPic = isTop ? 'text-rose-500' : 'text-slate-500';
                 let topBadge = isTop ? `<span class="mt-1 bg-rose-500 text-white text-[8px] font-extrabold px-1.5 py-0.5 rounded block text-center uppercase tracking-widest shadow-sm">Top Pemakaian</span>` : '';
 
+                let monthlyIplTotals = {};
+                if (currentUtilView === 'ipl') {
+                    selBulans.forEach(b => {
+                        let monthSubs = userAllSubs.filter(s => parseInt(s.tahun) === selTahun && parseInt(s.bulan) === b);
+                        let valBersih = 0, valAman = 0;
+                        if(monthSubs.length > 0) {
+                            if (monthSubs.some(s => s.data.ipl_bersih_jadwal === '1 Kali Sebulan')) {
+                                valBersih = Math.max(...monthSubs.map(s => s.data.ipl_bersih === 'Ada' ? parseSafeNumber(s.data.ipl_bersih_nom) : 0));
+                            } else {
+                                valBersih = monthSubs.reduce((sum, s) => sum + (s.data.ipl_bersih === 'Ada' ? parseSafeNumber(s.data.ipl_bersih_nom) : 0), 0);
+                            }
+                            if (monthSubs.some(s => s.data.ipl_aman_jadwal === '1 Kali Sebulan')) {
+                                valAman = Math.max(...monthSubs.map(s => s.data.ipl_aman === 'Ada' ? parseSafeNumber(s.data.ipl_aman_nom) : 0));
+                            } else {
+                                valAman = monthSubs.reduce((sum, s) => sum + (s.data.ipl_aman === 'Ada' ? parseSafeNumber(s.data.ipl_aman_nom) : 0), 0);
+                            }
+                        }
+                        monthlyIplTotals[b] = { bersih: valBersih, aman: valAman, total: valBersih + valAman };
+                    });
+                }
+
                 if (currentUtilView === 'rekap') {
                     let submitsForMinggu = userSubmitsCurrent.filter(d => parseInt(d.minggu) === selMinggu);
                     submitsForMinggu.sort((a,b) => parseInt(b.bulan) - parseInt(a.bulan));
@@ -2207,8 +2240,8 @@
 
                         const iplHtml = `
                             <div class="grid grid-cols-2 gap-x-2 gap-y-1 text-[10px]">
-                                <div class="text-slate-500 font-bold">Kebersihan</div><div class="font-semibold ${d.ipl_bersih==='Ada'?'text-emerald-600':''}">${d.ipl_bersih==='Ada' ? 'Rp'+parseSafeNumber(d.ipl_bersih_nom).toLocaleString('id-ID') : 'Tidak Ada'}</div>
-                                <div class="text-slate-500 font-bold">Keamanan</div><div class="font-semibold ${d.ipl_aman==='Ada'?'text-emerald-600':''}">${d.ipl_aman==='Ada' ? 'Rp'+parseSafeNumber(d.ipl_aman_nom).toLocaleString('id-ID') : 'Tidak Ada'}</div>
+                                <div class="text-slate-500 font-bold">Kebersihan</div><div class="font-semibold ${d.ipl_bersih==='Ada'?'text-emerald-600':''}">${d.ipl_bersih==='Ada' ? 'Rp'+parseSafeNumber(d.ipl_bersih_nom).toLocaleString('id-ID') : 'Tidak Ada'} <span class="text-[8px] font-medium opacity-70">(${d.ipl_bersih_jadwal==='1 Kali Sebulan'?'Bln':'Mgg'})</span></div>
+                                <div class="text-slate-500 font-bold">Keamanan</div><div class="font-semibold ${d.ipl_aman==='Ada'?'text-emerald-600':''}">${d.ipl_aman==='Ada' ? 'Rp'+parseSafeNumber(d.ipl_aman_nom).toLocaleString('id-ID') : 'Tidak Ada'} <span class="text-[8px] font-medium opacity-70">(${d.ipl_aman_jadwal==='1 Kali Sebulan'?'Bln':'Mgg'})</span></div>
                             </div>
                         `;
 
@@ -2224,6 +2257,9 @@
                         <span class="text-[10px] ${textPic}">${u.pic_name || u.username}</span>
                         ${topBadge}
                     </td>`;
+
+                    let reportedBersihBulanIni = {};
+                    let reportedAmanBulanIni = {};
 
                     weekIterators.forEach((w, wIdx) => {
                         let submitsForMinggu = userSubmitsCurrent.filter(d => parseInt(d.minggu) === w.minggu && parseInt(d.bulan) === w.bulan);
@@ -2337,15 +2373,43 @@
                                 </td>`;
                                 
                             } else {
-                                let val = 0;
-                                if(d.ipl_bersih === 'Ada') val += parseSafeNumber(d.ipl_bersih_nom);
-                                if(d.ipl_aman === 'Ada') val += parseSafeNumber(d.ipl_aman_nom);
-                                aggregatedTrend[wIdx] += val;
+                                let b = w.bulan;
+                                if(reportedBersihBulanIni[b] === undefined) reportedBersihBulanIni[b] = false;
+                                if(reportedAmanBulanIni[b] === undefined) reportedAmanBulanIni[b] = false;
+
+                                let valBersihToChart = 0;
+                                if (d.ipl_bersih === 'Ada') {
+                                    let val = parseSafeNumber(d.ipl_bersih_nom);
+                                    if (d.ipl_bersih_jadwal === '1 Kali Sebulan') {
+                                        if (!reportedBersihBulanIni[b]) { valBersihToChart = val; reportedBersihBulanIni[b] = true; }
+                                    } else {
+                                        valBersihToChart = val;
+                                    }
+                                }
+
+                                let valAmanToChart = 0;
+                                if (d.ipl_aman === 'Ada') {
+                                    let val = parseSafeNumber(d.ipl_aman_nom);
+                                    if (d.ipl_aman_jadwal === '1 Kali Sebulan') {
+                                        if (!reportedAmanBulanIni[b]) { valAmanToChart = val; reportedAmanBulanIni[b] = true; }
+                                    } else {
+                                        valAmanToChart = val;
+                                    }
+                                }
+
+                                aggregatedTrend[wIdx] += (valBersihToChart + valAmanToChart);
+                                
+                                let mTotal = monthlyIplTotals[b].total;
+                                let isLastWeekOfMonth = w.minggu === 4 || w.minggu === 5 || !weekIterators[wIdx+1] || weekIterators[wIdx+1].bulan !== b;
+
                                 rowHtml += `<td class="p-2 border-r border-slate-100 text-center relative cursor-pointer hover:bg-emerald-50/50" ${cellClick}>
                                     ${warningHtml}
-                                    <div class="mt-1">
-                                        <span class="text-[10px] font-bold ${d.ipl_bersih==='Ada'?'text-emerald-600':'text-slate-400'} block">B: ${d.ipl_bersih==='Ada'?'Rp'+(parseSafeNumber(d.ipl_bersih_nom)/1000)+'k':'-'}</span>
-                                        <span class="text-[10px] font-bold ${d.ipl_aman==='Ada'?'text-emerald-600':'text-slate-400'} block">A: ${d.ipl_aman==='Ada'?'Rp'+(parseSafeNumber(d.ipl_aman_nom)/1000)+'k':'-'}</span>
+                                    <div class="flex flex-col gap-1 items-center w-full mt-1">
+                                        <div class="bg-white border border-emerald-100 rounded px-1.5 py-1 w-full text-left shadow-sm">
+                                            <span class="text-[9px] font-bold ${d.ipl_bersih==='Ada'?'text-emerald-600':'text-slate-400'} block truncate">B: ${d.ipl_bersih==='Ada'?'Rp'+(parseSafeNumber(d.ipl_bersih_nom)/1000)+'k':'-'} <span class="font-medium text-[8px] opacity-70">(${d.ipl_bersih_jadwal==='1 Kali Sebulan'?'Bln':'Mgg'})</span></span>
+                                            <span class="text-[9px] font-bold ${d.ipl_aman==='Ada'?'text-emerald-600':'text-slate-400'} block truncate">A: ${d.ipl_aman==='Ada'?'Rp'+(parseSafeNumber(d.ipl_aman_nom)/1000)+'k':'-'} <span class="font-medium text-[8px] opacity-70">(${d.ipl_aman_jadwal==='1 Kali Sebulan'?'Bln':'Mgg'})</span></span>
+                                        </div>
+                                        ${isLastWeekOfMonth && mTotal > 0 ? `<div class="mt-0.5 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded w-full px-1 py-1 text-center"><span class="text-[8px] font-bold uppercase tracking-widest block opacity-70 leading-none mb-0.5">Total Bln Ini</span><span class="text-[10px] font-extrabold leading-none">Rp ${(mTotal/1000).toLocaleString('id-ID')}k</span></div>` : ''}
                                     </div>
                                 </td>`;
                             }
@@ -2383,13 +2447,21 @@
                             .sort((a,b) => getOrderScore(a) - getOrderScore(b));
 
                         if(currentUtilView === 'ipl') {
-                            userAllSubs.forEach((submit) => {
-                                if (parseInt(submit.tahun) === selTahun && selBulans.includes(parseInt(submit.bulan))) {
-                                    let bIdx = selBulans.indexOf(parseInt(submit.bulan));
-                                    let val = 0;
-                                    if(submit.data.ipl_bersih === 'Ada') val += parseSafeNumber(submit.data.ipl_bersih_nom);
-                                    if(submit.data.ipl_aman === 'Ada') val += parseSafeNumber(submit.data.ipl_aman_nom);
-                                    finalTrendData[bIdx] += val;
+                            selBulans.forEach((b, bIdx) => {
+                                let mSubs = userAllSubs.filter(s => parseInt(s.tahun) === selTahun && parseInt(s.bulan) === b);
+                                if(mSubs.length > 0) {
+                                    let vB = 0, vA = 0;
+                                    if(mSubs.some(s => s.data.ipl_bersih_jadwal === '1 Kali Sebulan')) {
+                                        vB = Math.max(...mSubs.map(s => s.data.ipl_bersih === 'Ada' ? parseSafeNumber(s.data.ipl_bersih_nom) : 0));
+                                    } else {
+                                        vB = mSubs.reduce((sum, s) => sum + (s.data.ipl_bersih === 'Ada' ? parseSafeNumber(s.data.ipl_bersih_nom) : 0), 0);
+                                    }
+                                    if(mSubs.some(s => s.data.ipl_aman_jadwal === '1 Kali Sebulan')) {
+                                        vA = Math.max(...mSubs.map(s => s.data.ipl_aman === 'Ada' ? parseSafeNumber(s.data.ipl_aman_nom) : 0));
+                                    } else {
+                                        vA = mSubs.reduce((sum, s) => sum + (s.data.ipl_aman === 'Ada' ? parseSafeNumber(s.data.ipl_aman_nom) : 0), 0);
+                                    }
+                                    finalTrendData[bIdx] += (vB + vA);
                                 }
                             });
                         } else {
