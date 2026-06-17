@@ -132,18 +132,18 @@
     </div>
 
     <!-- Tampilan Login -->
-    <div id="view-login" class="flex min-h-screen relative overflow-hidden bg-white">
-        <!-- Panel Kiri -->
-        <div class="hidden lg:flex lg:w-1/2 login-bg relative items-center justify-center p-12">
-            <div class="relative z-10 text-white max-w-lg">
-                <div class="w-16 h-16 bg-white/10 backdrop-blur-xl rounded-2xl flex items-center justify-center border border-white/20 mb-8 shadow-[0_8px_32px_rgba(0,0,0,0.3)]">
+    <div id="view-login" class="flex flex-col lg:flex-row min-h-screen relative overflow-hidden bg-white">
+        <!-- Panel Kiri (Dekorasi & Judul) -->
+        <div class="w-full lg:w-1/2 login-bg relative flex items-center justify-center p-8 sm:p-12 min-h-[40vh] lg:min-h-screen">
+            <div class="relative z-10 text-white max-w-lg text-center lg:text-left">
+                <div class="w-16 h-16 bg-white/10 backdrop-blur-xl rounded-2xl flex items-center justify-center border border-white/20 mb-6 lg:mb-8 shadow-[0_8px_32px_rgba(0,0,0,0.3)] mx-auto lg:mx-0">
                     <span class="material-symbols-rounded icon-fill text-3xl text-brand-400">checklist</span>
                 </div>
-                <h1 class="text-5xl font-extrabold tracking-tight mb-4 leading-[1.1]">Sistem<br><span class="text-white">Ceklis</span><br><span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-400 to-purple-400">Monitoring.</span></h1>
-                <p class="text-slate-400 text-lg leading-relaxed font-light">Sistem pelaporan cerdas untuk memantau performa area secara real-time. Cepat, akurat, dan terstruktur.</p>
+                <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight mb-3 lg:mb-4 leading-[1.1]">Sistem<br class="hidden lg:block"><span class="text-white">Ceklis</span><br class="hidden lg:block"><span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-400 to-purple-400">Monitoring.</span></h1>
+                <p class="text-slate-400 text-sm sm:text-base lg:text-lg leading-relaxed font-light">Sistem pelaporan cerdas untuk memantau performa area secara real-time. Cepat, akurat, dan terstruktur.</p>
             </div>
             <!-- Elemen Dekorasi -->
-            <div class="absolute bottom-12 right-12 z-10 bg-white/5 backdrop-blur-md border border-white/10 p-6 rounded-3xl w-72 shadow-2xl transform rotate-[-5deg]">
+            <div class="hidden sm:block absolute bottom-12 right-12 z-10 bg-white/5 backdrop-blur-md border border-white/10 p-6 rounded-3xl w-72 shadow-2xl transform rotate-[-5deg]">
                 <div class="flex items-center gap-3 mb-4">
                     <div class="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center"><span class="material-symbols-rounded icon-fill text-emerald-400 text-xl">check_circle</span></div>
                     <div><p class="text-white text-sm font-bold">Sistem Aktif</p><p class="text-slate-400 text-xs">Sinkronisasi Real-time</p></div>
@@ -153,13 +153,8 @@
         </div>
 
         <!-- Panel Kanan (Form Login) -->
-        <div class="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12 relative bg-surface">
-            <div class="absolute top-8 left-8 lg:hidden flex items-center gap-2">
-                <div class="w-8 h-8 rounded-lg bg-brand-600 flex items-center justify-center"><span class="material-symbols-rounded icon-fill text-white text-sm">checklist</span></div>
-                <span class="font-extrabold tracking-tight text-xl"><span class="text-slate-900">Ceklis</span> <span class="text-brand-600">Monitoring</span></span>
-            </div>
-
-            <div class="max-w-sm w-full relative z-10">
+        <div class="w-full lg:w-1/2 flex flex-col justify-center p-6 sm:p-12 relative bg-surface min-h-[60vh] lg:min-h-screen">
+            <div class="max-w-sm w-full relative z-10 mx-auto">
                 <div class="mb-10 text-center lg:text-left">
                     <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight">Masuk ke Sistem</h2>
                     <p class="text-slate-500 mt-2 text-sm font-medium">Gunakan kredensial Anda untuk memulai pengawasan.</p>
@@ -224,7 +219,7 @@
                     
                     <button onclick="switchTab('dashboard')" id="tab-dashboard" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all text-brand-700 bg-brand-50 group">
                         <span class="material-symbols-rounded icon-fill text-xl text-brand-600">pie_chart</span>
-                        <span class="text-sm">Dashboard Rekap</span>
+                        <span class="text-sm">Ceklis Monitoring & Aset</span>
                     </button>
 
                     <button onclick="switchTab('utilitas')" id="tab-utilitas" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-semibold transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-50 group">
@@ -478,8 +473,8 @@
                     
                     <div class="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-5 mb-6 px-2">
                         <div>
-                            <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Dashboard Rekapitulasi</h2>
-                            <p class="text-sm text-slate-500 mt-1 font-medium">Pemantauan hasil inspeksi lapangan secara komprehensif.</p>
+                            <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Ceklis Monitoring & Aset</h2>
+                            <p class="text-sm text-slate-500 mt-1 font-medium">Pemantauan hasil inspeksi lapangan dan aset secara komprehensif.</p>
                         </div>
 
                         <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full xl:w-auto">
@@ -567,7 +562,7 @@
         <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-md border-t border-slate-200 z-[100] pb-safe flex justify-around p-2 shadow-[0_-4px_20px_rgba(0,0,0,0.03)]">
             <button onclick="switchTab('dashboard')" id="mob-tab-dashboard" class="flex-1 py-2 flex flex-col items-center gap-1 text-brand-600 transition-colors">
                 <span class="material-symbols-rounded text-[24px]">pie_chart</span>
-                <span class="text-[9px] font-bold uppercase tracking-widest">Rekap</span>
+                <span class="text-[9px] font-bold uppercase tracking-widest text-center leading-tight">Ceklis & Aset</span>
             </button>
             <button onclick="switchTab('utilitas')" id="mob-tab-utilitas" class="flex-1 py-2 flex flex-col items-center gap-1 text-slate-400 hover:text-slate-900 transition-colors">
                 <span class="material-symbols-rounded icon-outline text-[24px]">home_repair_service</span>
@@ -2632,7 +2627,7 @@
         function downloadTemplateUtilitas() {
             const ws_data = [
                 [
-                    "Staging Name", "PIC Name", "SSC", "Bulan", "Tahun", "Minggu", 
+                    "Tanggal Input", "Staging Name", "PIC Name", "SSC", "Bulan", "Tahun", "Minggu", 
                     "Air Sumber", "Air ID", "Air Nama", "Air Mekanisme", "Air Angka", 
                     "Air Kondisi Meteran", "Air Ket Rusak Meteran", "Air Kondisi Pipa", "Air Ket Rusak Pipa", 
                     "Air Tandon", "Air Kondisi Tandon", "Air Ket Rusak Tandon", "Air Otomatis", "Air Kondisi Otomatis", "Air Ket Rusak Otomatis", "Air Pompa", "Air Kondisi Pompa", "Air Ket Rusak Pompa", 
@@ -2641,7 +2636,7 @@
                     "IPL Keamanan", "Nominal IPL Keamanan", "Jadwal IPL Keamanan"
                 ],
                 [
-                    "Contoh Staging A", "Budi Santoso", "SSC MKS", 5, 2026, 1, 
+                    "15/06/2026, 09:40", "Contoh Staging A", "Budi Santoso", "SSC MKS", 5, 2026, 1, 
                     "PDAM", "12345678", "PT Contoh", "Dibayar Ke PDAM Atau WTP Tiap Bulannya, Hanya Pemakaian Pribadi Staging", 1200.5, 
                     "Normal", "", "Normal", "", 
                     "Ada", "Normal", "", "Ada", "Normal", "", "Ada", "Normal", "", 
@@ -2731,13 +2726,16 @@
                                 }
                             }
 
+                            let customDate = row['Tanggal Input'] || row['Timestamp'];
+                            let finalDateStr = customDate ? String(customDate) : dateStr;
+
                             payloads.push({
                                 id: 'UTIL-UP-' + Date.now() + i,
                                 user_id: currentUser.id, 
                                 pic: row['PIC Name'] || '-',
                                 ssc: row['SSC'] || '-',
                                 stagging_name: row['Staging Name'],
-                                date: dateStr,
+                                date: finalDateStr,
                                 bulan: parseInt(row['Bulan']),
                                 tahun: parseInt(row['Tahun']),
                                 minggu: parseInt(row['Minggu']),
