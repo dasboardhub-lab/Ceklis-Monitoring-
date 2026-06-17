@@ -2566,13 +2566,16 @@
                 ctx.parentElement.classList.remove('hidden');
             }
 
+            let maxTotal = (datasets.length > 0 && datasets[0].data.length > 0) ? Math.max(...datasets[0].data) : 10;
+            let maxAvg = (datasets.length > 1 && datasets[1].data.length > 0) ? Math.max(...datasets[1].data) : 10;
+
             utilChartInstance = new Chart(ctx, {
                 type: 'line',
                 data: { labels: labels, datasets: datasets },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    layout: { padding: { top: 35, right: 25, left: 25, bottom: 10 } },
+                    layout: { padding: { top: 40, right: 25, left: 25, bottom: 10 } },
                     plugins: { 
                         legend: { 
                             display: false
@@ -2588,8 +2591,8 @@
                     },
                     scales: { 
                         x: { grid: { display: false }, border: { display: false } },
-                        y: { display: false, type: 'linear', position: 'left' },
-                        y1: { display: false, type: 'linear', position: 'right', grid: { drawOnChartArea: false } }
+                        y: { display: false, type: 'linear', position: 'left', suggestedMin: 0, suggestedMax: maxTotal * 1.2 },
+                        y1: { display: false, type: 'linear', position: 'right', grid: { drawOnChartArea: false }, suggestedMin: 0, suggestedMax: maxAvg * 2.2 }
                     }
                 },
                 plugins: [{
@@ -2628,9 +2631,24 @@
 
         function downloadTemplateUtilitas() {
             const ws_data = [
-                ["Staging Name", "PIC Name", "SSC", "Bulan (Angka 1-12)", "Tahun", "Minggu Ke (Angka 1-5)", "Angka Meteran Air", "Angka Meteran Listrik", "Nominal IPL Kebersihan", "Nominal IPL Keamanan"],
-                ["Contoh Staging A", "Budi Santoso", "SSC MKS", 5, 2026, 1, 1200.5, 4500, 50000, 100000],
-                ["Contoh Staging A", "Budi Santoso", "SSC MKS", 5, 2026, 2, 1210.0, 4550, 0, 100000]
+                [
+                    "Staging Name", "PIC Name", "SSC", "Bulan", "Tahun", "Minggu", 
+                    "Air Sumber", "Air ID", "Air Nama", "Air Mekanisme", "Air Angka", 
+                    "Air Kondisi Meteran", "Air Ket Rusak Meteran", "Air Kondisi Pipa", "Air Ket Rusak Pipa", 
+                    "Air Tandon", "Air Kondisi Tandon", "Air Ket Rusak Tandon", "Air Otomatis", "Air Kondisi Otomatis", "Air Ket Rusak Otomatis", "Air Pompa", "Air Kondisi Pompa", "Air Ket Rusak Pompa", 
+                    "Listrik ID 1", "Listrik Nama 1", "Listrik Kategori 1", "Listrik Angka 1", 
+                    "IPL Kebersihan", "Nominal IPL Kebersihan", "Jadwal IPL Kebersihan", 
+                    "IPL Keamanan", "Nominal IPL Keamanan", "Jadwal IPL Keamanan"
+                ],
+                [
+                    "Contoh Staging A", "Budi Santoso", "SSC MKS", 5, 2026, 1, 
+                    "PDAM", "12345678", "PT Contoh", "Dibayar Ke PDAM Atau WTP Tiap Bulannya, Hanya Pemakaian Pribadi Staging", 1200.5, 
+                    "Normal", "", "Normal", "", 
+                    "Ada", "Normal", "", "Ada", "Normal", "", "Ada", "Normal", "", 
+                    "PLN-998877", "Toko A", "Pra Bayar (Token)", 4500, 
+                    "Ada", 50000, "1 Kali Seminggu", 
+                    "Ada", 100000, "1 Kali Sebulan"
+                ]
             ];
             const ws = XLSX.utils.aoa_to_sheet(ws_data);
             const wb = XLSX.utils.book_new();
@@ -2666,19 +2684,52 @@
 
                         for (let i = 0; i < jsonData.length; i++) {
                             const row = jsonData[i];
-                            if(!row['Staging Name'] || !row['Bulan (Angka 1-12)'] || !row['Tahun'] || !row['Minggu Ke (Angka 1-5)']) {
+                            if(!row['Staging Name'] || !row['Bulan'] || !row['Tahun'] || !row['Minggu']) {
                                 continue;
                             }
 
                             const dataObj = {
-                                air_angka: row['Angka Meteran Air'] || 0,
-                                listrik_angka: row['Angka Meteran Listrik'] || 0,
-                                ipl_bersih: (row['Nominal IPL Kebersihan'] > 0) ? 'Ada' : 'Tidak Ada',
+                                air_sumber: row['Air Sumber'] || '',
+                                air_id: row['Air ID'] || '',
+                                air_nama: row['Air Nama'] || '',
+                                air_mekanisme: row['Air Mekanisme'] || '',
+                                air_angka: row['Air Angka'] || 0,
+                                air_kondisi_meteran: row['Air Kondisi Meteran'] || '',
+                                air_meteran_rusak: row['Air Ket Rusak Meteran'] || '',
+                                air_kondisi_pipa: row['Air Kondisi Pipa'] || '',
+                                air_pipa_rusak: row['Air Ket Rusak Pipa'] || '',
+                                air_tandon: row['Air Tandon'] || '',
+                                air_kondisi_tandon: row['Air Kondisi Tandon'] || '',
+                                air_tandon_rusak: row['Air Ket Rusak Tandon'] || '',
+                                air_otomatis: row['Air Otomatis'] || '',
+                                air_kondisi_otomatis: row['Air Kondisi Otomatis'] || '',
+                                air_otomatis_rusak: row['Air Ket Rusak Otomatis'] || '',
+                                air_pompa: row['Air Pompa'] || '',
+                                air_kondisi_pompa: row['Air Kondisi Pompa'] || '',
+                                air_pompa_rusak: row['Air Ket Rusak Pompa'] || '',
+
+                                listrik_id: row['Listrik ID 1'] || '',
+                                listrik_nama: row['Listrik Nama 1'] || '',
+                                listrik_kategori: row['Listrik Kategori 1'] || '',
+                                listrik_angka: row['Listrik Angka 1'] || 0,
+
+                                ipl_bersih: row['IPL Kebersihan'] || 'Tidak Ada',
                                 ipl_bersih_nom: row['Nominal IPL Kebersihan'] || 0,
-                                ipl_aman: (row['Nominal IPL Keamanan'] > 0) ? 'Ada' : 'Tidak Ada',
+                                ipl_bersih_jadwal: row['Jadwal IPL Kebersihan'] || '',
+                                
+                                ipl_aman: row['IPL Keamanan'] || 'Tidak Ada',
                                 ipl_aman_nom: row['Nominal IPL Keamanan'] || 0,
-                                air_sumber: 'Upload Data', listrik_kategori: 'Upload Data'
+                                ipl_aman_jadwal: row['Jadwal IPL Keamanan'] || ''
                             };
+
+                            for(let k=2; k<=10; k++) {
+                                if(row[`Listrik ID ${k}`] || row[`Listrik Angka ${k}`]) {
+                                    dataObj[`listrik_id_${k-1}`] = row[`Listrik ID ${k}`] || '';
+                                    dataObj[`listrik_nama_${k-1}`] = row[`Listrik Nama ${k}`] || '';
+                                    dataObj[`listrik_kategori_${k-1}`] = row[`Listrik Kategori ${k}`] || '';
+                                    dataObj[`listrik_angka_${k-1}`] = row[`Listrik Angka ${k}`] || 0;
+                                }
+                            }
 
                             payloads.push({
                                 id: 'UTIL-UP-' + Date.now() + i,
@@ -2687,9 +2738,9 @@
                                 ssc: row['SSC'] || '-',
                                 stagging_name: row['Staging Name'],
                                 date: dateStr,
-                                bulan: parseInt(row['Bulan (Angka 1-12)']),
+                                bulan: parseInt(row['Bulan']),
                                 tahun: parseInt(row['Tahun']),
-                                minggu: parseInt(row['Minggu Ke (Angka 1-5)']),
+                                minggu: parseInt(row['Minggu']),
                                 data: dataObj
                             });
                         }
