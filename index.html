@@ -1074,6 +1074,7 @@
         let adminTargetUsers = [];
         let activeAdminCategoryId = null;
         let globalFieldUsers = [];
+        let editingSubmissionId = null;
 
         const itemTypeConfig = {
             'ok_nonok': { pos: 'OK', neg: 'Non OK', posL: 'OK', negL: 'Non OK', iconPos: 'check', iconNeg: 'close', bgPos: 'bg-emerald-50', textPos: 'text-emerald-700', bgNeg: 'bg-rose-50', textNeg: 'text-rose-700' },
@@ -2877,9 +2878,16 @@
             let d; try { const res = await fetch('https://worldtimeapi.org/api/timezone/Asia/Makassar'); const timeData = await res.json(); d = new Date(timeData.datetime); } catch(err) { d = new Date(); }
             const dateStr = `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`; const timeStr = `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
 
-            await supabaseClient.from('submissions').insert({ id: Date.now().toString(), user_id: targetData.id, pic: targetData.pic, ssc: targetData.ssc, province: targetData.province, stagging_name: targetData.stagging_name, date: `${dateStr}, ${timeStr}`, answers: answers });
+            if (editingSubmissionId) {
+                await supabaseClient.from('submissions').update({ answers: answers }).eq('id', editingSubmissionId);
+                Island.show('Laporan Diperbarui!', 'success');
+                editingSubmissionId = null;
+            } else {
+                await supabaseClient.from('submissions').insert({ id: Date.now().toString(), user_id: targetData.id, pic: targetData.pic, ssc: targetData.ssc, province: targetData.province, stagging_name: targetData.stagging_name, date: `${dateStr}, ${timeStr}`, answers: answers });
+                Island.show('Laporan Terkirim!', 'success');
+            }
 
-            Island.show('Laporan Terkirim!', 'success'); e.target.reset(); 
+            e.target.reset(); 
             document.querySelectorAll('[id^="note-container-"]').forEach(el => { el.classList.add('max-h-0', 'opacity-0'); setTimeout(() => el.classList.add('hidden'), 300); });
             btn.disabled = false; btn.innerHTML = '<span class="material-symbols-rounded icon-fill">send</span> <span>Kirim Laporan Inspeksi</span>';
             closeChecklistModal(); setTimeout(() => switchTab('dashboard'), 500);
@@ -3378,10 +3386,13 @@
             const locationMap = new Map();
             validUsers.forEach(u => { const key = `${u.ssc}|${u.province}|${u.stagging_name}`; locationMap.set(key, { user_id: u.id, pic: '-', ssc: u.ssc, province: u.province, stagging_name: u.stagging_name, date: '-', answers: {} }); });
 
+            const validFilteredSubs = [];
+
             safeSubmissions.forEach(sub => {
                 const parts = sub.date.split(',')[0].split('/'); const matchM = (vM === 'all' || parseInt(parts[1]) == vM); const matchY = (vY === 'all' || parseInt(parts[2]) == vY);
                 const matchSsc = (selectedSSCs.length === 0 || selectedSSCs.includes(sub.ssc));
                 if (matchM && matchY && matchSsc) {
+                    validFilteredSubs.push(sub);
                     const key = `${sub.ssc}|${sub.province}|${sub.stagging_name}`; const existing = locationMap.get(key);
                     if (!existing || existing.date === '-' || parseDateObj(sub.date) > parseDateObj(existing.date)) { locationMap.set(key, sub); }
                 }
@@ -3398,7 +3409,55 @@
                 return (a.stagging_name || '').localeCompare(b.stagging_name || ''); 
             });
 
-            renderDashboardHeaders(filteredCats); renderDashboardBodyAndNotes(renderData, filteredCats, safeAllCats, sscHistory);
+            renderDashboardHeaders(filteredCats); renderDashboardBodyAndNotes(renderData, validFilteredSubs, filteredCats, safeAllCats, sscHistory);
+        }
+
+        async function editSubmission(submissionId) {
+            const { data: sub } = await supabaseClient.from('submissions').select('*').eq('id', submissionId).single();
+            if (!sub) return;
+            
+            editingSubmissionId = sub.id;
+
+            if (currentUser.role === 'admin') {
+                document.getElementById('admin-selector-container').classList.remove('hidden');
+                await loadAdminTargets();
+                const select = document.getElementById('admin-target-select');
+                const u = adminTargetUsers.find(x => x.stagging_name === sub.stagging_name);
+                if (u) {
+                    select.value = u.id;
+                    updateAdminTargetInfo();
+                }
+            } else {
+                document.getElementById('admin-selector-container').classList.add('hidden');
+                document.getElementById('form-staggingName').textContent = sub.stagging_name || '-'; 
+                document.getElementById('form-ssc-prov').textContent = `${sub.pic || '-'} - ${sub.province || '-'}`;
+                document.getElementById('form-pic-name').textContent = sub.ssc || '-'; 
+                document.getElementById('form-user-initial').textContent = (sub.ssc || '-').charAt(0).toUpperCase();
+            }
+
+            await generateChecklistForm();
+            
+            // Populate answers
+            for (const itemId in sub.answers) {
+                const ans = sub.answers[itemId];
+                const radio = document.querySelector(`input[name="status-${itemId}"][value="${ans.status}"]`);
+                if (radio) {
+                    radio.checked = true;
+                    // Trigger onchange to show note field if necessary
+                    const event = new Event('change');
+                    radio.dispatchEvent(event);
+                }
+                
+                if (ans.note) {
+                    const noteInput = document.getElementById(`note-input-${itemId}`);
+                    if (noteInput) {
+                        noteInput.value = ans.note;
+                    }
+                }
+            }
+
+            document.getElementById('btn-submit-form').innerHTML = '<span class="material-symbols-rounded icon-fill">edit_document</span> <span>Perbarui Laporan Inspeksi</span>';
+            document.getElementById('modal-checklist-form').classList.remove('hidden');
         }
 
         function renderDashboardHeaders(cats) {
@@ -3408,7 +3467,8 @@
                       <th rowspan="3" class="p-2 sticky-col-2 col-w-2 bg-white border-r border-b-2 border-slate-200 text-center hidden md:table-cell">Provinsi</th>
                       <th rowspan="3" class="p-2 sticky-col-3 col-w-3 bg-white border-r border-b-2 border-slate-200 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] md:shadow-none text-center">Kode SS</th>
                       <th rowspan="3" class="p-2 bg-white border-r border-b-2 border-slate-200 text-center min-w-[140px]">Penanggung Jawab</th>
-                      <th rowspan="3" class="p-2 bg-white border-r border-b-2 border-slate-200 text-center min-w-[120px]">Tanggal Pelaporan</th>`;
+                      <th rowspan="3" class="p-2 bg-white border-r border-b-2 border-slate-200 text-center min-w-[120px]">Tanggal Pelaporan</th>
+                      <th rowspan="3" class="p-2 bg-white border-r border-b-2 border-slate-200 text-center min-w-[80px]">Aksi</th>`;
             let h2 = ``; let h3 = ``;
 
             cats.forEach((cat, idx) => {
@@ -3427,7 +3487,7 @@
             row1.innerHTML = h1; row2.innerHTML = h2; row3.innerHTML = h3;
         }
 
-        function renderDashboardBodyAndNotes(data, filteredCats, allCats, sscHistory) {
+        function renderDashboardBodyAndNotes(data, notesData, filteredCats, allCats, sscHistory) {
             const tbody = document.getElementById('dashboard-tbody'); const noteSec = document.getElementById('dashboard-notes-section'); const noteCon = document.getElementById('dashboard-notes-container');
             let html = '', noteHtml = ''; const itemMap = {}; allCats.forEach(c => { if(c.items) c.items.forEach(i => itemMap[i.id] = { label: i.label, cat: c.category, type: i.type || 'ok_nonok' }) });
 
@@ -3437,6 +3497,26 @@
                 data.forEach((sub, idx) => {
                     const isNew = currGroup !== sub.ssc; if(isNew) currGroup = sub.ssc;
                     const borderCls = isNew && idx !== 0 ? 'border-t-[3px] border-slate-200' : 'border-t border-slate-100';
+
+                    let isEditable = false;
+                    if (sub.date !== '-') {
+                        let now;
+                        try { now = new Date(); } catch(e) { now = new Date(); }
+                        let subDate = parseDateObj(sub.date);
+                        let diffDays = (now.getTime() - subDate) / (1000 * 3600 * 24);
+                        if (diffDays <= 5) {
+                            isEditable = true;
+                        }
+                    }
+                    
+                    let actionHtml = '';
+                    if (isEditable && (currentUser.role === 'admin' || currentUser.id === sub.user_id)) {
+                        actionHtml = `<button onclick="editSubmission('${sub.id}')" class="text-brand-600 bg-brand-50 hover:bg-brand-100 w-8 h-8 rounded-lg transition-colors flex items-center justify-center mx-auto shadow-sm" title="Edit Laporan (H+5)"><span class="material-symbols-rounded text-[18px]">edit</span></button>`;
+                    } else if (sub.date !== '-') {
+                         actionHtml = `<span class="material-symbols-rounded text-slate-300 text-[18px]" title="Terkunci">lock</span>`;
+                    } else {
+                         actionHtml = `-`;
+                    }
 
                     let prevSscHtml = '';
                     if (sscHistory && sscHistory[sub.user_id]) {
@@ -3450,7 +3530,8 @@
                         <td class="px-2 py-2 sticky-col-2 col-w-2 text-center font-bold text-slate-500 text-[10px] hidden md:table-cell uppercase">${sub.province || '-'}</td>
                         <td class="px-2 py-2 sticky-col-3 col-w-3 font-extrabold text-slate-900 text-[11px] shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] md:shadow-none leading-tight">${sub.stagging_name || '-'}</td>
                         <td class="px-2 py-2 text-slate-800 font-bold text-[10px] leading-tight min-w-[140px]">${sub.pic !== '-' ? sub.pic : '<span class="text-slate-300 italic font-medium">Kosong</span>'}<br>${prevSscHtml}</td>
-                        <td class="px-2 py-2 text-center text-slate-500 text-[9px] font-bold bg-slate-50 min-w-[110px]">${sub.date.replace(', ', '<br><span class="text-brand-600">')}</span></td>`;
+                        <td class="px-2 py-2 text-center text-slate-500 text-[9px] font-bold bg-slate-50 min-w-[110px]">${sub.date.replace(', ', '<br><span class="text-brand-600">')}</span></td>
+                        <td class="px-2 py-2 text-center align-middle bg-white">${actionHtml}</td>`;
 
                     filteredCats.forEach(cat => {
                         const grouped = {}; (cat.items || []).forEach(item => { const sc = item.subCategory || 'Tanpa Sub Kategori'; if(!grouped[sc]) grouped[sc] = []; grouped[sc].push(item); });
@@ -3467,7 +3548,11 @@
                         });
                     });
                     html += `</tr>`;
+                });
 
+                notesData.sort((a, b) => parseDateObj(b.date) - parseDateObj(a.date));
+                
+                notesData.forEach(sub => {
                     let notesByCategory = {};
                     Object.keys(sub.answers).forEach(itemId => {
                         const ans = sub.answers[itemId]; const meta = itemMap[itemId]; const isNeg = meta ? ans.status === itemTypeConfig[meta.type].neg : (ans.status === 'Non OK' || ans.status === 'Tidak Ada' || ans.status === 'Rusak');
