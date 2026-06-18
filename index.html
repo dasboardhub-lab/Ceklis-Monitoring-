@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ceklis Monitoring | Platform Analisis Data</title>
+    <title>Ceklis Monitoring</title>
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%234f46e5'%3E%3Cpath d='M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z'/%3E%3C/svg%3E" type="image/svg+xml">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -282,9 +282,6 @@
                             <p class="text-slate-500 text-sm mt-1 font-medium">Pemantauan fasilitas air, listrik, dan IPL secara mingguan.</p>
                         </div>
                         <div class="flex gap-2">
-                            <button id="btn-upload-utilitas" style="display: none;" onclick="openUploadUtilitasModal()" class="bg-indigo-100 hover:bg-indigo-200 text-indigo-700 px-4 py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-transform active:scale-95 shadow-sm border border-indigo-200">
-                                <span class="material-symbols-rounded text-[20px]">upload_file</span> <span class="hidden sm:inline">Upload Data</span>
-                            </button>
                             <button id="btn-open-utilitas-form" onclick="openUtilitasModal()" class="bg-brand-600 hover:bg-brand-700 text-white px-6 py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-transform active:scale-95 shadow-md">
                                 <span class="material-symbols-rounded text-[20px]">add_task</span> Isi Form Mingguan
                             </button>
@@ -302,6 +299,8 @@
                         <div class="flex flex-wrap sm:flex-nowrap gap-2">
                             <select id="util-filter-minggu" onchange="renderUtilitasTable()" class="hidden input-modern px-4 py-2 rounded-xl text-sm font-bold w-32"><option value="1">Minggu 1</option><option value="2">Minggu 2</option><option value="3">Minggu 3</option><option value="4">Minggu 4</option><option value="5">Minggu 5</option></select>
                             
+                            <select id="util-filter-status" onchange="renderUtilitasTable()" class="input-modern px-4 py-2 rounded-xl text-sm font-bold w-36 bg-white"><option value="all">Semua Status</option><option value="submitted">Sudah Isi (Minggu Ini)</option><option value="unsubmitted">Belum Isi (Minggu Ini)</option></select>
+
                             <div class="relative inline-block text-left" id="util-bulan-dropdown-container">
                                 <button type="button" onclick="toggleUtilBulanDropdown()" id="btn-util-bulan-text" class="input-modern px-4 py-2 rounded-xl text-sm font-bold w-36 md:w-40 flex items-center justify-between gap-1 bg-white">
                                     <span class="truncate">Pilih Bulan</span>
@@ -361,7 +360,7 @@
 
                     <!-- Tabel Mingguan -->
                     <div class="bg-surface rounded-3xl shadow-soft border border-slate-200 overflow-hidden mb-8 flex flex-col">
-                        <div class="overflow-auto custom-scroll w-full h-[50vh] xl:h-[60vh]">
+                        <div class="overflow-auto custom-scroll w-full h-[80vh] xl:h-[85vh]">
                             <table class="w-full text-left border-collapse min-w-max text-[11px]">
                                 <thead class="sticky-header" id="utilitas-thead">
                                     <tr class="bg-slate-100 text-slate-600 font-bold border-b border-slate-200 uppercase tracking-wider">
@@ -395,6 +394,9 @@
                                 <div class="flex gap-2">
                                     <button onclick="exportUsersCSV()" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-600 border border-emerald-200 px-4 py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-colors shadow-sm">
                                         <span class="material-symbols-rounded text-[18px]">file_download</span> Export CSV
+                                    </button>
+                                    <button onclick="openUploadUserModal()" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-600 border border-indigo-200 px-4 py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-colors shadow-sm">
+                                        <span class="material-symbols-rounded text-[18px]">group_add</span> Upload Bulk
                                     </button>
                                     <button onclick="openAddUserModal()" class="bg-slate-900 hover:bg-black text-white px-4 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-transform active:scale-95 shadow-md">
                                         <span class="material-symbols-rounded icon-outline text-[18px]">person_add</span> Tambah Akun Baru
@@ -714,6 +716,31 @@
                     <div class="pt-6 flex justify-end gap-2 border-t border-slate-100 mt-6">
                         <button type="button" onclick="closeEditUserModal()" class="px-5 py-2.5 rounded-xl font-bold text-sm text-slate-600 hover:bg-slate-100 transition-colors">Batal</button>
                         <button type="submit" class="px-6 py-2.5 rounded-xl font-bold text-sm text-white bg-brand-600 hover:bg-brand-700 transition-transform active:scale-95 shadow-md">Simpan Perubahan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Upload Bulk Users -->
+    <div id="modal-upload-users" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[400] flex items-center justify-center p-4">
+        <div class="max-w-md w-full bg-surface rounded-3xl shadow-float overflow-hidden animate-modal flex flex-col border border-slate-200">
+            <div class="bg-indigo-50 border-b border-indigo-100 p-6 flex justify-between items-center shrink-0">
+                <h3 class="font-bold text-indigo-700 text-lg flex items-center gap-2"><span class="material-symbols-rounded icon-fill">upload_file</span> Upload Bulk Akun</h3>
+                <button onclick="closeUploadUserModal()" class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 hover:bg-indigo-200 flex items-center justify-center transition-colors"><span class="material-symbols-rounded text-sm">close</span></button>
+            </div>
+            <div class="p-6 sm:p-8">
+                <p class="text-slate-600 text-sm mb-4 text-center">Gunakan template yang disediakan. Sistem akan otomatis mengabaikan username yang sudah terdaftar.</p>
+                <button onclick="downloadTemplateUsers()" class="w-full mb-6 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 px-4 py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-transform active:scale-95 shadow-sm">
+                    <span class="material-symbols-rounded text-[18px]">download</span> Download Template .xlsx
+                </button>
+                <form id="form-upload-users" class="space-y-4">
+                    <div class="border-2 border-dashed border-slate-300 rounded-2xl p-6 text-center hover:bg-slate-50 transition-colors">
+                        <input type="file" id="file-upload-users" accept=".xlsx, .xls" required class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 cursor-pointer"/>
+                    </div>
+                    <div class="pt-4 flex justify-end gap-2 border-t border-slate-100">
+                        <button type="button" onclick="closeUploadUserModal()" class="px-5 py-2.5 rounded-xl font-bold text-sm text-slate-600 hover:bg-slate-100 transition-colors">Batal</button>
+                        <button type="submit" id="btn-process-upload-users" class="px-6 py-2.5 rounded-xl font-bold text-sm text-white bg-indigo-600 hover:bg-indigo-700 transition-transform active:scale-95 shadow-md flex items-center gap-2"><span class="material-symbols-rounded text-[18px]">cloud_upload</span> Proses Akun</button>
                     </div>
                 </form>
             </div>
@@ -1234,18 +1261,15 @@
             const tUsers = document.getElementById('tab-admin-users'); const tAdminForm = document.getElementById('tab-admin-form');
             const mUsers = document.getElementById('mob-tab-admin-users'); const mAdminForm = document.getElementById('mob-tab-admin-form');
             const btnOpenForm = document.getElementById('btn-open-form'); const btnAdminHapus = document.getElementById('btn-admin-hapus-data');
-            const btnUploadUtilitas = document.getElementById('btn-upload-utilitas');
             
             tUsers.style.display = 'none'; tAdminForm.style.display = 'none';
             if(mUsers) mUsers.style.display = 'none'; if(mAdminForm) mAdminForm.style.display = 'none';
             btnOpenForm.style.display = 'none'; if(btnAdminHapus) btnAdminHapus.style.display = 'none';
-            if(btnUploadUtilitas) btnUploadUtilitas.style.display = 'none';
 
             if (currentUser.role === 'admin') {
                 tUsers.style.display = 'flex'; tAdminForm.style.display = 'flex';
                 if(mUsers) mUsers.style.display = 'flex'; if(mAdminForm) mAdminForm.style.display = 'flex';
                 btnOpenForm.style.display = 'flex'; if(btnAdminHapus) btnAdminHapus.style.display = 'flex';
-                if(btnUploadUtilitas) btnUploadUtilitas.style.display = 'flex';
                 switchTab('dashboard'); await renderAdminUsers(); await renderAdminCategoryList();
             } else if (currentUser.role === 'user') {
                 btnOpenForm.style.display = 'flex'; switchTab('dashboard');
@@ -2103,6 +2127,16 @@
             const allFetchedData = dbData || [];
             globalUtilData = allFetchedData; 
             
+            const vStatus = document.getElementById('util-filter-status') ? document.getElementById('util-filter-status').value : 'all';
+            if (vStatus !== 'all') {
+                let nowStr = new Date();
+                const currWi = getCustomWeekInfo(nowStr);
+                validUsers = validUsers.filter(u => {
+                    const hasSub = allFetchedData.some(d => d.stagging_name === u.stagging_name && parseInt(d.tahun) === currWi.tahun && parseInt(d.bulan) === currWi.bulan && parseInt(d.minggu) === currWi.minggu);
+                    return vStatus === 'submitted' ? hasSub : !hasSub;
+                });
+            }
+
             const utilDataCurrent = allFetchedData.filter(d => selBulans.includes(parseInt(d.bulan)) && parseInt(d.tahun) === selTahun);
             
             const getOrderScore = d => parseInt(d.tahun) * 1000 + parseInt(d.bulan) * 10 + parseInt(d.minggu);
@@ -2899,6 +2933,90 @@
             const role = document.getElementById('add-role').value; const locFields = document.getElementById('fields-lokasi');
             if (role === 'user') { locFields.classList.remove('hidden'); document.getElementById('add-st').required = true; document.getElementById('add-pr').required = true; document.getElementById('add-ss').required = true; } 
             else { locFields.classList.add('hidden'); document.getElementById('add-st').required = false; document.getElementById('add-pr').required = false; document.getElementById('add-ss').required = false; }
+        }
+
+        function openUploadUserModal() { document.getElementById('modal-upload-users').classList.remove('hidden'); document.getElementById('form-upload-users').reset(); }
+        function closeUploadUserModal() { document.getElementById('modal-upload-users').classList.add('hidden'); }
+        function downloadTemplateUsers() {
+            const ws_data = [
+                ["Username", "Password", "Nama Lengkap", "Role", "Stagging Area", "Koordinator SSC", "Provinsi"],
+                ["budi_contoh", "pass123", "Budi Santoso", "user", "Store Antang", "SSC MKS", "Sulsel"],
+                ["tamu_contoh", "lihat123", "Tamu Perusahaan", "visitor", "", "", ""]
+            ];
+            const ws = XLSX.utils.aoa_to_sheet(ws_data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Template Akun");
+            XLSX.writeFile(wb, "Template_Upload_Akun.xlsx");
+        }
+
+        const uploadUserForm = document.getElementById('form-upload-users');
+        if (uploadUserForm) {
+            uploadUserForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const fileInput = document.getElementById('file-upload-users');
+                if (!fileInput.files.length) { Island.show('Pilih file terlebih dahulu.', 'error'); return; }
+                
+                const btn = document.getElementById('btn-process-upload-users');
+                const originalText = btn.innerHTML;
+                btn.disabled = true;
+                btn.innerHTML = '<span class="material-symbols-rounded animate-spin">sync</span> Memproses...';
+
+                const reader = new FileReader();
+                reader.onload = async function(e) {
+                    try {
+                        const data = new Uint8Array(e.target.result);
+                        const workbook = XLSX.read(data, {type: 'array'});
+                        const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                        const jsonData = XLSX.utils.sheet_to_json(firstSheet);
+
+                        if (jsonData.length === 0) { throw new Error("File Excel kosong."); }
+
+                        const { data: existUsers } = await supabaseClient.from('users').select('username');
+                        const existUsernames = existUsers ? existUsers.map(u => u.username) : [];
+
+                        let payloads = [];
+                        for (let i = 0; i < jsonData.length; i++) {
+                            const row = jsonData[i];
+                            if(!row['Username'] || !row['Password']) continue;
+
+                            const un = String(row['Username']).trim();
+                            if(existUsernames.includes(un)) continue; 
+                            existUsernames.push(un); 
+
+                            payloads.push({
+                                id: 'U' + Date.now() + i,
+                                username: un,
+                                password: String(row['Password']).trim(),
+                                pic_name: row['Nama Lengkap'] || un,
+                                role: (row['Role'] || 'user').toLowerCase(),
+                                stagging_name: row['Stagging Area'] || null,
+                                ssc: row['Koordinator SSC'] || null,
+                                province: row['Provinsi'] || null,
+                                is_active: true
+                            });
+                        }
+
+                        if (payloads.length === 0) { throw new Error("Semua username sudah ada di database atau data tidak valid."); }
+
+                        Island.show(`Memasukkan ${payloads.length} akun ke server...`, 'info', 5000);
+                        
+                        const { error } = await supabaseClient.from('users').insert(payloads);
+                        if (error) throw error;
+
+                        Island.show('Upload akun berhasil!', 'success');
+                        closeUploadUserModal();
+                        await renderAdminUsers();
+
+                    } catch (err) {
+                        console.error(err);
+                        Island.show(err.message || 'Gagal memproses file.', 'error');
+                    } finally {
+                        btn.disabled = false;
+                        btn.innerHTML = originalText;
+                    }
+                };
+                reader.readAsArrayBuffer(fileInput.files[0]);
+            });
         }
 
         document.getElementById('add-user-form').addEventListener('submit', async function(e) {
