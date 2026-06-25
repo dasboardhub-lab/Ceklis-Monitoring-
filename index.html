@@ -486,8 +486,7 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Tab: Dashboard Rekap -->
+                <!-- Tab: Dashboard Rekap -->=
                 <div id="content-dashboard" class="hidden w-full px-2 sm:px-6 lg:px-8 mt-4 sm:mt-6 animate-content">
                     
                     <div class="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-5 mb-6 px-2">
@@ -1053,6 +1052,11 @@
                             <span class="material-symbols-rounded icon-fill">cloud_upload</span> <span>Simpan Data Utilitas</span>
                         </button>
                     </div>
+
+                    <datalist id="history-air-id"></datalist>
+                    <datalist id="history-air-nama"></datalist>
+                    <datalist id="history-listrik-id"></datalist>
+                    <datalist id="history-listrik-nama"></datalist>
                 </form>
             </div>
         </div>
@@ -1781,6 +1785,9 @@
             if(d.ipl_aman_jadwal) { const el = document.querySelector(`input[name="ipl_aman_jadwal"][value="${d.ipl_aman_jadwal}"]`); if(el) el.checked = true; }
 
             document.getElementById('btn-submit-utilitas').innerHTML = '<span class="material-symbols-rounded icon-fill">edit_square</span> <span>Perbarui Data Utilitas</span>';
+            
+            populateUtilitasHistory(data.stagging_name);
+            
             document.getElementById('modal-utilitas-form').classList.remove('hidden');
         }
 
@@ -1914,6 +1921,8 @@
                 document.getElementById('u-periode-minggu').value = wi.minggu;
 
                 toggleAirFields(); toggleAirMekanisme(); toggleSubTandon(); toggleSubPompa(); toggleIpl('ipl_bersih', 'ipl-bersih-fields'); toggleIpl('ipl_aman', 'ipl-aman-fields');
+
+                await populateUtilitasHistory(uName);
 
                 document.getElementById('modal-utilitas-form').classList.remove('hidden');
             } catch (err) {
