@@ -219,7 +219,7 @@
                     
                     <button onclick="switchTab('dashboard')" id="tab-dashboard" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all text-brand-700 bg-brand-50 group">
                         <span class="material-symbols-rounded icon-fill text-xl text-brand-600">pie_chart</span>
-                        <span class="text-sm">Ceklis Monitoring & Aset</span>
+                        <span class="text-sm">Ceklis Monitoring</span>
                     </button>
 
                     <button onclick="switchTab('utilitas')" id="tab-utilitas" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-semibold transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-50 group">
@@ -316,7 +316,7 @@
                         <div class="flex flex-wrap sm:flex-nowrap gap-2">
                             <select id="util-filter-minggu" onchange="renderUtilitasTable()" class="hidden input-modern px-4 py-2 rounded-xl text-sm font-bold w-32"><option value="1">Minggu 1</option><option value="2">Minggu 2</option><option value="3">Minggu 3</option><option value="4">Minggu 4</option><option value="5">Minggu 5</option></select>
                             
-                            <select id="util-filter-status" onchange="renderUtilitasTable()" class="input-modern px-4 py-2 rounded-xl text-sm font-bold w-36 bg-white"><option value="all">Semua Status</option><option value="submitted">Sudah Isi (Minggu Ini)</option><option value="unsubmitted">Belum Isi (Minggu Ini)</option></select>
+                            <select id="util-filter-status" onchange="renderUtilitasTable()" class="input-modern px-4 py-2 rounded-xl text-sm font-bold w-36 bg-white"><option value="all">Semua Status</option><option value="submitted">Sudah Isi Data</option><option value="unsubmitted">Belum Isi Data</option></select>
 
                             <div class="relative inline-block text-left" id="util-bulan-dropdown-container">
                                 <button type="button" onclick="toggleUtilBulanDropdown()" id="btn-util-bulan-text" class="input-modern px-4 py-2 rounded-xl text-sm font-bold w-36 md:w-40 flex items-center justify-between gap-1 bg-white">
@@ -492,7 +492,7 @@
                     
                     <div class="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-5 mb-6 px-2">
                         <div>
-                            <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Ceklis Monitoring & Aset</h2>
+                            <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Ceklis Monitoring</h2>
                             <p class="text-sm text-slate-500 mt-1 font-medium">Pemantauan hasil inspeksi lapangan dan aset secara komprehensif.</p>
                         </div>
 
@@ -584,7 +584,7 @@
         <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-md border-t border-slate-200 z-[100] pb-safe flex justify-around p-2 shadow-[0_-4px_20px_rgba(0,0,0,0.03)]">
             <button onclick="switchTab('dashboard')" id="mob-tab-dashboard" class="flex-1 py-2 flex flex-col items-center gap-1 text-brand-600 transition-colors">
                 <span class="material-symbols-rounded text-[24px]">pie_chart</span>
-                <span class="text-[9px] font-bold uppercase tracking-widest text-center leading-tight">Ceklis & Aset</span>
+                <span class="text-[9px] font-bold uppercase tracking-widest text-center leading-tight">Ceklis</span>
             </button>
             <button onclick="switchTab('utilitas')" id="mob-tab-utilitas" class="flex-1 py-2 flex flex-col items-center gap-1 text-slate-400 hover:text-slate-900 transition-colors">
                 <span class="material-symbols-rounded icon-outline text-[24px]">home_repair_service</span>
@@ -2219,10 +2219,13 @@
             
             const vStatus = document.getElementById('util-filter-status') ? document.getElementById('util-filter-status').value : 'all';
             if (vStatus !== 'all') {
-                let nowStr = new Date();
-                const currWi = getCustomWeekInfo(nowStr);
                 validUsers = validUsers.filter(u => {
-                    const hasSub = allFetchedData.some(d => d.stagging_name === u.stagging_name && parseInt(d.tahun) === currWi.tahun && parseInt(d.bulan) === currWi.bulan && parseInt(d.minggu) === currWi.minggu);
+                    let hasSub = false;
+                    if (currentUtilView === 'rekap') {
+                        hasSub = allFetchedData.some(d => d.stagging_name === u.stagging_name && parseInt(d.tahun) === selTahun && selBulans.includes(parseInt(d.bulan)) && parseInt(d.minggu) === selMinggu);
+                    } else {
+                        hasSub = allFetchedData.some(d => d.stagging_name === u.stagging_name && parseInt(d.tahun) === selTahun && selBulans.includes(parseInt(d.bulan)));
+                    }
                     return vStatus === 'submitted' ? hasSub : !hasSub;
                 });
             }
@@ -4033,7 +4036,7 @@
                     }
                 });
 
-                text = `Halo Rekan-rekan Tim,\nMohon perhatiannya untuk *Progress Ceklis Monitoring & Aset* periode ${month} ${year === 'all' ? 'Keseluruhan' : year}:\n\n`;
+                text = `Halo Rekan-rekan Tim,\nMohon perhatiannya untuk *Progress Ceklis Monitoring* periode ${month} ${year === 'all' ? 'Keseluruhan' : year}:\n\n`;
                 
                 if(belumList.length > 0) {
                     text += `🚨 *BELUM MENGISI LAPORAN:*\n${belumList.map(a => `- ${a}`).join('\n')}\n_Mohon PIC area terkait agar segera menyelesaikannya hari ini._\n\n`;
@@ -4048,7 +4051,8 @@
                 text += `Cek detail dan log catatannya di:\n🔗 _https://ceklismonitoring.vercel.app/_`;
             
             } else if (type === 'utilitas') {
-                const monthText = document.getElementById('btn-util-bulan-text').innerText.trim();
+                const monthTextEl = document.getElementById('btn-util-bulan-text').querySelector('span.truncate');
+                const monthText = monthTextEl ? monthTextEl.innerText.trim() : 'Bulan Ini';
                 const year = document.getElementById('util-filter-tahun').value;
                 
                 let viewType = 'Data Air';
@@ -4058,27 +4062,95 @@
 
                 const tbody = document.getElementById('utilitas-tbody');
                 const rows = tbody.querySelectorAll('tr');
-                let topList = [];
                 
+                let topList = [];
+                let belumList = [];
+                let kendalaList = [];
+
+                let now; 
+                try { now = new Date(); } catch(err) { now = new Date(); }
+                const currWi = getCustomWeekInfo(now);
+                
+                let targetMinggu = currWi.minggu;
+                let targetTahun = parseInt(document.getElementById('util-filter-tahun').value) || currWi.tahun;
+                
+                let selBulans = Array.from(document.querySelectorAll('.util-bulan-checkbox:checked')).map(cb => parseInt(cb.value));
+                if(selBulans.length === 0) selBulans = [currWi.bulan];
+                let targetBulan = selBulans[selBulans.length - 1];
+
+                if (currentUtilView === 'rekap') {
+                    targetMinggu = parseInt(document.getElementById('util-filter-minggu').value) || currWi.minggu;
+                }
+                
+                // Cari Top List dari UI (karena logikanya menghitung selisih antar minggu yang cukup dinamis)
                 rows.forEach(r => {
                     if(!r.innerHTML.includes('Belum ada data') && !r.innerHTML.includes('Memuat data') && r.cells.length > 1) {
-                        const areaNameEl = r.querySelector('strong');
-                        if(areaNameEl) {
-                            const areaName = areaNameEl.innerText.trim();
-                            if(r.innerHTML.includes('Top Pemakaian')) {
-                                topList.push(areaName);
-                            }
+                        if(r.innerHTML.includes('Top Pemakaian')) {
+                            const areaNameEl = r.querySelector('strong');
+                            if(areaNameEl) topList.push(`- *${areaNameEl.innerText.trim()}*`);
+                        }
+                    }
+                });
+
+                // Cari Belum Isi & Kendala dari data Master agar akurat 100% (tidak terpengaruh oleh filter status di UI)
+                const selKoor = Array.from(document.querySelectorAll('.util-koor-checkbox:checked')).map(cb => cb.value);
+                const selStagings = Array.from(document.querySelectorAll('.util-ssc-checkbox:checked')).map(cb => cb.value);
+
+                let activeUsers = globalFieldUsers.filter(u => u.stagging_name);
+                if (selKoor.length > 0) activeUsers = activeUsers.filter(u => selKoor.includes(u.ssc));
+                if (selStagings.length > 0) activeUsers = activeUsers.filter(u => selStagings.includes(u.stagging_name));
+
+                activeUsers.sort((a, b) => a.stagging_name.localeCompare(b.stagging_name));
+
+                activeUsers.forEach(u => {
+                    const areaName = u.stagging_name;
+
+                    // 1. Deteksi Belum Mengisi
+                    const hasTargetSub = globalUtilData.some(d => d.stagging_name === areaName && parseInt(d.tahun) === targetTahun && parseInt(d.bulan) === targetBulan && parseInt(d.minggu) === targetMinggu);
+                    if (!hasTargetSub) {
+                        belumList.push(`- *${areaName}*`);
+                    }
+
+                    // 2. Deteksi Kendala (Dari Laporan Terakhir area tersebut)
+                    const areaSubs = globalUtilData.filter(d => d.stagging_name === areaName);
+                    areaSubs.sort((a,b) => {
+                         if (a.tahun != b.tahun) return b.tahun - a.tahun;
+                         if (a.bulan != b.bulan) return b.bulan - a.bulan;
+                         return b.minggu - a.minggu;
+                    });
+                    
+                    if (areaSubs.length > 0) {
+                        const latestSub = areaSubs[0];
+                        const d = latestSub.data;
+                        let issues = [];
+                        if (d.air_kondisi_meteran === 'Rusak') issues.push(`Meteran Air (${d.air_meteran_rusak || 'Rusak'})`);
+                        if (d.air_kondisi_pipa === 'Rusak') issues.push(`Pipa Air (${d.air_pipa_rusak || 'Bocor'})`);
+                        if (d.air_tandon === 'Ada' && d.air_kondisi_tandon === 'Rusak') issues.push(`Tandon (${d.air_tandon_rusak || 'Bocor'})`);
+                        if (d.air_otomatis === 'Ada' && d.air_kondisi_otomatis === 'Rusak') issues.push(`Otomatis Tandon (${d.air_otomatis_rusak || 'Rusak'})`);
+                        if (d.air_pompa === 'Ada' && d.air_kondisi_pompa === 'Rusak') issues.push(`Pompa Air (${d.air_pompa_rusak || 'Rusak'})`);
+                        
+                        if (issues.length > 0) {
+                            kendalaList.push(`- *${areaName}*: ${issues.join(', ')}`);
                         }
                     }
                 });
                 
                 text = `Halo Rekan-rekan Tim,\nBerikut adalah update pantauan *Awareness Utilitas & IPL* untuk periode ${monthText} ${year} (${viewType}):\n\n`;
 
+                if(belumList.length > 0) {
+                    text += `🚨 *BELUM MENGISI (M${targetMinggu}):*\n${belumList.join('\n')}\n_Mohon PIC area terkait agar segera melengkapi form di sistem hari ini._\n\n`;
+                } else {
+                    text += `✅ *Data (M${targetMinggu}) Terisi 100%*\nTerima kasih atas kedisiplinan rekan-rekan semua.\n\n`;
+                }
+
+                if(kendalaList.length > 0) {
+                    text += `⚠️ *KENDALA / FASILITAS RUSAK:*\n${kendalaList.join('\n')}\n_Mohon agar segera dikoordinasikan untuk perbaikan._\n\n`;
+                }
+
                 if(topList.length > 0) {
-                    text += `📈 *PEMAKAIAN TERTINGGI (TOP USAGE):*\n${topList.map(a => `- ${a}`).join('\n')}\n_Mohon perhatikan efisiensi pemakaian utilitas di area masing-masing._\n\n`;
+                    text += `📈 *PEMAKAIAN TERTINGGI (TOP USAGE):*\n${topList.join('\n')}\n_Mohon perhatikan efisiensi pemakaian utilitas di area masing-masing._\n\n`;
                 }
                 
-                text += `Bagi rekan-rekan yang *belum mengupdate* data mingguannya, mohon segera melengkapi form di sistem.\n\n`;
                 text += `Pantau tren dan grafik pemakaian area Anda di:\n🔗 _https://ceklismonitoring.vercel.app/_`;
             }
 
