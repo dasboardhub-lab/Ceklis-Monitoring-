@@ -293,6 +293,9 @@
                             <p class="text-slate-500 text-sm mt-1 font-medium">Pemantauan fasilitas air, listrik, dan IPL secara mingguan.</p>
                         </div>
                         <div class="flex gap-2">
+                            <button id="btn-broadcast-utilitas" style="display: none;" onclick="openReportModal('utilitas')" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 px-4 py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-colors shadow-sm">
+                                <span class="material-symbols-rounded text-[18px]">send_to_mobile</span> <span class="hidden sm:inline">Broadcast Tim</span>
+                            </button>
                             <button id="btn-export-utilitas" onclick="openExportUtilitasModal()" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-600 border border-emerald-200 px-4 py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-colors shadow-sm">
                                 <span class="material-symbols-rounded text-[18px]">file_download</span> Export Excel
                             </button>
@@ -537,6 +540,9 @@
                             <div class="flex gap-3 w-full sm:w-auto">
                                 <button id="btn-admin-hapus-data" style="display: none;" onclick="openAdminHapusModal()" class="flex-1 sm:flex-none bg-white hover:bg-rose-50 text-rose-600 border border-slate-200 px-4 py-3 rounded-2xl text-sm font-bold flex items-center justify-center gap-2 transition-all active:scale-[0.98] shadow-sm">
                                     <span class="material-symbols-rounded icon-outline text-[20px]">delete</span> <span class="hidden sm:inline">Hapus</span>
+                                </button>
+                                <button id="btn-broadcast-ceklis" style="display: none;" onclick="openReportModal('ceklis')" class="flex-1 sm:flex-none bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 px-4 py-3 rounded-2xl text-sm font-bold flex items-center justify-center gap-2 transition-all active:scale-[0.98] shadow-sm">
+                                    <span class="material-symbols-rounded icon-outline text-[20px]">send_to_mobile</span> <span class="hidden sm:inline">Broadcast Tim</span>
                                 </button>
                                 <button id="btn-open-form" style="display: none;" onclick="openChecklistModal()" class="flex-1 sm:flex-none bg-brand-600 hover:bg-brand-700 text-white px-6 py-3 rounded-2xl text-sm font-bold flex items-center justify-center gap-2 transition-all active:scale-[0.98] shadow-md shadow-brand-500/20">
                                     <span class="material-symbols-rounded icon-outline text-[20px]">edit_document</span> Isi Laporan
@@ -1153,6 +1159,27 @@
         </div>
     </div>
 
+    <!-- MODAL: Report Manager -->
+    <div id="modal-report-manager" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[500] flex items-center justify-center p-4">
+        <div class="max-w-lg w-full bg-surface rounded-3xl shadow-float overflow-hidden animate-modal flex flex-col border border-slate-200">
+            <div class="bg-indigo-50 border-b border-indigo-100 p-5 flex justify-between items-center shrink-0">
+                <h3 class="font-bold text-indigo-800 text-lg flex items-center gap-2"><span class="material-symbols-rounded icon-fill text-indigo-600">send_to_mobile</span> Broadcast Info Tim</h3>
+                <button onclick="closeReportModal()" class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 hover:bg-indigo-200 flex items-center justify-center transition-colors"><span class="material-symbols-rounded text-sm">close</span></button>
+            </div>
+            <div class="p-5 flex-1 bg-white">
+                <p class="text-xs text-slate-500 mb-3 font-medium">Teks broadcast di bawah ini otomatis dirangkum dari data yang tampil di layar Anda saat ini. Anda dapat mengedit teks sebelum membagikannya ke grup WA.</p>
+                <textarea id="report-text-content" rows="12" class="input-modern w-full px-4 py-3 rounded-xl text-sm font-medium text-slate-700 bg-slate-50 border border-slate-200 focus:bg-white resize-none leading-relaxed"></textarea>
+            </div>
+            <div class="p-4 border-t border-slate-100 bg-slate-50 flex justify-end gap-2">
+                <button onclick="copyReportText()" class="px-5 py-2.5 rounded-xl font-bold text-sm text-slate-600 bg-white border border-slate-200 hover:bg-slate-100 transition-colors shadow-sm flex items-center gap-2"><span class="material-symbols-rounded text-[18px]">content_copy</span> Copy Teks</button>
+                <button onclick="sendReportWA()" class="px-5 py-2.5 rounded-xl font-bold text-sm text-white bg-[#25D366] hover:bg-[#20bd5a] transition-colors shadow-sm flex items-center gap-2 active:scale-95">
+                    <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+                    Kirim via WA
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
         let currentUtilView = 'air';
         let utilChartScale = 'mingguan';
@@ -1321,15 +1348,18 @@
             const tUsers = document.getElementById('tab-admin-users'); const tAdminForm = document.getElementById('tab-admin-form');
             const mUsers = document.getElementById('mob-tab-admin-users'); const mAdminForm = document.getElementById('mob-tab-admin-form');
             const btnOpenForm = document.getElementById('btn-open-form'); const btnAdminHapus = document.getElementById('btn-admin-hapus-data');
+            const btnBroadUtil = document.getElementById('btn-broadcast-utilitas'); const btnBroadCek = document.getElementById('btn-broadcast-ceklis');
             
             tUsers.style.display = 'none'; tAdminForm.style.display = 'none';
             if(mUsers) mUsers.style.display = 'none'; if(mAdminForm) mAdminForm.style.display = 'none';
             btnOpenForm.style.display = 'none'; if(btnAdminHapus) btnAdminHapus.style.display = 'none';
+            if(btnBroadUtil) btnBroadUtil.style.display = 'none'; if(btnBroadCek) btnBroadCek.style.display = 'none';
 
             if (currentUser.role === 'admin') {
                 tUsers.style.display = 'flex'; tAdminForm.style.display = 'flex';
                 if(mUsers) mUsers.style.display = 'flex'; if(mAdminForm) mAdminForm.style.display = 'flex';
                 btnOpenForm.style.display = 'flex'; if(btnAdminHapus) btnAdminHapus.style.display = 'flex';
+                if(btnBroadUtil) btnBroadUtil.style.display = 'flex'; if(btnBroadCek) btnBroadCek.style.display = 'flex';
                 switchTab('dashboard'); await renderAdminUsers(); await renderAdminCategoryList();
             } else if (currentUser.role === 'user') {
                 btnOpenForm.style.display = 'flex'; switchTab('dashboard');
@@ -3959,6 +3989,119 @@
                 btn.innerHTML = originalText;
             }
         });
+
+        // === FUNGSI GENERATE LAPORAN MANAGER ===
+        window.openReportModal = function(type) {
+            const textarea = document.getElementById('report-text-content');
+            let text = '';
+            
+            if (type === 'ceklis') {
+                const monthSel = document.getElementById('filter-month');
+                const month = monthSel.options[monthSel.selectedIndex].text;
+                const year = document.getElementById('filter-year').value;
+                
+                const tbody = document.getElementById('dashboard-tbody');
+                const rows = tbody.querySelectorAll('tr');
+                let belumList = [];
+                let temuanDetailList = [];
+                
+                rows.forEach(r => {
+                    if(r.cells.length > 3 && !r.innerHTML.includes('BELUM ADA DATA')) {
+                        const areaName = r.cells[2].innerText.trim();
+                        const dateCell = r.cells[4].innerText;
+                        
+                        if(dateCell === '-') belumList.push(areaName);
+                    }
+                });
+
+                // Mengambil detail temuan dari kartu log lapangan
+                const notesCards = document.querySelectorAll('#dashboard-notes-container > div.group');
+                notesCards.forEach(card => {
+                    const titleEl = card.querySelector('.px-4.py-3 span.font-extrabold');
+                    let areaName = titleEl ? titleEl.childNodes[0].textContent.trim() : 'Area Unknown';
+                    
+                    let areaNotes = [];
+                    const noteItems = card.querySelectorAll('.border-l-\\[3px\\]');
+                    noteItems.forEach(item => {
+                        const label = item.querySelector('.font-bold').innerText.replace(':', '').trim();
+                        const note = item.querySelector('.italic').innerText.replace(/"/g, '').trim();
+                        areaNotes.push(`  • ${label}: ${note}`);
+                    });
+
+                    if (areaNotes.length > 0) {
+                        temuanDetailList.push(`- *${areaName}*\n${areaNotes.join('\n')}`);
+                    }
+                });
+
+                text = `Halo Rekan-rekan Tim,\nMohon perhatiannya untuk *Progress Ceklis Monitoring & Aset* periode ${month} ${year === 'all' ? 'Keseluruhan' : year}:\n\n`;
+                
+                if(belumList.length > 0) {
+                    text += `🚨 *BELUM MENGISI LAPORAN:*\n${belumList.map(a => `- ${a}`).join('\n')}\n_Mohon PIC area terkait agar segera menyelesaikannya hari ini._\n\n`;
+                } else {
+                    text += `✅ *Laporan Lengkap 100%*\nTerima kasih atas kedisiplinan rekan-rekan semua.\n\n`;
+                }
+                
+                if(temuanDetailList.length > 0) {
+                    text += `⚠️ *AREA DENGAN TEMUAN/ISU:* (Fasilitas Rusak / Hilang / Tidak Standar)\n${temuanDetailList.join('\n\n')}\n\n_Mohon agar segera dilakukan perbaikan atau tindak lanjut._\n\n`;
+                }
+                
+                text += `Cek detail dan log catatannya di:\n🔗 _https://ceklismonitoring.vercel.app/_`;
+            
+            } else if (type === 'utilitas') {
+                const monthText = document.getElementById('btn-util-bulan-text').innerText.trim();
+                const year = document.getElementById('util-filter-tahun').value;
+                
+                let viewType = 'Data Air';
+                if(currentUtilView === 'listrik') viewType = 'Data Listrik';
+                if(currentUtilView === 'ipl') viewType = 'Data IPL';
+                if(currentUtilView === 'rekap') viewType = 'Rekapitulasi Lengkap';
+
+                const tbody = document.getElementById('utilitas-tbody');
+                const rows = tbody.querySelectorAll('tr');
+                let topList = [];
+                
+                rows.forEach(r => {
+                    if(!r.innerHTML.includes('Belum ada data') && !r.innerHTML.includes('Memuat data') && r.cells.length > 1) {
+                        const areaNameEl = r.querySelector('strong');
+                        if(areaNameEl) {
+                            const areaName = areaNameEl.innerText.trim();
+                            if(r.innerHTML.includes('Top Pemakaian')) {
+                                topList.push(areaName);
+                            }
+                        }
+                    }
+                });
+                
+                text = `Halo Rekan-rekan Tim,\nBerikut adalah update pantauan *Awareness Utilitas & IPL* untuk periode ${monthText} ${year} (${viewType}):\n\n`;
+
+                if(topList.length > 0) {
+                    text += `📈 *PEMAKAIAN TERTINGGI (TOP USAGE):*\n${topList.map(a => `- ${a}`).join('\n')}\n_Mohon perhatikan efisiensi pemakaian utilitas di area masing-masing._\n\n`;
+                }
+                
+                text += `Bagi rekan-rekan yang *belum mengupdate* data mingguannya, mohon segera melengkapi form di sistem.\n\n`;
+                text += `Pantau tren dan grafik pemakaian area Anda di:\n🔗 _https://ceklismonitoring.vercel.app/_`;
+            }
+
+            textarea.value = text;
+            document.getElementById('modal-report-manager').classList.remove('hidden');
+        };
+
+        window.closeReportModal = function() {
+            document.getElementById('modal-report-manager').classList.add('hidden');
+        };
+
+        window.copyReportText = function() {
+            const textarea = document.getElementById('report-text-content');
+            textarea.select();
+            document.execCommand('copy');
+            Island.show('Teks berhasil disalin!', 'success');
+        };
+
+        window.sendReportWA = function() {
+            const text = document.getElementById('report-text-content').value;
+            const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
+            window.open(url, '_blank');
+        };
     </script>
 </body>
 </html>
