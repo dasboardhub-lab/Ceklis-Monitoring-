@@ -282,6 +282,9 @@
                             <p class="text-slate-500 text-sm mt-1 font-medium">Pemantauan fasilitas air, listrik, dan IPL secara mingguan.</p>
                         </div>
                         <div class="flex gap-2">
+                            <button id="btn-export-utilitas" onclick="openExportUtilitasModal()" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-600 border border-emerald-200 px-4 py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-colors shadow-sm">
+                                <span class="material-symbols-rounded text-[18px]">file_download</span> Export Excel
+                            </button>
                             <button id="btn-open-utilitas-form" onclick="openUtilitasModal()" class="bg-brand-600 hover:bg-brand-700 text-white px-6 py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-transform active:scale-95 shadow-md">
                                 <span class="material-symbols-rounded text-[20px]">add_task</span> Isi Form Mingguan
                             </button>
@@ -1087,6 +1090,52 @@
                     <div class="pt-4 flex justify-end gap-2 border-t border-slate-100">
                         <button type="button" onclick="closeUploadUtilitasModal()" class="px-5 py-2.5 rounded-xl font-bold text-sm text-slate-600 hover:bg-slate-100 transition-colors">Batal</button>
                         <button type="submit" id="btn-process-upload" class="px-6 py-2.5 rounded-xl font-bold text-sm text-white bg-indigo-600 hover:bg-indigo-700 transition-transform active:scale-95 shadow-md flex items-center gap-2"><span class="material-symbols-rounded text-[18px]">cloud_upload</span> Proses Upload</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Export Data Utilitas -->
+    <div id="modal-export-utilitas" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[400] flex items-center justify-center p-4">
+        <div class="max-w-md w-full bg-surface rounded-3xl shadow-float overflow-hidden animate-modal flex flex-col border border-slate-200">
+            <div class="bg-emerald-50 border-b border-emerald-100 p-6 flex justify-between items-center shrink-0">
+                <h3 class="font-bold text-emerald-700 text-lg flex items-center gap-2"><span class="material-symbols-rounded icon-fill">file_download</span> Download Data Utilitas</h3>
+                <button onclick="closeExportUtilitasModal()" class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-600 hover:bg-emerald-200 flex items-center justify-center transition-colors"><span class="material-symbols-rounded text-sm">close</span></button>
+            </div>
+            <div class="p-6 sm:p-8">
+                <p class="text-slate-600 text-sm mb-6 text-center">Pilih periode data Awareness Utilitas & IPL yang ingin Anda unduh dalam format Excel (.xlsx).</p>
+                <form id="form-export-utilitas" class="space-y-4">
+                    <div>
+                        <label class="label-modern">Filter Bulan</label>
+                        <select id="export-util-month" class="input-modern w-full px-4 py-3 rounded-xl font-bold text-slate-800">
+                            <option value="all">Semua Bulan (Satu Tahun)</option>
+                            <option value="1">Januari</option>
+                            <option value="2">Februari</option>
+                            <option value="3">Maret</option>
+                            <option value="4">April</option>
+                            <option value="5">Mei</option>
+                            <option value="6">Juni</option>
+                            <option value="7">Juli</option>
+                            <option value="8">Agustus</option>
+                            <option value="9">September</option>
+                            <option value="10">Oktober</option>
+                            <option value="11">November</option>
+                            <option value="12">Desember</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="label-modern">Filter Tahun</label>
+                        <select id="export-util-year" class="input-modern w-full px-4 py-3 rounded-xl font-bold text-slate-800">
+                            <option value="2026">2026</option>
+                            <option value="2027">2027</option>
+                            <option value="2028">2028</option>
+                            <option value="2029">2029</option>
+                        </select>
+                    </div>
+                    <div class="pt-6 flex justify-end gap-2 border-t border-slate-100 mt-2">
+                        <button type="button" onclick="closeExportUtilitasModal()" class="px-5 py-2.5 rounded-xl font-bold text-sm text-slate-600 hover:bg-slate-100 transition-colors">Batal</button>
+                        <button type="submit" id="btn-process-export-util" class="px-6 py-2.5 rounded-xl font-bold text-sm text-white bg-emerald-600 hover:bg-emerald-700 transition-transform active:scale-95 shadow-md flex items-center gap-2"><span class="material-symbols-rounded text-[18px]">download</span> Download Excel</button>
                     </div>
                 </form>
             </div>
@@ -3769,6 +3818,118 @@
                 input.required = false; input.value = ''; 
             }
         }
+
+        // === FUNGSI EXPORT DATA UTILITAS KE EXCEL ===
+        window.openExportUtilitasModal = function() {
+            document.getElementById('modal-export-utilitas').classList.remove('hidden');
+            const now = new Date();
+            document.getElementById('export-util-month').value = "all";
+            document.getElementById('export-util-year').value = now.getFullYear();
+        };
+
+        window.closeExportUtilitasModal = function() {
+            document.getElementById('modal-export-utilitas').classList.add('hidden');
+        };
+
+        document.getElementById('form-export-utilitas').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const vMonth = document.getElementById('export-util-month').value;
+            const vYear = document.getElementById('export-util-year').value;
+            
+            const btn = document.getElementById('btn-process-export-util');
+            const originalText = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<span class="material-symbols-rounded animate-spin">sync</span> Memproses...';
+            Island.show('Menyiapkan file Excel...', 'info', 5000);
+
+            try {
+                let query = supabaseClient.from('utilitas_data').select('*').eq('tahun', vYear);
+                if (vMonth !== 'all') {
+                    query = query.eq('bulan', vMonth);
+                }
+
+                const { data, error } = await query;
+                if (error) throw error;
+
+                if (!data || data.length === 0) {
+                    Island.show('Tidak ada data pada periode tersebut.', 'error');
+                    return;
+                }
+
+                // Pengurutan data berdasarkan Bulan, Minggu, lalu Nama Staging
+                data.sort((a, b) => {
+                    if (a.bulan !== b.bulan) return a.bulan - b.bulan;
+                    if (a.minggu !== b.minggu) return a.minggu - b.minggu;
+                    return (a.stagging_name || '').localeCompare(b.stagging_name || '');
+                });
+
+                const rows = data.map(d => {
+                    const dt = d.data || {};
+                    let listrikMeters = extractListrikMeters(dt);
+                    
+                    let rowData = {
+                        "ID Laporan": d.id,
+                        "Tanggal Input": d.date,
+                        "Bulan": d.bulan,
+                        "Tahun": d.tahun,
+                        "Minggu Ke": d.minggu,
+                        "Staging Area": d.stagging_name,
+                        "Koordinator (SSC)": d.ssc,
+                        "PIC": d.pic,
+                        
+                        "Air - Sumber": dt.air_sumber || '-',
+                        "Air - ID Pelanggan": dt.air_id || '-',
+                        "Air - Nama Pemilik": dt.air_nama || '-',
+                        "Air - Mekanisme": dt.air_mekanisme || '-',
+                        "Air - Angka Meteran": dt.air_angka || 0,
+                        "Air - Kondisi Meteran": dt.air_kondisi_meteran || '-',
+                        "Air - Ket Rusak Meteran": dt.air_meteran_rusak || '-',
+                        "Air - Kondisi Pipa": dt.air_kondisi_pipa || '-',
+                        "Air - Ket Rusak Pipa": dt.air_pipa_rusak || '-',
+                        "Air - Ada Tandon": dt.air_tandon || '-',
+                        "Air - Kondisi Tandon": dt.air_kondisi_tandon || '-',
+                        "Air - Ada Otomatis": dt.air_otomatis || '-',
+                        "Air - Kondisi Otomatis": dt.air_kondisi_otomatis || '-',
+                        "Air - Ada Pompa": dt.air_pompa || '-',
+                        "Air - Kondisi Pompa": dt.air_kondisi_pompa || '-',
+                        
+                        "IPL - Kebersihan": dt.ipl_bersih || '-',
+                        "IPL - Nom Kebersihan": dt.ipl_bersih_nom || 0,
+                        "IPL - Jadwal Kebersihan": dt.ipl_bersih_jadwal || '-',
+                        "IPL - Keamanan": dt.ipl_aman || '-',
+                        "IPL - Nom Keamanan": dt.ipl_aman_nom || 0,
+                        "IPL - Jadwal Keamanan": dt.ipl_aman_jadwal || '-'
+                    };
+
+                    for(let i=0; i<5; i++) {
+                        rowData[`Listrik ${i+1} - ID`] = listrikMeters[i]?.id || '-';
+                        rowData[`Listrik ${i+1} - Nama`] = listrikMeters[i]?.nama || '-';
+                        rowData[`Listrik ${i+1} - Kategori`] = listrikMeters[i]?.kategori || '-';
+                        rowData[`Listrik ${i+1} - Angka`] = listrikMeters[i]?.angka !== undefined ? listrikMeters[i].angka : '-';
+                    }
+
+                    return rowData;
+                });
+
+                const ws = XLSX.utils.json_to_sheet(rows);
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, "Data Utilitas");
+                
+                const monthNames = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agt', 'Sep', 'Okt', 'Nov', 'Des'];
+                const filenameMonth = vMonth === 'all' ? 'SatuTahun' : monthNames[parseInt(vMonth)];
+                XLSX.writeFile(wb, `Export_Utilitas_IPL_${filenameMonth}_${vYear}.xlsx`);
+                
+                Island.show('Berhasil mendownload Excel', 'success');
+                window.closeExportUtilitasModal();
+
+            } catch(e) {
+                console.error(e);
+                Island.show('Gagal menarik data dari server', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+            }
+        });
     </script>
 </body>
 </html>
