@@ -293,8 +293,8 @@
                             <p class="text-slate-500 text-sm mt-1 font-medium">Pemantauan fasilitas air, listrik, dan IPL secara mingguan.</p>
                         </div>
                         <div class="flex gap-2">
-                            <button id="btn-broadcast-global-1" style="display: none;" onclick="openBroadcastFilterModal()" class="bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 px-4 py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-colors shadow-sm">
-                                <span class="material-symbols-rounded text-[18px]">campaign</span> <span class="hidden sm:inline">Broadcast Laporan</span>
+                            <button id="btn-broadcast-utilitas" style="display: none;" onclick="openReportModal('utilitas')" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 px-4 py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-colors shadow-sm">
+                                <span class="material-symbols-rounded text-[18px]">send_to_mobile</span> <span class="hidden sm:inline">Broadcast Tim</span>
                             </button>
                             <button id="btn-export-utilitas" onclick="openExportUtilitasModal()" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-600 border border-emerald-200 px-4 py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-colors shadow-sm">
                                 <span class="material-symbols-rounded text-[18px]">file_download</span> Export Excel
@@ -540,8 +540,8 @@
                                 <button id="btn-admin-hapus-data" style="display: none;" onclick="openAdminHapusModal()" class="flex-1 sm:flex-none bg-white hover:bg-rose-50 text-rose-600 border border-slate-200 px-4 py-3 rounded-2xl text-sm font-bold flex items-center justify-center gap-2 transition-all active:scale-[0.98] shadow-sm">
                                     <span class="material-symbols-rounded icon-outline text-[20px]">delete</span> <span class="hidden sm:inline">Hapus</span>
                                 </button>
-                                <button id="btn-broadcast-global-2" style="display: none;" onclick="openBroadcastFilterModal()" class="flex-1 sm:flex-none bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 px-4 py-3 rounded-2xl text-sm font-bold flex items-center justify-center gap-2 transition-all active:scale-[0.98] shadow-sm">
-                                    <span class="material-symbols-rounded icon-outline text-[20px]">campaign</span> <span class="hidden sm:inline">Broadcast Laporan</span>
+                                <button id="btn-broadcast-ceklis" style="display: none;" onclick="openReportModal('ceklis')" class="flex-1 sm:flex-none bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 px-4 py-3 rounded-2xl text-sm font-bold flex items-center justify-center gap-2 transition-all active:scale-[0.98] shadow-sm">
+                                    <span class="material-symbols-rounded icon-outline text-[20px]">send_to_mobile</span> <span class="hidden sm:inline">Broadcast Tim</span>
                                 </button>
                                 <button id="btn-open-form" style="display: none;" onclick="openChecklistModal()" class="flex-1 sm:flex-none bg-brand-600 hover:bg-brand-700 text-white px-6 py-3 rounded-2xl text-sm font-bold flex items-center justify-center gap-2 transition-all active:scale-[0.98] shadow-md shadow-brand-500/20">
                                     <span class="material-symbols-rounded icon-outline text-[20px]">edit_document</span> Isi Laporan
@@ -1163,93 +1163,6 @@
         </div>
     </div>
 
-    <!-- MODAL: Broadcast Filter -->
-    <div id="modal-broadcast-filter" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[400] flex items-center justify-center p-4">
-        <div class="max-w-md w-full bg-surface rounded-3xl shadow-float overflow-hidden animate-modal flex flex-col border border-slate-200">
-            <div class="bg-indigo-50 border-b border-indigo-100 p-6 flex justify-between items-center shrink-0">
-                <h3 class="font-bold text-indigo-700 text-lg flex items-center gap-2"><span class="material-symbols-rounded icon-fill">campaign</span> Filter Broadcast</h3>
-                <button onclick="closeBroadcastFilterModal()" class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 hover:bg-indigo-200 flex items-center justify-center transition-colors"><span class="material-symbols-rounded text-sm">close</span></button>
-            </div>
-            <div class="p-6">
-                <form id="form-broadcast-filter" class="space-y-4">
-                    <div>
-                        <label class="label-modern">Target Pengecekan Laporan</label>
-                        <div class="space-y-2 mt-2">
-                            <label class="flex items-center gap-3 p-3 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 transition-colors">
-                                <input type="checkbox" id="bc-type-ceklis" checked class="w-5 h-5 text-indigo-600 rounded">
-                                <span class="font-bold text-slate-700 text-sm">Ceklis Monitoring <span class="text-[10px] bg-slate-200 text-slate-600 px-1.5 py-0.5 rounded ml-1 uppercase">Bulanan</span></span>
-                            </label>
-                            <label class="flex items-center gap-3 p-3 border border-slate-200 rounded-xl cursor-pointer hover:bg-slate-50 transition-colors">
-                                <input type="checkbox" id="bc-type-util" checked class="w-5 h-5 text-indigo-600 rounded">
-                                <span class="font-bold text-slate-700 text-sm">Utilitas & IPL <span class="text-[10px] bg-slate-200 text-slate-600 px-1.5 py-0.5 rounded ml-1 uppercase">Mingguan</span></span>
-                            </label>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-3">
-                        <div id="bc-month-container" class="relative inline-block text-left w-full">
-                            <label class="label-modern">Bulan</label>
-                            <button type="button" onclick="toggleBcMonthDropdown()" id="btn-bc-month-text" class="input-modern w-full px-3 py-2.5 rounded-xl font-bold text-slate-800 text-sm flex justify-between items-center bg-white">
-                                <span class="truncate">Pilih Bulan</span>
-                                <span class="material-symbols-rounded text-[18px] text-slate-400">expand_more</span>
-                            </button>
-                            <div id="bc-month-dropdown" class="hidden absolute left-0 mt-2 w-full rounded-2xl shadow-float bg-white border border-slate-100 z-50 p-2 max-h-[40vh] overflow-y-auto custom-scroll">
-                                <label class="flex items-center gap-3 p-2 hover:bg-slate-50 rounded-xl cursor-pointer"><input type="checkbox" value="1" class="bc-month-cb w-4 h-4 text-indigo-600 rounded" onchange="handleBcMonthChange()"><span class="text-sm font-bold text-slate-700">Januari</span></label>
-                                <label class="flex items-center gap-3 p-2 hover:bg-slate-50 rounded-xl cursor-pointer"><input type="checkbox" value="2" class="bc-month-cb w-4 h-4 text-indigo-600 rounded" onchange="handleBcMonthChange()"><span class="text-sm font-bold text-slate-700">Februari</span></label>
-                                <label class="flex items-center gap-3 p-2 hover:bg-slate-50 rounded-xl cursor-pointer"><input type="checkbox" value="3" class="bc-month-cb w-4 h-4 text-indigo-600 rounded" onchange="handleBcMonthChange()"><span class="text-sm font-bold text-slate-700">Maret</span></label>
-                                <label class="flex items-center gap-3 p-2 hover:bg-slate-50 rounded-xl cursor-pointer"><input type="checkbox" value="4" class="bc-month-cb w-4 h-4 text-indigo-600 rounded" onchange="handleBcMonthChange()"><span class="text-sm font-bold text-slate-700">April</span></label>
-                                <label class="flex items-center gap-3 p-2 hover:bg-slate-50 rounded-xl cursor-pointer"><input type="checkbox" value="5" class="bc-month-cb w-4 h-4 text-indigo-600 rounded" onchange="handleBcMonthChange()"><span class="text-sm font-bold text-slate-700">Mei</span></label>
-                                <label class="flex items-center gap-3 p-2 hover:bg-slate-50 rounded-xl cursor-pointer"><input type="checkbox" value="6" class="bc-month-cb w-4 h-4 text-indigo-600 rounded" onchange="handleBcMonthChange()"><span class="text-sm font-bold text-slate-700">Juni</span></label>
-                                <label class="flex items-center gap-3 p-2 hover:bg-slate-50 rounded-xl cursor-pointer"><input type="checkbox" value="7" class="bc-month-cb w-4 h-4 text-indigo-600 rounded" onchange="handleBcMonthChange()"><span class="text-sm font-bold text-slate-700">Juli</span></label>
-                                <label class="flex items-center gap-3 p-2 hover:bg-slate-50 rounded-xl cursor-pointer"><input type="checkbox" value="8" class="bc-month-cb w-4 h-4 text-indigo-600 rounded" onchange="handleBcMonthChange()"><span class="text-sm font-bold text-slate-700">Agustus</span></label>
-                                <label class="flex items-center gap-3 p-2 hover:bg-slate-50 rounded-xl cursor-pointer"><input type="checkbox" value="9" class="bc-month-cb w-4 h-4 text-indigo-600 rounded" onchange="handleBcMonthChange()"><span class="text-sm font-bold text-slate-700">September</span></label>
-                                <label class="flex items-center gap-3 p-2 hover:bg-slate-50 rounded-xl cursor-pointer"><input type="checkbox" value="10" class="bc-month-cb w-4 h-4 text-indigo-600 rounded" onchange="handleBcMonthChange()"><span class="text-sm font-bold text-slate-700">Oktober</span></label>
-                                <label class="flex items-center gap-3 p-2 hover:bg-slate-50 rounded-xl cursor-pointer"><input type="checkbox" value="11" class="bc-month-cb w-4 h-4 text-indigo-600 rounded" onchange="handleBcMonthChange()"><span class="text-sm font-bold text-slate-700">November</span></label>
-                                <label class="flex items-center gap-3 p-2 hover:bg-slate-50 rounded-xl cursor-pointer"><input type="checkbox" value="12" class="bc-month-cb w-4 h-4 text-indigo-600 rounded" onchange="handleBcMonthChange()"><span class="text-sm font-bold text-slate-700">Desember</span></label>
-                            </div>
-                        </div>
-                        <div>
-                            <label class="label-modern">Tahun</label>
-                            <select id="bc-year" class="input-modern w-full px-3 py-2.5 rounded-xl font-bold text-slate-800 text-sm">
-                                <option value="2026">2026</option><option value="2027">2027</option><option value="2028">2028</option><option value="2029">2029</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-3 mt-3">
-                        <div id="bc-week-container" class="relative inline-block text-left w-full">
-                            <label class="label-modern">Minggu Ke (Khusus Utilitas)</label>
-                            <button type="button" onclick="toggleBcWeekDropdown()" id="btn-bc-week-text" class="input-modern w-full px-3 py-2.5 rounded-xl font-bold text-slate-800 text-sm flex justify-between items-center bg-white">
-                                <span class="truncate">Pilih Minggu</span>
-                                <span class="material-symbols-rounded text-[18px] text-slate-400">expand_more</span>
-                            </button>
-                            <div id="bc-week-dropdown" class="hidden absolute left-0 mt-2 w-full rounded-2xl shadow-float bg-white border border-slate-100 z-50 p-2 max-h-[40vh] overflow-y-auto custom-scroll">
-                                <label class="flex items-center gap-3 p-2 hover:bg-slate-50 rounded-xl cursor-pointer"><input type="checkbox" value="1" class="bc-week-cb w-4 h-4 text-indigo-600 rounded" onchange="handleBcWeekChange()"><span class="text-sm font-bold text-slate-700">Minggu 1</span></label>
-                                <label class="flex items-center gap-3 p-2 hover:bg-slate-50 rounded-xl cursor-pointer"><input type="checkbox" value="2" class="bc-week-cb w-4 h-4 text-indigo-600 rounded" onchange="handleBcWeekChange()"><span class="text-sm font-bold text-slate-700">Minggu 2</span></label>
-                                <label class="flex items-center gap-3 p-2 hover:bg-slate-50 rounded-xl cursor-pointer"><input type="checkbox" value="3" class="bc-week-cb w-4 h-4 text-indigo-600 rounded" onchange="handleBcWeekChange()"><span class="text-sm font-bold text-slate-700">Minggu 3</span></label>
-                                <label class="flex items-center gap-3 p-2 hover:bg-slate-50 rounded-xl cursor-pointer"><input type="checkbox" value="4" class="bc-week-cb w-4 h-4 text-indigo-600 rounded" onchange="handleBcWeekChange()"><span class="text-sm font-bold text-slate-700">Minggu 4</span></label>
-                                <label class="flex items-center gap-3 p-2 hover:bg-slate-50 rounded-xl cursor-pointer"><input type="checkbox" value="5" class="bc-week-cb w-4 h-4 text-indigo-600 rounded" onchange="handleBcWeekChange()"><span class="text-sm font-bold text-slate-700">Minggu 5</span></label>
-                            </div>
-                        </div>
-                        <div id="bc-ssc-container" class="relative inline-block text-left w-full">
-                            <label class="label-modern">Koordinator SSC</label>
-                            <button type="button" onclick="toggleBcSscDropdown()" id="btn-bc-ssc-text" class="input-modern w-full px-3 py-2.5 rounded-xl font-bold text-slate-800 text-sm flex justify-between items-center bg-white">
-                                <span class="truncate">Pilih Koordinator</span>
-                                <span class="material-symbols-rounded text-[18px] text-slate-400">expand_more</span>
-                            </button>
-                            <div id="bc-ssc-dropdown" class="hidden absolute left-0 mt-2 w-full rounded-2xl shadow-float bg-white border border-slate-100 z-50 p-2 max-h-[40vh] overflow-y-auto custom-scroll">
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="pt-4 mt-2 border-t border-slate-100">
-                        <button type="button" id="btn-generate-bc" onclick="generateCustomBroadcast()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 rounded-xl transition-transform active:scale-[0.98] shadow-md flex items-center justify-center gap-2">
-                            <span class="material-symbols-rounded text-[18px]">bolt</span> Generate Teks Broadcast
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
     <!-- MODAL: Report Manager -->
     <div id="modal-report-manager" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[500] flex items-center justify-center p-4">
         <div class="max-w-lg w-full bg-surface rounded-3xl shadow-float overflow-hidden animate-modal flex flex-col border border-slate-200">
@@ -1276,7 +1189,6 @@
         let utilChartScale = 'mingguan';
         let utilChartInstance = null;
         let globalUtilData = [];
-        let globalCeklisData = [];
         let adminTargetUsers = [];
         let activeAdminCategoryId = null;
         let globalFieldUsers = [];
@@ -1440,18 +1352,18 @@
             const tUsers = document.getElementById('tab-admin-users'); const tAdminForm = document.getElementById('tab-admin-form');
             const mUsers = document.getElementById('mob-tab-admin-users'); const mAdminForm = document.getElementById('mob-tab-admin-form');
             const btnOpenForm = document.getElementById('btn-open-form'); const btnAdminHapus = document.getElementById('btn-admin-hapus-data');
-            const btnBroadGlobal1 = document.getElementById('btn-broadcast-global-1'); const btnBroadGlobal2 = document.getElementById('btn-broadcast-global-2');
+            const btnBroadUtil = document.getElementById('btn-broadcast-utilitas'); const btnBroadCek = document.getElementById('btn-broadcast-ceklis');
             
             tUsers.style.display = 'none'; tAdminForm.style.display = 'none';
             if(mUsers) mUsers.style.display = 'none'; if(mAdminForm) mAdminForm.style.display = 'none';
             btnOpenForm.style.display = 'none'; if(btnAdminHapus) btnAdminHapus.style.display = 'none';
-            if(btnBroadGlobal1) btnBroadGlobal1.style.display = 'none'; if(btnBroadGlobal2) btnBroadGlobal2.style.display = 'none';
+            if(btnBroadUtil) btnBroadUtil.style.display = 'none'; if(btnBroadCek) btnBroadCek.style.display = 'none';
 
             if (currentUser.role === 'admin') {
                 tUsers.style.display = 'flex'; tAdminForm.style.display = 'flex';
                 if(mUsers) mUsers.style.display = 'flex'; if(mAdminForm) mAdminForm.style.display = 'flex';
                 btnOpenForm.style.display = 'flex'; if(btnAdminHapus) btnAdminHapus.style.display = 'flex';
-                if(btnBroadGlobal1) btnBroadGlobal1.style.display = 'flex'; if(btnBroadGlobal2) btnBroadGlobal2.style.display = 'flex';
+                if(btnBroadUtil) btnBroadUtil.style.display = 'flex'; if(btnBroadCek) btnBroadCek.style.display = 'flex';
                 switchTab('dashboard'); await renderAdminUsers(); await renderAdminCategoryList();
             } else if (currentUser.role === 'user') {
                 btnOpenForm.style.display = 'flex'; switchTab('dashboard');
@@ -2427,7 +2339,7 @@
                     submitsForMinggu.sort((a,b) => parseInt(b.bulan) - parseInt(a.bulan));
                     const submit = submitsForMinggu.length > 0 ? submitsForMinggu[0] : null;
                     
-                    let rowHtml = `<td class="p-3 border-r border-slate-200 sticky-col-1 bg-white uppercase">
+                    let rowHtml = `<td class="p-3 border-r border-slate-200 sticky-col-1 bg-white">
                         <strong class="text-slate-900 text-xs block mb-0.5">${u.stagging_name}</strong>
                         <span class="text-[10px] text-slate-500">${u.pic_name || u.username}</span>
                     </td>`;
@@ -2472,7 +2384,7 @@
                     html += `<tr class="border-b border-slate-100 hover:bg-slate-50/50 transition-colors">${rowHtml}</tr>`;
 
                 } else {
-                    let rowHtml = `<td class="p-3 border-r border-slate-200 sticky-col-1 ${rowBg} uppercase">
+                    let rowHtml = `<td class="p-3 border-r border-slate-200 sticky-col-1 ${rowBg}">
                         <strong class="${textName} text-xs block mb-0.5">${u.stagging_name}</strong>
                         <span class="text-[10px] ${textPic}">${u.pic_name || u.username}</span>
                         ${topBadge}
@@ -3289,11 +3201,11 @@
                 const roleIcon = { admin: 'workspace_premium', visitor: 'visibility', user: 'person' };
                 
                 let area = '<span class="text-xs text-slate-400 font-medium">Akses Global (Pusat)</span>';
-                if(u.role === 'user') area = `<span class="font-extrabold text-slate-800 text-[13px] block mb-0.5 uppercase">${u.stagging_name}</span><span class="text-[11px] text-slate-500 font-medium uppercase">${u.ssc} - ${u.province}</span>`;
+                if(u.role === 'user') area = `<span class="font-extrabold text-slate-800 text-[13px] block mb-0.5">${u.stagging_name}</span><span class="text-[11px] text-slate-500 font-medium">${u.ssc} - ${u.province}</span>`;
 
                 tbody.innerHTML += `
                     <tr class="hover:bg-slate-50 transition-colors">
-                        <td class="p-4"><div class="font-extrabold text-slate-900 text-sm mb-1 uppercase">${u.pic_name || u.username}</div><div class="text-[11px] font-mono text-slate-500 mb-1">@${u.username}</div><div class="text-[11px] font-mono flex items-center gap-1.5 text-slate-400"><span class="material-symbols-rounded text-[14px]">key</span>${u.password}</div></td>
+                        <td class="p-4"><div class="font-extrabold text-slate-900 text-sm mb-1">${u.pic_name || u.username}</div><div class="text-[11px] font-mono text-slate-500 mb-1">@${u.username}</div><div class="text-[11px] font-mono flex items-center gap-1.5 text-slate-400"><span class="material-symbols-rounded text-[14px]">key</span>${u.password}</div></td>
                         <td class="p-4"><span class="text-[10px] uppercase font-bold tracking-widest px-2 py-1 rounded border inline-flex items-center gap-1 ${roleColors[u.role]}"><span class="material-symbols-rounded icon-fill text-[14px]">${roleIcon[u.role]}</span>${u.role}</span></td>
                         <td class="p-4">${area}</td><td class="p-4 text-center">${statusBadge}</td>
                         <td class="p-4 text-center">
@@ -3514,10 +3426,6 @@
             document.getElementById('util-ssc-dropdown-menu').classList.toggle('hidden');
         };
 
-        window.toggleBcMonthDropdown = function() { document.getElementById('bc-month-dropdown').classList.toggle('hidden'); };
-        window.toggleBcWeekDropdown = function() { document.getElementById('bc-week-dropdown').classList.toggle('hidden'); };
-        window.toggleBcSscDropdown = function() { document.getElementById('bc-ssc-dropdown').classList.toggle('hidden'); };
-
         document.addEventListener('click', function(e) {
             const container = document.getElementById('ssc-dropdown-container');
             if (container && !container.contains(e.target)) {
@@ -3540,24 +3448,6 @@
             const utilSscContainer = document.getElementById('util-ssc-dropdown-container');
             if (utilSscContainer && !utilSscContainer.contains(e.target)) {
                 const menu = document.getElementById('util-ssc-dropdown-menu');
-                if(menu) menu.classList.add('hidden');
-            }
-
-            const bcMonthContainer = document.getElementById('bc-month-container');
-            if (bcMonthContainer && !bcMonthContainer.contains(e.target)) {
-                const menu = document.getElementById('bc-month-dropdown');
-                if(menu) menu.classList.add('hidden');
-            }
-            
-            const bcWeekContainer = document.getElementById('bc-week-container');
-            if (bcWeekContainer && !bcWeekContainer.contains(e.target)) {
-                const menu = document.getElementById('bc-week-dropdown');
-                if(menu) menu.classList.add('hidden');
-            }
-
-            const bcSscContainer = document.getElementById('bc-ssc-container');
-            if (bcSscContainer && !bcSscContainer.contains(e.target)) {
-                const menu = document.getElementById('bc-ssc-dropdown');
                 if(menu) menu.classList.add('hidden');
             }
         });
@@ -3603,30 +3493,6 @@
             else if (checkboxes.length === 1) { btnText.textContent = checkboxes[0].value; } 
             else { btnText.textContent = `${checkboxes.length} Koordinator`; }
             applyFiltersAndRender();
-        };
-
-        window.handleBcMonthChange = function() {
-            const checkboxes = document.querySelectorAll('.bc-month-cb:checked');
-            const btnText = document.getElementById('btn-bc-month-text').querySelector('span');
-            if (checkboxes.length === 0) { btnText.textContent = 'Pilih Bulan'; } 
-            else if (checkboxes.length === 1) { const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']; btnText.textContent = months[parseInt(checkboxes[0].value)-1]; } 
-            else { btnText.textContent = `${checkboxes.length} Bulan`; }
-        };
-
-        window.handleBcWeekChange = function() {
-            const checkboxes = document.querySelectorAll('.bc-week-cb:checked');
-            const btnText = document.getElementById('btn-bc-week-text').querySelector('span');
-            if (checkboxes.length === 0) { btnText.textContent = 'Pilih Minggu'; } 
-            else if (checkboxes.length === 1) { btnText.textContent = `Minggu ${checkboxes[0].value}`; } 
-            else { btnText.textContent = `${checkboxes.length} Minggu`; }
-        };
-
-        window.handleBcSscChange = function() {
-            const checkboxes = document.querySelectorAll('.bc-ssc-cb:checked');
-            const btnText = document.getElementById('btn-bc-ssc-text').querySelector('span');
-            if (checkboxes.length === 0) { btnText.textContent = 'Pilih Koordinator'; } 
-            else if (checkboxes.length === 1) { btnText.textContent = checkboxes[0].value; } 
-            else { btnText.textContent = `${checkboxes.length} Koordinator`; }
         };
 
         let listrikMeterCount = 1;
@@ -3898,10 +3764,10 @@
                     }
 
                     html += `<tr class="hover:bg-slate-50 smooth-transition ${borderCls}">
-                        <td class="px-2 py-2 sticky-col-1 col-w-1 text-center font-extrabold text-slate-800 text-[10px] hidden md:table-cell uppercase">${sub.ssc || '-'}</td>
+                        <td class="px-2 py-2 sticky-col-1 col-w-1 text-center font-extrabold text-slate-800 text-[10px] hidden md:table-cell">${sub.ssc || '-'}</td>
                         <td class="px-2 py-2 sticky-col-2 col-w-2 text-center font-bold text-slate-500 text-[10px] hidden md:table-cell uppercase">${sub.province || '-'}</td>
-                        <td class="px-2 py-2 sticky-col-3 col-w-3 font-extrabold text-slate-900 text-[11px] shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] md:shadow-none leading-tight uppercase">${sub.stagging_name || '-'}</td>
-                        <td class="px-2 py-2 text-slate-800 font-bold text-[10px] leading-tight min-w-[140px] uppercase">${sub.pic !== '-' ? sub.pic : '<span class="text-slate-300 italic font-medium normal-case">Kosong</span>'}<br>${prevSscHtml}</td>
+                        <td class="px-2 py-2 sticky-col-3 col-w-3 font-extrabold text-slate-900 text-[11px] shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] md:shadow-none leading-tight">${sub.stagging_name || '-'}</td>
+                        <td class="px-2 py-2 text-slate-800 font-bold text-[10px] leading-tight min-w-[140px]">${sub.pic !== '-' ? sub.pic : '<span class="text-slate-300 italic font-medium">Kosong</span>'}<br>${prevSscHtml}</td>
                         <td class="px-2 py-2 text-center text-slate-500 text-[9px] font-bold bg-slate-50 min-w-[110px]">${sub.date.replace(', ', '<br><span class="text-brand-600">')}</span></td>
                         <td class="px-2 py-2 text-center align-middle bg-white">${actionHtml}</td>`;
 
@@ -3944,10 +3810,10 @@
                                 <div class="absolute top-3 right-3 opacity-20 group-hover:opacity-100 transition-opacity"><span class="material-symbols-rounded icon-fill text-amber-500 text-[20px]">push_pin</span></div>
                                 <div class="px-4 py-3 border-b border-slate-100 shrink-0 bg-slate-50">
                                     <div class="flex justify-between items-start gap-2 pr-6">
-                                        <span class="font-extrabold text-slate-900 text-[13px] leading-tight uppercase">${sub.stagging_name} <span class="text-slate-500 font-bold">(${sub.ssc})</span></span>
+                                        <span class="font-extrabold text-slate-900 text-[13px] leading-tight">${sub.stagging_name} <span class="text-slate-500 font-bold">(${sub.ssc})</span></span>
                                     </div>
                                     <div class="flex justify-between items-center mt-1.5">
-                                        <span class="text-slate-500 text-[10px] font-bold flex items-center gap-1 uppercase"><span class="material-symbols-rounded text-[12px] normal-case">person</span>${sub.pic}</span>
+                                        <span class="text-slate-500 text-[10px] font-bold flex items-center gap-1"><span class="material-symbols-rounded text-[12px]">person</span>${sub.pic}</span>
                                         <span class="text-brand-700 text-[10px] font-bold bg-brand-100 px-1.5 py-0.5 rounded">${sub.date.split(',')[0]}</span>
                                     </div>
                                 </div>
@@ -4137,167 +4003,168 @@
         });
 
         // === FUNGSI GENERATE LAPORAN MANAGER ===
-        window.openBroadcastFilterModal = function() {
-            let now = new Date();
-            const wi = getCustomWeekInfo(now);
+        window.openReportModal = function(type) {
+            const textarea = document.getElementById('report-text-content');
+            let text = '';
             
-            document.getElementById('bc-year').value = wi.tahun;
-            
-            document.querySelectorAll('.bc-month-cb').forEach(cb => cb.checked = false);
-            const mCb = document.querySelector(`.bc-month-cb[value="${wi.bulan}"]`); if(mCb) mCb.checked = true;
-            
-            document.querySelectorAll('.bc-week-cb').forEach(cb => cb.checked = false);
-            const wCb = document.querySelector(`.bc-week-cb[value="${wi.minggu}"]`); if(wCb) wCb.checked = true;
-            
-            handleBcMonthChange();
-            handleBcWeekChange();
-
-            const sscMenu = document.getElementById('bc-ssc-dropdown');
-            sscMenu.innerHTML = '';
-            const uniqueSsc = [...new Set(globalFieldUsers.map(u => u.ssc).filter(Boolean))].sort();
-            uniqueSsc.forEach(ssc => {
-                sscMenu.innerHTML += `<label class="flex items-center gap-3 p-2 hover:bg-slate-50 rounded-xl cursor-pointer"><input type="checkbox" value="${ssc}" class="bc-ssc-cb w-4 h-4 text-indigo-600 rounded" onchange="handleBcSscChange()"><span class="text-sm font-bold text-slate-700">${ssc}</span></label>`;
-            });
-            handleBcSscChange();
-
-            document.getElementById('modal-broadcast-filter').classList.remove('hidden');
-        };
-
-        window.closeBroadcastFilterModal = function() {
-            document.getElementById('modal-broadcast-filter').classList.add('hidden');
-        };
-
-        window.generateCustomBroadcast = async function() {
-            const isCeklis = document.getElementById('bc-type-ceklis').checked;
-            const isUtil = document.getElementById('bc-type-util').checked;
-            
-            const targetMonths = Array.from(document.querySelectorAll('.bc-month-cb:checked')).map(cb => parseInt(cb.value));
-            const targetWeeks = Array.from(document.querySelectorAll('.bc-week-cb:checked')).map(cb => parseInt(cb.value));
-            const targetSscs = Array.from(document.querySelectorAll('.bc-ssc-cb:checked')).map(cb => cb.value);
-            const targetYear = parseInt(document.getElementById('bc-year').value);
-
-            if (!isCeklis && !isUtil) { Island.show('Pilih minimal satu jenis laporan!', 'error'); return; }
-            if (targetMonths.length === 0) { Island.show('Pilih minimal satu bulan!', 'error'); return; }
-            if (isUtil && targetWeeks.length === 0) { Island.show('Pilih minimal satu minggu!', 'error'); return; }
-            if (targetSscs.length === 0) { Island.show('Pilih minimal satu Koordinator (SSC)!', 'error'); return; }
-
-            const btn = document.getElementById('btn-generate-bc');
-            const originalText = btn.innerHTML;
-            btn.innerHTML = '<span class="material-symbols-rounded animate-spin">sync</span> Memproses...'; 
-            btn.disabled = true;
-
-            try {
-                const [ceklisRes, utilRes] = await Promise.all([
-                    supabaseClient.from('submissions').select('*'),
-                    supabaseClient.from('utilitas_data').select('*')
-                ]);
+            if (type === 'ceklis') {
+                const monthSel = document.getElementById('filter-month');
+                const month = monthSel.options[monthSel.selectedIndex].text;
+                const year = document.getElementById('filter-year').value;
                 
-                const ceklisData = ceklisRes.data || [];
-                const utilData = utilRes.data || [];
-
-                let activeUsers = globalFieldUsers.filter(u => u.stagging_name && targetSscs.includes(u.ssc));
-
-                let groupedMissing = {};
-
-                activeUsers.forEach(u => {
-                    const areaName = u.stagging_name;
-                    const ssc = u.ssc || 'Tanpa SSC';
-                    
-                    let hasUtil = true;
-                    if (isUtil) {
-                        for (let m of targetMonths) {
-                            for (let w of targetWeeks) {
-                                const found = utilData.some(d => d.stagging_name === areaName && parseInt(d.tahun) === targetYear && parseInt(d.bulan) === m && parseInt(d.minggu) === w);
-                                if (!found) { hasUtil = false; break; }
-                            }
-                            if (!hasUtil) break;
-                        }
-                    }
-
-                    let hasCeklis = true;
-                    if (isCeklis) {
-                        for (let m of targetMonths) {
-                            const found = ceklisData.some(d => {
-                                if(d.stagging_name !== areaName || d.date === '-') return false;
-                                const parts = d.date.split(',')[0].split('/');
-                                return parseInt(parts[1]) === m && parseInt(parts[2]) === targetYear;
-                            });
-                            if (!found) { hasCeklis = false; break; }
-                        }
-                    }
-
-                    if ((isUtil && !hasUtil) || (isCeklis && !hasCeklis)) {
-                        if (!groupedMissing[ssc]) groupedMissing[ssc] = [];
-                        groupedMissing[ssc].push({ area: areaName, ceklis: hasCeklis, utilitas: hasUtil });
+                const tbody = document.getElementById('dashboard-tbody');
+                const rows = tbody.querySelectorAll('tr');
+                let belumList = [];
+                let temuanDetailList = [];
+                
+                rows.forEach(r => {
+                    if(r.cells.length > 3 && !r.innerHTML.includes('BELUM ADA DATA')) {
+                        const areaName = r.cells[2].innerText.trim();
+                        const dateCell = r.cells[4].innerText;
+                        
+                        if(dateCell === '-') belumList.push(areaName);
                     }
                 });
 
-                const monthNames = ['', 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
-                let monthStr = targetMonths.map(m => monthNames[m]).join(', ');
-                let weekStr = targetWeeks.map(w => `M${w}`).join(', ');
-                
-                let periodStr = monthStr + ' ' + targetYear;
-                if (isUtil && isCeklis) {
-                    periodStr = `Bulan ${monthStr} ${targetYear} (Khusus Utilitas: ${weekStr})`;
-                } else if (isUtil) {
-                    periodStr = `Bulan ${monthStr} ${targetYear} (${weekStr})`;
-                }
-                
-                let titleType = [];
-                if(isCeklis) titleType.push('Ceklis Monitoring');
-                if(isUtil) titleType.push('Utilitas & IPL');
-                
-                let text = `Halo Rekan-rekan Tim,\nBerikut adalah update area Staging yang *BELUM* melengkapi form *${titleType.join(' & ')}* untuk periode ${periodStr}:\n\n`;
-
-                if (Object.keys(groupedMissing).length === 0) {
-                    text += `✅ *Data Terisi 100%*\nTerima kasih atas kedisiplinan rekan-rekan semua.\n\n`;
-                } else {
-                    Object.keys(groupedMissing).sort().forEach(ssc => {
-                        text += `*${ssc}*\n`;
-                        text += "```text\n";
-                        
-                        let maxLen = 7;
-                        groupedMissing[ssc].forEach(item => {
-                            if (item.area.length > maxLen) maxLen = item.area.length;
-                        });
-                        
-                        let header = "Staging".padEnd(maxLen, ' ');
-                        
-                        if (isCeklis && isUtil) text += `${header} | Ceklis | Utilitas\n`;
-                        else if (isCeklis) text += `${header} | Ceklis\n`;
-                        else if (isUtil) text += `${header} | Utilitas\n`;
-                        
-                        groupedMissing[ssc].sort((a,b) => a.area.localeCompare(b.area)).forEach(item => {
-                            const areaPad = item.area.padEnd(maxLen, ' ');
-                            const stC_double = item.ceklis ? '✅    ' : '❌    '; 
-                            const stC_single = item.ceklis ? '✅' : '❌'; 
-                            const stU = item.utilitas ? '✅' : '❌';
-
-                            if (isCeklis && isUtil) {
-                                text += `${areaPad} | ${stC_double} | ${stU}\n`;
-                            } else if (isCeklis) {
-                                text += `${areaPad} | ${stC_single}\n`;
-                            } else if (isUtil) {
-                                text += `${areaPad} | ${stU}\n`;
-                            }
-                        });
-                        text += "```\n\n";
+                // Mengambil detail temuan dari kartu log lapangan
+                const notesCards = document.querySelectorAll('#dashboard-notes-container > div.group');
+                notesCards.forEach(card => {
+                    const titleEl = card.querySelector('.px-4.py-3 span.font-extrabold');
+                    let areaName = titleEl ? titleEl.childNodes[0].textContent.trim() : 'Area Unknown';
+                    
+                    let areaNotes = [];
+                    const noteItems = card.querySelectorAll('.border-l-\\[3px\\]');
+                    noteItems.forEach(item => {
+                        const label = item.querySelector('.font-bold').innerText.replace(':', '').trim();
+                        const note = item.querySelector('.italic').innerText.replace(/"/g, '').trim();
+                        areaNotes.push(`  • ${label}: ${note}`);
                     });
-                    text += `_Mohon PIC area terkait agar segera melengkapi form di sistem hari ini._\n\n`;
+
+                    if (areaNotes.length > 0) {
+                        temuanDetailList.push(`- *${areaName}*\n${areaNotes.join('\n')}`);
+                    }
+                });
+
+                text = `Halo Rekan-rekan Tim,\nMohon perhatiannya untuk *Progress Ceklis Monitoring* periode ${month} ${year === 'all' ? 'Keseluruhan' : year}:\n\n`;
+                
+                if(belumList.length > 0) {
+                    text += `🚨 *BELUM MENGISI LAPORAN:*\n${belumList.map(a => `- ${a}`).join('\n')}\n_Mohon PIC area terkait agar segera menyelesaikannya hari ini._\n\n`;
+                } else {
+                    text += `✅ *Laporan Lengkap 100%*\nTerima kasih atas kedisiplinan rekan-rekan semua.\n\n`;
+                }
+                
+                if(temuanDetailList.length > 0) {
+                    text += `⚠️ *AREA DENGAN TEMUAN/ISU:* (Fasilitas Rusak / Hilang / Tidak Standar)\n${temuanDetailList.join('\n\n')}\n\n_Mohon agar segera dilakukan perbaikan atau tindak lanjut._\n\n`;
+                }
+                
+                text += `Cek detail dan log catatannya di:\n🔗 _https://ceklismonitoring.vercel.app/_`;
+            
+            } else if (type === 'utilitas') {
+                const monthTextEl = document.getElementById('btn-util-bulan-text').querySelector('span.truncate');
+                const monthText = monthTextEl ? monthTextEl.innerText.trim() : 'Bulan Ini';
+                const year = document.getElementById('util-filter-tahun').value;
+                
+                let viewType = 'Data Air';
+                if(currentUtilView === 'listrik') viewType = 'Data Listrik';
+                if(currentUtilView === 'ipl') viewType = 'Data IPL';
+                if(currentUtilView === 'rekap') viewType = 'Rekapitulasi Lengkap';
+
+                const tbody = document.getElementById('utilitas-tbody');
+                const rows = tbody.querySelectorAll('tr');
+                
+                let topList = [];
+                let belumList = [];
+                let kendalaList = [];
+
+                let now; 
+                try { now = new Date(); } catch(err) { now = new Date(); }
+                const currWi = getCustomWeekInfo(now);
+                
+                let targetMinggu = currWi.minggu;
+                let targetTahun = parseInt(document.getElementById('util-filter-tahun').value) || currWi.tahun;
+                
+                let selBulans = Array.from(document.querySelectorAll('.util-bulan-checkbox:checked')).map(cb => parseInt(cb.value));
+                if(selBulans.length === 0) selBulans = [currWi.bulan];
+                let targetBulan = selBulans[selBulans.length - 1];
+
+                if (currentUtilView === 'rekap') {
+                    targetMinggu = parseInt(document.getElementById('util-filter-minggu').value) || currWi.minggu;
+                }
+                
+                // Cari Top List dari UI (karena logikanya menghitung selisih antar minggu yang cukup dinamis)
+                rows.forEach(r => {
+                    if(!r.innerHTML.includes('Belum ada data') && !r.innerHTML.includes('Memuat data') && r.cells.length > 1) {
+                        if(r.innerHTML.includes('Top Pemakaian')) {
+                            const areaNameEl = r.querySelector('strong');
+                            if(areaNameEl) topList.push(`- *${areaNameEl.innerText.trim()}*`);
+                        }
+                    }
+                });
+
+                // Cari Belum Isi & Kendala dari data Master agar akurat 100% (tidak terpengaruh oleh filter status di UI)
+                const selKoor = Array.from(document.querySelectorAll('.util-koor-checkbox:checked')).map(cb => cb.value);
+                const selStagings = Array.from(document.querySelectorAll('.util-ssc-checkbox:checked')).map(cb => cb.value);
+
+                let activeUsers = globalFieldUsers.filter(u => u.stagging_name);
+                if (selKoor.length > 0) activeUsers = activeUsers.filter(u => selKoor.includes(u.ssc));
+                if (selStagings.length > 0) activeUsers = activeUsers.filter(u => selStagings.includes(u.stagging_name));
+
+                activeUsers.sort((a, b) => a.stagging_name.localeCompare(b.stagging_name));
+
+                activeUsers.forEach(u => {
+                    const areaName = u.stagging_name;
+
+                    // 1. Deteksi Belum Mengisi
+                    const hasTargetSub = globalUtilData.some(d => d.stagging_name === areaName && parseInt(d.tahun) === targetTahun && parseInt(d.bulan) === targetBulan && parseInt(d.minggu) === targetMinggu);
+                    if (!hasTargetSub) {
+                        belumList.push(`- *${areaName}*`);
+                    }
+
+                    // 2. Deteksi Kendala (Dari Laporan Terakhir area tersebut)
+                    const areaSubs = globalUtilData.filter(d => d.stagging_name === areaName);
+                    areaSubs.sort((a,b) => {
+                         if (a.tahun != b.tahun) return b.tahun - a.tahun;
+                         if (a.bulan != b.bulan) return b.bulan - a.bulan;
+                         return b.minggu - a.minggu;
+                    });
+                    
+                    if (areaSubs.length > 0) {
+                        const latestSub = areaSubs[0];
+                        const d = latestSub.data;
+                        let issues = [];
+                        if (d.air_kondisi_meteran === 'Rusak') issues.push(`Meteran Air (${d.air_meteran_rusak || 'Rusak'})`);
+                        if (d.air_kondisi_pipa === 'Rusak') issues.push(`Pipa Air (${d.air_pipa_rusak || 'Bocor'})`);
+                        if (d.air_tandon === 'Ada' && d.air_kondisi_tandon === 'Rusak') issues.push(`Tandon (${d.air_tandon_rusak || 'Bocor'})`);
+                        if (d.air_otomatis === 'Ada' && d.air_kondisi_otomatis === 'Rusak') issues.push(`Otomatis Tandon (${d.air_otomatis_rusak || 'Rusak'})`);
+                        if (d.air_pompa === 'Ada' && d.air_kondisi_pompa === 'Rusak') issues.push(`Pompa Air (${d.air_pompa_rusak || 'Rusak'})`);
+                        
+                        if (issues.length > 0) {
+                            kendalaList.push(`- *${areaName}*: ${issues.join(', ')}`);
+                        }
+                    }
+                });
+                
+                text = `Halo Rekan-rekan Tim,\nBerikut adalah update pantauan *Awareness Utilitas & IPL* untuk periode ${monthText} ${year} (${viewType}):\n\n`;
+
+                if(belumList.length > 0) {
+                    text += `🚨 *BELUM MENGISI (M${targetMinggu}):*\n${belumList.join('\n')}\n_Mohon PIC area terkait agar segera melengkapi form di sistem hari ini._\n\n`;
+                } else {
+                    text += `✅ *Data (M${targetMinggu}) Terisi 100%*\nTerima kasih atas kedisiplinan rekan-rekan semua.\n\n`;
                 }
 
-                text += `Akses portal di:\n🔗 _https://ceklismonitoring.vercel.app/_`;
+                if(kendalaList.length > 0) {
+                    text += `⚠️ *KENDALA / FASILITAS RUSAK:*\n${kendalaList.join('\n')}\n_Mohon agar segera dikoordinasikan untuk perbaikan._\n\n`;
+                }
 
-                document.getElementById('report-text-content').value = text;
-                closeBroadcastFilterModal();
-                document.getElementById('modal-report-manager').classList.remove('hidden');
-
-            } catch (error) {
-                console.error(error);
-                Island.show('Gagal memproses data broadcast.', 'error');
-            } finally {
-                btn.innerHTML = originalText; btn.disabled = false;
+                if(topList.length > 0) {
+                    text += `📈 *PEMAKAIAN TERTINGGI (TOP USAGE):*\n${topList.join('\n')}\n_Mohon perhatikan efisiensi pemakaian utilitas di area masing-masing._\n\n`;
+                }
+                
+                text += `Pantau tren dan grafik pemakaian area Anda di:\n🔗 _https://ceklismonitoring.vercel.app/_`;
             }
+
+            textarea.value = text;
+            document.getElementById('modal-report-manager').classList.remove('hidden');
         };
 
         window.closeReportModal = function() {
