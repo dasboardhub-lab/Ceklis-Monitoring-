@@ -1190,6 +1190,28 @@
         </div>
     </div>
 
+    <!-- MODAL: Feedback Animasi Terima Kasih -->
+    <div id="modal-thank-you" class="hidden fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[9999] flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+        <div id="thank-you-box" class="max-w-sm w-full bg-white rounded-3xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.5)] overflow-hidden transform scale-50 opacity-0 transition-all duration-500 flex flex-col items-center text-center relative p-8 border border-emerald-100">
+            <!-- Elemen Dekorasi Background Blur -->
+            <div class="absolute -top-20 -right-20 w-40 h-40 bg-emerald-200 rounded-full blur-3xl opacity-60"></div>
+            <div class="absolute -bottom-20 -left-20 w-40 h-40 bg-blue-200 rounded-full blur-3xl opacity-60"></div>
+            
+            <div class="relative z-10 w-24 h-24 bg-gradient-to-tr from-emerald-400 to-teal-400 rounded-full flex items-center justify-center mb-6 shadow-xl shadow-emerald-200/50 border-4 border-white animate-[bounce_2s_ease-in-out_infinite]">
+                <span class="material-symbols-rounded icon-fill text-white text-[50px]">check_circle</span>
+            </div>
+            
+            <h3 class="relative z-10 font-extrabold text-slate-900 text-2xl mb-2 tracking-tight">Terima Kasih!</h3>
+            <p class="relative z-10 text-slate-500 text-sm leading-relaxed mb-8 font-medium px-2">
+                Laporan Anda telah berhasil tersimpan. Kontribusi Anda sangat berarti dalam menjaga kualitas dan standar operasional area kita.
+            </p>
+            
+            <button onclick="closeThankYouModal()" class="relative z-10 w-full bg-slate-900 hover:bg-black text-white font-bold py-3.5 rounded-xl transition-transform active:scale-95 shadow-md flex justify-center items-center gap-2">
+                Tutup & Lanjutkan <span class="material-symbols-rounded text-[18px]">arrow_forward</span>
+            </button>
+        </div>
+    </div>
+
     <script>
         let currentUtilView = 'air';
         let utilChartScale = 'mingguan';
@@ -2138,6 +2160,7 @@
                 
                 closeUtilitasModal();
                 renderUtilitasTable();
+                showThankYouModal();
             } catch(error) {
                 console.error(error);
                 Island.show('Gagal menyimpan data server.', 'error');
@@ -3056,7 +3079,9 @@
             e.target.reset(); 
             document.querySelectorAll('[id^="note-container-"]').forEach(el => { el.classList.add('max-h-0', 'opacity-0'); setTimeout(() => el.classList.add('hidden'), 300); });
             btn.disabled = false; btn.innerHTML = '<span class="material-symbols-rounded icon-fill">send</span> <span>Kirim Laporan Inspeksi</span>';
-            closeChecklistModal(); setTimeout(() => switchTab('dashboard'), 500);
+            closeChecklistModal(); 
+            showThankYouModal();
+            setTimeout(() => switchTab('dashboard'), 500);
         });
 
         function openAddUserModal() { document.getElementById('add-user-form').reset(); toggleFormFieldsBasedOnRole(); document.getElementById('modal-add-user').classList.remove('hidden'); }
@@ -4250,6 +4275,25 @@
             const text = document.getElementById('report-text-content').value;
             const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
             window.open(url, '_blank');
+        };
+
+        window.showThankYouModal = function() {
+            const container = document.getElementById('modal-thank-you');
+            const box = document.getElementById('thank-you-box');
+            container.classList.remove('hidden');
+            void container.offsetWidth; // Memicu ulang render
+            container.classList.remove('opacity-0');
+            box.classList.remove('scale-50', 'opacity-0');
+            box.classList.add('scale-100', 'opacity-100');
+        };
+
+        window.closeThankYouModal = function() {
+            const container = document.getElementById('modal-thank-you');
+            const box = document.getElementById('thank-you-box');
+            container.classList.add('opacity-0');
+            box.classList.remove('scale-100', 'opacity-100');
+            box.classList.add('scale-50', 'opacity-0');
+            setTimeout(() => container.classList.add('hidden'), 300);
         };
     </script>
 </body>
