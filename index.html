@@ -952,7 +952,7 @@
                         <div id="air-angka-container" class="hidden">
                             <label class="label-modern">Angka Meteran Air Saat Ini</label>
                             <div class="grid grid-cols-2 gap-4 items-center">
-                                <input type="text" id="u-air-angka" name="air_angka" class="input-modern w-full px-4 py-3 rounded-xl font-bold text-sm text-blue-700">
+                                <input type="text" id="u-air-angka" name="air_angka" oninput="formatRibuanBulat(this)" class="input-modern w-full px-4 py-3 rounded-xl font-bold text-sm text-blue-700">
                                 <span class="text-rose-500 text-[10px] sm:text-xs font-bold italic">*abaikan angka di belakang koma (,)</span>
                             </div>
                         </div>
@@ -1835,7 +1835,7 @@
                 else { document.getElementById('u-air-mekanisme').value = 'Lainnya'; document.getElementById('u-air-mekanisme-lain').value = d.air_mekanisme; }
             }
             toggleAirMekanisme();
-            document.getElementById('u-air-angka').value = d.air_angka || '';
+            document.getElementById('u-air-angka').value = d.air_angka ? parseSafeNumber(d.air_angka).toLocaleString('id-ID') : '';
             
             if(d.air_kondisi_meteran) { const el = document.querySelector(`input[name="air_kondisi_meteran"][value="${d.air_kondisi_meteran}"]`); if(el) el.checked = true; }
             document.getElementById('air-meteran-rusak').value = d.air_meteran_rusak || ''; toggleRusak('air_kondisi_meteran', 'air-meteran-rusak');
@@ -1880,7 +1880,7 @@
                         <div class="md:col-span-2">
                             <label class="label-modern">Angka di Meteran Saat Ini</label>
                             <div class="grid grid-cols-2 gap-4 items-center">
-                                <input type="text" id="u-listrik-angka" name="listrik_angka" required class="input-modern w-full px-4 py-3 rounded-xl text-sm font-bold">
+                                <input type="text" id="u-listrik-angka" name="listrik_angka" required oninput="formatRibuanBulat(this)" class="input-modern w-full px-4 py-3 rounded-xl text-sm font-bold">
                                 <span class="text-rose-500 text-[10px] sm:text-xs font-bold italic">*abaikan angka di belakang koma (,)</span>
                             </div>
                         </div>
@@ -1899,7 +1899,7 @@
                 
                 document.querySelector(`input[name="${idName}"]`).value = m.id === 'Meteran Utama' || m.id.startsWith('Meteran Tambahan') ? '' : m.id;
                 document.querySelector(`input[name="${namaName}"]`).value = m.nama === '-' ? '' : m.nama;
-                document.querySelector(`input[name="${angkaName}"]`).value = m.angka || '';
+                document.querySelector(`input[name="${angkaName}"]`).value = m.angka ? parseSafeNumber(m.angka).toLocaleString('id-ID') : '';
                 const catEl = document.querySelector(`input[name="${katName}"][value="${m.kategori}"]`);
                 if(catEl) catEl.checked = true;
             });
@@ -2036,7 +2036,7 @@
                             <div class="md:col-span-2">
                                 <label class="label-modern">Angka di Meteran Saat Ini</label>
                                 <div class="grid grid-cols-2 gap-4 items-center">
-                                    <input type="text" id="u-listrik-angka" name="listrik_angka" required class="input-modern w-full px-4 py-3 rounded-xl text-sm font-bold">
+                                    <input type="text" id="u-listrik-angka" name="listrik_angka" required oninput="formatRibuanBulat(this)" class="input-modern w-full px-4 py-3 rounded-xl text-sm font-bold">
                                     <span class="text-rose-500 text-[10px] sm:text-xs font-bold italic">*abaikan angka di belakang koma (,)</span>
                                 </div>
                             </div>
@@ -2071,6 +2071,12 @@
         }
 
         function closeUtilitasModal() { document.getElementById('modal-utilitas-form').classList.add('hidden'); }
+
+        window.formatRibuanBulat = function(input) {
+            let val = input.value.replace(/[^0-9]/g, '');
+            if(val !== '') val = parseInt(val, 10).toLocaleString('id-ID');
+            input.value = val;
+        }
 
         function toggleAirFields() {
             const s = document.querySelector('input[name="air_sumber"]:checked')?.value || ''; 
@@ -3717,7 +3723,7 @@
                         <div class="md:col-span-2">
                             <label class="label-modern">Angka di Meteran Saat Ini</label>
                             <div class="grid grid-cols-2 gap-4 items-center">
-                                <input type="text" id="u-listrik-angka-${idx}" name="listrik_angka_${idx}" required class="input-modern w-full px-4 py-3 rounded-xl text-sm font-bold">
+                                <input type="text" id="u-listrik-angka-${idx}" name="listrik_angka_${idx}" required oninput="formatRibuanBulat(this)" class="input-modern w-full px-4 py-3 rounded-xl text-sm font-bold">
                                 <span class="text-rose-500 text-[10px] sm:text-xs font-bold italic">*abaikan angka di belakang koma (,)</span>
                             </div>
                         </div>
