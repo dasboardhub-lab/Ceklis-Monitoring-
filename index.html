@@ -172,7 +172,10 @@
                         <label class="label-modern">Kata Sandi</label>
                         <div class="relative">
                             <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"><span class="material-symbols-rounded icon-outline text-slate-400 text-xl">lock</span></div>
-                            <input type="password" id="password" required placeholder="••••••••" class="input-modern w-full pl-12 pr-4 py-3.5 rounded-xl text-[15px] font-semibold">
+                            <input type="password" id="password" required placeholder="••••••••" class="input-modern w-full pl-12 pr-12 py-3.5 rounded-xl text-[15px] font-semibold">
+                            <button type="button" onclick="togglePasswordVisibility('password', 'eye-icon-login')" class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-brand-600 transition-colors focus:outline-none">
+                                <span id="eye-icon-login" class="material-symbols-rounded icon-outline text-xl">visibility</span>
+                            </button>
                         </div>
                     </div>
 
@@ -1295,6 +1298,18 @@
 
         let failedUsernameCount = 0;
         let failedPasswordCount = 0;
+
+        window.togglePasswordVisibility = function(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.textContent = 'visibility_off';
+            } else {
+                input.type = 'password';
+                icon.textContent = 'visibility';
+            }
+        };
 
         let isSidebarOpen = false;
         window.toggleSidebar = function() {
