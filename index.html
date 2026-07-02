@@ -1263,23 +1263,35 @@
         };
 
         const Modal = {
-            _show(type, title, message, iconName, iconColorClass, iconBg, onConfirm, showInput = false, inputVal = '') {
+            _show(type, title, message, iconName, iconColorClass, iconBg, onConfirm, showInput = false, inputVal = '', customButtons = null) {
                 const container = document.getElementById('custom-modal'); const box = document.getElementById('modal-box');
-                document.getElementById('modal-title').textContent = title; document.getElementById('modal-message').textContent = message;
+                document.getElementById('modal-title').textContent = title; document.getElementById('modal-message').innerHTML = message.replace(/\n/g, '<br>');
                 const iconEl = document.getElementById('modal-icon');
                 iconEl.className = `w-14 h-14 rounded-full flex items-center justify-center shrink-0 mb-4 shadow-inner ${iconBg}`;
                 iconEl.innerHTML = `<span class="material-symbols-rounded icon-fill ${iconColorClass} text-3xl">${iconName}</span>`;
                 const inputContainer = document.getElementById('modal-input-container'); const inputEl = document.getElementById('modal-input');
                 if (showInput) { inputContainer.classList.remove('hidden'); inputEl.value = inputVal; setTimeout(() => inputEl.focus(), 100); } else { inputContainer.classList.add('hidden'); }
                 const actions = document.getElementById('modal-actions'); actions.innerHTML = '';
-                const btnCancel = document.createElement('button');
-                btnCancel.className = "px-5 py-2.5 rounded-xl font-bold text-sm text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors w-full sm:w-auto";
-                btnCancel.textContent = "Batal"; btnCancel.onclick = () => this._close();
-                const btnOk = document.createElement('button'); const isDanger = iconBg.includes('rose');
-                btnOk.className = `px-6 py-2.5 rounded-xl font-bold text-sm text-white transition-transform active:scale-95 shadow-md w-full sm:w-auto ${isDanger ? 'bg-rose-600 hover:bg-rose-700' : 'bg-slate-900 hover:bg-black'}`;
-                btnOk.textContent = showInput ? "Simpan Data" : (onConfirm ? "Ya, Lanjutkan" : "Mengerti");
-                btnOk.onclick = () => { this._close(); if (onConfirm) onConfirm(showInput ? inputEl.value : null); };
-                if (onConfirm) actions.appendChild(btnCancel); actions.appendChild(btnOk);
+                
+                if (customButtons && Array.isArray(customButtons)) {
+                    customButtons.forEach(btn => {
+                        const b = document.createElement('button');
+                        b.className = btn.className || "px-5 py-2.5 rounded-xl font-bold text-sm text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors w-full sm:w-auto";
+                        b.innerHTML = btn.label;
+                        b.onclick = () => { this._close(); if(btn.onClick) btn.onClick(); };
+                        actions.appendChild(b);
+                    });
+                } else {
+                    const btnCancel = document.createElement('button');
+                    btnCancel.className = "px-5 py-2.5 rounded-xl font-bold text-sm text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors w-full sm:w-auto";
+                    btnCancel.textContent = "Batal"; btnCancel.onclick = () => this._close();
+                    const btnOk = document.createElement('button'); const isDanger = iconBg.includes('rose');
+                    btnOk.className = `px-6 py-2.5 rounded-xl font-bold text-sm text-white transition-transform active:scale-95 shadow-md w-full sm:w-auto ${isDanger ? 'bg-rose-600 hover:bg-rose-700' : 'bg-slate-900 hover:bg-black'}`;
+                    btnOk.textContent = showInput ? "Simpan Data" : (onConfirm ? "Ya, Lanjutkan" : "Mengerti");
+                    btnOk.onclick = () => { this._close(); if (onConfirm) onConfirm(showInput ? inputEl.value : null); };
+                    if (onConfirm) actions.appendChild(btnCancel); actions.appendChild(btnOk);
+                }
+                
                 container.classList.remove('hidden'); void container.offsetWidth; container.classList.remove('opacity-0');
                 box.classList.remove('scale-95'); box.classList.add('scale-100');
             },
@@ -1291,7 +1303,8 @@
             confirm(title, message, onConfirm) { this._show('confirm', title, message, 'help', 'text-amber-500', 'bg-amber-50 border-amber-100', onConfirm); },
             danger(title, message, onConfirm) { this._show('confirm', title, message, 'delete', 'text-rose-600', 'bg-rose-50 border-rose-100', onConfirm); },
             prompt(title, message, defaultVal, onConfirm) { this._show('prompt', title, message, 'edit', 'text-brand-600', 'bg-brand-50 border-brand-100', onConfirm, true, defaultVal); },
-            warning(title, message) { this._show('info', title, message, 'warning', 'text-amber-500', 'bg-amber-50 border-amber-100', null); }
+            warning(title, message) { this._show('info', title, message, 'warning', 'text-amber-500', 'bg-amber-50 border-amber-100', null); },
+            custom(title, message, iconName, iconColorClass, iconBg, buttons) { this._show('custom', title, message, iconName, iconColorClass, iconBg, null, false, '', buttons); }
         };
 
         const { createClient } = supabase;
@@ -1470,6 +1483,78 @@
             
             await populateCategoryFilter(); await populateUtilFilters(); await applyFiltersAndRender();
             Island.show(`Selamat bertugas, ${currentUser.pic_name || currentUser.username}!`, 'success');
+
+            if (currentUser.role === 'user') {
+                setTimeout(() => { checkAndShowReminders(); }, 1500);
+            }
+        }
+
+        async function checkAndShowReminders() {
+            if (!currentUser.stagging_name) return;
+
+            let serverDate;
+            try {
+                const res = await fetch('https://worldtimeapi.org/api/timezone/Asia/Makassar');
+                const data = await res.json();
+                serverDate = new Date(data.datetime);
+            } catch(e) {
+                serverDate = new Date();
+            }
+
+            const currentDay = serverDate.getDate();
+            const currentMonthStr = String(serverDate.getMonth() + 1).padStart(2, '0');
+            const currentYearStr = String(serverDate.getFullYear());
+
+            let missingCeklis = false;
+            let missingUtil = false;
+            let utilWeekInfo = getCustomWeekInfo(serverDate);
+
+            // Validasi 1: Ceklis Monitoring
+            if (currentDay >= 20) {
+                const { data: subs } = await supabaseClient.from('submissions').select('date').eq('stagging_name', currentUser.stagging_name);
+                let hasSubmittedCeklis = false;
+                if (subs && subs.length > 0) {
+                    hasSubmittedCeklis = subs.some(sub => {
+                        const dateParts = sub.date.split(',')[0].trim().split('/');
+                        return dateParts.length === 3 && dateParts[1] === currentMonthStr && dateParts[2] === currentYearStr;
+                    });
+                }
+                if (!hasSubmittedCeklis) missingCeklis = true;
+            }
+
+            // Validasi 2: Utilitas & IPL
+            const { data: utilData } = await supabaseClient.from('utilitas_data').select('id').eq('stagging_name', currentUser.stagging_name).eq('bulan', utilWeekInfo.bulan).eq('tahun', utilWeekInfo.tahun).eq('minggu', utilWeekInfo.minggu).maybeSingle();
+            if (!utilData) missingUtil = true;
+
+            // Tampilkan Notifikasi jika ada form yang bolong
+            if (missingCeklis || missingUtil) {
+                let msg = '';
+                let buttons = [];
+                
+                buttons.push({
+                    label: "Nanti Saja",
+                    className: "px-4 py-2.5 rounded-xl font-bold text-sm text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors w-full sm:w-auto flex-1 order-last sm:order-first"
+                });
+
+                if (missingCeklis) {
+                    msg += `• <b>Ceklis Monitoring</b> bulan ini belum diisi.\n`;
+                    buttons.push({
+                        label: `<span class="material-symbols-rounded text-[16px]">edit_document</span> Isi Ceklis`,
+                        className: "px-4 py-2.5 rounded-xl font-bold text-sm text-white bg-brand-600 hover:bg-brand-700 transition-transform active:scale-95 shadow-md w-full sm:w-auto flex-1 flex items-center justify-center gap-1",
+                        onClick: () => { switchTab('dashboard'); setTimeout(() => openChecklistModal(), 300); }
+                    });
+                }
+                if (missingUtil) {
+                    msg += `• <b>Utilitas & IPL</b> Minggu ke-${utilWeekInfo.minggu} belum diisi.\n`;
+                    buttons.push({
+                        label: `<span class="material-symbols-rounded text-[16px]">home_repair_service</span> Isi Utilitas`,
+                        className: "px-4 py-2.5 rounded-xl font-bold text-sm text-white bg-emerald-600 hover:bg-emerald-700 transition-transform active:scale-95 shadow-md w-full sm:w-auto flex-1 flex items-center justify-center gap-1",
+                        onClick: () => { switchTab('utilitas'); setTimeout(() => openUtilitasModal(), 300); }
+                    });
+                }
+
+                Modal.custom('Tugas Belum Selesai!', `Harap segera melengkapi form berikut:\n\n${msg}\nSegera lengkapi data area Anda.`, 'warning', 'text-amber-500', 'bg-amber-50 border-amber-100', buttons);
+            }
         }
 
         async function populateUtilFilters() {
@@ -2484,7 +2569,8 @@
                     
                     let rowHtml = `<td class="p-3 border-r border-slate-200 sticky-col-1 bg-white">
                         <strong class="text-slate-900 text-xs block mb-0.5">${u.stagging_name}</strong>
-                        <span class="text-[10px] text-slate-500">${u.pic_name || u.username}</span>
+                        <span class="text-[10px] text-slate-500 block mb-1">${u.pic_name || u.username}</span>
+                        ${submit ? `<span class="text-[8px] text-brand-600 bg-brand-50 px-1.5 py-0.5 rounded font-bold border border-brand-100">Inp: ${submit.date.split(',')[0]}</span>` : ''}
                     </td>`;
 
                     if (submit) {
@@ -2595,7 +2681,8 @@
                                     ${warningHtml}
                                     <div class="flex flex-col items-center w-full mt-1">
                                         ${diffHtml}
-                                        <span class="text-[9px] text-slate-500 font-mono bg-blue-50/50 border border-blue-100 px-2 py-0.5 rounded w-full text-center">Mtr: ${currAir.toLocaleString('id-ID')}</span>
+                                        <span class="text-[9px] text-slate-500 font-mono bg-blue-50/50 border border-blue-100 px-2 py-0.5 rounded w-full text-center mb-1">Mtr: ${currAir.toLocaleString('id-ID')}</span>
+                                        <span class="text-[8px] text-slate-400 font-medium">${submit.date.split(',')[0]}</span>
                                     </div>
                                 </td>`;
                                 
@@ -2661,7 +2748,8 @@
                                     ${warningHtml}
                                     <div class="flex flex-col items-center w-full mt-1">
                                         ${diffHtml}
-                                        <div class="w-full flex flex-col">${meterTexts}</div>
+                                        <div class="w-full flex flex-col mb-1">${meterTexts}</div>
+                                        <span class="text-[8px] text-slate-400 font-medium">${submit.date.split(',')[0]}</span>
                                     </div>
                                 </td>`;
                                 
@@ -2698,11 +2786,12 @@
                                 rowHtml += `<td class="p-2 border-r border-slate-100 text-center relative cursor-pointer hover:bg-emerald-50/50" ${cellClick}>
                                     ${warningHtml}
                                     <div class="flex flex-col gap-1 items-center w-full mt-1">
-                                        <div class="bg-white border border-emerald-100 rounded px-1.5 py-1 w-full text-left shadow-sm">
+                                        <div class="bg-white border border-emerald-100 rounded px-1.5 py-1 w-full text-left shadow-sm mb-0.5">
                                             <span class="text-[9px] font-bold ${d.ipl_bersih==='Ada'?'text-emerald-600':'text-slate-400'} block truncate">B: ${d.ipl_bersih==='Ada'?'Rp'+(parseSafeNumber(d.ipl_bersih_nom)/1000)+'k':'-'} <span class="font-medium text-[8px] opacity-70">(${d.ipl_bersih_jadwal==='1 Kali Sebulan'?'Bln':'Mgg'})</span></span>
                                             <span class="text-[9px] font-bold ${d.ipl_aman==='Ada'?'text-emerald-600':'text-slate-400'} block truncate">A: ${d.ipl_aman==='Ada'?'Rp'+(parseSafeNumber(d.ipl_aman_nom)/1000)+'k':'-'} <span class="font-medium text-[8px] opacity-70">(${d.ipl_aman_jadwal==='1 Kali Sebulan'?'Bln':'Mgg'})</span></span>
                                         </div>
-                                        ${isLastWeekOfMonth && mTotal > 0 ? `<div class="mt-0.5 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded w-full px-1 py-1 text-center"><span class="text-[8px] font-bold uppercase tracking-widest block opacity-70 leading-none mb-0.5">Total Bln Ini</span><span class="text-[10px] font-extrabold leading-none">Rp ${(mTotal/1000).toLocaleString('id-ID')}k</span></div>` : ''}
+                                        ${isLastWeekOfMonth && mTotal > 0 ? `<div class="bg-emerald-50 text-emerald-700 border border-emerald-200 rounded w-full px-1 py-1 text-center mb-0.5"><span class="text-[8px] font-bold uppercase tracking-widest block opacity-70 leading-none mb-0.5">Total Bln Ini</span><span class="text-[10px] font-extrabold leading-none">Rp ${(mTotal/1000).toLocaleString('id-ID')}k</span></div>` : ''}
+                                        <span class="text-[8px] text-slate-400 font-medium">${submit.date.split(',')[0]}</span>
                                     </div>
                                 </td>`;
                             }
