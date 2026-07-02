@@ -577,6 +577,30 @@
                         </div>
                     </div>
 
+                    <!-- Panel Personal PIC Lapangan -->
+                    <div id="user-personal-dashboard" class="hidden grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 animate-content">
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+                            <div>
+                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Status Ceklis Bulan Ini</p>
+                                <div id="user-status-ceklis" class="flex items-center gap-2">
+                                    <span class="material-symbols-rounded text-slate-300">hourglass_empty</span>
+                                    <span class="font-extrabold text-slate-500 text-sm">Mengecek...</span>
+                                </div>
+                            </div>
+                            <button id="btn-user-isi-ceklis" onclick="openChecklistModal()" class="hidden bg-brand-50 hover:bg-brand-100 text-brand-700 px-4 py-2 rounded-xl text-sm font-bold transition-colors">Isi Ceklis</button>
+                        </div>
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+                            <div>
+                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Status Utilitas Minggu Ini</p>
+                                <div id="user-status-util" class="flex items-center gap-2">
+                                    <span class="material-symbols-rounded text-slate-300">hourglass_empty</span>
+                                    <span class="font-extrabold text-slate-500 text-sm">Mengecek...</span>
+                                </div>
+                            </div>
+                            <button id="btn-user-isi-util" onclick="switchTab('utilitas'); setTimeout(() => openUtilitasModal(), 300);" class="hidden bg-emerald-50 hover:bg-emerald-100 text-emerald-700 px-4 py-2 rounded-xl text-sm font-bold transition-colors">Isi Utilitas</button>
+                        </div>
+                    </div>
+
                     <!-- Tabel Master Data Laporan -->
                     <div class="bg-surface rounded-3xl shadow-soft border border-slate-200 overflow-hidden mb-8 flex flex-col">
                         <div class="overflow-auto custom-scroll w-full h-[75vh] xl:h-[85vh]">
@@ -1478,20 +1502,26 @@
             const mUsers = document.getElementById('mob-tab-admin-users'); const mAdminForm = document.getElementById('mob-tab-admin-form');
             const btnOpenForm = document.getElementById('btn-open-form'); const btnAdminHapus = document.getElementById('btn-admin-hapus-data');
             const btnBroadUtil = document.getElementById('btn-broadcast-utilitas'); const btnBroadCek = document.getElementById('btn-broadcast-ceklis');
+            const notifContainer = document.getElementById('notification-container');
+            const personalDashboard = document.getElementById('user-personal-dashboard');
             
             tUsers.style.display = 'none'; tAdminForm.style.display = 'none';
             if(mUsers) mUsers.style.display = 'none'; if(mAdminForm) mAdminForm.style.display = 'none';
             btnOpenForm.style.display = 'none'; if(btnAdminHapus) btnAdminHapus.style.display = 'none';
             if(btnBroadUtil) btnBroadUtil.style.display = 'none'; if(btnBroadCek) btnBroadCek.style.display = 'none';
+            if(notifContainer) notifContainer.style.display = 'none';
 
             if (currentUser.role === 'admin') {
                 tUsers.style.display = 'flex'; tAdminForm.style.display = 'flex';
                 if(mUsers) mUsers.style.display = 'flex'; if(mAdminForm) mAdminForm.style.display = 'flex';
                 btnOpenForm.style.display = 'flex'; if(btnAdminHapus) btnAdminHapus.style.display = 'flex';
                 if(btnBroadUtil) btnBroadUtil.style.display = 'flex'; if(btnBroadCek) btnBroadCek.style.display = 'flex';
+                if(personalDashboard) personalDashboard.classList.add('hidden');
                 switchTab('dashboard'); await renderAdminUsers(); await renderAdminCategoryList();
             } else if (currentUser.role === 'user') {
-                btnOpenForm.style.display = 'flex'; switchTab('dashboard');
+                btnOpenForm.style.display = 'flex'; 
+                if(notifContainer) notifContainer.style.display = 'block';
+                switchTab('dashboard');
             } else if (currentUser.role === 'visitor') {
                 switchTab('dashboard');
             }
@@ -1509,7 +1539,7 @@
         };
 
         async function checkAndShowReminders(showPopup = false) {
-            if (!currentUser.stagging_name) return;
+            if (currentUser.role !== 'user' || !currentUser.stagging_name) return;
 
             let serverDate;
             try {
@@ -1529,21 +1559,56 @@
             let utilWeekInfo = getCustomWeekInfo(serverDate);
 
             // Validasi 1: Ceklis Monitoring
-            if (currentDay >= 20) {
-                const { data: subs } = await supabaseClient.from('submissions').select('date').eq('stagging_name', currentUser.stagging_name);
-                let hasSubmittedCeklis = false;
-                if (subs && subs.length > 0) {
-                    hasSubmittedCeklis = subs.some(sub => {
-                        const dateParts = sub.date.split(',')[0].trim().split('/');
-                        return dateParts.length === 3 && parseInt(dateParts[1]) === parseInt(currentMonthStr) && dateParts[2] === currentYearStr;
-                    });
-                }
-                if (!hasSubmittedCeklis) missingCeklis = true;
+            const { data: subs } = await supabaseClient.from('submissions').select('date').eq('stagging_name', currentUser.stagging_name);
+            let hasSubmittedCeklis = false;
+            if (subs && subs.length > 0) {
+                hasSubmittedCeklis = subs.some(sub => {
+                    const dateParts = sub.date.split(',')[0].trim().split('/');
+                    return dateParts.length === 3 && parseInt(dateParts[1]) === parseInt(currentMonthStr) && dateParts[2] === currentYearStr;
+                });
             }
+            if (!hasSubmittedCeklis) missingCeklis = true;
 
             // Validasi 2: Utilitas & IPL
             const { data: utilData } = await supabaseClient.from('utilitas_data').select('id').eq('stagging_name', currentUser.stagging_name).eq('bulan', utilWeekInfo.bulan).eq('tahun', utilWeekInfo.tahun).eq('minggu', utilWeekInfo.minggu).maybeSingle();
             if (!utilData) missingUtil = true;
+
+            // Update Panel Personal PIC
+            if (currentUser.role === 'user') {
+                const panel = document.getElementById('user-personal-dashboard');
+                if (panel) panel.classList.remove('hidden');
+
+                const sc = document.getElementById('user-status-ceklis');
+                const bc = document.getElementById('btn-user-isi-ceklis');
+                if (sc && bc) {
+                    if (missingCeklis) {
+                        if (currentDay < 20) {
+                            sc.innerHTML = `<span class="material-symbols-rounded icon-fill text-slate-400 text-lg">lock</span><span class="font-extrabold text-slate-500 text-sm">Terkunci (Buka Tgl 20)</span>`;
+                            bc.classList.add('hidden');
+                        } else {
+                            sc.innerHTML = `<span class="material-symbols-rounded icon-fill text-amber-500 text-lg">warning</span><span class="font-extrabold text-amber-600 text-sm">Belum Selesai</span>`;
+                            bc.classList.remove('hidden');
+                        }
+                    } else {
+                        sc.innerHTML = `<span class="material-symbols-rounded icon-fill text-emerald-500 text-lg">check_circle</span><span class="font-extrabold text-emerald-600 text-sm">Selesai</span>`;
+                        bc.classList.add('hidden');
+                    }
+                }
+
+                const su = document.getElementById('user-status-util');
+                const bu = document.getElementById('btn-user-isi-util');
+                if (su && bu) {
+                    if (missingUtil) {
+                        su.innerHTML = `<span class="material-symbols-rounded icon-fill text-amber-500 text-lg">warning</span><span class="font-extrabold text-amber-600 text-sm">Belum Selesai</span>`;
+                        bu.classList.remove('hidden');
+                    } else {
+                        su.innerHTML = `<span class="material-symbols-rounded icon-fill text-emerald-500 text-lg">check_circle</span><span class="font-extrabold text-emerald-600 text-sm">Selesai</span>`;
+                        bu.classList.add('hidden');
+                    }
+                }
+            }
+
+            let triggerPopupCeklis = missingCeklis && currentDay >= 20;
 
             const notifBadge = document.getElementById('notif-badge');
             const notifCount = document.getElementById('notif-count');
@@ -1552,7 +1617,7 @@
             let taskCount = 0;
             let notifHtml = '';
 
-            if (missingCeklis) {
+            if (triggerPopupCeklis) {
                 taskCount++;
                 notifHtml += `
                     <div class="p-3 bg-brand-50 border border-brand-100 rounded-xl flex flex-col gap-2 hover:bg-brand-100 transition-colors cursor-pointer" onclick="toggleNotificationDropdown(); switchTab('dashboard'); setTimeout(() => openChecklistModal(), 300);">
@@ -1593,7 +1658,7 @@
             }
 
             // Tampilkan Notifikasi jika ada form yang bolong
-            if (showPopup && (missingCeklis || missingUtil)) {
+            if (showPopup && (triggerPopupCeklis || missingUtil)) {
                 let msg = '';
                 let buttons = [];
                 
@@ -1602,7 +1667,7 @@
                     className: "px-4 py-2.5 rounded-xl font-bold text-sm text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors w-full sm:w-auto flex-1 order-last sm:order-first"
                 });
 
-                if (missingCeklis) {
+                if (triggerPopupCeklis) {
                     msg += `• <b>Ceklis Monitoring</b> bulan ini belum diisi.\n`;
                     buttons.push({
                         label: `<span class="material-symbols-rounded text-[16px]">edit_document</span> Isi Ceklis`,
