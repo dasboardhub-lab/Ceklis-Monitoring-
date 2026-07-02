@@ -1478,28 +1478,55 @@
         function buildUtilKoorMenu() {
             const menu = document.getElementById('util-koor-dropdown-menu');
             if (!menu) return;
-            menu.innerHTML = '';
+            menu.innerHTML = `
+                <div class="sticky top-0 bg-white z-10 pb-2 mb-2 border-b border-slate-100">
+                    <input type="text" placeholder="Cari Koordinator..." class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm font-medium focus:outline-none focus:border-brand-500" onkeyup="filterDropdownList(this, 'util-koor-dropdown-list')">
+                </div>
+                <div id="util-koor-dropdown-list" class="space-y-1"></div>
+            `;
+            const listContainer = document.getElementById('util-koor-dropdown-list');
             const uniqueSsc = [...new Set(globalFieldUsers.map(u => u.ssc).filter(Boolean))].sort();
             uniqueSsc.forEach(ssc => {
-                menu.innerHTML += `<label class="flex items-center gap-3 p-2 hover:bg-slate-50 rounded-xl cursor-pointer smooth-transition"><input type="checkbox" value="${ssc}" class="util-koor-checkbox w-4 h-4 text-brand-600 bg-slate-100 border-slate-300 rounded focus:ring-brand-500" onchange="handleUtilKoorChange()"><span class="text-sm font-bold text-slate-700">${ssc}</span></label>`;
+                listContainer.innerHTML += `<label class="flex items-center gap-3 p-2 hover:bg-slate-50 rounded-xl cursor-pointer smooth-transition"><input type="checkbox" value="${ssc}" class="util-koor-checkbox w-4 h-4 text-brand-600 bg-slate-100 border-slate-300 rounded focus:ring-brand-500" onchange="handleUtilKoorChange()"><span class="text-sm font-bold text-slate-700">${ssc}</span></label>`;
             });
         }
 
         function buildUtilAreaMenu(selectedSscs = []) {
             const menu = document.getElementById('util-ssc-dropdown-menu');
             if (!menu) return;
-            menu.innerHTML = '';
+            menu.innerHTML = `
+                <div class="sticky top-0 bg-white z-10 pb-2 mb-2 border-b border-slate-100">
+                    <input type="text" placeholder="Cari Area..." class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm font-medium focus:outline-none focus:border-brand-500" onkeyup="filterDropdownList(this, 'util-ssc-dropdown-list')">
+                </div>
+                <div id="util-ssc-dropdown-list" class="space-y-1"></div>
+            `;
+            const listContainer = document.getElementById('util-ssc-dropdown-list');
             let filteredUsers = globalFieldUsers;
             if (selectedSscs.length > 0) {
                 filteredUsers = globalFieldUsers.filter(u => selectedSscs.includes(u.ssc));
             }
             const uniqueStagings = [...new Set(filteredUsers.map(u => u.stagging_name).filter(Boolean))].sort();
             uniqueStagings.forEach(stg => { 
-                menu.innerHTML += `<label class="flex items-center gap-3 p-2 hover:bg-slate-50 rounded-xl cursor-pointer smooth-transition"><input type="checkbox" value="${stg}" class="util-ssc-checkbox w-4 h-4 text-brand-600 bg-slate-100 border-slate-300 rounded focus:ring-brand-500" onchange="handleUtilSscChange()"><span class="text-sm font-bold text-slate-700">${stg}</span></label>`;
+                listContainer.innerHTML += `<label class="flex items-center gap-3 p-2 hover:bg-slate-50 rounded-xl cursor-pointer smooth-transition"><input type="checkbox" value="${stg}" class="util-ssc-checkbox w-4 h-4 text-brand-600 bg-slate-100 border-slate-300 rounded focus:ring-brand-500" onchange="handleUtilSscChange()"><span class="text-sm font-bold text-slate-700">${stg}</span></label>`;
             });
             const btnText = document.getElementById('btn-util-ssc-text');
             if(btnText) btnText.querySelector('span').textContent = 'Semua Area';
         }
+
+        window.filterDropdownList = function(inputEl, listId) {
+            const filter = inputEl.value.toLowerCase();
+            const listContainer = document.getElementById(listId);
+            if(!listContainer) return;
+            const labels = listContainer.getElementsByTagName('label');
+            for (let i = 0; i < labels.length; i++) {
+                const text = labels[i].textContent || labels[i].innerText;
+                if (text.toLowerCase().indexOf(filter) > -1) {
+                    labels[i].style.display = "";
+                } else {
+                    labels[i].style.display = "none";
+                }
+            }
+        };
 
         function logout() {
             currentUser = null; document.getElementById('login-form').reset();
