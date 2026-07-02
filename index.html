@@ -284,6 +284,21 @@
                 </div>
                 
                 <div id="header-actions" class="flex items-center gap-2">
+                    <div class="relative" id="notification-container">
+                        <button onclick="toggleNotificationDropdown()" class="relative w-9 h-9 rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 flex items-center justify-center active:scale-95 transition-colors">
+                            <span class="material-symbols-rounded icon-outline text-lg">notifications</span>
+                            <span id="notif-badge" class="hidden absolute top-0 right-0 w-3 h-3 bg-rose-500 border-2 border-white rounded-full"></span>
+                        </button>
+                        <div id="notification-dropdown" class="hidden absolute right-0 mt-2 w-72 bg-white rounded-2xl shadow-float border border-slate-100 z-50 overflow-hidden origin-top-right transition-all">
+                            <div class="p-3 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
+                                <span class="text-xs font-bold text-slate-700 uppercase tracking-widest">Notifikasi Tugas</span>
+                                <span id="notif-count" class="bg-rose-100 text-rose-600 text-[10px] font-bold px-2 py-0.5 rounded-full">0</span>
+                            </div>
+                            <div id="notification-list" class="max-h-64 overflow-y-auto custom-scroll p-2 space-y-1">
+                                <div class="text-center p-4 text-slate-400 text-xs font-medium">Memeriksa tugas...</div>
+                            </div>
+                        </div>
+                    </div>
                     <button onclick="openChangePasswordModal()" class="w-9 h-9 rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 flex items-center justify-center active:scale-95 transition-colors"><span class="material-symbols-rounded icon-outline text-lg">key</span></button>
                     <button onclick="logout()" class="w-9 h-9 rounded-full bg-rose-50 text-rose-600 hover:bg-rose-100 flex items-center justify-center active:scale-95 transition-colors"><span class="material-symbols-rounded icon-outline text-lg">logout</span></button>
                 </div>
@@ -1485,11 +1500,15 @@
             Island.show(`Selamat bertugas, ${currentUser.pic_name || currentUser.username}!`, 'success');
 
             if (currentUser.role === 'user') {
-                setTimeout(() => { checkAndShowReminders(); }, 1500);
+                setTimeout(() => { checkAndShowReminders(true); }, 1500);
             }
         }
 
-        async function checkAndShowReminders() {
+        window.toggleNotificationDropdown = function() {
+            document.getElementById('notification-dropdown').classList.toggle('hidden');
+        };
+
+        async function checkAndShowReminders(showPopup = false) {
             if (!currentUser.stagging_name) return;
 
             let serverDate;
@@ -1516,7 +1535,7 @@
                 if (subs && subs.length > 0) {
                     hasSubmittedCeklis = subs.some(sub => {
                         const dateParts = sub.date.split(',')[0].trim().split('/');
-                        return dateParts.length === 3 && dateParts[1] === currentMonthStr && dateParts[2] === currentYearStr;
+                        return dateParts.length === 3 && parseInt(dateParts[1]) === parseInt(currentMonthStr) && dateParts[2] === currentYearStr;
                     });
                 }
                 if (!hasSubmittedCeklis) missingCeklis = true;
@@ -1526,8 +1545,55 @@
             const { data: utilData } = await supabaseClient.from('utilitas_data').select('id').eq('stagging_name', currentUser.stagging_name).eq('bulan', utilWeekInfo.bulan).eq('tahun', utilWeekInfo.tahun).eq('minggu', utilWeekInfo.minggu).maybeSingle();
             if (!utilData) missingUtil = true;
 
+            const notifBadge = document.getElementById('notif-badge');
+            const notifCount = document.getElementById('notif-count');
+            const notifList = document.getElementById('notification-list');
+            
+            let taskCount = 0;
+            let notifHtml = '';
+
+            if (missingCeklis) {
+                taskCount++;
+                notifHtml += `
+                    <div class="p-3 bg-brand-50 border border-brand-100 rounded-xl flex flex-col gap-2 hover:bg-brand-100 transition-colors cursor-pointer" onclick="toggleNotificationDropdown(); switchTab('dashboard'); setTimeout(() => openChecklistModal(), 300);">
+                        <div class="flex items-start gap-2">
+                            <span class="material-symbols-rounded icon-fill text-brand-500 text-[18px]">edit_document</span>
+                            <div>
+                                <p class="text-xs font-bold text-slate-800 leading-tight">Ceklis Monitoring</p>
+                                <p class="text-[10px] text-slate-500 mt-0.5">Bulan ini belum diisi.</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            if (missingUtil) {
+                taskCount++;
+                notifHtml += `
+                    <div class="p-3 bg-emerald-50 border border-emerald-100 rounded-xl flex flex-col gap-2 hover:bg-emerald-100 transition-colors cursor-pointer" onclick="toggleNotificationDropdown(); switchTab('utilitas'); setTimeout(() => openUtilitasModal(), 300);">
+                        <div class="flex items-start gap-2">
+                            <span class="material-symbols-rounded icon-fill text-emerald-500 text-[18px]">home_repair_service</span>
+                            <div>
+                                <p class="text-xs font-bold text-slate-800 leading-tight">Utilitas & IPL</p>
+                                <p class="text-[10px] text-slate-500 mt-0.5">Minggu ke-${utilWeekInfo.minggu} belum diisi.</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            if (taskCount > 0) {
+                notifBadge.classList.remove('hidden');
+                notifCount.textContent = taskCount;
+                notifList.innerHTML = notifHtml;
+            } else {
+                notifBadge.classList.add('hidden');
+                notifCount.textContent = '0';
+                notifList.innerHTML = '<div class="text-center p-4 text-slate-400 text-xs font-medium">Semua tugas selesai.</div>';
+            }
+
             // Tampilkan Notifikasi jika ada form yang bolong
-            if (missingCeklis || missingUtil) {
+            if (showPopup && (missingCeklis || missingUtil)) {
                 let msg = '';
                 let buttons = [];
                 
@@ -2354,6 +2420,7 @@
                 closeUtilitasModal();
                 renderUtilitasTable();
                 showThankYouModal();
+                setTimeout(() => checkAndShowReminders(false), 1000);
             } catch(error) {
                 console.error(error);
                 Island.show('Gagal menyimpan data server.', 'error');
@@ -3279,6 +3346,7 @@
             closeChecklistModal(); 
             showThankYouModal();
             setTimeout(() => switchTab('dashboard'), 500);
+            setTimeout(() => checkAndShowReminders(false), 1000);
         });
 
         function openAddUserModal() { document.getElementById('add-user-form').reset(); toggleFormFieldsBasedOnRole(); document.getElementById('modal-add-user').classList.remove('hidden'); }
@@ -3738,6 +3806,12 @@
             const utilSscContainer = document.getElementById('util-ssc-dropdown-container');
             if (utilSscContainer && !utilSscContainer.contains(e.target)) {
                 const menu = document.getElementById('util-ssc-dropdown-menu');
+                if(menu) menu.classList.add('hidden');
+            }
+
+            const notifContainer = document.getElementById('notification-container');
+            if (notifContainer && !notifContainer.contains(e.target)) {
+                const menu = document.getElementById('notification-dropdown');
                 if(menu) menu.classList.add('hidden');
             }
         });
