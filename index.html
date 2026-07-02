@@ -175,6 +175,9 @@
                             <input type="password" id="password" required placeholder="••••••••" class="input-modern w-full pl-12 pr-4 py-3.5 rounded-xl text-[15px] font-semibold">
                         </div>
                     </div>
+
+                    <div id="login-error-container" class="w-full mb-2 mt-4"></div>
+
                     <button type="submit" id="btn-login" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 transition-all shadow-md shadow-brand-500/20 mt-8 active:scale-[0.98]">
                         Masuk Sistem <span class="material-symbols-rounded text-xl">arrow_forward</span>
                     </button>
@@ -1290,6 +1293,9 @@
         let currentUser = null;
         Island.init();
 
+        let failedUsernameCount = 0;
+        let failedPasswordCount = 0;
+
         let isSidebarOpen = false;
         window.toggleSidebar = function() {
             isSidebarOpen = !isSidebarOpen;
@@ -1330,21 +1336,57 @@
             const un = document.getElementById('username').value;
             const pw = document.getElementById('password').value;
             
+            let errorContainer = document.getElementById('login-error-container');
+            if(errorContainer) errorContainer.innerHTML = '';
+
             const btn = document.getElementById('btn-login');
             btn.disabled = true; btn.innerHTML = '<span class="material-symbols-rounded animate-spin">sync</span> Memeriksa...';
 
-            const { data, error } = await supabaseClient.from('users').select('*').eq('username', un).maybeSingle();
-            
-            btn.disabled = false; btn.innerHTML = 'Masuk Sistem <span class="material-symbols-rounded text-xl">arrow_forward</span>';
+            try {
+                const { data, error } = await supabaseClient.from('users').select('*').eq('username', un).maybeSingle();
+                
+                btn.disabled = false; btn.innerHTML = 'Masuk Sistem <span class="material-symbols-rounded text-xl">arrow_forward</span>';
 
-            if (!data) {
-                Island.show('Username tidak ditemukan di sistem.', 'error');
-            } else if (data.password !== pw) {
-                Island.show('Kata sandi yang Anda masukkan salah.', 'error');
-            } else if (!data.is_active) { 
-                Island.show('Akun Anda dinonaktifkan.', 'error'); 
-            } else {
-                currentUser = data; await loginSuccess();
+                if (!data) {
+                    failedUsernameCount++;
+                    if (failedUsernameCount >= 3) {
+                        if(errorContainer) errorContainer.innerHTML = `
+                            <div class="p-4 bg-rose-50 border border-rose-200 rounded-xl flex flex-col gap-3 animate-content">
+                                <span class="text-rose-600 font-bold text-sm text-center">Username salah 3x.</span>
+                                <a href="https://wa.me/6285215226972?text=Halo%20Admin%20GA,%20saya%20butuh%20bantuan%20pengecekan%20username%20aplikasi%20Ceklis" target="_blank" class="bg-rose-600 hover:bg-rose-700 text-white text-sm font-bold py-2.5 px-4 rounded-xl text-center flex items-center justify-center gap-2">
+                                    <span class="material-symbols-rounded text-[18px]">support_agent</span> Hubungi Admin GA
+                                </a>
+                            </div>
+                        `;
+                    } else {
+                        if(errorContainer) errorContainer.innerHTML = '';
+                        Island.show(`Username tidak ditemukan (${failedUsernameCount}/3)`, 'error');
+                    }
+                } else if (data.password !== pw) {
+                    failedPasswordCount++;
+                    if (failedPasswordCount >= 3) {
+                        if(errorContainer) errorContainer.innerHTML = `
+                            <div class="p-4 bg-rose-50 border border-rose-200 rounded-xl flex flex-col gap-3 animate-content">
+                                <span class="text-rose-600 font-bold text-sm text-center">Kata sandi salah 3x.</span>
+                                <a href="https://wa.me/6285215226972?text=Halo%20Admin%20GA,%20saya%20butuh%20bantuan%20reset%20password%20aplikasi%20Ceklis" target="_blank" class="bg-rose-600 hover:bg-rose-700 text-white text-sm font-bold py-2.5 px-4 rounded-xl text-center flex items-center justify-center gap-2">
+                                    <span class="material-symbols-rounded text-[18px]">lock_reset</span> Hubungi GA untuk Reset
+                                </a>
+                            </div>
+                        `;
+                    } else {
+                        if(errorContainer) errorContainer.innerHTML = '';
+                        Island.show(`Kata sandi salah (${failedPasswordCount}/3)`, 'error');
+                    }
+                } else if (!data.is_active) { 
+                    Island.show('Akun Anda dinonaktifkan.', 'error'); 
+                } else {
+                    failedUsernameCount = 0;
+                    failedPasswordCount = 0;
+                    currentUser = data; await loginSuccess();
+                }
+            } catch (err) {
+                btn.disabled = false; btn.innerHTML = 'Masuk Sistem <span class="material-symbols-rounded text-xl">arrow_forward</span>';
+                Island.show('Terjadi kesalahan sistem.', 'error');
             }
         });
 
