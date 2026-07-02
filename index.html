@@ -930,7 +930,7 @@
 
                         <div id="air-pdam-fields" class="hidden space-y-4 bg-blue-50/50 p-4 rounded-xl border border-blue-100">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div><label class="label-modern">Nomor ID Pelanggan Air</label><input type="text" id="u-air-id" name="air_id" list="history-air-id" autocomplete="off" oninput="this.value = this.value.replace(/[^0-9]/g, '')" class="input-modern w-full px-4 py-3 rounded-xl text-sm font-mono"></div>
+                                <div><label class="label-modern">Nomor ID Pelanggan Air</label><input type="text" id="u-air-id" name="air_id" list="history-air-id" autocomplete="off" class="input-modern w-full px-4 py-3 rounded-xl text-sm font-mono"></div>
                                 <div><label class="label-modern">Nama Pemilik ID</label><input type="text" id="u-air-nama" name="air_nama" list="history-air-nama" autocomplete="off" class="input-modern w-full px-4 py-3 rounded-xl text-sm"></div>
                             </div>
                         </div>
@@ -943,6 +943,7 @@
                                     <option value="Dibayar Ke PDAM Atau WTP Tiap Bulannya, Hanya Pemakaian Pribadi Staging">Dibayar Ke PDAM Atau WTP Tiap Bulannya, Hanya Pemakaian Pribadi Staging</option>
                                     <option value="Dibagi Dengan Ruko Tetangga, Karena 1 Meteran PDAM Dipakai Lebih Dari 1 Ruko">Dibagi Dengan Ruko Tetangga, Karena 1 Meteran PDAM Dipakai Lebih Dari 1 Ruko</option>
                                     <option value="Dibayarkan Include Atau Sudah Termasuk Dengan Biaya Sewa Ruko">Dibayarkan Include Atau Sudah Termasuk Dengan Biaya Sewa Ruko</option>
+                                    <option value="Sumur Bor">Sumur Bor</option>
                                     <option value="Lainnya">Yang lain...</option>
                                 </select>
                                 <input type="text" id="u-air-mekanisme-lain" name="air_mekanisme_lain" placeholder="Sebutkan..." class="hidden input-modern w-full px-4 py-3 rounded-xl text-sm">
@@ -951,13 +952,13 @@
 
                         <div id="air-angka-container" class="hidden">
                             <label class="label-modern">Angka Meteran Air Saat Ini</label>
-                            <input type="text" id="u-air-angka" name="air_angka" oninput="formatRibuanInput(this)" class="input-modern w-full px-4 py-3 rounded-xl font-bold text-sm text-blue-700">
+                            <input type="text" id="u-air-angka" name="air_angka" class="input-modern w-full px-4 py-3 rounded-xl font-bold text-sm text-blue-700">
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label class="label-modern mb-2">Kondisi Meteran Air</label>
-                                <div class="flex gap-2"><label class="cursor-pointer flex-1"><input type="radio" name="air_kondisi_meteran" value="Normal" class="peer sr-only" required onchange="toggleRusak('air_kondisi_meteran', 'air-meteran-rusak')"><div class="text-center px-3 py-2 rounded-lg text-xs font-bold border-2 border-slate-200 peer-checked:border-teal-500 peer-checked:bg-teal-50 peer-checked:text-teal-700">Normal</div></label><label class="cursor-pointer flex-1"><input type="radio" name="air_kondisi_meteran" value="Rusak" class="peer sr-only" required onchange="toggleRusak('air_kondisi_meteran', 'air-meteran-rusak')"><div class="text-center px-3 py-2 rounded-lg text-xs font-bold border-2 border-slate-200 peer-checked:border-rose-500 peer-checked:bg-rose-50 peer-checked:text-rose-700">Rusak</div></label><label class="cursor-pointer flex-1"><input type="radio" name="air_kondisi_meteran" value="Tidak Ada" class="peer sr-only" required onchange="toggleRusak('air_kondisi_meteran', 'air-meteran-rusak')"><div class="text-center px-3 py-2 rounded-lg text-xs font-bold border-2 border-slate-200 peer-checked:border-slate-500 peer-checked:bg-slate-100 peer-checked:text-slate-700">Tidak Ada</div></label></div>
+                                <div class="flex gap-2"><label class="cursor-pointer flex-1"><input type="radio" name="air_kondisi_meteran" value="Normal" class="peer sr-only" required onchange="toggleRusak('air_kondisi_meteran', 'air-meteran-rusak')"><div class="text-center px-3 py-2 rounded-lg text-xs font-bold border-2 border-slate-200 peer-checked:border-teal-500 peer-checked:bg-teal-50 peer-checked:text-teal-700">Normal</div></label><label class="cursor-pointer flex-1"><input type="radio" name="air_kondisi_meteran" value="Rusak" class="peer sr-only" required onchange="toggleRusak('air_kondisi_meteran', 'air-meteran-rusak')"><div class="text-center px-3 py-2 rounded-lg text-xs font-bold border-2 border-slate-200 peer-checked:border-rose-500 peer-checked:bg-rose-50 peer-checked:text-rose-700">Rusak</div></label></div>
                                 <input type="text" id="air-meteran-rusak" name="air_meteran_rusak" placeholder="Keterangan Rusak..." class="hidden mt-2 input-modern w-full px-3 py-2 rounded-lg text-xs border-rose-300">
                             </div>
                             <div>
@@ -1367,8 +1368,8 @@
                         if(errorContainer) errorContainer.innerHTML = `
                             <div class="p-4 bg-rose-50 border border-rose-200 rounded-xl flex flex-col gap-3 animate-content">
                                 <span class="text-rose-600 font-bold text-sm text-center">Username salah 3x.</span>
-                                <a href="https://wa.me/6285215226972?text=Halo%20GA,%20saya%20butuh%20bantuan%20pengecekan%20username%20aplikasi%20Ceklis" target="_blank" class="bg-rose-600 hover:bg-rose-700 text-white text-sm font-bold py-2.5 px-4 rounded-xl text-center flex items-center justify-center gap-2">
-                                    <span class="material-symbols-rounded text-[18px]">support_agent</span> Hubungi GA
+                                <a href="https://wa.me/6285215226972?text=Halo%20Admin%20GA,%20saya%20butuh%20bantuan%20pengecekan%20username%20aplikasi%20Ceklis" target="_blank" class="bg-rose-600 hover:bg-rose-700 text-white text-sm font-bold py-2.5 px-4 rounded-xl text-center flex items-center justify-center gap-2">
+                                    <span class="material-symbols-rounded text-[18px]">support_agent</span> Hubungi Admin GA
                                 </a>
                             </div>
                         `;
@@ -1828,7 +1829,7 @@
                 else { document.getElementById('u-air-mekanisme').value = 'Lainnya'; document.getElementById('u-air-mekanisme-lain').value = d.air_mekanisme; }
             }
             toggleAirMekanisme();
-            document.getElementById('u-air-angka').value = d.air_angka ? parseSafeNumber(d.air_angka).toLocaleString('id-ID') : '';
+            document.getElementById('u-air-angka').value = d.air_angka || '';
             
             if(d.air_kondisi_meteran) { const el = document.querySelector(`input[name="air_kondisi_meteran"][value="${d.air_kondisi_meteran}"]`); if(el) el.checked = true; }
             document.getElementById('air-meteran-rusak').value = d.air_meteran_rusak || ''; toggleRusak('air_kondisi_meteran', 'air-meteran-rusak');
@@ -1855,7 +1856,7 @@
                 <div class="listrik-item relative bg-slate-50 p-4 rounded-xl border border-slate-200 shadow-sm" id="listrik-item-0">
                     <h4 class="text-[10px] font-extrabold text-amber-600 uppercase tracking-widest mb-3 bg-amber-100 inline-block px-2 py-1 rounded">Meteran 1</h4>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div><label class="label-modern">Nomor ID Pelanggan PLN</label><input type="text" id="u-listrik-id" name="listrik_id" list="history-listrik-id" autocomplete="off" required oninput="this.value = this.value.replace(/[^0-9]/g, '')" class="input-modern w-full px-4 py-3 rounded-xl text-sm font-mono"></div>
+                        <div><label class="label-modern">Nomor ID Pelanggan PLN</label><input type="text" id="u-listrik-id" name="listrik_id" list="history-listrik-id" autocomplete="off" required class="input-modern w-full px-4 py-3 rounded-xl text-sm font-mono"></div>
                         <div><label class="label-modern">Nama Pemilik ID Pelanggan</label><input type="text" id="u-listrik-nama" name="listrik_nama" list="history-listrik-nama" autocomplete="off" required class="input-modern w-full px-4 py-3 rounded-xl text-sm"></div>
                         <div class="md:col-span-2">
                             <label class="label-modern mb-2">Kategori ID Pelanggan</label>
@@ -1870,7 +1871,7 @@
                                 </label>
                             </div>
                         </div>
-                        <div class="md:col-span-2"><label class="label-modern">Angka di Meteran Saat Ini</label><input type="text" id="u-listrik-angka" name="listrik_angka" oninput="formatRibuanInput(this)" required class="input-modern w-full px-4 py-3 rounded-xl text-sm font-bold"></div>
+                        <div class="md:col-span-2"><label class="label-modern">Angka di Meteran Saat Ini</label><input type="text" id="u-listrik-angka" name="listrik_angka" required class="input-modern w-full px-4 py-3 rounded-xl text-sm font-bold"></div>
                     </div>
                 </div>
             `;
@@ -1886,7 +1887,7 @@
                 
                 document.querySelector(`input[name="${idName}"]`).value = m.id === 'Meteran Utama' || m.id.startsWith('Meteran Tambahan') ? '' : m.id;
                 document.querySelector(`input[name="${namaName}"]`).value = m.nama === '-' ? '' : m.nama;
-                document.querySelector(`input[name="${angkaName}"]`).value = m.angka ? parseSafeNumber(m.angka).toLocaleString('id-ID') : '';
+                document.querySelector(`input[name="${angkaName}"]`).value = m.angka || '';
                 const catEl = document.querySelector(`input[name="${katName}"][value="${m.kategori}"]`);
                 if(catEl) catEl.checked = true;
             });
@@ -2005,24 +2006,28 @@
                     <div class="listrik-item relative bg-slate-50 p-4 rounded-xl border border-slate-200 shadow-sm" id="listrik-item-0">
                         <h4 class="text-[10px] font-extrabold text-amber-600 uppercase tracking-widest mb-3 bg-amber-100 inline-block px-2 py-1 rounded">Meteran 1</h4>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div><label class="label-modern">Nomor ID Pelanggan PLN</label><input type="text" id="u-listrik-id" name="listrik_id" list="history-listrik-id" autocomplete="off" required oninput="this.value = this.value.replace(/[^0-9]/g, '')" class="input-modern w-full px-4 py-3 rounded-xl text-sm font-mono"></div>
+                            <div><label class="label-modern">Nomor ID Pelanggan PLN</label><input type="text" id="u-listrik-id" name="listrik_id" list="history-listrik-id" autocomplete="off" required class="input-modern w-full px-4 py-3 rounded-xl text-sm font-mono"></div>
                             <div><label class="label-modern">Nama Pemilik ID Pelanggan</label><input type="text" id="u-listrik-nama" name="listrik_nama" list="history-listrik-nama" autocomplete="off" required class="input-modern w-full px-4 py-3 rounded-xl text-sm"></div>
                             <div class="md:col-span-2">
                                 <label class="label-modern mb-2">Kategori ID Pelanggan</label>
                                 <div class="flex flex-wrap gap-2">
                                     <label class="cursor-pointer">
-                                    <input type="radio" name="listrik_kategori" value="Pasca Bayar" class="peer sr-only" required>
-                                    <div class="px-5 py-2.5 rounded-xl text-sm font-bold bg-white border-2 border-slate-200 text-slate-600 peer-checked:border-amber-500 peer-checked:bg-amber-50 peer-checked:text-amber-700 transition-all">Pasca Bayar</div>
-                                </label>
+                                        <input type="radio" name="listrik_kategori" value="Pra Bayar (Token)" class="peer sr-only" required>
+                                        <div class="px-5 py-2.5 rounded-xl text-sm font-bold bg-white border-2 border-slate-200 text-slate-600 peer-checked:border-amber-500 peer-checked:bg-amber-50 peer-checked:text-amber-700 transition-all">Pra Bayar (Token)</div>
+                                    </label>
+                                    <label class="cursor-pointer">
+                                        <input type="radio" name="listrik_kategori" value="Pasca Bayar" class="peer sr-only" required>
+                                        <div class="px-5 py-2.5 rounded-xl text-sm font-bold bg-white border-2 border-slate-200 text-slate-600 peer-checked:border-amber-500 peer-checked:bg-amber-50 peer-checked:text-amber-700 transition-all">Pasca Bayar</div>
+                                    </label>
+                                </div>
                             </div>
+                            <div class="md:col-span-2"><label class="label-modern">Angka di Meteran Saat Ini</label><input type="text" id="u-listrik-angka" name="listrik_angka" required class="input-modern w-full px-4 py-3 rounded-xl text-sm font-bold"></div>
                         </div>
-                        <div class="md:col-span-2"><label class="label-modern">Angka di Meteran Saat Ini</label><input type="text" id="u-listrik-angka" name="listrik_angka" oninput="formatRibuanInput(this)" required class="input-modern w-full px-4 py-3 rounded-xl text-sm font-bold"></div>
                     </div>
-                </div>
-            `;
-            listrikMeterCount = 1;
+                `;
+                listrikMeterCount = 1;
 
-            if(document.getElementById('admin-util-date-override')) document.getElementById('admin-util-date-override').value = '';
+                if(document.getElementById('admin-util-date-override')) document.getElementById('admin-util-date-override').value = '';
                 
                 document.getElementById('u-periode-tanggal-display').value = `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth()+1).padStart(2, '0')}/${now.getFullYear()}`;
                 document.getElementById('u-periode-bulan-display').value = months[wi.bulan - 1];
@@ -2167,11 +2172,6 @@
             delete dataObj.edit_id;
 
             if(dataObj.air_mekanisme === 'Lainnya') dataObj.air_mekanisme = dataObj.air_mekanisme_lain;
-            if(dataObj.air_angka) dataObj.air_angka = parseSafeNumber(dataObj.air_angka);
-            if(dataObj.listrik_angka) dataObj.listrik_angka = parseSafeNumber(dataObj.listrik_angka);
-            for(let i=1; i<=20; i++) {
-                if(dataObj[`listrik_angka_${i}`]) dataObj[`listrik_angka_${i}`] = parseSafeNumber(dataObj[`listrik_angka_${i}`]);
-            }
             if(dataObj.ipl_bersih_nom) dataObj.ipl_bersih_nom = parseSafeNumber(dataObj.ipl_bersih_nom);
             if(dataObj.ipl_aman_nom) dataObj.ipl_aman_nom = parseSafeNumber(dataObj.ipl_aman_nom);
 
@@ -2258,12 +2258,6 @@
             if (!val) return 0;
             let s = String(val).replace(/\./g, '').replace(/,/g, '.').replace(/[^0-9.-]/g, '');
             return parseFloat(s) || 0;
-        }
-
-        window.formatRibuanInput = function(input) {
-            let val = input.value.replace(/[^0-9]/g, '');
-            if(val !== '') val = parseInt(val, 10).toLocaleString('id-ID');
-            input.value = val;
         }
 
         window.formatRupiahInput = function(input) {
@@ -3687,7 +3681,7 @@
                     <button type="button" onclick="removeListrikMeter(${idx})" class="absolute top-3 right-3 text-rose-500 hover:bg-rose-100 p-1.5 rounded-lg transition-colors"><span class="material-symbols-rounded text-[18px]">delete</span></button>
                     <h4 class="text-[10px] font-extrabold text-amber-600 uppercase tracking-widest mb-3 bg-amber-100 inline-block px-2 py-1 rounded">Meteran Tambahan</h4>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div><label class="label-modern">Nomor ID Pelanggan PLN</label><input type="text" id="u-listrik-id-${idx}" name="listrik_id_${idx}" list="history-listrik-id" autocomplete="off" required oninput="this.value = this.value.replace(/[^0-9]/g, '')" class="input-modern w-full px-4 py-3 rounded-xl text-sm font-mono"></div>
+                        <div><label class="label-modern">Nomor ID Pelanggan PLN</label><input type="text" id="u-listrik-id-${idx}" name="listrik_id_${idx}" list="history-listrik-id" autocomplete="off" required class="input-modern w-full px-4 py-3 rounded-xl text-sm font-mono"></div>
                         <div><label class="label-modern">Nama Pemilik ID Pelanggan</label><input type="text" id="u-listrik-nama-${idx}" name="listrik_nama_${idx}" list="history-listrik-nama" autocomplete="off" required class="input-modern w-full px-4 py-3 rounded-xl text-sm"></div>
                         <div class="md:col-span-2">
                             <label class="label-modern mb-2">Kategori ID Pelanggan</label>
@@ -3702,7 +3696,7 @@
                                 </label>
                             </div>
                         </div>
-                        <div class="md:col-span-2"><label class="label-modern">Angka di Meteran Saat Ini</label><input type="text" id="u-listrik-angka-${idx}" name="listrik_angka_${idx}" oninput="formatRibuanInput(this)" required class="input-modern w-full px-4 py-3 rounded-xl text-sm font-bold"></div>
+                        <div class="md:col-span-2"><label class="label-modern">Angka di Meteran Saat Ini</label><input type="text" id="u-listrik-angka-${idx}" name="listrik_angka_${idx}" required class="input-modern w-full px-4 py-3 rounded-xl text-sm font-bold"></div>
                     </div>
                 </div>
             `;
