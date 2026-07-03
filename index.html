@@ -533,47 +533,47 @@
                         </div>
                     </div>
                 </div>
-                <!-- Tab: Dashboard Rekap -->=
+                <!-- Tab: Dashboard Rekap -->
                 <div id="content-dashboard" class="hidden w-full px-2 sm:px-6 lg:px-8 mt-4 sm:mt-6 animate-content">
                     
-                    <div class="flex flex-col xl:flex-row justify-between items-start xl:items-end gap-5 mb-6 px-2">
+                    <div class="flex flex-col gap-5 mb-6 px-2">
                         <div>
                             <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Ceklis Monitoring</h2>
                             <p class="text-sm text-slate-500 mt-1 font-medium">Pemantauan hasil inspeksi lapangan dan aset secara komprehensif.</p>
                         </div>
 
-                        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full xl:w-auto">
+                        <div class="flex flex-col 2xl:flex-row justify-between items-start 2xl:items-center gap-4 w-full">
                             <!-- Filter Bar Modern -->
-                            <div class="flex flex-wrap md:flex-nowrap items-center bg-white p-1.5 rounded-2xl border border-slate-200 shadow-soft gap-1">
-                                <div class="flex items-center pl-3 pr-2 text-slate-400"><span class="material-symbols-rounded icon-outline text-[20px]">tune</span></div>
+                            <div class="flex flex-nowrap items-center bg-white p-1.5 rounded-2xl border border-slate-200 shadow-soft gap-1 w-full 2xl:w-auto overflow-x-auto hide-scrollbar shrink-0">
+                                <div class="flex items-center pl-3 pr-2 text-slate-400 shrink-0"><span class="material-symbols-rounded icon-outline text-[20px]">tune</span></div>
                                 
-                                <select id="filter-month" onchange="applyFiltersAndRender()" class="px-3 py-2 bg-transparent hover:bg-slate-50 rounded-xl text-sm outline-none font-bold text-slate-700 cursor-pointer transition-colors appearance-none pr-8 bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%24%2024%22%20fill%3D%22none%22%20stroke%3D%22%2394a3b8%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[position:right_0.2rem_center]">
+                                <select id="filter-month" onchange="applyFiltersAndRender()" class="shrink-0 px-3 py-2 bg-transparent hover:bg-slate-50 rounded-xl text-sm outline-none font-bold text-slate-700 cursor-pointer transition-colors appearance-none pr-8 bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%24%2024%22%20fill%3D%22none%22%20stroke%3D%22%2394a3b8%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[position:right_0.2rem_center]">
                                     <option value="all">Semua Bulan</option><option value="1">Januari</option><option value="2">Februari</option><option value="3">Maret</option><option value="4">April</option><option value="5">Mei</option><option value="6">Juni</option><option value="7">Juli</option><option value="8">Agustus</option><option value="9">September</option><option value="10">Oktober</option><option value="11">November</option><option value="12">Desember</option>
                                 </select>
                                 
-                                <div class="hidden sm:block w-px h-5 bg-slate-200 mx-1"></div>
+                                <div class="w-px h-5 bg-slate-200 mx-1 shrink-0"></div>
                                 
-                                <select id="filter-year" onchange="applyFiltersAndRender()" class="px-3 py-2 bg-transparent hover:bg-slate-50 rounded-xl text-sm outline-none font-bold text-slate-700 cursor-pointer transition-colors appearance-none pr-8 bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%24%2024%22%20fill%3D%22none%22%20stroke%3D%22%2394a3b8%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[position:right_0.2rem_center]">
+                                <select id="filter-year" onchange="applyFiltersAndRender()" class="shrink-0 px-3 py-2 bg-transparent hover:bg-slate-50 rounded-xl text-sm outline-none font-bold text-slate-700 cursor-pointer transition-colors appearance-none pr-8 bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%24%2024%22%20fill%3D%22none%22%20stroke%3D%22%2394a3b8%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[position:right_0.2rem_center]">
                                     <option value="all">Semua Tahun</option><option value="2026">2026</option><option value="2027">2027</option><option value="2028">2028</option><option value="2029">2029</option>
                                 </select>
                                 
-                                <div class="hidden md:block w-px h-5 bg-slate-200 mx-1"></div>
+                                <div class="w-px h-5 bg-slate-200 mx-1 shrink-0"></div>
                                 
-                                <select id="filter-category" onchange="applyFiltersAndRender()" class="px-3 py-2 bg-transparent hover:bg-slate-50 rounded-xl text-sm outline-none font-bold text-slate-700 cursor-pointer transition-colors max-w-[150px] sm:max-w-[180px] truncate appearance-none pr-8 bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%24%2024%22%20fill%3D%22none%22%20stroke%3D%22%2394a3b8%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[position:right_0.2rem_center]">
+                                <select id="filter-category" onchange="applyFiltersAndRender()" class="shrink-0 px-3 py-2 bg-transparent hover:bg-slate-50 rounded-xl text-sm outline-none font-bold text-slate-700 cursor-pointer transition-colors max-w-[150px] sm:max-w-[180px] truncate appearance-none pr-8 bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%24%2024%22%20fill%3D%22none%22%20stroke%3D%22%2394a3b8%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[position:right_0.2rem_center]">
                                     <option value="all">Semua Kategori</option>
                                 </select>
 
-                                <div class="hidden md:block w-px h-5 bg-slate-200 mx-1"></div>
+                                <div class="w-px h-5 bg-slate-200 mx-1 shrink-0"></div>
                                 
-                                <select id="filter-status" onchange="applyFiltersAndRender()" class="px-3 py-2 bg-transparent hover:bg-slate-50 rounded-xl text-sm outline-none font-bold text-slate-700 cursor-pointer transition-colors max-w-[150px] sm:max-w-[180px] truncate appearance-none pr-8 bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%24%2024%22%20fill%3D%22none%22%20stroke%3D%22%2394a3b8%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[position:right_0.2rem_center]">
+                                <select id="filter-status" onchange="applyFiltersAndRender()" class="shrink-0 px-3 py-2 bg-transparent hover:bg-slate-50 rounded-xl text-sm outline-none font-bold text-slate-700 cursor-pointer transition-colors max-w-[150px] sm:max-w-[180px] truncate appearance-none pr-8 bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%24%2024%22%20fill%3D%22none%22%20stroke%3D%22%2394a3b8%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[position:right_0.2rem_center]">
                                     <option value="all">Semua Status</option>
                                     <option value="submitted">Sudah Mengisi</option>
                                     <option value="unsubmitted">Belum Mengisi</option>
                                 </select>
 
-                                <div class="hidden md:block w-px h-5 bg-slate-200 mx-1"></div>
+                                <div class="w-px h-5 bg-slate-200 mx-1 shrink-0"></div>
                                 
-                                <div class="relative inline-block text-left" id="ssc-dropdown-container">
+                                <div class="relative inline-block text-left shrink-0" id="ssc-dropdown-container">
                                     <button type="button" onclick="toggleSscDropdown()" id="btn-ssc-text" class="px-3 py-2 bg-transparent hover:bg-slate-50 rounded-xl text-sm outline-none font-bold text-slate-700 cursor-pointer transition-colors max-w-[150px] sm:max-w-[180px] flex items-center justify-between gap-1 border border-transparent">
                                         <span class="truncate">Semua Koordinator</span>
                                         <span class="material-symbols-rounded text-[18px] shrink-0 text-slate-400">expand_more</span>
@@ -583,45 +583,45 @@
                                 </div>
                             </div>
 
-                            <div class="flex gap-3 w-full sm:w-auto">
-                                <button id="btn-admin-hapus-data" style="display: none;" onclick="openAdminHapusModal()" class="flex-1 sm:flex-none bg-white hover:bg-rose-50 text-rose-600 border border-slate-200 px-4 py-3 rounded-2xl text-sm font-bold flex items-center justify-center gap-2 transition-all active:scale-[0.98] shadow-sm">
-                                    <span class="material-symbols-rounded icon-outline text-[20px]">delete</span> <span class="hidden sm:inline">Hapus</span>
+                            <div class="flex gap-2 w-full 2xl:w-auto overflow-x-auto hide-scrollbar pb-1 2xl:pb-0 shrink-0">
+                                <button id="btn-admin-hapus-data" style="display: none;" onclick="openAdminHapusModal()" class="shrink-0 bg-white hover:bg-rose-50 text-rose-600 border border-slate-200 px-4 py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-all active:scale-[0.98] shadow-sm">
+                                    <span class="material-symbols-rounded icon-outline text-[18px]">delete</span> <span class="hidden sm:inline">Hapus</span>
                                 </button>
-                                <button id="btn-broadcast-ceklis" style="display: none;" onclick="openReportModal('ceklis')" class="flex-1 sm:flex-none bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 px-4 py-3 rounded-2xl text-sm font-bold flex items-center justify-center gap-2 transition-all active:scale-[0.98] shadow-sm">
-                                    <span class="material-symbols-rounded icon-outline text-[20px]">send_to_mobile</span> <span class="hidden sm:inline">Broadcast Tim</span>
+                                <button id="btn-broadcast-ceklis" style="display: none;" onclick="openReportModal('ceklis')" class="shrink-0 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 px-4 py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-all active:scale-[0.98] shadow-sm">
+                                    <span class="material-symbols-rounded icon-outline text-[18px]">send_to_mobile</span> <span class="hidden sm:inline">Broadcast Tim</span>
                                 </button>
-                                <button id="btn-open-form" style="display: none;" onclick="openChecklistModal()" class="flex-1 sm:flex-none bg-brand-600 hover:bg-brand-700 text-white px-6 py-3 rounded-2xl text-sm font-bold flex items-center justify-center gap-2 transition-all active:scale-[0.98] shadow-md shadow-brand-500/20">
-                                    <span class="material-symbols-rounded icon-outline text-[20px]">edit_document</span> Isi Laporan
+                                <button id="btn-open-form" style="display: none;" onclick="openChecklistModal()" class="shrink-0 bg-brand-600 hover:bg-brand-700 text-white px-5 py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-all active:scale-[0.98] shadow-md shadow-brand-500/20">
+                                    <span class="material-symbols-rounded icon-outline text-[18px]">edit_document</span> Isi Laporan
                                 </button>
                             </div>
                         </div>
                     </div>
 
                     <!-- Panel Personal PIC Lapangan -->
-                    <div id="user-personal-dashboard" class="hidden grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 animate-content">
-                        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+                    <div id="user-personal-dashboard" class="hidden grid grid-cols-2 gap-3 sm:gap-4 mb-6 animate-content">
+                        <div class="bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between gap-3">
                             <div>
-                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Status Ceklis Bulan Ini</p>
-                                <div id="user-status-ceklis" class="flex items-center gap-2">
-                                    <span class="material-symbols-rounded text-slate-300">hourglass_empty</span>
-                                    <span class="font-extrabold text-slate-500 text-sm">Mengecek...</span>
+                                <p class="text-[8px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1 truncate" title="Status Ceklis Bulan Ini">Status Ceklis</p>
+                                <div id="user-status-ceklis" class="flex items-start sm:items-center gap-1.5 sm:gap-2">
+                                    <span class="material-symbols-rounded text-slate-300 text-base sm:text-lg">hourglass_empty</span>
+                                    <span class="font-extrabold text-slate-500 text-[11px] sm:text-sm leading-tight">Mengecek...</span>
                                 </div>
                             </div>
-                            <button id="btn-user-isi-ceklis" onclick="openChecklistModal()" class="hidden bg-brand-50 hover:bg-brand-100 text-brand-700 px-4 py-2 rounded-xl text-sm font-bold transition-colors">Isi Ceklis</button>
+                            <button id="btn-user-isi-ceklis" onclick="openChecklistModal()" class="hidden w-full bg-brand-50 hover:bg-brand-100 text-brand-700 px-3 py-2 rounded-xl text-[11px] sm:text-sm font-bold transition-colors mt-auto">Isi Ceklis</button>
                         </div>
-                        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+                        <div class="bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between gap-3">
                             <div>
-                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Status Utilitas Minggu Ini</p>
-                                <div id="user-status-util" class="flex items-center gap-2">
-                                    <span class="material-symbols-rounded text-slate-300">hourglass_empty</span>
-                                    <span class="font-extrabold text-slate-500 text-sm">Mengecek...</span>
+                                <p class="text-[8px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1 truncate" title="Status Utilitas Minggu Ini">Status Utilitas</p>
+                                <div id="user-status-util" class="flex items-start sm:items-center gap-1.5 sm:gap-2">
+                                    <span class="material-symbols-rounded text-slate-300 text-base sm:text-lg">hourglass_empty</span>
+                                    <span class="font-extrabold text-slate-500 text-[11px] sm:text-sm leading-tight">Mengecek...</span>
                                 </div>
                             </div>
-                            <button id="btn-user-isi-util" onclick="switchTab('utilitas'); setTimeout(() => openUtilitasModal(), 300);" class="hidden bg-emerald-50 hover:bg-emerald-100 text-emerald-700 px-4 py-2 rounded-xl text-sm font-bold transition-colors">Isi Utilitas</button>
+                            <button id="btn-user-isi-util" onclick="switchTab('utilitas'); setTimeout(() => openUtilitasModal(), 300);" class="hidden w-full bg-emerald-50 hover:bg-emerald-100 text-emerald-700 px-3 py-2 rounded-xl text-[11px] sm:text-sm font-bold transition-colors mt-auto">Isi Utilitas</button>
                         </div>
                     </div>
 
-                    <!-- Tabel Master Data Laporan -->
+                    <!-- Panel Leaderboard Admin -->
                     <div class="bg-surface rounded-3xl shadow-soft border border-slate-200 overflow-hidden mb-8 flex flex-col">
                         <div class="overflow-auto custom-scroll w-full h-[75vh] xl:h-[85vh]">
                             <table class="w-full text-left border-collapse min-w-max text-xs">
@@ -724,8 +724,8 @@
                                         <ul class="text-xs text-slate-600 space-y-2 list-disc pl-4">
                                             <li>Login menggunakan username dan password yang diberikan. Segera ubah sandi default "123".</li>
                                             <li>Perhatikan <strong>Notifikasi Lonceng Merah</strong> (Pojok kanan atas) sebagai pengingat tugas Anda.</li>
-                                            <li><strong>Utilitas:</strong> Buka tab "Awareness Utilitas & IPL", klik "Isi Form Mingguan". <strong>Cukup masukkan angka bulat utamanya saja (angka sebelum tanda koma/desimal).</strong> <br><em class="mt-1 block">Contoh:</em> Jika pada meteran tertera angka <code class="bg-slate-200 px-1 py-0.5 rounded font-bold text-rose-600">3.400,23</code>, maka Anda hanya perlu mengetikkan angka <strong><code class="bg-slate-200 px-1 py-0.5 rounded font-bold text-emerald-600">3400</code></strong> (abaikan angka 23 di belakang koma).</li>
-                                            <li><strong>Ceklis:</strong> Buka tab "Ceklis Monitoring", klik "Isi Laporan". Pilih opsi <em>N/A</em> jika barang tidak ada, dan wajib mengisi keterangan (note) jika ada fasilitas yang rusak.</li>
+                                            <li><strong>Jadwal Ceklis Monitoring:</strong> Pengisian wajib dilakukan <strong>1 kali dalam sebulan</strong>. Akses form pelaporan baru akan terbuka mulai <strong>tanggal 20 hingga akhir bulan</strong> setiap bulannya. Buka tab "Ceklis Monitoring", klik "Isi Laporan". Pilih opsi <em>N/A</em> jika barang tidak ada, dan wajib mengisi keterangan (note) jika ada fasilitas yang rusak.</li>
+                                            <li><strong>Jadwal Utilitas & IPL:</strong> Pengisian wajib dilakukan <strong>setiap minggu</strong>. Perhitungan satu minggu dimulai dari Senin hingga Minggu berjalan, dan Anda bebas mengisi di hari apa saja dalam rentang tersebut. <br><span class="text-rose-600 font-semibold bg-rose-50 px-1 py-0.5 rounded leading-relaxed inline-block mt-1 mb-1">Penting: Jika Anda tidak mengisi di minggu berjalan dan baru mengisi di hari Senin depannya, maka laporan itu akan otomatis masuk ke data minggu depannya, sehingga status minggu sebelumnya Anda akan tetap tercatat "Belum Mengisi".</span><br>Buka tab "Awareness Utilitas & IPL", klik "Isi Form Mingguan". <strong>Cukup masukkan angka bulat utamanya saja (angka sebelum tanda koma/desimal).</strong> <br><em class="mt-1 block">Contoh:</em> Jika pada meteran tertera angka <code class="bg-slate-200 px-1 py-0.5 rounded font-bold text-rose-600">3.400,23</code>, maka Anda hanya perlu mengetikkan angka <strong><code class="bg-slate-200 px-1 py-0.5 rounded font-bold text-emerald-600">3400</code></strong> (abaikan angka 23 di belakang koma).</li>
                                         </ul>
                                     </div>
                                     <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
@@ -1702,14 +1702,14 @@
                 if (sc && bc) {
                     if (missingCeklis) {
                         if (currentDay < 20) {
-                            sc.innerHTML = `<span class="material-symbols-rounded icon-fill text-slate-400 text-lg">lock</span><span class="font-extrabold text-slate-500 text-sm">Terkunci (Buka Tgl 20)</span>`;
+                            sc.innerHTML = `<span class="material-symbols-rounded icon-fill text-slate-400 text-base sm:text-lg shrink-0 mt-0.5 sm:mt-0">lock</span><span class="font-extrabold text-slate-500 text-[11px] sm:text-sm leading-tight">Terkunci<span class="block font-medium text-[9px] sm:text-[10px] text-slate-400 mt-0.5 normal-case">Akses dibuka tgl 20 hingga akhir bulan disetiap bulannya</span></span>`;
                             bc.classList.add('hidden');
                         } else {
-                            sc.innerHTML = `<span class="material-symbols-rounded icon-fill text-amber-500 text-lg">warning</span><span class="font-extrabold text-amber-600 text-sm">Belum Selesai</span>`;
+                            sc.innerHTML = `<span class="material-symbols-rounded icon-fill text-amber-500 text-base sm:text-lg shrink-0">warning</span><span class="font-extrabold text-amber-600 text-[11px] sm:text-sm leading-tight">Belum Selesai</span>`;
                             bc.classList.remove('hidden');
                         }
                     } else {
-                        sc.innerHTML = `<span class="material-symbols-rounded icon-fill text-emerald-500 text-lg">check_circle</span><span class="font-extrabold text-emerald-600 text-sm">Selesai</span>`;
+                        sc.innerHTML = `<span class="material-symbols-rounded icon-fill text-emerald-500 text-base sm:text-lg shrink-0">check_circle</span><span class="font-extrabold text-emerald-600 text-[11px] sm:text-sm leading-tight">Selesai</span>`;
                         bc.classList.add('hidden');
                     }
                 }
@@ -1718,10 +1718,10 @@
                 const bu = document.getElementById('btn-user-isi-util');
                 if (su && bu) {
                     if (missingUtil) {
-                        su.innerHTML = `<span class="material-symbols-rounded icon-fill text-amber-500 text-lg">warning</span><span class="font-extrabold text-amber-600 text-sm">Belum Selesai</span>`;
+                        su.innerHTML = `<span class="material-symbols-rounded icon-fill text-amber-500 text-base sm:text-lg shrink-0">warning</span><span class="font-extrabold text-amber-600 text-[11px] sm:text-sm leading-tight">Belum Selesai</span>`;
                         bu.classList.remove('hidden');
                     } else {
-                        su.innerHTML = `<span class="material-symbols-rounded icon-fill text-emerald-500 text-lg">check_circle</span><span class="font-extrabold text-emerald-600 text-sm">Selesai</span>`;
+                        su.innerHTML = `<span class="material-symbols-rounded icon-fill text-emerald-500 text-base sm:text-lg shrink-0">check_circle</span><span class="font-extrabold text-emerald-600 text-[11px] sm:text-sm leading-tight">Selesai</span>`;
                         bu.classList.add('hidden');
                     }
                 }
