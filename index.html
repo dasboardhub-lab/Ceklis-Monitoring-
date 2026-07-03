@@ -3773,6 +3773,14 @@
                                         </div>
                                     </label>
                                     <div class="hidden sm:block h-6 w-px bg-slate-200"></div>
+                                    <label class="flex items-center cursor-pointer group justify-between sm:justify-start">
+                                        <span class="text-[10px] font-extrabold ${item.allowNA ? 'text-slate-700' : 'text-slate-400'} uppercase tracking-widest order-2 sm:order-1 sm:mr-3">Opsi N/A</span>
+                                        <div class="relative inline-block w-8 align-middle select-none order-1 sm:order-2">
+                                            <input type="checkbox" id="allow-na-${item.id}" class="toggle-checkbox absolute z-10 block w-4 h-4 mt-0.5 rounded-full bg-white border border-slate-300 appearance-none cursor-pointer peer transition-all" ${item.allowNA ? 'checked' : ''} onchange="adminToggleItemNA('${cat.id}', '${item.id}')"/>
+                                            <label for="allow-na-${item.id}" class="toggle-label block overflow-hidden h-5 rounded-full bg-slate-200 cursor-pointer peer-checked:bg-slate-700 transition-colors"></label>
+                                        </div>
+                                    </label>
+                                    <div class="hidden sm:block h-6 w-px bg-slate-200"></div>
                                     <div class="flex gap-1 justify-end">
                                         <button onclick="openItemModal('${cat.id}', '${item.id}')" class="text-slate-400 hover:text-brand-600 hover:bg-brand-50 w-8 h-8 rounded-lg transition-colors flex items-center justify-center bg-white sm:bg-transparent border border-slate-200 sm:border-transparent shadow-sm sm:shadow-none"><span class="material-symbols-rounded text-[18px]">edit</span></button>
                                         <button onclick="adminDeleteItem('${cat.id}', '${item.id}')" class="text-slate-400 hover:text-rose-600 hover:bg-rose-50 w-8 h-8 rounded-lg transition-colors flex items-center justify-center bg-white sm:bg-transparent border border-slate-200 sm:border-transparent shadow-sm sm:shadow-none"><span class="material-symbols-rounded text-[18px]">delete</span></button>
@@ -3803,7 +3811,7 @@
             e.preventDefault(); const catId = document.getElementById('manage-item-catId').value; const itemId = document.getElementById('manage-item-id').value; const label = document.getElementById('manage-item-label').value.trim(); const type = document.getElementById('manage-item-type').value; const subCategory = document.getElementById('manage-item-subcategory').value.trim();
             const { data: cat } = await supabaseClient.from('checklist_master').select('*').eq('id', catId).single();
             if (itemId) { const item = cat.items.find(i => i.id === itemId); item.label = label; item.type = type; item.subCategory = subCategory; } 
-            else { cat.items.push({ id: 'I'+Date.now(), label: label, type: type, requiresNote: false, subCategory: subCategory }); }
+            else { cat.items.push({ id: 'I'+Date.now(), label: label, type: type, requiresNote: false, allowNA: false, subCategory: subCategory }); }
             await supabaseClient.from('checklist_master').update({ items: cat.items }).eq('id', catId); renderAdminItems(cat); closeItemModal(); Island.show('Disimpan.', 'success');
         });
 
@@ -3818,6 +3826,12 @@
         async function adminToggleItemNote(catId, itemId) {
             const { data: cat } = await supabaseClient.from('checklist_master').select('*').eq('id', catId).single();
             const item = cat.items.find(i => i.id === itemId); item.requiresNote = !item.requiresNote;
+            await supabaseClient.from('checklist_master').update({ items: cat.items }).eq('id', catId); renderAdminItems(cat);
+        }
+
+        async function adminToggleItemNA(catId, itemId) {
+            const { data: cat } = await supabaseClient.from('checklist_master').select('*').eq('id', catId).single();
+            const item = cat.items.find(i => i.id === itemId); item.allowNA = !item.allowNA;
             await supabaseClient.from('checklist_master').update({ items: cat.items }).eq('id', catId); renderAdminItems(cat);
         }
 
@@ -4272,8 +4286,25 @@
                             grouped[sc].forEach(item => {
                                 const ans = sub.answers[item.id]; const tDef = itemTypeConfig[item.type || 'ok_nonok'];
                                 if(ans) {
-                                    const isPos = ans.status === tDef.pos; const bgClass = isPos ? tDef.bgPos : tDef.bgNeg; const txtClass = isPos ? tDef.textPos : tDef.textNeg; const iconClass = isPos ? tDef.iconPos : tDef.iconNeg;
-                                    html += `<td class="px-1 py-1 border-r border-slate-100 text-center"><div class="w-6 h-6 rounded border border-white shadow-sm ${bgClass} ${txtClass} flex items-center justify-center mx-auto relative" title="${ans.status}"><span class="material-symbols-rounded icon-fill text-[14px]">${iconClass}</span>${(!isPos && ans.note && item.requiresNote) ? '<span class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-amber-500 border-2 border-white rounded-full"></span>':''}</div></td>`;
+                                    let bgClass, txtClass, iconClass;
+                                    const isPos = ans.status === tDef.pos;
+                                    const isNA = ans.status === 'N/A';
+                                    
+                                    if (isNA) {
+                                        bgClass = 'bg-slate-100 border-slate-200';
+                                        txtClass = 'text-slate-400';
+                                        iconClass = 'horizontal_rule';
+                                    } else if (isPos) {
+                                        bgClass = tDef.bgPos;
+                                        txtClass = tDef.textPos;
+                                        iconClass = tDef.iconPos;
+                                    } else {
+                                        bgClass = tDef.bgNeg;
+                                        txtClass = tDef.textNeg;
+                                        iconClass = tDef.iconNeg;
+                                    }
+                                    
+                                    html += `<td class="px-1 py-1 border-r border-slate-100 text-center"><div class="w-6 h-6 rounded border border-white shadow-sm ${bgClass} ${txtClass} flex items-center justify-center mx-auto relative" title="${ans.status}"><span class="material-symbols-rounded icon-fill text-[14px]">${iconClass}</span>${(!isPos && !isNA && ans.note && item.requiresNote) ? '<span class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-amber-500 border-2 border-white rounded-full"></span>':''}</div></td>`;
                                 } else html += `<td class="px-1 py-1 border-r border-slate-100 text-center text-slate-200 text-[10px] font-bold">-</td>`;
                             });
                         });
@@ -4338,6 +4369,18 @@
                     
                     groupedItems[subCatName].forEach(item => {
                         const typeDef = itemTypeConfig[item.type || 'ok_nonok'];
+                        let naHtml = '';
+                        if (item.allowNA) {
+                            naHtml = `
+                                <label class="cursor-pointer relative flex-1 lg:flex-none">
+                                    <input type="radio" name="status-${item.id}" value="N/A" onchange="handleRadioChange('${item.id}', ${item.requiresNote}, 'N/A', '${item.type}')" class="peer sr-only" required>
+                                    <div class="flex items-center justify-center px-4 py-2 rounded-lg border border-transparent text-slate-500 smooth-transition hover:bg-slate-100 bg-transparent text-xs font-bold w-full min-w-[90px] peer-checked:bg-slate-200 peer-checked:text-slate-700 peer-checked:shadow-sm">
+                                        <span class="material-symbols-rounded icon-fill mr-1.5 text-[16px] opacity-70">horizontal_rule</span>N/A
+                                    </div>
+                                </label>
+                            `;
+                        }
+                        
                         html += `
                             <div class="py-4 px-6 hover:bg-slate-50/50 smooth-transition">
                                 <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
@@ -4355,6 +4398,7 @@
                                                 <span class="material-symbols-rounded icon-fill mr-1.5 text-[16px] opacity-70">${typeDef.iconNeg}</span>${typeDef.negL}
                                             </div>
                                         </label>
+                                        ${naHtml}
                                     </div>
                                 </div>
                                 <div id="note-container-${item.id}" class="hidden overflow-hidden transition-all duration-300 max-h-0 opacity-0 mt-3 max-w-2xl">
