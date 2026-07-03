@@ -41,6 +41,7 @@
             }
         }
     </script>
+    
 
     <style>
         body { font-family: 'Figtree', sans-serif; -webkit-tap-highlight-color: transparent; background-color: #f8fafc; color: #0f172a; }
@@ -382,17 +383,31 @@
                         </div>
                     </div>
 
-                    <!-- Chart Trafik -->
-                    <div id="utilitas-chart-container" class="bg-white rounded-3xl shadow-soft border border-slate-200 p-6 mb-6">
-                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
-                            <h3 class="font-bold text-slate-800 text-sm" id="chart-util-title">Total Pemakaian Air (Trend Bulan Ini)</h3>
-                            <div class="flex bg-slate-100 p-1 rounded-lg text-xs font-bold shadow-inner">
-                                <button id="btn-scale-mingguan" onclick="switchUtilChartScale('mingguan')" class="px-3 py-1.5 rounded bg-white shadow text-slate-800 transition-all">Bulan Ini</button>
-                                <button id="btn-scale-bulanan" onclick="switchUtilChartScale('bulanan')" class="px-3 py-1.5 rounded text-slate-500 hover:text-slate-700 transition-all">Sepanjang Tahun</button>
+                    <!-- Analitik & Top 5 -->
+                    <div id="utilitas-analytics-section" class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+                        <!-- Chart Trafik -->
+                        <div id="utilitas-chart-container" class="lg:col-span-2 bg-white rounded-3xl shadow-soft border border-slate-200 p-6 flex flex-col">
+                            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
+                                <h3 class="font-bold text-slate-800 text-sm" id="chart-util-title">Total Pemakaian Air (Trend Bulan Ini)</h3>
+                                <div class="flex bg-slate-100 p-1 rounded-lg text-xs font-bold shadow-inner">
+                                    <button id="btn-scale-mingguan" onclick="switchUtilChartScale('mingguan')" class="px-3 py-1.5 rounded bg-white shadow text-slate-800 transition-all">Bulan Ini</button>
+                                    <button id="btn-scale-bulanan" onclick="switchUtilChartScale('bulanan')" class="px-3 py-1.5 rounded text-slate-500 hover:text-slate-700 transition-all">Sepanjang Tahun</button>
+                                </div>
+                            </div>
+                            <div class="w-full flex-1 min-h-[250px] relative">
+                                <canvas id="utilitasChart"></canvas>
                             </div>
                         </div>
-                        <div class="w-full h-[250px]">
-                            <canvas id="utilitasChart"></canvas>
+
+                        <!-- Top 10 Pemborosan -->
+                        <div id="utilitas-top5-container" class="bg-white rounded-3xl shadow-soft border border-slate-200 p-5 flex flex-col">
+                            <div class="flex items-center gap-2 mb-3 border-b border-slate-100 pb-3 shrink-0">
+                                <span class="material-symbols-rounded icon-fill text-rose-500 text-xl">trending_up</span>
+                                <h3 class="font-extrabold text-slate-800 text-sm" id="top5-util-title">Top 10 Pemborosan Air</h3>
+                            </div>
+                            <div id="top5-util-list" class="flex-1 flex flex-col gap-1 overflow-y-auto custom-scroll pr-1 max-h-[260px]">
+                                <div class="text-center text-slate-400 text-xs py-4">Memuat data...</div>
+                            </div>
                         </div>
                     </div>
 
@@ -415,7 +430,6 @@
                                 </tbody>
                             </table>
                         </div>
-                        <div id="utilitas-pagination" class="p-4 border-t border-slate-200 bg-white flex flex-col sm:flex-row justify-between items-center gap-3"></div>
                     </div>
                 </div>
 
@@ -614,7 +628,6 @@
                                 <tbody id="dashboard-tbody" class="bg-white"></tbody>
                             </table>
                         </div>
-                        <div id="dashboard-pagination" class="p-4 border-t border-slate-200 bg-white flex flex-col sm:flex-row justify-between items-center gap-3"></div>
                     </div>
 
                     <!-- Log Catatan -->
@@ -1277,11 +1290,6 @@
         let editingSubmissionId = null;
         let globalAdminUsers = [];
 
-        let currentPageUtil = 1;
-        let itemsPerPageUtil = 20;
-        let currentPageDash = 1;
-        let itemsPerPageDash = 20;
-
         const itemTypeConfig = {
             'ok_nonok': { pos: 'OK', neg: 'Non OK', posL: 'OK', negL: 'Non OK', iconPos: 'check', iconNeg: 'close', bgPos: 'bg-emerald-50', textPos: 'text-emerald-700', bgNeg: 'bg-rose-50', textNeg: 'text-rose-700' },
             'ada_tidak': { pos: 'Ada', neg: 'Tidak Ada', posL: 'Ada', negL: 'Tidak Ada', iconPos: 'inventory_2', iconNeg: 'block', bgPos: 'bg-indigo-50', textPos: 'text-indigo-700', bgNeg: 'bg-slate-100', textNeg: 'text-slate-500' },
@@ -1433,8 +1441,8 @@
                         if(errorContainer) errorContainer.innerHTML = `
                             <div class="p-4 bg-rose-50 border border-rose-200 rounded-xl flex flex-col gap-3 animate-content">
                                 <span class="text-rose-600 font-bold text-sm text-center">Username salah 3x.</span>
-                                <a href="https://wa.me/6285215226972?text=Halo%20Admin%20GA,%20saya%20butuh%20bantuan%20pengecekan%20username%20aplikasi%20Ceklis" target="_blank" class="bg-rose-600 hover:bg-rose-700 text-white text-sm font-bold py-2.5 px-4 rounded-xl text-center flex items-center justify-center gap-2">
-                                    <span class="material-symbols-rounded text-[18px]">support_agent</span> Hubungi Admin GA
+                                <a href="https://wa.me/6285215226972?text=Halo%20Tim%20GA,%20saya%20butuh%20bantuan%20pengecekan%20username%20aplikasi%20Ceklis" target="_blank" class="bg-rose-600 hover:bg-rose-700 text-white text-sm font-bold py-2.5 px-4 rounded-xl text-center flex items-center justify-center gap-2">
+                                    <span class="material-symbols-rounded text-[18px]">support_agent</span> Hubungi Tim GA
                                 </a>
                             </div>
                         `;
@@ -2160,17 +2168,35 @@
                 }
             });
 
+            const analyticsSection = document.getElementById('utilitas-analytics-section');
             const chartContainer = document.getElementById('utilitas-chart-container');
+            const top5Container = document.getElementById('utilitas-top5-container');
             const weekFilter = document.getElementById('util-filter-minggu');
 
             if (view === 'rekap') {
-                if(chartContainer) chartContainer.classList.add('hidden');
+                if(analyticsSection) analyticsSection.classList.add('hidden');
                 if(weekFilter) weekFilter.classList.remove('hidden');
-            } else {
-                if(chartContainer) chartContainer.classList.remove('hidden');
+            } else if (view === 'ipl') {
+                if(analyticsSection) analyticsSection.classList.remove('hidden');
+                if(top5Container) top5Container.classList.add('hidden');
+                if(chartContainer) {
+                    chartContainer.classList.remove('lg:col-span-2');
+                    chartContainer.classList.add('lg:col-span-3');
+                }
                 if(weekFilter) weekFilter.classList.add('hidden');
                 const titleSuffix = utilChartScale === 'mingguan' ? '(Trend Bulan Ini)' : '(Trend Tahun Ini)';
-                document.getElementById('chart-util-title').textContent = `Total ${view === 'air' ? 'Pemakaian Air' : (view === 'listrik' ? 'Pemakaian Listrik' : 'Tagihan IPL')} ${titleSuffix}`;
+                document.getElementById('chart-util-title').textContent = `Total Tagihan IPL ${titleSuffix}`;
+            } else {
+                if(analyticsSection) analyticsSection.classList.remove('hidden');
+                if(top5Container) top5Container.classList.remove('hidden');
+                if(chartContainer) {
+                    chartContainer.classList.remove('lg:col-span-3');
+                    chartContainer.classList.add('lg:col-span-2');
+                }
+                if(weekFilter) weekFilter.classList.add('hidden');
+                const titleSuffix = utilChartScale === 'mingguan' ? '(Trend Bulan Ini)' : '(Trend Tahun Ini)';
+                document.getElementById('chart-util-title').textContent = `Total ${view === 'air' ? 'Pemakaian Air' : 'Pemakaian Listrik'} ${titleSuffix}`;
+                document.getElementById('top5-util-title').textContent = `Top 10 Pemborosan ${view === 'air' ? 'Air' : 'Listrik'}`;
             }
 
             renderUtilitasTable();
@@ -2508,54 +2534,6 @@
             return parseFloat(s) || 0;
         }
 
-        function renderPaginationControls(totalItems, itemsPerPage, currentPage, containerId, changePageFuncStr) {
-            const container = document.getElementById(containerId);
-            if (!container) return;
-            const totalPages = Math.ceil(totalItems / itemsPerPage);
-            
-            if (totalPages <= 1) {
-                container.innerHTML = `<span class="text-sm text-slate-500 font-medium">Menampilkan ${totalItems} data</span>`;
-                return;
-            }
-
-            let startIdx = (currentPage - 1) * itemsPerPage + 1;
-            let endIdx = Math.min(currentPage * itemsPerPage, totalItems);
-
-            let html = `<span class="text-sm text-slate-500 font-medium hidden sm:inline">Menampilkan ${startIdx}-${endIdx} dari ${totalItems} data</span>`;
-            html += `<div class="flex items-center gap-1 sm:gap-2">`;
-            
-            html += `<button onclick="${changePageFuncStr}(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''} class="px-3 py-1.5 rounded-lg border border-slate-200 text-sm font-bold ${currentPage === 1 ? 'text-slate-300 bg-slate-50 cursor-not-allowed' : 'text-slate-600 bg-white hover:bg-slate-50'}">Prev</button>`;
-            
-            let startPage = Math.max(1, currentPage - 1);
-            let endPage = Math.min(totalPages, currentPage + 1);
-            
-            if (startPage > 1) {
-                html += `<button onclick="${changePageFuncStr}(1)" class="px-3 py-1.5 rounded-lg border border-slate-200 text-sm font-bold text-slate-600 bg-white hover:bg-slate-50 hidden sm:block">1</button>`;
-                if (startPage > 2) html += `<span class="px-1 text-slate-400 hidden sm:block">...</span>`;
-            }
-
-            for (let p = startPage; p <= endPage; p++) {
-                if (p === currentPage) {
-                    html += `<button class="px-3 py-1.5 rounded-lg border border-brand-500 bg-brand-50 text-brand-700 text-sm font-bold">${p}</button>`;
-                } else {
-                    html += `<button onclick="${changePageFuncStr}(${p})" class="px-3 py-1.5 rounded-lg border border-slate-200 text-sm font-bold text-slate-600 bg-white hover:bg-slate-50">${p}</button>`;
-                }
-            }
-
-            if (endPage < totalPages) {
-                if (endPage < totalPages - 1) html += `<span class="px-1 text-slate-400 hidden sm:block">...</span>`;
-                html += `<button onclick="${changePageFuncStr}(${totalPages})" class="px-3 py-1.5 rounded-lg border border-slate-200 text-sm font-bold text-slate-600 bg-white hover:bg-slate-50 hidden sm:block">${totalPages}</button>`;
-            }
-
-            html += `<button onclick="${changePageFuncStr}(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''} class="px-3 py-1.5 rounded-lg border border-slate-200 text-sm font-bold ${currentPage === totalPages ? 'text-slate-300 bg-slate-50 cursor-not-allowed' : 'text-slate-600 bg-white hover:bg-slate-50'}">Next</button>`;
-            html += `</div>`;
-            
-            container.innerHTML = html;
-        }
-
-        window.changePageUtil = function(page) { currentPageUtil = page; renderUtilitasTable(); };
-        window.changePageDash = function(page) { currentPageDash = page; applyFiltersAndRender(); };
-
         window.formatRupiahInput = function(input) {
             let val = input.value.replace(/[^0-9]/g, '');
             if(val !== '') val = parseInt(val, 10).toLocaleString('id-ID');
@@ -2659,6 +2637,7 @@
             const getOrderScore = d => parseInt(d.tahun) * 1000 + parseInt(d.bulan) * 10 + parseInt(d.minggu);
 
             let topUsers = [];
+            let top5DataToRender = [];
             if (currentUtilView === 'air' || currentUtilView === 'listrik') {
                 let usageTotals = validUsers.map(u => {
                     let totalUsage = 0;
@@ -2677,20 +2656,19 @@
                                 currMeters.forEach(cm => {
                                     let pm = prevMeters.find(meter => meter.id === cm.id);
                                     if (pm) {
-                                        // PRA BAYAR (Token): Angka setiap minggu BERKURANG. Pemakaian = Minggu Lalu - Minggu Ini
                                         if (cm.kategori === 'Pra Bayar (Token)') {
                                             if (pm.angka >= cm.angka) totalUsage += (pm.angka - cm.angka);
-                                        } 
-                                        // PASCA BAYAR: Angka setiap minggu BERTAMBAH/NAIK. Pemakaian = Minggu Ini - Minggu Lalu
-                                        else {
+                                        } else {
                                             if (cm.angka >= pm.angka) totalUsage += (cm.angka - pm.angka);
                                         }
                                     }
                                 });
                             } else {
                                 let currVal = parseSafeNumber(submit.data[`${currentUtilView}_angka`]);
-                                let prevVal = prevSubmit ? parseSafeNumber(prevSubmit.data[`${currentUtilView}_angka`]) : 0;
-                                if (currVal >= prevVal) totalUsage += (currVal - prevVal);
+                                if (prevSubmit) {
+                                    let prevVal = parseSafeNumber(prevSubmit.data[`${currentUtilView}_angka`]);
+                                    if (currVal >= prevVal) totalUsage += (currVal - prevVal);
+                                }
                             }
                         }
                     });
@@ -2698,6 +2676,29 @@
                 });
                 usageTotals.sort((a, b) => b.usage - a.usage);
                 topUsers = usageTotals.filter(u => u.usage > 0).slice(0, 3).map(u => u.name);
+                top5DataToRender = usageTotals.filter(u => u.usage > 0).slice(0, 10);
+            }
+
+            const top5ListEl = document.getElementById('top5-util-list');
+            if (top5ListEl && (currentUtilView === 'air' || currentUtilView === 'listrik')) {
+                if (top5DataToRender.length === 0) {
+                    top5ListEl.innerHTML = '<div class="text-center text-slate-400 text-xs py-4">Data pemakaian belum memadai.</div>';
+                } else {
+                    let htmlListrik = '';
+                    top5DataToRender.forEach((item, idx) => {
+                        let valStr = currentUtilView === 'listrik' ? item.usage.toLocaleString('id-ID') : item.usage.toLocaleString('id-ID', {maximumFractionDigits: 1});
+                        htmlListrik += `
+                            <div class="flex justify-between items-center p-2 hover:bg-rose-50 border-b border-slate-100 last:border-0 rounded-lg transition-colors">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-6 h-6 rounded-full ${idx < 3 ? 'bg-rose-100 text-rose-600' : 'bg-slate-100 text-slate-500'} flex items-center justify-center text-[10px] font-extrabold">${idx+1}</span>
+                                    <span class="text-xs font-bold text-slate-700 truncate max-w-[120px]" title="${item.name}">${item.name}</span>
+                                </div>
+                                <span class="text-xs font-extrabold text-rose-600">+${valStr}</span>
+                            </div>
+                        `;
+                    });
+                    top5ListEl.innerHTML = htmlListrik;
+                }
             }
 
             let html = '';
@@ -2709,12 +2710,6 @@
             }
 
             validUsers.sort((a, b) => (a.stagging_name || '').localeCompare(b.stagging_name || ''));
-
-            const totalItems = validUsers.length;
-            if ((currentPageUtil - 1) * itemsPerPageUtil >= totalItems) currentPageUtil = 1;
-            renderPaginationControls(totalItems, itemsPerPageUtil, currentPageUtil, 'utilitas-pagination', 'changePageUtil');
-            const startIdxUtil = (currentPageUtil - 1) * itemsPerPageUtil;
-            const endIdxUtil = startIdxUtil + itemsPerPageUtil;
 
             let chartLabels = [];
             let chartDatasets = [];
@@ -2760,16 +2755,11 @@
                     submitsForMinggu.sort((a,b) => parseInt(b.bulan) - parseInt(a.bulan));
                     const submit = submitsForMinggu.length > 0 ? submitsForMinggu[0] : null;
                     
-                    let isRowVisible = (i >= startIdxUtil && i < endIdxUtil);
-                    let rowHtml = '';
-                    
-                    if (isRowVisible) {
-                        rowHtml = `<td class="p-3 border-r border-slate-200 sticky-col-1 bg-white">
-                            <strong class="text-slate-900 text-xs block mb-0.5">${u.stagging_name}</strong>
-                            <span class="text-[10px] text-slate-500 block mb-1">${u.pic_name || u.username}</span>
-                            ${submit ? `<span class="text-[8px] text-brand-600 bg-brand-50 px-1.5 py-0.5 rounded font-bold border border-brand-100">Inp: ${submit.date.split(',')[0]}</span>` : ''}
-                        </td>`;
-                    }
+                    let rowHtml = `<td class="p-3 border-r border-slate-200 sticky-col-1 bg-white">
+                        <strong class="text-slate-900 text-xs block mb-0.5">${u.stagging_name}</strong>
+                        <span class="text-[10px] text-slate-500 block mb-1">${u.pic_name || u.username}</span>
+                        ${submit ? `<span class="text-[8px] text-brand-600 bg-brand-50 px-1.5 py-0.5 rounded font-bold border border-brand-100">Inp: ${submit.date.split(',')[0]}</span>` : ''}
+                    </td>`;
 
                     if (submit) {
                         const d = submit.data;
@@ -2786,29 +2776,36 @@
                             </div>
                         `;
 
-                        if (isRowVisible) {
-                            rowHtml += `<td ${cellClick}>${airHtml}</td><td ${cellClick}>${listrikHtml}</td><td ${cellClick}>${iplHtml}</td>`;
-                        }
+                        const listrikHtml = `
+                            <div class="flex flex-col gap-2 text-[10px]">
+                                ${extractListrikMeters(d).map((m, idx) => `
+                                    <div class="bg-amber-50 p-1.5 rounded border border-amber-100">
+                                        <div class="font-semibold break-all text-amber-700">${m.id || '-'} <span class="text-[9px] font-medium text-amber-600 opacity-80">(${m.kategori})</span></div>
+                                        <div class="text-amber-600 font-extrabold text-xs mt-0.5">Mtr: ${m.angka.toLocaleString('id-ID')}</div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        `;
+
+                        const iplHtml = `
+                            <div class="grid grid-cols-2 gap-x-2 gap-y-1 text-[10px]">
+                                <div class="text-slate-500 font-bold">Kebersihan</div><div class="font-semibold ${d.ipl_bersih==='Ada'?'text-emerald-600':''}">${d.ipl_bersih==='Ada' ? 'Rp'+parseSafeNumber(d.ipl_bersih_nom).toLocaleString('id-ID') : 'Tidak Ada'} <span class="text-[8px] font-medium opacity-70">(${d.ipl_bersih_jadwal==='1 Kali Sebulan'?'Bln':'Mgg'})</span></div>
+                                <div class="text-slate-500 font-bold">Keamanan</div><div class="font-semibold ${d.ipl_aman==='Ada'?'text-emerald-600':''}">${d.ipl_aman==='Ada' ? 'Rp'+parseSafeNumber(d.ipl_aman_nom).toLocaleString('id-ID') : 'Tidak Ada'} <span class="text-[8px] font-medium opacity-70">(${d.ipl_aman_jadwal==='1 Kali Sebulan'?'Bln':'Mgg'})</span></div>
+                            </div>
+                        `;
+
+                        rowHtml += `<td ${cellClick}>${airHtml}</td><td ${cellClick}>${listrikHtml}</td><td ${cellClick}>${iplHtml}</td>`;
                     } else {
-                        if (isRowVisible) {
-                            rowHtml += `<td colspan="3" class="p-4 text-center text-slate-400 font-bold text-[10px] bg-slate-50/50">Belum ada data pengisian di Minggu ${selMinggu}</td>`;
-                        }
+                        rowHtml += `<td colspan="3" class="p-4 text-center text-slate-400 font-bold text-[10px] bg-slate-50/50">Belum ada data pengisian di Minggu ${selMinggu}</td>`;
                     }
-                    if (isRowVisible) {
-                        html += `<tr class="border-b border-slate-100 hover:bg-slate-50/50 transition-colors">${rowHtml}</tr>`;
-                    }
+                    html += `<tr class="border-b border-slate-100 hover:bg-slate-50/50 transition-colors">${rowHtml}</tr>`;
 
                 } else {
-                    let isRowVisible = (i >= startIdxUtil && i < endIdxUtil);
-                    let rowHtml = '';
-                    
-                    if (isRowVisible) {
-                        rowHtml = `<td class="p-3 border-r border-slate-200 sticky-col-1 ${rowBg}">
-                            <strong class="${textName} text-xs block mb-0.5">${u.stagging_name}</strong>
-                            <span class="text-[10px] ${textPic}">${u.pic_name || u.username}</span>
-                            ${topBadge}
-                        </td>`;
-                    }
+                    let rowHtml = `<td class="p-3 border-r border-slate-200 sticky-col-1 ${rowBg}">
+                        <strong class="${textName} text-xs block mb-0.5">${u.stagging_name}</strong>
+                        <span class="text-[10px] ${textPic}">${u.pic_name || u.username}</span>
+                        ${topBadge}
+                    </td>`;
 
                     let reportedBersihBulanIni = {};
                     let reportedAmanBulanIni = {};
@@ -2868,16 +2865,14 @@
                                     diffHtml = `<div class="mb-1.5"><strong class="text-slate-400 text-[9px] uppercase tracking-widest bg-slate-100 px-2 py-0.5 rounded">${statusTxt}</strong></div>`;
                                 }
                                 
-                                if (isRowVisible) {
-                                    rowHtml += `<td class="p-2 border-r border-slate-50 relative hover:bg-blue-50/50 transition-colors cursor-pointer" ${cellClick}>
-                                        ${warningHtml}
-                                        <div class="flex flex-col items-center w-full mt-1">
-                                            ${diffHtml}
-                                            <span class="text-[9px] text-slate-500 font-mono bg-blue-50/50 border border-blue-100 px-2 py-0.5 rounded w-full text-center mb-1">Mtr: ${currAir.toLocaleString('id-ID')}</span>
-                                            <span class="text-[8px] text-slate-400 font-medium">${submit.date.split(',')[0]}</span>
-                                        </div>
-                                    </td>`;
-                                }
+                                rowHtml += `<td class="p-2 border-r border-slate-50 relative hover:bg-blue-50/50 transition-colors cursor-pointer" ${cellClick}>
+                                    ${warningHtml}
+                                    <div class="flex flex-col items-center w-full mt-1">
+                                        ${diffHtml}
+                                        <span class="text-[9px] text-slate-500 font-mono bg-blue-50/50 border border-blue-100 px-2 py-0.5 rounded w-full text-center mb-1">Mtr: ${currAir.toLocaleString('id-ID')}</span>
+                                        <span class="text-[8px] text-slate-400 font-medium">${submit.date.split(',')[0]}</span>
+                                    </div>
+                                </td>`;
                                 
                             } else if(currentUtilView === 'listrik') {
                                 let currMeters = extractListrikMeters(d);
@@ -2937,16 +2932,14 @@
                                 
                                 let meterTexts = currMeters.map((cm, idx) => `<span class="text-[9px] text-slate-500 font-mono bg-amber-50/50 border border-amber-100/80 px-1 py-0.5 rounded w-full text-center truncate mb-0.5 last:mb-0" title="${cm.id}">${currMeters.length > 1 ? 'M'+(idx+1) : 'Mtr'}: ${cm.angka.toLocaleString('id-ID')}</span>`).join('');
                                 
-                                if (isRowVisible) {
-                                    rowHtml += `<td class="p-2 border-r border-slate-50 relative hover:bg-amber-50/50 transition-colors cursor-pointer" ${cellClick}>
-                                        ${warningHtml}
-                                        <div class="flex flex-col items-center w-full mt-1">
-                                            ${diffHtml}
-                                            <div class="w-full flex flex-col mb-1">${meterTexts}</div>
-                                            <span class="text-[8px] text-slate-400 font-medium">${submit.date.split(',')[0]}</span>
-                                        </div>
-                                    </td>`;
-                                }
+                                rowHtml += `<td class="p-2 border-r border-slate-50 relative hover:bg-amber-50/50 transition-colors cursor-pointer" ${cellClick}>
+                                    ${warningHtml}
+                                    <div class="flex flex-col items-center w-full mt-1">
+                                        ${diffHtml}
+                                        <div class="w-full flex flex-col mb-1">${meterTexts}</div>
+                                        <span class="text-[8px] text-slate-400 font-medium">${submit.date.split(',')[0]}</span>
+                                    </div>
+                                </td>`;
                                 
                             } else {
                                 let b = w.bulan;
@@ -2978,34 +2971,27 @@
                                 let mTotal = monthlyIplTotals[b].total;
                                 let isLastWeekOfMonth = w.minggu === 4 || w.minggu === 5 || !weekIterators[wIdx+1] || weekIterators[wIdx+1].bulan !== b;
 
-                                if (isRowVisible) {
-                                    rowHtml += `<td class="p-2 border-r border-slate-100 text-center relative cursor-pointer hover:bg-emerald-50/50" ${cellClick}>
-                                        ${warningHtml}
-                                        <div class="flex flex-col gap-1 items-center w-full mt-1">
-                                            <div class="bg-white border border-emerald-100 rounded px-1.5 py-1 w-full text-left shadow-sm mb-0.5">
-                                                <span class="text-[9px] font-bold ${d.ipl_bersih==='Ada'?'text-emerald-600':'text-slate-400'} block truncate">B: ${d.ipl_bersih==='Ada'?'Rp'+(parseSafeNumber(d.ipl_bersih_nom)/1000)+'k':'-'} <span class="font-medium text-[8px] opacity-70">(${d.ipl_bersih_jadwal==='1 Kali Sebulan'?'Bln':'Mgg'})</span></span>
-                                                <span class="text-[9px] font-bold ${d.ipl_aman==='Ada'?'text-emerald-600':'text-slate-400'} block truncate">A: ${d.ipl_aman==='Ada'?'Rp'+(parseSafeNumber(d.ipl_aman_nom)/1000)+'k':'-'} <span class="font-medium text-[8px] opacity-70">(${d.ipl_aman_jadwal==='1 Kali Sebulan'?'Bln':'Mgg'})</span></span>
-                                            </div>
-                                            ${isLastWeekOfMonth && mTotal > 0 ? `<div class="bg-emerald-50 text-emerald-700 border border-emerald-200 rounded w-full px-1 py-1 text-center mb-0.5"><span class="text-[8px] font-bold uppercase tracking-widest block opacity-70 leading-none mb-0.5">Total Bln Ini</span><span class="text-[10px] font-extrabold leading-none">Rp ${(mTotal/1000).toLocaleString('id-ID')}k</span></div>` : ''}
-                                            <span class="text-[8px] text-slate-400 font-medium">${submit.date.split(',')[0]}</span>
+                                rowHtml += `<td class="p-2 border-r border-slate-100 text-center relative cursor-pointer hover:bg-emerald-50/50" ${cellClick}>
+                                    ${warningHtml}
+                                    <div class="flex flex-col gap-1 items-center w-full mt-1">
+                                        <div class="bg-white border border-emerald-100 rounded px-1.5 py-1 w-full text-left shadow-sm mb-0.5">
+                                            <span class="text-[9px] font-bold ${d.ipl_bersih==='Ada'?'text-emerald-600':'text-slate-400'} block truncate">B: ${d.ipl_bersih==='Ada'?'Rp'+(parseSafeNumber(d.ipl_bersih_nom)/1000)+'k':'-'} <span class="font-medium text-[8px] opacity-70">(${d.ipl_bersih_jadwal==='1 Kali Sebulan'?'Bln':'Mgg'})</span></span>
+                                            <span class="text-[9px] font-bold ${d.ipl_aman==='Ada'?'text-emerald-600':'text-slate-400'} block truncate">A: ${d.ipl_aman==='Ada'?'Rp'+(parseSafeNumber(d.ipl_aman_nom)/1000)+'k':'-'} <span class="font-medium text-[8px] opacity-70">(${d.ipl_aman_jadwal==='1 Kali Sebulan'?'Bln':'Mgg'})</span></span>
                                         </div>
-                                    </td>`;
-                                }
+                                        ${isLastWeekOfMonth && mTotal > 0 ? `<div class="bg-emerald-50 text-emerald-700 border border-emerald-200 rounded w-full px-1 py-1 text-center mb-0.5"><span class="text-[8px] font-bold uppercase tracking-widest block opacity-70 leading-none mb-0.5">Total Bln Ini</span><span class="text-[10px] font-extrabold leading-none">Rp ${(mTotal/1000).toLocaleString('id-ID')}k</span></div>` : ''}
+                                        <span class="text-[8px] text-slate-400 font-medium">${submit.date.split(',')[0]}</span>
+                                    </div>
+                                </td>`;
                             }
                         } else {
-                            if (isRowVisible) {
-                                if(!w.saturdays[w.minggu-1]) {
-                                    rowHtml += `<td class="p-3 border-r border-slate-100 text-center text-slate-200 font-medium text-[9px] bg-slate-50/50">-</td>`;
-                                } else {
-                                    rowHtml += `<td class="p-3 border-r border-slate-100 text-center text-slate-300 font-bold text-xs bg-slate-50/50">-</td>`;
-                                }
+                            if(!w.saturdays[w.minggu-1]) {
+                                rowHtml += `<td class="p-3 border-r border-slate-100 text-center text-slate-200 font-medium text-[9px] bg-slate-50/50">-</td>`;
+                            } else {
+                                rowHtml += `<td class="p-3 border-r border-slate-100 text-center text-slate-300 font-bold text-xs bg-slate-50/50">-</td>`;
                             }
                         }
                     });
-                    
-                    if (isRowVisible) {
-                        html += `<tr class="hover:bg-slate-50/50 border-b border-slate-100 transition-colors">${rowHtml}</tr>`;
-                    }
+                    html += `<tr class="hover:bg-slate-50/50 border-b border-slate-100 transition-colors">${rowHtml}</tr>`;
                 }
             });
             
@@ -3143,11 +3129,13 @@
                 utilChartInstance.destroy();
             }
 
+            const chartSection = document.getElementById('utilitas-chart-container');
+
             if (datasets.length === 0) {
-                ctx.parentElement.classList.add('hidden');
+                if (chartSection) chartSection.classList.add('hidden');
                 return;
             } else {
-                ctx.parentElement.classList.remove('hidden');
+                if (chartSection) chartSection.classList.remove('hidden');
             }
 
             let maxTotal = (datasets.length > 0 && datasets[0].data.length > 0) ? Math.max(...datasets[0].data) : 10;
@@ -4152,11 +4140,7 @@
                 return (a.stagging_name || '').localeCompare(b.stagging_name || ''); 
             });
 
-            const totalItemsDash = renderData.length;
-            if ((currentPageDash - 1) * itemsPerPageDash >= totalItemsDash) currentPageDash = 1;
-
-            renderDashboardHeaders(filteredCats); 
-            renderDashboardBodyAndNotes(renderData, validFilteredSubs, filteredCats, safeAllCats, sscHistory);
+            renderDashboardHeaders(filteredCats); renderDashboardBodyAndNotes(renderData, validFilteredSubs, filteredCats, safeAllCats, sscHistory);
         }
 
         async function editSubmission(submissionId) {
@@ -4238,15 +4222,10 @@
             const tbody = document.getElementById('dashboard-tbody'); const noteSec = document.getElementById('dashboard-notes-section'); const noteCon = document.getElementById('dashboard-notes-container');
             let html = '', noteHtml = ''; const itemMap = {}; allCats.forEach(c => { if(c.items) c.items.forEach(i => itemMap[i.id] = { label: i.label, cat: c.category, type: i.type || 'ok_nonok' }) });
 
-            renderPaginationControls(data.length, itemsPerPageDash, currentPageDash, 'dashboard-pagination', 'changePageDash');
-            const startIdxDash = (currentPageDash - 1) * itemsPerPageDash;
-            const endIdxDash = startIdxDash + itemsPerPageDash;
-            const paginatedData = data.slice(startIdxDash, endIdxDash);
-
-            if (paginatedData.length === 0) { html = `<tr><td colspan="100" class="p-10 text-center text-slate-400 font-bold bg-slate-50">BELUM ADA DATA.</td></tr>`; } 
+            if (data.length === 0) { html = `<tr><td colspan="100" class="p-10 text-center text-slate-400 font-bold bg-slate-50">BELUM ADA DATA.</td></tr>`; } 
             else {
                 let currGroup = '';
-                paginatedData.forEach((sub, idx) => {
+                data.forEach((sub, idx) => {
                     const isNew = currGroup !== sub.ssc; if(isNew) currGroup = sub.ssc;
                     const borderCls = isNew && idx !== 0 ? 'border-t-[3px] border-slate-200' : 'border-t border-slate-100';
 
@@ -4303,9 +4282,8 @@
                 });
 
                 notesData.sort((a, b) => parseDateObj(b.date) - parseDateObj(a.date));
-                const paginatedNotes = notesData.slice(startIdxDash, endIdxDash);
                 
-                paginatedNotes.forEach(sub => {
+                notesData.forEach(sub => {
                     let notesByCategory = {};
                     Object.keys(sub.answers).forEach(itemId => {
                         const ans = sub.answers[itemId]; const meta = itemMap[itemId]; const isNeg = meta ? ans.status === itemTypeConfig[meta.type].neg : (ans.status === 'Non OK' || ans.status === 'Tidak Ada' || ans.status === 'Rusak');
@@ -4717,6 +4695,7 @@
             box.classList.add('scale-50', 'opacity-0');
             setTimeout(() => container.classList.add('hidden'), 300);
         };
+        
     </script>
 </body>
 </html>
