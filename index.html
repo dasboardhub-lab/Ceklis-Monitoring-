@@ -224,8 +224,13 @@
                 <nav class="flex-1 px-4 space-y-1 overflow-y-auto hide-scrollbar pb-6 mt-2">
                     <p class="px-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3 mt-2">Menu Utama</p>
                     
-                    <button onclick="switchTab('dashboard')" id="tab-dashboard" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all text-brand-700 bg-brand-50 group">
-                        <span class="material-symbols-rounded icon-fill text-xl text-brand-600">pie_chart</span>
+                    <button onclick="switchTab('panduan')" id="tab-panduan" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all text-brand-700 bg-brand-50 group">
+                        <span class="material-symbols-rounded icon-fill text-xl text-brand-600">menu_book</span>
+                        <span class="text-sm">Buku Panduan</span>
+                    </button>
+
+                    <button onclick="switchTab('dashboard')" id="tab-dashboard" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-semibold transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-50 group">
+                        <span class="material-symbols-rounded icon-outline text-xl group-hover:text-slate-800 transition-colors">pie_chart</span>
                         <span class="text-sm">Ceklis Monitoring</span>
                     </button>
 
@@ -233,7 +238,7 @@
                         <span class="material-symbols-rounded icon-outline text-xl group-hover:text-slate-800 transition-colors">home_repair_service</span>
                         <span class="text-sm">Awareness Utilitas & IPL</span>
                     </button>
-                    
+
                     <button onclick="switchTab('admin-users')" id="tab-admin-users" style="display: none;" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-semibold transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-50 group">
                         <span class="material-symbols-rounded icon-outline text-xl group-hover:text-slate-800 transition-colors">group</span>
                         <span class="text-sm">Data Pengguna</span>
@@ -642,13 +647,94 @@
                         <div id="dashboard-notes-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5"></div>
                     </div>
                 </div>
+
+                <!-- Tab: Buku Panduan -->
+                <div id="content-panduan" class="hidden w-full px-4 sm:px-6 lg:px-8 mt-6 sm:mt-8 animate-content max-w-4xl mx-auto mb-12">
+                    <div class="bg-surface rounded-3xl shadow-soft border border-slate-200 overflow-hidden">
+                        <div class="bg-brand-600 p-8 sm:p-10 text-white relative overflow-hidden">
+                            <div class="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-2xl"></div>
+                            <div class="relative z-10">
+                                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center mb-4 backdrop-blur-sm border border-white/20">
+                                    <span class="material-symbols-rounded icon-fill text-2xl">menu_book</span>
+                                </div>
+                                <h2 class="text-3xl font-extrabold tracking-tight mb-2">Buku Panduan Sistem</h2>
+                                <p class="text-brand-100 text-sm font-medium">Sistem Ceklis Monitoring & Awareness Utilitas Terpadu</p>
+                            </div>
+                        </div>
+                        <div class="p-6 sm:p-10 space-y-8 text-slate-700">
+                            <section>
+                                <h3 class="text-lg font-extrabold text-slate-900 mb-3 flex items-center gap-2"><span class="material-symbols-rounded text-brand-500">info</span> 1. PENDAHULUAN</h3>
+                                <p class="text-sm leading-relaxed bg-slate-50 p-4 rounded-xl border border-slate-100">Sistem ini dirancang sebagai alat pelaporan cerdas untuk memantau performa area, kondisi fasilitas (aset), serta melacak tren penggunaan utilitas (Air, Listrik, dan IPL) secara real-time. Dengan antarmuka yang modern, sistem ini memastikan data diinput secara terstruktur, akurat, dan mudah dianalisis.</p>
+                            </section>
+                            
+                            <section>
+                                <h3 class="text-lg font-extrabold text-slate-900 mb-3 flex items-center gap-2"><span class="material-symbols-rounded text-brand-500">admin_panel_settings</span> 2. HAK AKSES PENGGUNA (ROLE)</h3>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div class="border border-slate-200 p-4 rounded-xl">
+                                        <div class="flex items-center gap-2 mb-2"><span class="material-symbols-rounded text-slate-500">person</span><strong class="text-sm">User (PIC)</strong></div>
+                                        <p class="text-xs text-slate-500">Melihat dashboard dan wajib mengisi form pelaporan khusus areanya sendiri.</p>
+                                    </div>
+                                    <div class="border border-slate-200 p-4 rounded-xl bg-indigo-50/50">
+                                        <div class="flex items-center gap-2 mb-2"><span class="material-symbols-rounded text-indigo-600">workspace_premium</span><strong class="text-sm">Admin (GA)</strong></div>
+                                        <p class="text-xs text-slate-500">Kontrol penuh. Melihat semua data, kelola form, kelola akun, hapus data, dan override pelaporan.</p>
+                                    </div>
+                                    <div class="border border-slate-200 p-4 rounded-xl">
+                                        <div class="flex items-center gap-2 mb-2"><span class="material-symbols-rounded text-slate-500">visibility</span><strong class="text-sm">Visitor</strong></div>
+                                        <p class="text-xs text-slate-500">Hanya akses baca (read-only) ke dashboard. Tidak dapat mengubah data.</p>
+                                    </div>
+                                </div>
+                            </section>
+
+                            <section>
+                                <h3 class="text-lg font-extrabold text-slate-900 mb-3 flex items-center gap-2"><span class="material-symbols-rounded text-brand-500">apps</span> 3. MODUL UTAMA</h3>
+                                <div class="space-y-4">
+                                    <div class="border-l-4 border-brand-500 pl-4 py-1">
+                                        <strong class="text-sm block text-slate-900 mb-1">A. Ceklis Monitoring (Bulanan)</strong>
+                                        <p class="text-xs text-slate-500 leading-relaxed">Inspeksi kondisi fisik area (sekali per bulan, tanggal 20 hingga akhir bulan). Gunakan <strong>"Opsi N/A" (Tidak Ada)</strong> khusus jika fasilitas yang dinilai secara aktual memang tidak tersedia di area Anda. Sistem juga akan mewajibkan Anda mengisi catatan/keterangan apabila terdapat barang yang dilaporkan Rusak/Tidak Standar.</p>
+                                    </div>
+                                    <div class="border-l-4 border-emerald-500 pl-4 py-1">
+                                        <strong class="text-sm block text-slate-900 mb-1">B. Awareness Utilitas & IPL (Mingguan)</strong>
+                                        <p class="text-xs text-slate-500 leading-relaxed">Mencatat pemakaian Air, Listrik (multi-meteran), dan pembayaran IPL mingguan. Sistem otomatis mendeteksi selisih angka (drift) untuk menghitung pemakaian riil dan mencari Top 10 Pemborosan.</p>
+                                    </div>
+                                </div>
+                            </section>
+
+                            <section>
+                                <h3 class="text-lg font-extrabold text-slate-900 mb-3 flex items-center gap-2"><span class="material-symbols-rounded text-brand-500">bolt</span> 4. CARA PENGGUNAAN (SOP)</h3>
+                                <div class="space-y-3">
+                                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                                        <strong class="text-sm text-slate-800 block mb-2">Untuk PIC Lapangan:</strong>
+                                        <ul class="text-xs text-slate-600 space-y-2 list-disc pl-4">
+                                            <li>Login menggunakan username dan password yang diberikan. Segera ubah sandi default "123".</li>
+                                            <li>Perhatikan <strong>Notifikasi Lonceng Merah</strong> (Pojok kanan atas) sebagai pengingat tugas Anda.</li>
+                                            <li><strong>Utilitas:</strong> Buka tab "Awareness Utilitas & IPL", klik "Isi Form Mingguan". <strong>Cukup masukkan angka bulat utamanya saja (angka sebelum tanda koma/desimal).</strong> <br><em class="mt-1 block">Contoh:</em> Jika pada meteran tertera angka <code class="bg-slate-200 px-1 py-0.5 rounded font-bold text-rose-600">3.400,23</code>, maka Anda hanya perlu mengetikkan angka <strong><code class="bg-slate-200 px-1 py-0.5 rounded font-bold text-emerald-600">3400</code></strong> (abaikan angka 23 di belakang koma).</li>
+                                            <li><strong>Ceklis:</strong> Buka tab "Ceklis Monitoring", klik "Isi Laporan". Pilih opsi <em>N/A</em> jika barang tidak ada, dan wajib mengisi keterangan (note) jika ada fasilitas yang rusak.</li>
+                                        </ul>
+                                    </div>
+                                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                                        <strong class="text-sm text-slate-800 block mb-2">Untuk Admin GA:</strong>
+                                        <ul class="text-xs text-slate-600 space-y-2 list-disc pl-4">
+                                            <li>Gunakan Filter (ikon garis tiga) di atas grafik untuk melihat data spesifik area/bulan/tahun.</li>
+                                            <li><strong>Ubah Format:</strong> Buka tab "Format Ceklis", pilih kategori, lalu tambah item atau aktifkan fitur N/A dan wajib Catatan (Note).</li>
+                                            <li><strong>Broadcast WA:</strong> Klik "Broadcast Tim" untuk otomatis membuat draf laporan (area boros, area belum lapor, temuan kerusakan) yang siap dikirim ke Grup WA.</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                    </div>
+                </div>
             </div>
         </main>
         
         <!-- Navbar Mobile -->
         <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-md border-t border-slate-200 z-[100] pb-safe flex justify-around p-2 shadow-[0_-4px_20px_rgba(0,0,0,0.03)]">
-            <button onclick="switchTab('dashboard')" id="mob-tab-dashboard" class="flex-1 py-2 flex flex-col items-center gap-1 text-brand-600 transition-colors">
-                <span class="material-symbols-rounded text-[24px]">pie_chart</span>
+            <button onclick="switchTab('panduan')" id="mob-tab-panduan" class="flex-1 py-2 flex flex-col items-center gap-1 text-brand-600 transition-colors">
+                <span class="material-symbols-rounded text-[24px]">menu_book</span>
+                <span class="text-[9px] font-bold uppercase tracking-widest text-center leading-tight">Panduan</span>
+            </button>
+            <button onclick="switchTab('dashboard')" id="mob-tab-dashboard" class="flex-1 py-2 flex flex-col items-center gap-1 text-slate-400 hover:text-slate-900 transition-colors">
+                <span class="material-symbols-rounded icon-outline text-[24px]">pie_chart</span>
                 <span class="text-[9px] font-bold uppercase tracking-widest text-center leading-tight">Ceklis</span>
             </button>
             <button onclick="switchTab('utilitas')" id="mob-tab-utilitas" class="flex-1 py-2 flex flex-col items-center gap-1 text-slate-400 hover:text-slate-900 transition-colors">
@@ -1156,6 +1242,7 @@
                 </div>
                 
                 <div id="detail-content" class="space-y-2"></div>
+                        <div id="detail-content" class="space-y-2"></div>
             </div>
             <div class="p-4 border-t border-slate-100 bg-slate-50 flex justify-end gap-2" id="detail-modal-footer">
                 <button id="btn-edit-detail" class="hidden px-5 py-2.5 rounded-xl font-bold text-sm text-white bg-brand-600 hover:bg-brand-700 transition-colors shadow-sm items-center gap-2"><span class="material-symbols-rounded text-[18px]">edit</span> Edit Data</button>
@@ -1532,13 +1619,13 @@
                 btnOpenForm.style.display = 'flex'; if(btnAdminHapus) btnAdminHapus.style.display = 'flex';
                 if(btnBroadUtil) btnBroadUtil.style.display = 'flex'; if(btnBroadCek) btnBroadCek.style.display = 'flex';
                 if(personalDashboard) personalDashboard.classList.add('hidden');
-                switchTab('dashboard'); await renderAdminUsers(); await renderAdminCategoryList();
+                switchTab('panduan'); await renderAdminUsers(); await renderAdminCategoryList();
             } else if (currentUser.role === 'user') {
                 btnOpenForm.style.display = 'flex'; 
                 if(notifContainer) notifContainer.style.display = 'block';
-                switchTab('dashboard');
+                switchTab('panduan');
             } else if (currentUser.role === 'visitor') {
-                switchTab('dashboard');
+                switchTab('panduan');
             }
             
             await populateCategoryFilter(); await populateUtilFilters(); await applyFiltersAndRender();
@@ -1772,7 +1859,7 @@
         }
 
         function switchTab(tabName) {
-            const views = ['admin-users', 'admin-form', 'dashboard', 'utilitas'];
+            const views = ['admin-users', 'admin-form', 'dashboard', 'utilitas', 'panduan'];
             views.forEach(v => {
                 const content = document.getElementById(`content-${v}`); if (content) content.classList.add('hidden');
                 
