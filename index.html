@@ -392,9 +392,9 @@
                     </div>
 
                     <!-- Analitik & Top 5 -->
-                    <div id="utilitas-analytics-section" class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+                    <div id="utilitas-analytics-section" class="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-6">
                         <!-- Chart Trafik -->
-                        <div id="utilitas-chart-container" class="lg:col-span-2 bg-white rounded-3xl shadow-soft border border-slate-200 p-6 flex flex-col">
+                        <div id="utilitas-chart-container" class="lg:col-span-3 bg-white rounded-3xl shadow-soft border border-slate-200 p-6 flex flex-col">
                             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
                                 <h3 class="font-bold text-slate-800 text-sm" id="chart-util-title">Total Pemakaian Air (Trend Bulan Ini)</h3>
                                 <div class="flex bg-slate-100 p-1 rounded-lg text-xs font-bold shadow-inner">
@@ -408,13 +408,28 @@
                         </div>
 
                         <!-- Top 10 Pemborosan -->
-                        <div id="utilitas-top5-container" class="bg-white rounded-3xl shadow-soft border border-slate-200 p-5 flex flex-col">
-                            <div class="flex items-center gap-2 mb-3 border-b border-slate-100 pb-3 shrink-0">
-                                <span class="material-symbols-rounded icon-fill text-rose-500 text-xl">trending_up</span>
-                                <h3 class="font-extrabold text-slate-800 text-sm" id="top5-util-title">Top 10 Pemborosan Air</h3>
-                            </div>
-                            <div id="top5-util-list" class="flex-1 flex flex-col gap-1 overflow-y-auto custom-scroll pr-1 max-h-[260px]">
-                                <div class="text-center text-slate-400 text-xs py-4">Memuat data...</div>
+                        <div id="utilitas-top5-container" class="lg:col-span-2 bg-white rounded-3xl shadow-soft border border-slate-200 p-5 flex flex-col">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 h-full">
+                                <!-- Kolom Minggu Ini -->
+                                <div class="flex flex-col h-full border-b sm:border-b-0 sm:border-r border-slate-100 pb-4 sm:pb-0 sm:pr-4">
+                                    <div class="flex items-center gap-2 mb-3 border-b border-slate-100 pb-3 shrink-0">
+                                        <span class="material-symbols-rounded icon-fill text-rose-500 text-xl">trending_up</span>
+                                        <h3 class="font-extrabold text-slate-800 text-[11px] xl:text-xs uppercase tracking-widest" id="top5-util-title-minggu">Top 10 Air (Mgg Ini)</h3>
+                                    </div>
+                                    <div id="top5-util-list-minggu" class="flex-1 flex flex-col gap-1 overflow-y-auto custom-scroll pr-1 max-h-[260px]">
+                                        <div class="text-center text-slate-400 text-xs py-4">Memuat data...</div>
+                                    </div>
+                                </div>
+                                <!-- Kolom Bulan Ini -->
+                                <div class="flex flex-col h-full pt-4 sm:pt-0 sm:pl-2">
+                                    <div class="flex items-center gap-2 mb-3 border-b border-slate-100 pb-3 shrink-0">
+                                        <span class="material-symbols-rounded icon-fill text-rose-500 text-xl">trending_up</span>
+                                        <h3 class="font-extrabold text-slate-800 text-[11px] xl:text-xs uppercase tracking-widest" id="top5-util-title-bulan">Top 10 Air (Bln Ini)</h3>
+                                    </div>
+                                    <div id="top5-util-list-bulan" class="flex-1 flex flex-col gap-1 overflow-y-auto custom-scroll pr-1 max-h-[260px]">
+                                        <div class="text-center text-slate-400 text-xs py-4">Memuat data...</div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -2330,8 +2345,8 @@
                 if(analyticsSection) analyticsSection.classList.remove('hidden');
                 if(top5Container) top5Container.classList.add('hidden');
                 if(chartContainer) {
-                    chartContainer.classList.remove('lg:col-span-2');
-                    chartContainer.classList.add('lg:col-span-3');
+                    chartContainer.classList.remove('lg:col-span-3');
+                    chartContainer.classList.add('lg:col-span-5');
                 }
                 if(weekFilter) weekFilter.classList.add('hidden');
                 const titleSuffix = utilChartScale === 'mingguan' ? '(Trend Bulan Ini)' : '(Trend Tahun Ini)';
@@ -2340,13 +2355,14 @@
                 if(analyticsSection) analyticsSection.classList.remove('hidden');
                 if(top5Container) top5Container.classList.remove('hidden');
                 if(chartContainer) {
-                    chartContainer.classList.remove('lg:col-span-3');
-                    chartContainer.classList.add('lg:col-span-2');
+                    chartContainer.classList.remove('lg:col-span-5');
+                    chartContainer.classList.add('lg:col-span-3');
                 }
                 if(weekFilter) weekFilter.classList.add('hidden');
                 const titleSuffix = utilChartScale === 'mingguan' ? '(Trend Bulan Ini)' : '(Trend Tahun Ini)';
                 document.getElementById('chart-util-title').textContent = `Total ${view === 'air' ? 'Pemakaian Air' : 'Pemakaian Listrik'} ${titleSuffix}`;
-                document.getElementById('top5-util-title').textContent = `Top 10 Pemborosan ${view === 'air' ? 'Air' : 'Listrik'} (Minggu Ini)`;
+                document.getElementById('top5-util-title-minggu').textContent = `Top 10 ${view === 'air' ? 'Air' : 'Listrik'} (Mgg Ini)`;
+                document.getElementById('top5-util-title-bulan').textContent = `Top 10 ${view === 'air' ? 'Air' : 'Listrik'} (Bln Ini)`;
             }
 
             renderUtilitasTable();
@@ -2810,87 +2826,145 @@
             const getOrderScore = d => parseInt(d.tahun) * 1000 + parseInt(d.bulan) * 10 + parseInt(d.minggu);
 
             let topUsers = [];
-            let top5DataToRender = [];
+            let top10DataMinggu = [];
+            let top10DataBulan = [];
+            
             if (currentUtilView === 'air' || currentUtilView === 'listrik') {
                 let now = new Date();
                 const currWi = getCustomWeekInfo(now);
 
-                let usageTotals = validUsers.map(u => {
-                    let totalUsage = 0;
-                    let diffDays = 7;
-                    let hasData = false;
+                let usageTotalsMinggu = [];
+                let usageTotalsBulan = [];
 
+                validUsers.forEach(u => {
                     let userAllSubs = allFetchedData.filter(d => d.stagging_name === u.stagging_name)
                         .sort((a,b) => getOrderScore(a) - getOrderScore(b));
                         
-                    // Hanya kalkulasi selisih untuk pengisian di Minggu Berjalan (real-time)
-                    const submit = userAllSubs.find(d => parseInt(d.tahun) === currWi.tahun && parseInt(d.bulan) === currWi.bulan && parseInt(d.minggu) === currWi.minggu);
+                    // === MINGGU INI ===
+                    let totalUsageMinggu = 0;
+                    let diffDaysMinggu = 7;
+                    let hasDataMinggu = false;
                     
-                    if(submit) {
-                        const currentIndex = userAllSubs.findIndex(s => s.id === submit.id);
+                    const submitMinggu = userAllSubs.find(d => parseInt(d.tahun) === currWi.tahun && parseInt(d.bulan) === currWi.bulan && parseInt(d.minggu) === currWi.minggu);
+                    
+                    if(submitMinggu) {
+                        const currentIndex = userAllSubs.findIndex(s => s.id === submitMinggu.id);
                         let prevSubmit = currentIndex > 0 ? userAllSubs[currentIndex - 1] : null;
 
                         if (prevSubmit) {
-                            let ts1 = parseDateObj(submit.date);
+                            let ts1 = parseDateObj(submitMinggu.date);
                             let ts2 = parseDateObj(prevSubmit.date);
-                            diffDays = (ts1 - ts2) / (1000 * 60 * 60 * 24);
-                            if (diffDays <= 0) diffDays = 7;
+                            diffDaysMinggu = (ts1 - ts2) / (1000 * 60 * 60 * 24);
+                            if (diffDaysMinggu <= 0) diffDaysMinggu = 7;
                         }
 
                         if (currentUtilView === 'listrik') {
-                            let currMeters = extractListrikMeters(submit.data);
+                            let currMeters = extractListrikMeters(submitMinggu.data);
                             let prevMeters = prevSubmit ? extractListrikMeters(prevSubmit.data) : [];
                             currMeters.forEach(cm => {
                                 let pm = prevMeters.find(meter => meter.id === cm.id);
                                 if (pm) {
                                     if (cm.kategori === 'Pra Bayar (Token)') {
-                                        if (pm.angka >= cm.angka) { totalUsage += (pm.angka - cm.angka); hasData = true; }
+                                        if (pm.angka >= cm.angka) { totalUsageMinggu += (pm.angka - cm.angka); hasDataMinggu = true; }
                                     } else {
-                                        if (cm.angka >= pm.angka) { totalUsage += (cm.angka - pm.angka); hasData = true; }
+                                        if (cm.angka >= pm.angka) { totalUsageMinggu += (cm.angka - pm.angka); hasDataMinggu = true; }
                                     }
                                 }
                             });
                         } else {
-                            let currVal = parseSafeNumber(submit.data[`${currentUtilView}_angka`]);
+                            let currVal = parseSafeNumber(submitMinggu.data[`${currentUtilView}_angka`]);
                             if (prevSubmit) {
                                 let prevVal = parseSafeNumber(prevSubmit.data[`${currentUtilView}_angka`]);
-                                if (currVal >= prevVal) { totalUsage += (currVal - prevVal); hasData = true; }
+                                if (currVal >= prevVal) { totalUsageMinggu += (currVal - prevVal); hasDataMinggu = true; }
                             }
                         }
                     }
+                    let avgUsageMinggu = hasDataMinggu ? (totalUsageMinggu / diffDaysMinggu) : 0;
+                    usageTotalsMinggu.push({ name: u.stagging_name, usage: totalUsageMinggu, avg: avgUsageMinggu });
+
+                    // === BULAN INI ===
+                    let totalUsageBulan = 0;
+                    let diffDaysBulan = 0;
+                    let hasDataBulan = false;
+
+                    let monthSubs = userAllSubs.filter(d => parseInt(d.tahun) === currWi.tahun && parseInt(d.bulan) === currWi.bulan);
                     
-                    let avgUsage = hasData ? (totalUsage / diffDays) : 0;
-                    return { name: u.stagging_name, usage: totalUsage, avg: avgUsage };
+                    monthSubs.forEach(subBulan => {
+                        const currentIndex = userAllSubs.findIndex(s => s.id === subBulan.id);
+                        let prevSubmit = currentIndex > 0 ? userAllSubs[currentIndex - 1] : null;
+
+                        if (prevSubmit) {
+                            let ts1 = parseDateObj(subBulan.date);
+                            let ts2 = parseDateObj(prevSubmit.date);
+                            let days = (ts1 - ts2) / (1000 * 60 * 60 * 24);
+                            if (days <= 0) days = 7;
+                            diffDaysBulan += days;
+
+                            if (currentUtilView === 'listrik') {
+                                let currMeters = extractListrikMeters(subBulan.data);
+                                let prevMeters = extractListrikMeters(prevSubmit.data);
+                                currMeters.forEach(cm => {
+                                    let pm = prevMeters.find(meter => meter.id === cm.id);
+                                    if (pm) {
+                                        if (cm.kategori === 'Pra Bayar (Token)') {
+                                            if (pm.angka >= cm.angka) { totalUsageBulan += (pm.angka - cm.angka); hasDataBulan = true; }
+                                        } else {
+                                            if (cm.angka >= pm.angka) { totalUsageBulan += (cm.angka - pm.angka); hasDataBulan = true; }
+                                        }
+                                    }
+                                });
+                            } else {
+                                let currVal = parseSafeNumber(subBulan.data[`${currentUtilView}_angka`]);
+                                let prevVal = parseSafeNumber(prevSubmit.data[`${currentUtilView}_angka`]);
+                                if (currVal >= prevVal) { totalUsageBulan += (currVal - prevVal); hasDataBulan = true; }
+                            }
+                        }
+                    });
+
+                    let avgUsageBulan = hasDataBulan && diffDaysBulan > 0 ? (totalUsageBulan / diffDaysBulan) : 0;
+                    usageTotalsBulan.push({ name: u.stagging_name, usage: totalUsageBulan, avg: avgUsageBulan });
                 });
-                usageTotals.sort((a, b) => b.avg - a.avg);
-                topUsers = usageTotals.filter(u => u.avg > 0).slice(0, 3).map(u => u.name);
-                top5DataToRender = usageTotals.filter(u => u.avg > 0).slice(0, 10);
+
+                usageTotalsMinggu.sort((a, b) => b.avg - a.avg);
+                usageTotalsBulan.sort((a, b) => b.avg - a.avg);
+
+                topUsers = usageTotalsMinggu.filter(u => u.avg > 0).slice(0, 3).map(u => u.name);
+                top10DataMinggu = usageTotalsMinggu.filter(u => u.avg > 0).slice(0, 10);
+                top10DataBulan = usageTotalsBulan.filter(u => u.avg > 0).slice(0, 10);
             }
 
-            const top5ListEl = document.getElementById('top5-util-list');
-            if (top5ListEl && (currentUtilView === 'air' || currentUtilView === 'listrik')) {
-                if (top5DataToRender.length === 0) {
-                    top5ListEl.innerHTML = '<div class="text-center text-slate-400 text-xs py-4">Data pemakaian belum memadai.</div>';
+            const top5ListMingguEl = document.getElementById('top5-util-list-minggu');
+            const top5ListBulanEl = document.getElementById('top5-util-list-bulan');
+            
+            function renderTop10List(container, data) {
+                if (!container) return;
+                if (data.length === 0) {
+                    container.innerHTML = '<div class="text-center text-slate-400 text-xs py-4">Data belum memadai.</div>';
                 } else {
-                    let htmlListrik = '';
-                    top5DataToRender.forEach((item, idx) => {
+                    let htmlList = '';
+                    data.forEach((item, idx) => {
                         let avgStr = item.avg.toLocaleString('id-ID', {maximumFractionDigits: 1});
                         let totalStr = item.usage.toLocaleString('id-ID', {maximumFractionDigits: 1});
-                        htmlListrik += `
+                        htmlList += `
                             <div class="flex justify-between items-center p-2 hover:bg-rose-50 border-b border-slate-100 last:border-0 rounded-lg transition-colors">
                                 <div class="flex items-center gap-2">
-                                    <span class="w-6 h-6 rounded-full ${idx < 3 ? 'bg-rose-100 text-rose-600' : 'bg-slate-100 text-slate-500'} flex items-center justify-center text-[10px] font-extrabold shrink-0">${idx+1}</span>
-                                    <span class="text-[11px] font-bold text-slate-700 truncate max-w-[120px]" title="${item.name}">${item.name}</span>
+                                    <span class="w-5 h-5 sm:w-6 sm:h-6 rounded-full ${idx < 3 ? 'bg-rose-100 text-rose-600' : 'bg-slate-100 text-slate-500'} flex items-center justify-center text-[9px] sm:text-[10px] font-extrabold shrink-0">${idx+1}</span>
+                                    <span class="text-[10px] sm:text-[11px] font-bold text-slate-700 truncate max-w-[80px] xl:max-w-[120px]" title="${item.name}">${item.name}</span>
                                 </div>
                                 <div class="flex flex-col items-end leading-none shrink-0">
-                                    <span class="text-[11px] font-extrabold text-rose-600">${avgStr}/hr</span>
-                                    <span class="text-[9px] text-slate-400 font-bold mt-1 truncate max-w-[80px]" title="Total Pemakaian: ${totalStr}">(Tot: ${totalStr})</span>
+                                    <span class="text-[10px] sm:text-[11px] font-extrabold text-rose-600">${avgStr}/hr</span>
+                                    <span class="text-[8px] sm:text-[9px] text-slate-400 font-bold mt-1 truncate max-w-[80px]" title="Total Pemakaian: ${totalStr}">(Tot: ${totalStr})</span>
                                 </div>
                             </div>
                         `;
                     });
-                    top5ListEl.innerHTML = htmlListrik;
+                    container.innerHTML = htmlList;
                 }
+            }
+
+            if (currentUtilView === 'air' || currentUtilView === 'listrik') {
+                renderTop10List(top5ListMingguEl, top10DataMinggu);
+                renderTop10List(top5ListBulanEl, top10DataBulan);
             }
 
             let html = '';
