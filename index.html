@@ -1040,6 +1040,7 @@
 
                 <form id="utilitas-form" class="p-4 sm:p-6 space-y-6">
                     <input type="hidden" id="u-edit-id" name="edit_id" value="">
+                    <input type="hidden" id="u-original-date" name="original_date" value="">
                     
                     <div id="admin-util-selector-container" class="hidden p-4 bg-amber-50 rounded-2xl border border-amber-200">
                         <label class="flex items-center gap-2 text-xs text-amber-700 uppercase font-bold tracking-widest mb-3"><span class="material-symbols-rounded icon-fill text-amber-500 text-lg">workspace_premium</span> Override Admin (Utilitas)</label>
@@ -2036,6 +2037,13 @@
             </div>`;
             
             const d = data.data;
+
+            if (d.edited_at) {
+                content += `<div class="mb-4 bg-amber-50/50 p-2 rounded border border-amber-200 text-center shadow-sm">
+                    <p class="text-[10px] text-amber-600 uppercase font-bold tracking-widest flex items-center justify-center gap-1"><span class="material-symbols-rounded text-[14px]">history</span> Terakhir Diubah</p>
+                    <p class="text-xs font-bold text-amber-800">${d.edited_at} <span class="font-medium text-[10px]">oleh ${d.edited_by || '-'}</span></p>
+                </div>`;
+            }
             
             const renderAir = () => {
                 let h = `<div class="mb-4"><h4 class="font-bold text-sm text-blue-600 border-b border-blue-100 pb-1 mb-2 flex items-center gap-1"><span class="material-symbols-rounded text-[16px]">water_drop</span> Informasi Air</h4>`;
@@ -2163,6 +2171,7 @@
             
             document.getElementById('utilitas-form').reset();
             document.getElementById('u-edit-id').value = data.id;
+            document.getElementById('u-original-date').value = data.date || '';
             
             if (currentUser.role === 'admin') {
                 document.getElementById('admin-util-selector-container').classList.remove('hidden');
@@ -2583,17 +2592,34 @@
             const dataObj = Object.fromEntries(formData.entries());
             
             const editId = dataObj.edit_id;
+            const originalDate = dataObj.original_date;
             delete dataObj.edit_id;
+            delete dataObj.original_date;
 
             if(dataObj.air_mekanisme === 'Lainnya') dataObj.air_mekanisme = dataObj.air_mekanisme_lain;
             if(dataObj.ipl_bersih_nom) dataObj.ipl_bersih_nom = parseSafeNumber(dataObj.ipl_bersih_nom);
             if(dataObj.ipl_aman_nom) dataObj.ipl_aman_nom = parseSafeNumber(dataObj.ipl_aman_nom);
 
             let d = new Date();
+            let isDateOverridden = false;
             if (currentUser.role === 'admin' && document.getElementById('admin-util-date-override').value) {
                 d = new Date(document.getElementById('admin-util-date-override').value);
+                isDateOverridden = true;
             }
             const dateStr = `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}, ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+            
+            let finalDate = dateStr;
+            if (editId && !isDateOverridden && originalDate) {
+                finalDate = originalDate;
+            }
+
+            let realNow = new Date();
+            const realDateStr = `${String(realNow.getDate()).padStart(2,'0')}/${String(realNow.getMonth()+1).padStart(2,'0')}/${realNow.getFullYear()}, ${String(realNow.getHours()).padStart(2,'0')}:${String(realNow.getMinutes()).padStart(2,'0')}`;
+
+            if (editId) {
+                dataObj.edited_at = realDateStr;
+                dataObj.edited_by = currentUser.pic_name || currentUser.username;
+            }
 
             let uName = currentUser.stagging_name || 'Staging Dummy (Admin)';
             let uPic = currentUser.pic_name || currentUser.username;
@@ -2611,12 +2637,12 @@
             }
 
             const payload = { 
-                id: 'UTIL' + Date.now(), 
+                id: editId || 'UTIL' + Date.now(), 
                 user_id: currentUser.id, 
                 pic: uPic, 
                 ssc: uSsc, 
                 stagging_name: uName, 
-                date: dateStr,
+                date: finalDate,
                 bulan: dataObj.bulan,
                 tahun: dataObj.tahun,
                 minggu: dataObj.minggu,
@@ -2631,7 +2657,7 @@
             try {
                 const { data: existing } = await supabaseClient
                     .from('utilitas_data')
-                    .select('id, pic')
+                    .select('id, pic, date')
                     .eq('stagging_name', uName)
                     .eq('bulan', dataObj.bulan)
                     .eq('tahun', dataObj.tahun)
@@ -2641,6 +2667,9 @@
                 if (existing && existing.id !== editId) {
                     if (currentUser.role === 'admin') {
                         payload.id = existing.id; 
+                        if (!isDateOverridden) payload.date = existing.date;
+                        payload.data.edited_at = realDateStr;
+                        payload.data.edited_by = currentUser.pic_name || currentUser.username;
                         await supabaseClient.from('utilitas_data').update(payload).eq('id', existing.id);
                         Island.show('Revisi Data Berhasil Disimpan.', 'success');
                     } else {
@@ -2788,6 +2817,9 @@
 
                 let usageTotals = validUsers.map(u => {
                     let totalUsage = 0;
+                    let diffDays = 7;
+                    let hasData = false;
+
                     let userAllSubs = allFetchedData.filter(d => d.stagging_name === u.stagging_name)
                         .sort((a,b) => getOrderScore(a) - getOrderScore(b));
                         
@@ -2798,6 +2830,13 @@
                         const currentIndex = userAllSubs.findIndex(s => s.id === submit.id);
                         let prevSubmit = currentIndex > 0 ? userAllSubs[currentIndex - 1] : null;
 
+                        if (prevSubmit) {
+                            let ts1 = parseDateObj(submit.date);
+                            let ts2 = parseDateObj(prevSubmit.date);
+                            diffDays = (ts1 - ts2) / (1000 * 60 * 60 * 24);
+                            if (diffDays <= 0) diffDays = 7;
+                        }
+
                         if (currentUtilView === 'listrik') {
                             let currMeters = extractListrikMeters(submit.data);
                             let prevMeters = prevSubmit ? extractListrikMeters(prevSubmit.data) : [];
@@ -2805,9 +2844,9 @@
                                 let pm = prevMeters.find(meter => meter.id === cm.id);
                                 if (pm) {
                                     if (cm.kategori === 'Pra Bayar (Token)') {
-                                        if (pm.angka >= cm.angka) totalUsage += (pm.angka - cm.angka);
+                                        if (pm.angka >= cm.angka) { totalUsage += (pm.angka - cm.angka); hasData = true; }
                                     } else {
-                                        if (cm.angka >= pm.angka) totalUsage += (cm.angka - pm.angka);
+                                        if (cm.angka >= pm.angka) { totalUsage += (cm.angka - pm.angka); hasData = true; }
                                     }
                                 }
                             });
@@ -2815,15 +2854,17 @@
                             let currVal = parseSafeNumber(submit.data[`${currentUtilView}_angka`]);
                             if (prevSubmit) {
                                 let prevVal = parseSafeNumber(prevSubmit.data[`${currentUtilView}_angka`]);
-                                if (currVal >= prevVal) totalUsage += (currVal - prevVal);
+                                if (currVal >= prevVal) { totalUsage += (currVal - prevVal); hasData = true; }
                             }
                         }
                     }
-                    return { name: u.stagging_name, usage: totalUsage };
+                    
+                    let avgUsage = hasData ? (totalUsage / diffDays) : 0;
+                    return { name: u.stagging_name, usage: totalUsage, avg: avgUsage };
                 });
-                usageTotals.sort((a, b) => b.usage - a.usage);
-                topUsers = usageTotals.filter(u => u.usage > 0).slice(0, 3).map(u => u.name);
-                top5DataToRender = usageTotals.filter(u => u.usage > 0).slice(0, 10);
+                usageTotals.sort((a, b) => b.avg - a.avg);
+                topUsers = usageTotals.filter(u => u.avg > 0).slice(0, 3).map(u => u.name);
+                top5DataToRender = usageTotals.filter(u => u.avg > 0).slice(0, 10);
             }
 
             const top5ListEl = document.getElementById('top5-util-list');
@@ -2833,14 +2874,18 @@
                 } else {
                     let htmlListrik = '';
                     top5DataToRender.forEach((item, idx) => {
-                        let valStr = currentUtilView === 'listrik' ? item.usage.toLocaleString('id-ID') : item.usage.toLocaleString('id-ID', {maximumFractionDigits: 1});
+                        let avgStr = item.avg.toLocaleString('id-ID', {maximumFractionDigits: 1});
+                        let totalStr = item.usage.toLocaleString('id-ID', {maximumFractionDigits: 1});
                         htmlListrik += `
                             <div class="flex justify-between items-center p-2 hover:bg-rose-50 border-b border-slate-100 last:border-0 rounded-lg transition-colors">
                                 <div class="flex items-center gap-2">
-                                    <span class="w-6 h-6 rounded-full ${idx < 3 ? 'bg-rose-100 text-rose-600' : 'bg-slate-100 text-slate-500'} flex items-center justify-center text-[10px] font-extrabold">${idx+1}</span>
-                                    <span class="text-xs font-bold text-slate-700 truncate max-w-[120px]" title="${item.name}">${item.name}</span>
+                                    <span class="w-6 h-6 rounded-full ${idx < 3 ? 'bg-rose-100 text-rose-600' : 'bg-slate-100 text-slate-500'} flex items-center justify-center text-[10px] font-extrabold shrink-0">${idx+1}</span>
+                                    <span class="text-[11px] font-bold text-slate-700 truncate max-w-[120px]" title="${item.name}">${item.name}</span>
                                 </div>
-                                <span class="text-xs font-extrabold text-rose-600">+${valStr}</span>
+                                <div class="flex flex-col items-end leading-none shrink-0">
+                                    <span class="text-[11px] font-extrabold text-rose-600">${avgStr}/hr</span>
+                                    <span class="text-[9px] text-slate-400 font-bold mt-1 truncate max-w-[80px]" title="Total Pemakaian: ${totalStr}">(Tot: ${totalStr})</span>
+                                </div>
                             </div>
                         `;
                     });
