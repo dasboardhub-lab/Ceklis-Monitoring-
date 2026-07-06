@@ -351,6 +351,9 @@
                                     <span class="material-symbols-rounded text-[18px] shrink-0 text-slate-400">expand_more</span>
                                 </button>
                                 <div id="util-bulan-dropdown-menu" class="hidden absolute left-0 mt-2 w-48 rounded-2xl shadow-float bg-white border border-slate-100 z-50 p-2 max-h-[50vh] overflow-y-auto custom-scroll">
+                                    <div class="sticky top-0 bg-white z-10 pb-2 mb-2 border-b border-slate-100">
+                                        <button type="button" onclick="resetUtilBulanFilter()" class="w-full py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 text-[10px] font-bold rounded-lg transition-colors">RESET PILIHAN (SEMUA)</button>
+                                    </div>
                                     <label class="flex items-center gap-3 p-2 hover:bg-slate-50 rounded-xl cursor-pointer smooth-transition"><input type="checkbox" value="1" class="util-bulan-checkbox w-4 h-4 text-brand-600 bg-slate-100 border-slate-300 rounded focus:ring-brand-500" onchange="handleUtilBulanChange()"><span class="text-sm font-bold text-slate-700">Januari</span></label>
                                     <label class="flex items-center gap-3 p-2 hover:bg-slate-50 rounded-xl cursor-pointer smooth-transition"><input type="checkbox" value="2" class="util-bulan-checkbox w-4 h-4 text-brand-600 bg-slate-100 border-slate-300 rounded focus:ring-brand-500" onchange="handleUtilBulanChange()"><span class="text-sm font-bold text-slate-700">Februari</span></label>
                                     <label class="flex items-center gap-3 p-2 hover:bg-slate-50 rounded-xl cursor-pointer smooth-transition"><input type="checkbox" value="3" class="util-bulan-checkbox w-4 h-4 text-brand-600 bg-slate-100 border-slate-300 rounded focus:ring-brand-500" onchange="handleUtilBulanChange()"><span class="text-sm font-bold text-slate-700">Maret</span></label>
@@ -1822,6 +1825,7 @@
             menu.innerHTML = `
                 <div class="sticky top-0 bg-white z-10 pb-2 mb-2 border-b border-slate-100">
                     <input type="text" placeholder="Cari Koordinator..." class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm font-medium focus:outline-none focus:border-brand-500" onkeyup="filterDropdownList(this, 'util-koor-dropdown-list')">
+                    <button type="button" onclick="resetUtilKoorFilter()" class="w-full mt-2 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 text-[10px] font-bold rounded-lg transition-colors">RESET PILIHAN (SEMUA)</button>
                 </div>
                 <div id="util-koor-dropdown-list" class="space-y-1"></div>
             `;
@@ -1838,6 +1842,7 @@
             menu.innerHTML = `
                 <div class="sticky top-0 bg-white z-10 pb-2 mb-2 border-b border-slate-100">
                     <input type="text" placeholder="Cari Area..." class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm font-medium focus:outline-none focus:border-brand-500" onkeyup="filterDropdownList(this, 'util-ssc-dropdown-list')">
+                    <button type="button" onclick="resetUtilSscFilter()" class="w-full mt-2 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 text-[10px] font-bold rounded-lg transition-colors">RESET PILIHAN (SEMUA)</button>
                 </div>
                 <div id="util-ssc-dropdown-list" class="space-y-1"></div>
             `;
@@ -2725,13 +2730,16 @@
             
             const vStatus = document.getElementById('util-filter-status') ? document.getElementById('util-filter-status').value : 'all';
             if (vStatus !== 'all') {
+                let now = new Date();
+                const currWi = getCustomWeekInfo(now);
+                
                 validUsers = validUsers.filter(u => {
-                    let hasSub = false;
-                    if (currentUtilView === 'rekap') {
-                        hasSub = allFetchedData.some(d => d.stagging_name === u.stagging_name && parseInt(d.tahun) === selTahun && selBulans.includes(parseInt(d.bulan)) && parseInt(d.minggu) === selMinggu);
-                    } else {
-                        hasSub = allFetchedData.some(d => d.stagging_name === u.stagging_name && parseInt(d.tahun) === selTahun && selBulans.includes(parseInt(d.bulan)));
-                    }
+                    let hasSub = allFetchedData.some(d => 
+                        d.stagging_name === u.stagging_name && 
+                        parseInt(d.tahun) === currWi.tahun && 
+                        parseInt(d.bulan) === currWi.bulan && 
+                        parseInt(d.minggu) === currWi.minggu
+                    );
                     return vStatus === 'submitted' ? hasSub : !hasSub;
                 });
             }
@@ -4100,6 +4108,26 @@
             applyFiltersAndRender();
         };
 
+        window.resetUtilKoorFilter = function() {
+            document.querySelectorAll('.util-koor-checkbox').forEach(cb => cb.checked = false);
+            handleUtilKoorChange();
+        };
+
+        window.resetUtilSscFilter = function() {
+            document.querySelectorAll('.util-ssc-checkbox').forEach(cb => cb.checked = false);
+            handleUtilSscChange();
+        };
+        
+        window.resetUtilBulanFilter = function() {
+            document.querySelectorAll('.util-bulan-checkbox').forEach(cb => cb.checked = false);
+            handleUtilBulanChange();
+        };
+
+        window.resetSscFilter = function() {
+            document.querySelectorAll('.ssc-checkbox').forEach(cb => cb.checked = false);
+            handleSscChange();
+        };
+
         let listrikMeterCount = 1;
         window.addListrikMeter = function() {
             const container = document.getElementById('listrik-meters-container');
@@ -4196,12 +4224,19 @@
 
             const menu = document.getElementById('ssc-dropdown-menu');
             if (menu) {
-                menu.innerHTML = '';
+                menu.innerHTML = `
+                    <div class="sticky top-0 bg-white z-10 pb-2 mb-2 border-b border-slate-100">
+                        <input type="text" placeholder="Cari Koordinator..." class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm font-medium focus:outline-none focus:border-brand-500" onkeyup="filterDropdownList(this, 'ssc-dropdown-list')">
+                        <button type="button" onclick="resetSscFilter()" class="w-full mt-2 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 text-[10px] font-bold rounded-lg transition-colors">RESET PILIHAN (SEMUA)</button>
+                    </div>
+                    <div id="ssc-dropdown-list" class="space-y-1"></div>
+                `;
                 const { data: users } = await supabaseClient.from('users').select('ssc').eq('role', 'user');
                 if (users) {
+                    const listContainer = document.getElementById('ssc-dropdown-list');
                     const uniqueSsc = [...new Set(users.map(u => u.ssc).filter(Boolean))].sort();
                     uniqueSsc.forEach(ssc => { 
-                        menu.innerHTML += `
+                        listContainer.innerHTML += `
                             <label class="flex items-center gap-3 p-2 hover:bg-slate-50 rounded-xl cursor-pointer smooth-transition">
                                 <input type="checkbox" value="${ssc}" class="ssc-checkbox w-4 h-4 text-brand-600 bg-slate-100 border-slate-300 rounded focus:ring-brand-500" onchange="handleSscChange()">
                                 <span class="text-sm font-bold text-slate-700">${ssc}</span>
