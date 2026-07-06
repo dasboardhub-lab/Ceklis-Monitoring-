@@ -1413,6 +1413,19 @@
         let editingSubmissionId = null;
         let globalAdminUsers = [];
 
+        let utilSortCol = 'ssc';
+        let utilSortDir = 'asc';
+
+        window.handleUtilSort = function(col) {
+            if (utilSortCol === col) {
+                utilSortDir = utilSortDir === 'asc' ? 'desc' : 'asc';
+            } else {
+                utilSortCol = col;
+                utilSortDir = col === 'ssc' ? 'asc' : 'desc';
+            }
+            renderUtilitasTable();
+        };
+
         const itemTypeConfig = {
             'ok_nonok': { pos: 'OK', neg: 'Non OK', posL: 'OK', negL: 'Non OK', iconPos: 'check', iconNeg: 'close', bgPos: 'bg-emerald-50', textPos: 'text-emerald-700', bgNeg: 'bg-rose-50', textNeg: 'text-rose-700' },
             'ada_tidak': { pos: 'Ada', neg: 'Tidak Ada', posL: 'Ada', negL: 'Tidak Ada', iconPos: 'inventory_2', iconNeg: 'block', bgPos: 'bg-indigo-50', textPos: 'text-indigo-700', bgNeg: 'bg-slate-100', textNeg: 'text-slate-500' },
@@ -2758,7 +2771,12 @@
             if (currentUtilView === 'rekap') {
                 thead.innerHTML = `
                     <tr class="bg-slate-100 text-slate-600 font-bold border-b border-slate-200 uppercase tracking-wider text-[10px]">
-                        <th class="p-3 border-r border-slate-200 sticky-col-1 min-w-[150px]">Staging & PIC</th>
+                        <th class="p-3 border-r border-slate-200 sticky-col-1 min-w-[150px] cursor-pointer hover:bg-slate-200 transition-colors" onclick="handleUtilSort('ssc')">
+                            <div class="flex items-center justify-between">
+                                <span>Staging & PIC</span>
+                                ${utilSortCol === 'ssc' ? `<span class="material-symbols-rounded text-[14px]">${utilSortDir === 'asc' ? 'arrow_upward' : 'arrow_downward'}</span>` : '<span class="material-symbols-rounded text-[14px] text-slate-300">swap_vert</span>'}
+                            </div>
+                        </th>
                         <th class="p-3 border-r border-slate-200 min-w-[200px]">Fasilitas Air</th>
                         <th class="p-3 border-r border-slate-200 min-w-[200px]">Fasilitas Listrik</th>
                         <th class="p-3 min-w-[200px]">Data IPL</th>
@@ -2767,9 +2785,16 @@
             } else {
                 let theadHtml = `
                     <tr class="bg-slate-100 text-slate-600 font-bold border-b border-slate-200 uppercase tracking-wider">
-                        <th class="p-3 border-r border-slate-200 min-w-[150px] sticky-col-1 z-50 bg-slate-100">Staging & PIC</th>`;
+                        <th class="p-3 border-r border-slate-200 min-w-[150px] sticky-col-1 z-50 bg-slate-100 cursor-pointer hover:bg-slate-200 transition-colors" onclick="handleUtilSort('ssc')">
+                            <div class="flex items-center justify-between">
+                                <span>Staging & PIC</span>
+                                ${utilSortCol === 'ssc' ? `<span class="material-symbols-rounded text-[14px]">${utilSortDir === 'asc' ? 'arrow_upward' : 'arrow_downward'}</span>` : '<span class="material-symbols-rounded text-[14px] text-slate-300">swap_vert</span>'}
+                            </div>
+                        </th>`;
                 
-                weekIterators.forEach((w) => {
+                weekIterators.forEach((w, wIdx) => {
+                    let sortIcon = utilSortCol === 'w' + wIdx ? `<span class="material-symbols-rounded text-[14px]">${utilSortDir === 'asc' ? 'arrow_upward' : 'arrow_downward'}</span>` : '<span class="material-symbols-rounded text-[14px] text-slate-300 opacity-50 hover:opacity-100">swap_vert</span>';
+                    
                     if(w.saturdays[w.minggu-1]) {
                         let satDate = new Date(selTahun, w.bulan - 1, w.saturdays[w.minggu-1]);
                         let monDate = new Date(satDate); monDate.setDate(satDate.getDate() - 5);
@@ -2777,10 +2802,26 @@
                         let monStr = `${monDate.getDate()} ${w.monthNameShort}`;
                         let sunStr = `${sunDate.getDate()} ${w.monthNameShort}`;
                         
-                        theadHtml += `<th class="p-3 border-r border-slate-200 text-center min-w-[140px]">${w.monthNameShort} M${w.minggu}<br><span class="text-[9px] text-slate-500 font-medium">${monStr} - ${sunStr}</span></th>`;
+                        theadHtml += `<th class="p-3 border-r border-slate-200 text-center min-w-[140px] cursor-pointer hover:bg-slate-200 transition-colors" onclick="handleUtilSort('w${wIdx}')">
+                            <div class="flex flex-col items-center justify-center">
+                                <div class="flex items-center gap-1">
+                                    <span>${w.monthNameShort} M${w.minggu}</span>
+                                    ${sortIcon}
+                                </div>
+                                <span class="text-[9px] text-slate-500 font-medium">${monStr} - ${sunStr}</span>
+                            </div>
+                        </th>`;
                         monthLabels.push(`${w.monthNameShort} M${w.minggu}`);
                     } else {
-                        theadHtml += `<th class="p-3 border-r border-slate-200 text-center min-w-[140px]">${w.monthNameShort} M${w.minggu}<br><span class="text-[9px] text-slate-500 font-medium">-</span></th>`;
+                        theadHtml += `<th class="p-3 border-r border-slate-200 text-center min-w-[140px] cursor-pointer hover:bg-slate-200 transition-colors" onclick="handleUtilSort('w${wIdx}')">
+                            <div class="flex flex-col items-center justify-center">
+                                <div class="flex items-center gap-1">
+                                    <span>${w.monthNameShort} M${w.minggu}</span>
+                                    ${sortIcon}
+                                </div>
+                                <span class="text-[9px] text-slate-500 font-medium">-</span>
+                            </div>
+                        </th>`;
                         monthLabels.push(`${w.monthNameShort} M${w.minggu}`);
                     }
                 });
@@ -2975,7 +3016,68 @@
                 return;
             }
 
-            validUsers.sort((a, b) => (a.stagging_name || '').localeCompare(b.stagging_name || ''));
+            // --- SORTING CALCULATION PASS ---
+            validUsers.forEach(u => {
+                let sortVal = 0;
+                if (utilSortCol === 'ssc') {
+                    sortVal = (u.ssc || '') + '-' + (u.stagging_name || '');
+                } else if (utilSortCol.startsWith('w')) {
+                    const wIdx = parseInt(utilSortCol.substring(1));
+                    const w = weekIterators[wIdx];
+                    if (w) {
+                        const userAllSubs = allFetchedData.filter(d => d.stagging_name === u.stagging_name).sort((a,b) => getOrderScore(a) - getOrderScore(b));
+                        let submitsForMinggu = userAllSubs.filter(d => parseInt(d.minggu) === w.minggu && parseInt(d.bulan) === w.bulan && parseInt(d.tahun) === selTahun);
+                        submitsForMinggu.sort((a,b) => parseInt(b.bulan) - parseInt(a.bulan));
+                        const submit = submitsForMinggu.length > 0 ? submitsForMinggu[0] : null;
+
+                        if (submit) {
+                            const currentIndex = userAllSubs.findIndex(s => s.id === submit.id);
+                            let prevSubmit = currentIndex > 0 ? userAllSubs[currentIndex - 1] : null;
+
+                            if (currentUtilView === 'air') {
+                                if (prevSubmit) {
+                                    let currAir = parseSafeNumber(submit.data.air_angka);
+                                    let lastAir = parseSafeNumber(prevSubmit.data.air_angka);
+                                    if (currAir >= lastAir) sortVal = currAir - lastAir;
+                                }
+                            } else if (currentUtilView === 'listrik') {
+                                 if (prevSubmit) {
+                                     let currMeters = extractListrikMeters(submit.data);
+                                     let prevMeters = extractListrikMeters(prevSubmit.data);
+                                     let tempVal = 0;
+                                     currMeters.forEach(cm => {
+                                         let pm = prevMeters.find(m => m.id === cm.id);
+                                         if (pm) {
+                                             if (cm.kategori === 'Pra Bayar (Token)' && pm.angka >= cm.angka) tempVal += (pm.angka - cm.angka);
+                                             else if (cm.kategori !== 'Pra Bayar (Token)' && cm.angka >= pm.angka) tempVal += (cm.angka - pm.angka);
+                                         }
+                                     });
+                                     sortVal = tempVal;
+                                 }
+                            } else if (currentUtilView === 'ipl') {
+                                let valBersih = submit.data.ipl_bersih === 'Ada' ? parseSafeNumber(submit.data.ipl_bersih_nom) : 0;
+                                let valAman = submit.data.ipl_aman === 'Ada' ? parseSafeNumber(submit.data.ipl_aman_nom) : 0;
+                                sortVal = valBersih + valAman;
+                            }
+                        } else {
+                            sortVal = -1; 
+                        }
+                    }
+                }
+                u._sortValue = sortVal;
+            });
+
+            validUsers.sort((a, b) => {
+                if (utilSortCol === 'ssc') {
+                    const valA = a._sortValue || '';
+                    const valB = b._sortValue || '';
+                    return utilSortDir === 'asc' ? valA.localeCompare(valB) : valB.localeCompare(valA);
+                } else {
+                    const valA = a._sortValue !== undefined ? a._sortValue : -1;
+                    const valB = b._sortValue !== undefined ? b._sortValue : -1;
+                    return utilSortDir === 'asc' ? valA - valB : valB - valA;
+                }
+            });
 
             let chartLabels = [];
             let chartDatasets = [];
