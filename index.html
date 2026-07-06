@@ -2305,7 +2305,7 @@
                 if(weekFilter) weekFilter.classList.add('hidden');
                 const titleSuffix = utilChartScale === 'mingguan' ? '(Trend Bulan Ini)' : '(Trend Tahun Ini)';
                 document.getElementById('chart-util-title').textContent = `Total ${view === 'air' ? 'Pemakaian Air' : 'Pemakaian Listrik'} ${titleSuffix}`;
-                document.getElementById('top5-util-title').textContent = `Top 10 Pemborosan ${view === 'air' ? 'Air' : 'Listrik'}`;
+                document.getElementById('top5-util-title').textContent = `Top 10 Pemborosan ${view === 'air' ? 'Air' : 'Listrik'} (Minggu Ini)`;
             }
 
             renderUtilitasTable();
@@ -2751,39 +2751,42 @@
             let topUsers = [];
             let top5DataToRender = [];
             if (currentUtilView === 'air' || currentUtilView === 'listrik') {
+                let now = new Date();
+                const currWi = getCustomWeekInfo(now);
+
                 let usageTotals = validUsers.map(u => {
                     let totalUsage = 0;
                     let userAllSubs = allFetchedData.filter(d => d.stagging_name === u.stagging_name)
                         .sort((a,b) => getOrderScore(a) - getOrderScore(b));
                         
-                    weekIterators.forEach(w => {
-                        const submit = utilDataCurrent.find(d => d.stagging_name === u.stagging_name && parseInt(d.minggu) === w.minggu && parseInt(d.bulan) === w.bulan);
-                        if(submit) {
-                            const currentIndex = userAllSubs.findIndex(s => s.id === submit.id);
-                            let prevSubmit = currentIndex > 0 ? userAllSubs[currentIndex - 1] : null;
+                    // Hanya kalkulasi selisih untuk pengisian di Minggu Berjalan (real-time)
+                    const submit = userAllSubs.find(d => parseInt(d.tahun) === currWi.tahun && parseInt(d.bulan) === currWi.bulan && parseInt(d.minggu) === currWi.minggu);
+                    
+                    if(submit) {
+                        const currentIndex = userAllSubs.findIndex(s => s.id === submit.id);
+                        let prevSubmit = currentIndex > 0 ? userAllSubs[currentIndex - 1] : null;
 
-                            if (currentUtilView === 'listrik') {
-                                let currMeters = extractListrikMeters(submit.data);
-                                let prevMeters = prevSubmit ? extractListrikMeters(prevSubmit.data) : [];
-                                currMeters.forEach(cm => {
-                                    let pm = prevMeters.find(meter => meter.id === cm.id);
-                                    if (pm) {
-                                        if (cm.kategori === 'Pra Bayar (Token)') {
-                                            if (pm.angka >= cm.angka) totalUsage += (pm.angka - cm.angka);
-                                        } else {
-                                            if (cm.angka >= pm.angka) totalUsage += (cm.angka - pm.angka);
-                                        }
+                        if (currentUtilView === 'listrik') {
+                            let currMeters = extractListrikMeters(submit.data);
+                            let prevMeters = prevSubmit ? extractListrikMeters(prevSubmit.data) : [];
+                            currMeters.forEach(cm => {
+                                let pm = prevMeters.find(meter => meter.id === cm.id);
+                                if (pm) {
+                                    if (cm.kategori === 'Pra Bayar (Token)') {
+                                        if (pm.angka >= cm.angka) totalUsage += (pm.angka - cm.angka);
+                                    } else {
+                                        if (cm.angka >= pm.angka) totalUsage += (cm.angka - pm.angka);
                                     }
-                                });
-                            } else {
-                                let currVal = parseSafeNumber(submit.data[`${currentUtilView}_angka`]);
-                                if (prevSubmit) {
-                                    let prevVal = parseSafeNumber(prevSubmit.data[`${currentUtilView}_angka`]);
-                                    if (currVal >= prevVal) totalUsage += (currVal - prevVal);
                                 }
+                            });
+                        } else {
+                            let currVal = parseSafeNumber(submit.data[`${currentUtilView}_angka`]);
+                            if (prevSubmit) {
+                                let prevVal = parseSafeNumber(prevSubmit.data[`${currentUtilView}_angka`]);
+                                if (currVal >= prevVal) totalUsage += (currVal - prevVal);
                             }
                         }
-                    });
+                    }
                     return { name: u.stagging_name, usage: totalUsage };
                 });
                 usageTotals.sort((a, b) => b.usage - a.usage);
