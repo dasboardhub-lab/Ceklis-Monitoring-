@@ -827,7 +827,7 @@
     </div>
 
     <!-- MODAL: Custom Konfirmasi / Alert -->
-    <div id="custom-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[500] flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+    <div id="custom-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[1000] flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
         <div id="modal-box" class="max-w-sm w-full bg-surface rounded-3xl shadow-float overflow-hidden transform scale-95 transition-transform duration-300 flex flex-col border border-slate-200">
             <div class="p-8 flex-1 text-center flex flex-col items-center">
                 <div id="modal-icon" class="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl mb-5 border"></div>
@@ -1262,9 +1262,9 @@
                 </div>
                 
                 <div id="detail-content" class="space-y-2"></div>
-                        <div id="detail-content" class="space-y-2"></div>
             </div>
             <div class="p-4 border-t border-slate-100 bg-slate-50 flex justify-end gap-2" id="detail-modal-footer">
+                <button id="btn-delete-detail" class="hidden px-5 py-2.5 rounded-xl font-bold text-sm text-white bg-rose-600 hover:bg-rose-700 transition-colors shadow-sm items-center gap-2"><span class="material-symbols-rounded text-[18px]">delete</span> Hapus</button>
                 <button id="btn-edit-detail" class="hidden px-5 py-2.5 rounded-xl font-bold text-sm text-white bg-brand-600 hover:bg-brand-700 transition-colors shadow-sm items-center gap-2"><span class="material-symbols-rounded text-[18px]">edit</span> Edit Data</button>
                 <button onclick="closeUtilitasDetailModal()" class="px-5 py-2.5 rounded-xl font-bold text-sm text-slate-600 bg-white border border-slate-200 hover:bg-slate-100 transition-colors shadow-sm">Tutup</button>
             </div>
@@ -2105,6 +2105,7 @@
             document.getElementById('detail-content').innerHTML = content;
             
             const btnEdit = document.getElementById('btn-edit-detail');
+            const btnDelete = document.getElementById('btn-delete-detail');
             if (btnEdit) {
                 if (currentUser.role === 'admin' || currentUser.stagging_name === data.stagging_name) {
                     btnEdit.classList.remove('hidden');
@@ -2115,6 +2116,16 @@
                     btnEdit.classList.remove('flex');
                 }
             }
+            if (btnDelete) {
+                if (currentUser.role === 'admin') {
+                    btnDelete.classList.remove('hidden');
+                    btnDelete.classList.add('flex');
+                    btnDelete.onclick = () => deleteUtilitasData(id);
+                } else {
+                    btnDelete.classList.add('hidden');
+                    btnDelete.classList.remove('flex');
+                }
+            }
 
             document.getElementById('modal-detail-utilitas').classList.remove('hidden');
         }
@@ -2122,6 +2133,27 @@
         function closeUtilitasDetailModal() {
             document.getElementById('modal-detail-utilitas').classList.add('hidden');
         }
+
+        window.deleteUtilitasData = function(id) {
+            Modal.danger('Hapus Data Utilitas?', 'Data ini akan dihapus permanen. Status PIC akan kembali menjadi "Belum Mengisi" pada minggu tersebut.', async () => {
+                closeUtilitasDetailModal();
+                Island.show('Menghapus data...', 'info');
+                await supabaseClient.from('utilitas_data').delete().eq('id', id);
+                Island.show('Data berhasil dihapus.', 'success');
+                renderUtilitasTable();
+                setTimeout(() => checkAndShowReminders(false), 1000);
+            });
+        };
+
+        window.deleteSubmission = function(id) {
+            Modal.danger('Hapus Laporan Ceklis?', 'Data laporan ini akan dihapus permanen. Status PIC akan kembali menjadi "Belum Mengisi" pada bulan tersebut.', async () => {
+                Island.show('Menghapus laporan...', 'info');
+                await supabaseClient.from('submissions').delete().eq('id', id);
+                Island.show('Laporan berhasil dihapus.', 'success');
+                applyFiltersAndRender();
+                setTimeout(() => checkAndShowReminders(false), 1000);
+            });
+        };
 
         window.editUtilitasData = function(id) {
             const data = globalUtilData.find(d => d.id === id);
@@ -4397,10 +4429,20 @@
                     }
                     
                     let actionHtml = '';
-                    if (isEditable && (currentUser.role === 'admin' || currentUser.id === sub.user_id)) {
-                        actionHtml = `<button onclick="editSubmission('${sub.id}')" class="text-brand-600 bg-brand-50 hover:bg-brand-100 w-8 h-8 rounded-lg transition-colors flex items-center justify-center mx-auto shadow-sm" title="Edit Laporan (H+5)"><span class="material-symbols-rounded text-[18px]">edit</span></button>`;
-                    } else if (sub.date !== '-') {
-                         actionHtml = `<span class="material-symbols-rounded text-slate-300 text-[18px]" title="Terkunci">lock</span>`;
+                    if (sub.date !== '-') {
+                        let btnHtml = '';
+                        if (isEditable && (currentUser.role === 'admin' || currentUser.id === sub.user_id)) {
+                            btnHtml += `<button onclick="editSubmission('${sub.id}')" class="text-brand-600 bg-brand-50 hover:bg-brand-100 w-8 h-8 rounded-lg transition-colors flex items-center justify-center shadow-sm" title="Edit Laporan (H+5)"><span class="material-symbols-rounded text-[18px]">edit</span></button>`;
+                        }
+                        if (currentUser.role === 'admin') {
+                            btnHtml += `<button onclick="deleteSubmission('${sub.id}')" class="text-rose-600 bg-rose-50 hover:bg-rose-100 w-8 h-8 rounded-lg transition-colors flex items-center justify-center shadow-sm" title="Hapus Laporan"><span class="material-symbols-rounded text-[18px]">delete</span></button>`;
+                        }
+                        
+                        if (btnHtml !== '') {
+                            actionHtml = `<div class="flex items-center justify-center gap-1">${btnHtml}</div>`;
+                        } else {
+                            actionHtml = `<span class="material-symbols-rounded text-slate-300 text-[18px]" title="Terkunci">lock</span>`;
+                        }
                     } else {
                          actionHtml = `-`;
                     }
