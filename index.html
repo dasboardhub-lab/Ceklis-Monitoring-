@@ -4668,18 +4668,11 @@
                          actionHtml = `-`;
                     }
 
-                    let prevSscHtml = '';
-                    if (sscHistory && sscHistory[sub.user_id]) {
-                        const hist = sscHistory[sub.user_id]; const currentIdx = hist.indexOf(sub.stagging_name); let prevSsc = null;
-                        if (currentIdx > 0) prevSsc = hist[currentIdx - 1]; else if (currentIdx === -1 && hist.length > 0) prevSsc = hist[hist.length - 1];
-                        if (prevSsc && prevSsc !== sub.stagging_name) { prevSscHtml = `<div class="text-[8px] text-brand-600 font-extrabold bg-brand-50 border border-brand-200 rounded px-1.5 py-0.5 mt-1 inline-block whitespace-nowrap uppercase tracking-widest"><span class="material-symbols-rounded text-[10px] mr-0.5 align-middle">history</span>Eks-${prevSsc}</div>`; }
-                    }
-
                     html += `<tr class="hover:bg-slate-50 smooth-transition ${borderCls}">
                         <td class="px-2 py-2 sticky-col-1 col-w-1 text-center font-extrabold text-slate-800 text-[10px] hidden md:table-cell">${sub.ssc || '-'}</td>
                         <td class="px-2 py-2 sticky-col-2 col-w-2 text-center font-bold text-slate-500 text-[10px] hidden md:table-cell uppercase">${sub.province || '-'}</td>
                         <td class="px-2 py-2 sticky-col-3 col-w-3 font-extrabold text-slate-900 text-[11px] shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] md:shadow-none leading-tight">${sub.stagging_name || '-'}</td>
-                        <td class="px-2 py-2 text-slate-800 font-bold text-[10px] leading-tight min-w-[140px]">${sub.pic !== '-' ? sub.pic : '<span class="text-slate-300 italic font-medium">Kosong</span>'}<br>${prevSscHtml}</td>
+                        <td class="px-2 py-2 text-slate-800 font-bold text-[10px] leading-tight min-w-[140px]">${sub.pic !== '-' ? sub.pic : '<span class="text-slate-300 italic font-medium">Kosong</span>'}</td>
                         <td class="px-2 py-2 text-center text-slate-500 text-[9px] font-bold bg-slate-50 min-w-[110px]">${sub.date.replace(', ', '<br><span class="text-brand-600">')}</span></td>
                         <td class="px-2 py-2 text-center align-middle bg-white">${actionHtml}</td>`;
 
