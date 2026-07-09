@@ -599,6 +599,16 @@
                                     <div id="ssc-dropdown-menu" class="hidden absolute right-0 mt-2 w-56 rounded-2xl shadow-float bg-white border border-slate-100 z-50 p-2 max-h-[50vh] overflow-y-auto custom-scroll">
                                     </div>
                                 </div>
+                                
+                                <div class="hidden sm:block w-px h-5 bg-slate-200 shrink-0"></div>
+                                
+                                <label class="flex items-center cursor-pointer group shrink-0 gap-2 px-2" title="Hanya tampilkan area yang memiliki temuan/kerusakan pada kategori terpilih">
+                                    <span class="text-[11px] font-extrabold text-slate-500 uppercase tracking-widest group-hover:text-amber-600 transition-colors">Mode Temuan</span>
+                                    <div class="relative inline-block w-8 align-middle select-none">
+                                        <input type="checkbox" id="filter-issues-only" class="toggle-checkbox absolute z-10 block w-4 h-4 mt-0.5 rounded-full bg-white border border-slate-300 appearance-none cursor-pointer peer transition-all shadow-sm" onchange="applyFiltersAndRender()"/>
+                                        <label for="filter-issues-only" class="toggle-label block overflow-hidden h-5 rounded-full bg-slate-200 cursor-pointer peer-checked:bg-amber-500 transition-colors"></label>
+                                    </div>
+                                </label>
                             </div>
 
                             <div class="flex gap-2 w-full 2xl:w-auto overflow-x-auto hide-scrollbar pb-1 2xl:pb-0 shrink-0">
@@ -2848,15 +2858,25 @@
             
             const vStatus = document.getElementById('util-filter-status') ? document.getElementById('util-filter-status').value : 'all';
             if (vStatus !== 'all') {
-                let now = new Date();
-                const currWi = getCustomWeekInfo(now);
+                let targetTahun, targetMinggu, targetBulans;
+                if (currentUtilView === 'rekap') {
+                    targetTahun = selTahun;
+                    targetMinggu = selMinggu;
+                    targetBulans = selBulans;
+                } else {
+                    let now = new Date();
+                    const currWi = getCustomWeekInfo(now);
+                    targetTahun = currWi.tahun;
+                    targetMinggu = currWi.minggu;
+                    targetBulans = [currWi.bulan];
+                }
                 
                 validUsers = validUsers.filter(u => {
                     let hasSub = allFetchedData.some(d => 
                         d.stagging_name === u.stagging_name && 
-                        parseInt(d.tahun) === currWi.tahun && 
-                        parseInt(d.bulan) === currWi.bulan && 
-                        parseInt(d.minggu) === currWi.minggu
+                        parseInt(d.tahun) === targetTahun && 
+                        targetBulans.includes(parseInt(d.bulan)) && 
+                        parseInt(d.minggu) === targetMinggu
                     );
                     return vStatus === 'submitted' ? hasSub : !hasSub;
                 });
@@ -4134,15 +4154,7 @@
                                 </div>
                                 <div class="flex flex-col sm:flex-row sm:items-center gap-4 shrink-0 bg-slate-50 sm:bg-transparent p-3 sm:p-0 rounded-xl sm:rounded-none border sm:border-transparent border-slate-100">
                                     <label class="flex items-center cursor-pointer group justify-between sm:justify-start">
-                                        <span class="text-[10px] font-extrabold ${item.requiresNote ? 'text-amber-600' : 'text-slate-400'} uppercase tracking-widest order-2 sm:order-1 sm:mr-3">Note</span>
-                                        <div class="relative inline-block w-8 align-middle select-none order-1 sm:order-2">
-                                            <input type="checkbox" id="req-note-${item.id}" class="toggle-checkbox absolute z-10 block w-4 h-4 mt-0.5 rounded-full bg-white border border-slate-300 appearance-none cursor-pointer peer transition-all" ${item.requiresNote ? 'checked' : ''} onchange="adminToggleItemNote('${cat.id}', '${item.id}')"/>
-                                            <label for="req-note-${item.id}" class="toggle-label block overflow-hidden h-5 rounded-full bg-slate-200 cursor-pointer peer-checked:bg-amber-500 transition-colors"></label>
-                                        </div>
-                                    </label>
-                                    <div class="hidden sm:block h-6 w-px bg-slate-200"></div>
-                                    <label class="flex items-center cursor-pointer group justify-between sm:justify-start">
-                                        <span class="text-[10px] font-extrabold ${item.allowNA ? 'text-slate-700' : 'text-slate-400'} uppercase tracking-widest order-2 sm:order-1 sm:mr-3">Opsi N/A</span>
+                                        <span class="text-[10px] font-extrabold ${item.allowNA ? 'text-slate-700' : 'text-slate-400'} uppercase tracking-widest order-2 sm:order-1 sm:mr-3">Opsi "Tidak Ada"</span>
                                         <div class="relative inline-block w-8 align-middle select-none order-1 sm:order-2">
                                             <input type="checkbox" id="allow-na-${item.id}" class="toggle-checkbox absolute z-10 block w-4 h-4 mt-0.5 rounded-full bg-white border border-slate-300 appearance-none cursor-pointer peer transition-all" ${item.allowNA ? 'checked' : ''} onchange="adminToggleItemNA('${cat.id}', '${item.id}')"/>
                                             <label for="allow-na-${item.id}" class="toggle-label block overflow-hidden h-5 rounded-full bg-slate-200 cursor-pointer peer-checked:bg-slate-700 transition-colors"></label>
@@ -4543,6 +4555,24 @@
             if (vStatus === 'submitted') { renderData = renderData.filter(d => d.date !== '-'); } 
             else if (vStatus === 'unsubmitted') { renderData = renderData.filter(d => d.date === '-'); }
 
+            const showIssuesOnly = document.getElementById('filter-issues-only') ? document.getElementById('filter-issues-only').checked : false;
+            if (showIssuesOnly) {
+                const displayedItemIds = [];
+                filteredCats.forEach(cat => {
+                    if (cat.items) cat.items.forEach(item => displayedItemIds.push({ id: item.id, type: item.type }));
+                });
+                
+                renderData = renderData.filter(d => {
+                    if (d.date === '-') return false; 
+                    return displayedItemIds.some(item => {
+                        const ans = d.answers[item.id];
+                        if (!ans) return false;
+                        const tDef = itemTypeConfig[item.type || 'ok_nonok'];
+                        return ans.status !== tDef.pos && ans.status !== 'N/A';
+                    });
+                });
+            }
+
             renderData.sort((a, b) => { 
                 if (a.ssc !== b.ssc) return (a.ssc || '').localeCompare(b.ssc || ''); 
                 if (a.province !== b.province) return (a.province || '').localeCompare(b.province || ''); 
@@ -4600,15 +4630,19 @@
             document.getElementById('modal-checklist-form').classList.remove('hidden');
         }
 
+        window.showParameterDetail = function(text) {
+            Modal._show('info', 'Parameter Inspeksi', text, 'find_in_page', 'text-brand-600', 'bg-brand-50 border-brand-100', null);
+        };
+
         function renderDashboardHeaders(cats) {
             const row1 = document.getElementById('thead-row-1'); const row2 = document.getElementById('thead-row-2'); const row3 = document.getElementById('thead-row-3');
             
-            let h1 = `<th rowspan="3" class="p-2 sticky-col-1 col-w-1 bg-white border-r border-b-2 border-slate-200 text-center hidden md:table-cell">Area SSC</th>
-                      <th rowspan="3" class="p-2 sticky-col-2 col-w-2 bg-white border-r border-b-2 border-slate-200 text-center hidden md:table-cell">Provinsi</th>
-                      <th rowspan="3" class="p-2 sticky-col-3 col-w-3 bg-white border-r border-b-2 border-slate-200 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] md:shadow-none text-center">Kode SS</th>
-                      <th rowspan="3" class="p-2 bg-white border-r border-b-2 border-slate-200 text-center min-w-[140px]">Penanggung Jawab</th>
-                      <th rowspan="3" class="p-2 bg-white border-r border-b-2 border-slate-200 text-center min-w-[120px]">Tanggal Pelaporan</th>
-                      <th rowspan="3" class="p-2 bg-white border-r border-b-2 border-slate-200 text-center min-w-[80px]">Aksi</th>`;
+            let h1 = `<th rowspan="3" class="px-2 py-1.5 sticky-col-1 col-w-1 bg-white border-r border-b-2 border-slate-200 text-center hidden md:table-cell text-[10px] leading-tight">Area SSC</th>
+                      <th rowspan="3" class="px-2 py-1.5 sticky-col-2 col-w-2 bg-white border-r border-b-2 border-slate-200 text-center hidden md:table-cell text-[10px] leading-tight">Provinsi</th>
+                      <th rowspan="3" class="px-2 py-1.5 sticky-col-3 col-w-3 bg-white border-r border-b-2 border-slate-200 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] md:shadow-none text-center text-[10px] leading-tight">Kode SS</th>
+                      <th rowspan="3" class="px-2 py-1.5 bg-white border-r border-b-2 border-slate-200 text-center min-w-[140px] text-[10px] leading-tight">Penanggung Jawab</th>
+                      <th rowspan="3" class="px-2 py-1.5 bg-white border-r border-b-2 border-slate-200 text-center min-w-[120px] text-[10px] leading-tight">Tanggal Pelaporan</th>
+                      <th rowspan="3" class="px-2 py-1.5 bg-white border-r border-b-2 border-slate-200 text-center min-w-[80px] text-[10px] leading-tight">Aksi</th>`;
             let h2 = ``; let h3 = ``;
 
             cats.forEach((cat, idx) => {
@@ -4616,12 +4650,15 @@
                 const grouped = {}; cat.items.forEach(item => { const sc = item.subCategory || 'Tanpa Sub Kategori'; if(!grouped[sc]) grouped[sc] = []; grouped[sc].push(item); });
                 const scKeys = Object.keys(grouped).sort();
 
-                h1 += `<th colspan="${cat.items.length}" class="p-2 border-r border-b border-slate-200 text-center bg-slate-800 text-white font-extrabold tracking-widest">${cat.category}</th>`;
+                h1 += `<th colspan="${cat.items.length}" class="py-1 px-2 border-r border-b border-slate-200 text-center bg-slate-800 text-white font-extrabold tracking-widest text-[10px] uppercase">${cat.category}</th>`;
                 
                 scKeys.forEach(sc => {
                     const displaySc = sc === 'Tanpa Sub Kategori' ? 'Parameter Umum' : sc;
-                    h2 += `<th colspan="${grouped[sc].length}" class="p-1.5 border-r border-b border-slate-200 text-center bg-slate-100 text-slate-600 font-extrabold text-[9px] uppercase tracking-wider">${displaySc}</th>`;
-                    grouped[sc].forEach(item => { h3 += `<th class="p-1.5 border-r border-slate-100 text-center align-bottom bg-white min-w-[70px] w-[70px]"><div class="w-full mx-auto font-bold text-[9px] whitespace-normal break-words leading-tight pb-1" title="${item.label}">${item.label}</div></th>`; });
+                    h2 += `<th colspan="${grouped[sc].length}" class="py-1 px-1.5 border-r border-b border-slate-200 text-center bg-slate-100 text-slate-600 font-extrabold text-[9px] uppercase tracking-wider">${displaySc}</th>`;
+                    grouped[sc].forEach(item => { 
+                        const safeLabel = item.label.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                        h3 += `<th class="px-1 py-1 border-r border-slate-100 text-center align-middle bg-white min-w-[75px] max-w-[75px] cursor-pointer hover:bg-slate-50 transition-colors group" onclick="showParameterDetail('${safeLabel}')" title="Klik untuk lihat selengkapnya"><div class="w-full mx-auto font-bold text-[9px] leading-tight group-hover:text-brand-600 transition-colors" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${item.label}</div></th>`; 
+                    });
                 });
             });
             row1.innerHTML = h1; row2.innerHTML = h2; row3.innerHTML = h3;
@@ -4702,7 +4739,7 @@
                                         iconClass = tDef.iconNeg;
                                     }
                                     
-                                    html += `<td class="px-1 py-1 border-r border-slate-100 text-center"><div class="w-6 h-6 rounded border border-white shadow-sm ${bgClass} ${txtClass} flex items-center justify-center mx-auto relative" title="${ans.status}"><span class="material-symbols-rounded icon-fill text-[14px]">${iconClass}</span>${(!isPos && !isNA && ans.note && item.requiresNote) ? '<span class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-amber-500 border-2 border-white rounded-full"></span>':''}</div></td>`;
+                                    html += `<td class="px-1 py-1 border-r border-slate-100 text-center"><div class="w-6 h-6 rounded border border-white shadow-sm ${bgClass} ${txtClass} flex items-center justify-center mx-auto relative" title="${isNA ? 'Tidak Ada' : ans.status}"><span class="material-symbols-rounded icon-fill text-[14px]">${iconClass}</span>${(!isPos && !isNA && ans.note && item.requiresNote) ? '<span class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-amber-500 border-2 border-white rounded-full"></span>':''}</div></td>`;
                                 } else html += `<td class="px-1 py-1 border-r border-slate-100 text-center text-slate-200 text-[10px] font-bold">-</td>`;
                             });
                         });
@@ -4712,11 +4749,13 @@
 
                 notesData.sort((a, b) => parseDateObj(b.date) - parseDateObj(a.date));
                 
+                const allowedCatNames = filteredCats.map(c => c.category);
+
                 notesData.forEach(sub => {
                     let notesByCategory = {};
                     Object.keys(sub.answers).forEach(itemId => {
                         const ans = sub.answers[itemId]; const meta = itemMap[itemId]; const isNeg = meta ? ans.status === itemTypeConfig[meta.type].neg : (ans.status === 'Non OK' || ans.status === 'Tidak Ada' || ans.status === 'Rusak');
-                        if (isNeg && ans.note) { if(meta) { if(!notesByCategory[meta.cat]) notesByCategory[meta.cat] = []; notesByCategory[meta.cat].push({ label: meta.label, note: ans.note }); } }
+                        if (isNeg && ans.note) { if(meta && allowedCatNames.includes(meta.cat)) { if(!notesByCategory[meta.cat]) notesByCategory[meta.cat] = []; notesByCategory[meta.cat].push({ label: meta.label, note: ans.note }); } }
                     });
 
                     let subNotesHtml = ''; const catKeys = Object.keys(notesByCategory);
@@ -4773,7 +4812,7 @@
                                 <label class="cursor-pointer relative flex-1 lg:flex-none">
                                     <input type="radio" name="status-${item.id}" value="N/A" onchange="handleRadioChange('${item.id}', ${item.requiresNote}, 'N/A', '${item.type}')" class="peer sr-only" required>
                                     <div class="flex items-center justify-center px-4 py-2 rounded-lg border border-transparent text-slate-500 smooth-transition hover:bg-slate-100 bg-transparent text-xs font-bold w-full min-w-[90px] peer-checked:bg-slate-200 peer-checked:text-slate-700 peer-checked:shadow-sm">
-                                        <span class="material-symbols-rounded icon-fill mr-1.5 text-[16px] opacity-70">horizontal_rule</span>N/A
+                                        <span class="material-symbols-rounded icon-fill mr-1.5 text-[16px] opacity-70">horizontal_rule</span>Tidak Ada
                                     </div>
                                 </label>
                             `;
