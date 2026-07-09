@@ -789,6 +789,36 @@
                                     </div>
                                 </div>
                             </section>
+
+                            <section>
+                                <h3 class="text-lg font-extrabold text-slate-900 mb-3 flex items-center gap-2"><span class="material-symbols-rounded text-brand-500">star</span> 5. FITUR UNGGULAN APLIKASI</h3>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+                                        <div class="flex items-center gap-2 mb-2"><span class="material-symbols-rounded text-amber-500">warning</span><strong class="text-sm text-slate-800">Mode Temuan (Issue Tracker)</strong></div>
+                                        <p class="text-xs text-slate-500 leading-relaxed">Filter cerdas (Toggle Switch) di dashboard Ceklis yang secara instan menyembunyikan area normal dan hanya menampilkan area yang memiliki fasilitas rusak, sehingga evaluasi manajer jauh lebih cepat.</p>
+                                    </div>
+                                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+                                        <div class="flex items-center gap-2 mb-2"><span class="material-symbols-rounded text-emerald-500">send_to_mobile</span><strong class="text-sm text-slate-800">Auto-Broadcast WA</strong></div>
+                                        <p class="text-xs text-slate-500 leading-relaxed">Generator teks otomatis merangkum data tabel, mencari area yang belum melapor, dan mencatat fasilitas rusak untuk dikirim langsung dengan satu klik ke Grup WhatsApp.</p>
+                                    </div>
+                                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+                                        <div class="flex items-center gap-2 mb-2"><span class="material-symbols-rounded text-blue-500">analytics</span><strong class="text-sm text-slate-800">Leaderboard & Analitik</strong></div>
+                                        <p class="text-xs text-slate-500 leading-relaxed">Sistem otomatis menghitung tren pemakaian harian berdasarkan selisih angka meteran, lalu memunculkan "Top 10 Area Pemborosan" untuk utilitas Listrik dan Air.</p>
+                                    </div>
+                                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+                                        <div class="flex items-center gap-2 mb-2"><span class="material-symbols-rounded text-indigo-500">dynamic_form</span><strong class="text-sm text-slate-800">Dynamic Form Builder</strong></div>
+                                        <p class="text-xs text-slate-500 leading-relaxed">Admin memiliki kebebasan penuh menambah, menghapus, atau mengubah format kategori dan parameter pertanyaan inspeksi secara real-time langsung dari dalam aplikasi.</p>
+                                    </div>
+                                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+                                        <div class="flex items-center gap-2 mb-2"><span class="material-symbols-rounded text-teal-500">file_download</span><strong class="text-sm text-slate-800">Export & Import Data</strong></div>
+                                        <p class="text-xs text-slate-500 leading-relaxed">Mendukung pengunduhan laporan (Utilitas & Pengguna) ke format Excel/CSV untuk diolah kembali, serta mendukung Bulk Upload via file Excel (Template Disediakan).</p>
+                                    </div>
+                                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+                                        <div class="flex items-center gap-2 mb-2"><span class="material-symbols-rounded text-rose-500">notifications_active</span><strong class="text-sm text-slate-800">Smart Reminder</strong></div>
+                                        <p class="text-xs text-slate-500 leading-relaxed">Notifikasi pintar (Dynamic Island & Panel PIC) yang mendeteksi dan memperingatkan petugas jika belum menyelesaikan pelaporan utilitas mingguan atau ceklis bulanannya.</p>
+                                    </div>
+                                </div>
+                            </section>
                         </div>
                     </div>
                 </div>
@@ -1607,10 +1637,11 @@
                 if (!data) {
                     failedUsernameCount++;
                     if (failedUsernameCount >= 3) {
+                        const waText = encodeURIComponent(`Halo Tim GA, saya butuh bantuan pengecekan username aplikasi C-SMART.\n\nBerikut data saya:\nNama: \nUsername yg dicoba: ${un}\nKode SS/Area: \n\nMohon bantuannya.`);
                         if(errorContainer) errorContainer.innerHTML = `
                             <div class="p-4 bg-rose-50 border border-rose-200 rounded-xl flex flex-col gap-3 animate-content">
                                 <span class="text-rose-600 font-bold text-sm text-center">Username salah 3x.</span>
-                                <a href="https://wa.me/6285215226972?text=Halo%20Tim%20GA,%20saya%20butuh%20bantuan%20pengecekan%20username%20aplikasi%20Ceklis" target="_blank" class="bg-rose-600 hover:bg-rose-700 text-white text-sm font-bold py-2.5 px-4 rounded-xl text-center flex items-center justify-center gap-2">
+                                <a href="https://wa.me/6285215226972?text=${waText}" target="_blank" class="bg-rose-600 hover:bg-rose-700 text-white text-sm font-bold py-2.5 px-4 rounded-xl text-center flex items-center justify-center gap-2">
                                     <span class="material-symbols-rounded text-[18px]">support_agent</span> Hubungi Tim GA
                                 </a>
                             </div>
@@ -1622,10 +1653,11 @@
                 } else if (data.password !== pw) {
                     failedPasswordCount++;
                     if (failedPasswordCount >= 3) {
+                        const waText = encodeURIComponent(`Halo Admin GA, saya butuh bantuan reset password aplikasi C-SMART.\n\nBerikut data saya:\nNama: \nUsername: ${un}\nKode SS/Area: \n\nMohon bantuannya.`);
                         if(errorContainer) errorContainer.innerHTML = `
                             <div class="p-4 bg-rose-50 border border-rose-200 rounded-xl flex flex-col gap-3 animate-content">
                                 <span class="text-rose-600 font-bold text-sm text-center">Kata sandi salah 3x.</span>
-                                <a href="https://wa.me/6285215226972?text=Halo%20Admin%20GA,%20saya%20butuh%20bantuan%20reset%20password%20aplikasi%20Ceklis" target="_blank" class="bg-rose-600 hover:bg-rose-700 text-white text-sm font-bold py-2.5 px-4 rounded-xl text-center flex items-center justify-center gap-2">
+                                <a href="https://wa.me/6285215226972?text=${waText}" target="_blank" class="bg-rose-600 hover:bg-rose-700 text-white text-sm font-bold py-2.5 px-4 rounded-xl text-center flex items-center justify-center gap-2">
                                     <span class="material-symbols-rounded text-[18px]">lock_reset</span> Hubungi GA untuk Reset
                                 </a>
                             </div>
