@@ -579,8 +579,8 @@
                     
                     <div class="flex flex-col gap-5 mb-6 px-2">
                         <div>
-                            <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">C-SMART Dashboard</h2>
-                            <p class="text-sm text-slate-500 mt-1 font-medium">Sistem Monitoring Area Real-Time untuk inspeksi fasilitas dan utilitas.</p>
+                            <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Ceklis Monitoring</h2>
+                            <p class="text-sm text-slate-500 mt-1 font-medium">Sistem Monitoring untuk inspeksi fasilitas secara bulanan.</p>
                         </div>
 
                         <div class="flex flex-col 2xl:flex-row justify-between items-start 2xl:items-center gap-4 w-full">
@@ -4729,10 +4729,10 @@
                     }
 
                     html += `<tr class="hover:bg-slate-50 smooth-transition ${borderCls}">
-                        <td class="px-2 py-2 sticky-col-1 col-w-1 text-center font-extrabold text-slate-800 text-[10px] hidden md:table-cell">${sub.ssc || '-'}</td>
+                        <td class="px-2 py-2 sticky-col-1 col-w-1 text-center font-extrabold text-slate-800 text-[10px] hidden md:table-cell uppercase">${sub.ssc || '-'}</td>
                         <td class="px-2 py-2 sticky-col-2 col-w-2 text-center font-bold text-slate-500 text-[10px] hidden md:table-cell uppercase">${sub.province || '-'}</td>
-                        <td class="px-2 py-2 sticky-col-3 col-w-3 font-extrabold text-slate-900 text-[11px] shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] md:shadow-none leading-tight">${sub.stagging_name || '-'}</td>
-                        <td class="px-2 py-2 text-slate-800 font-bold text-[10px] leading-tight min-w-[140px]">${sub.pic !== '-' ? sub.pic : '<span class="text-slate-300 italic font-medium">Kosong</span>'}</td>
+                        <td class="px-2 py-2 sticky-col-3 col-w-3 font-extrabold text-slate-900 text-[11px] shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] md:shadow-none leading-tight uppercase">${sub.stagging_name || '-'}</td>
+                        <td class="px-2 py-2 text-slate-800 font-bold text-[10px] leading-tight min-w-[140px] uppercase">${sub.pic !== '-' ? sub.pic : '<span class="text-slate-300 italic font-medium normal-case">Kosong</span>'}</td>
                         <td class="px-2 py-2 text-center text-slate-500 text-[9px] font-bold bg-slate-50 min-w-[110px]">${sub.date.replace(', ', '<br><span class="text-brand-600">')}</span></td>
                         <td class="px-2 py-2 text-center align-middle bg-white">${actionHtml}</td>`;
 
@@ -5042,7 +5042,7 @@
                     }
                 });
 
-                text = `Halo Rekan-rekan Tim,\nMohon perhatiannya untuk *Progress Ceklis Monitoring* periode ${month} ${year === 'all' ? 'Keseluruhan' : year}:\n\n`;
+                text = `Halo Rekan-rekan Tim,\nMohon perhatiannya untuk *Progress C-SMART Ceklis* periode ${month} ${year === 'all' ? 'Keseluruhan' : year}:\n\n`;
                 
                 if(belumList.length > 0) {
                     text += `🚨 *BELUM MENGISI LAPORAN:*\n${belumList.map(a => `- ${a}`).join('\n')}\n_Mohon PIC area terkait agar segera menyelesaikannya hari ini._\n\n`;
