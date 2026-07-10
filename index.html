@@ -253,19 +253,9 @@
                         <span class="text-sm">Awareness Utilitas & IPL</span>
                     </button>
 
-                    <button onclick="switchTab('admin-users')" id="tab-admin-users" style="display: none;" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-semibold transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-50 group">
-                        <span class="material-symbols-rounded icon-outline text-xl group-hover:text-slate-800 transition-colors">group</span>
-                        <span class="text-sm">Data Pengguna</span>
-                    </button>
-                    
-                    <button onclick="switchTab('admin-form')" id="tab-admin-form" style="display: none;" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-semibold transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-50 group">
-                        <span class="material-symbols-rounded icon-outline text-xl group-hover:text-slate-800 transition-colors">layers</span>
-                        <span class="text-sm">Format Ceklis</span>
-                    </button>
-                    
-                    <button onclick="switchTab('admin-id')" id="tab-admin-id" style="display: none;" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-semibold transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-50 group">
-                        <span class="material-symbols-rounded icon-outline text-xl group-hover:text-slate-800 transition-colors">credit_card</span>
-                        <span class="text-sm">Master ID Utilitas</span>
+                    <button onclick="switchTab('pengaturan')" id="tab-pengaturan" style="display: none;" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-semibold transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-50 group">
+                        <span class="material-symbols-rounded icon-outline text-xl group-hover:text-slate-800 transition-colors">settings</span>
+                        <span class="text-sm">Pengaturan Sistem</span>
                     </button>
                 </nav>
 
@@ -484,18 +474,26 @@
                     </div>
                 </div>
 
-                <!-- Tab: Manajemen Pengguna -->
-                <div id="content-admin-users" class="hidden w-full px-4 sm:px-6 lg:px-8 mt-6 sm:mt-8 animate-content max-w-full mx-auto">
-                    <div class="mb-6 border-b border-slate-200 pb-4">
-                        <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight">Manajemen Pengguna</h2>
-                        <p class="text-slate-500 text-sm mt-1 font-medium">Kelola hak akses, peran, dan penugasan area.</p>
+                <!-- Tab: Pengaturan Sistem (Gabungan) -->
+                <div id="content-pengaturan" class="hidden w-full px-4 sm:px-6 lg:px-8 mt-6 sm:mt-8 animate-content max-w-full mx-auto">
+                    <div class="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 border-b border-slate-200 pb-4">
+                        <div>
+                            <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight">Pengaturan Sistem</h2>
+                            <p class="text-slate-500 text-sm mt-1 font-medium">Kelola pengguna, format form, dan data master utilitas.</p>
+                        </div>
+                        <div class="flex bg-slate-100 p-1 rounded-xl shadow-inner gap-1 flex-wrap sm:flex-nowrap overflow-x-auto max-w-full hide-scrollbar shrink-0">
+                            <button onclick="switchAdminSubTab('users')" id="subtab-users" class="px-4 py-2 rounded-lg text-sm font-bold bg-white shadow text-indigo-600 transition-all shrink-0">Data Pengguna</button>
+                            <button onclick="switchAdminSubTab('form')" id="subtab-form" class="px-4 py-2 rounded-lg text-sm font-bold text-slate-500 hover:text-slate-700 transition-all shrink-0">Format Ceklis</button>
+                            <button onclick="switchAdminSubTab('id')" id="subtab-id" class="px-4 py-2 rounded-lg text-sm font-bold text-slate-500 hover:text-slate-700 transition-all shrink-0">Master ID Utilitas</button>
+                        </div>
                     </div>
 
-                    <div class="w-full">
+                    <!-- Section: Manajemen Pengguna -->
+                    <div id="section-admin-users" class="animate-content w-full">
                         <div class="bg-surface rounded-3xl shadow-soft border border-slate-200 flex flex-col overflow-hidden min-h-[500px]">
                             <div class="p-6 border-b border-slate-100 bg-surface flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                                 <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full md:w-auto">
-                                    <h3 class="text-lg font-bold text-slate-800 shrink-0">Daftar Pengguna Sistem</h3>
+                                    <h3 class="text-lg font-bold text-slate-800 shrink-0">Daftar Pengguna</h3>
                                     <div class="relative w-full sm:w-64">
                                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><span class="material-symbols-rounded icon-outline text-slate-400 text-lg">search</span></div>
                                         <input type="text" id="search-user" oninput="renderAdminUsers(false)" placeholder="Cari nama, area, SSC, provinsi..." class="input-modern w-full pl-10 pr-3 py-2 rounded-xl text-sm font-medium bg-slate-50 border border-slate-200">
@@ -529,65 +527,54 @@
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Tab: Format Checklist Inspeksi -->
-                <div id="content-admin-form" class="hidden w-full px-4 sm:px-6 lg:px-8 mt-6 sm:mt-8 animate-content max-w-full mx-auto">
-                    <div class="mb-6 border-b border-slate-200 pb-4">
-                        <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight">Format Checklist Inspeksi</h2>
-                        <p class="text-slate-500 text-sm mt-1 font-medium">Strukturisasi kategori dan parameter penilaian laporan.</p>
-                    </div>
-
-                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 h-auto lg:h-[70vh]">
-                        <div class="lg:col-span-4 bg-surface rounded-3xl shadow-soft border border-slate-200 flex flex-col overflow-hidden min-h-[400px]">
-                            <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-surface z-10">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center"><span class="material-symbols-rounded icon-fill">layers</span></div>
-                                    <h3 class="text-base font-bold text-slate-800">Kategori Utama</h3>
-                                </div>
-                                <div class="flex gap-2">
-                                    <button onclick="exportFormatCSV()" class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center hover:bg-emerald-100 transition-colors shadow-sm" title="Export Supabase CSV">
-                                        <span class="material-symbols-rounded text-[18px]">file_download</span>
-                                    </button>
-                                    <button onclick="adminAddCategory()" class="w-9 h-9 rounded-xl bg-slate-900 text-white flex items-center justify-center hover:bg-black transition-colors active:scale-95 shadow-md">
-                                        <span class="material-symbols-rounded icon-outline">add</span>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="flex-1 overflow-y-auto custom-scroll p-4 space-y-2 bg-slate-50/50" id="admin-category-list"></div>
-                        </div>
-
-                        <div class="lg:col-span-8 bg-surface rounded-3xl shadow-soft border border-slate-200 flex flex-col overflow-hidden relative min-h-[500px]">
-                            <div class="p-6 border-b border-slate-100 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 bg-surface z-10">
-                                <div>
-                                    <p class="text-[10px] font-extrabold text-brand-600 uppercase tracking-widest mb-1" id="admin-selected-category-name">PILIH KATEGORI</p>
-                                    <h3 class="font-bold text-slate-800 text-xl">Parameter Penilaian</h3>
-                                </div>
-                                <button id="btn-add-item" onclick="openItemModal(activeAdminCategoryId)" class="hidden bg-brand-600 hover:bg-brand-700 text-white px-5 py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-transform active:scale-[0.98] shadow-md shadow-brand-500/20">
-                                    <span class="material-symbols-rounded icon-outline text-[20px]">add</span> Tambah Item Baru
-                                </button>
-                            </div>
-                            <div class="flex-1 overflow-y-auto custom-scroll p-4 sm:p-6 bg-slate-50/50">
-                                <div id="admin-item-empty" class="h-full flex flex-col items-center justify-center text-slate-400 py-10">
-                                    <div class="w-20 h-20 rounded-full bg-slate-100 flex items-center justify-center mb-4 text-3xl">
-                                        <span class="material-symbols-rounded icon-outline text-[40px]">ads_click</span>
+                    <!-- Section: Format Checklist Inspeksi -->
+                    <div id="section-admin-form" class="hidden animate-content w-full">
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 h-auto lg:h-[70vh]">
+                            <div class="lg:col-span-4 bg-surface rounded-3xl shadow-soft border border-slate-200 flex flex-col overflow-hidden min-h-[400px]">
+                                <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-surface z-10">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center"><span class="material-symbols-rounded icon-fill">layers</span></div>
+                                        <h3 class="text-base font-bold text-slate-800">Kategori Utama</h3>
                                     </div>
-                                    <p class="font-medium text-sm">Pilih kategori di kiri untuk mengelola parameter.</p>
+                                    <div class="flex gap-2">
+                                        <button onclick="exportFormatCSV()" class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center hover:bg-emerald-100 transition-colors shadow-sm" title="Export Supabase CSV">
+                                            <span class="material-symbols-rounded text-[18px]">file_download</span>
+                                        </button>
+                                        <button onclick="adminAddCategory()" class="w-9 h-9 rounded-xl bg-slate-900 text-white flex items-center justify-center hover:bg-black transition-colors active:scale-95 shadow-md">
+                                            <span class="material-symbols-rounded icon-outline">add</span>
+                                        </button>
+                                    </div>
                                 </div>
-                                <div id="admin-item-list" class="space-y-4 hidden pb-10"></div>
+                                <div class="flex-1 overflow-y-auto custom-scroll p-4 space-y-2 bg-slate-50/50" id="admin-category-list"></div>
+                            </div>
+
+                            <div class="lg:col-span-8 bg-surface rounded-3xl shadow-soft border border-slate-200 flex flex-col overflow-hidden relative min-h-[500px]">
+                                <div class="p-6 border-b border-slate-100 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 bg-surface z-10">
+                                    <div>
+                                        <p class="text-[10px] font-extrabold text-brand-600 uppercase tracking-widest mb-1" id="admin-selected-category-name">PILIH KATEGORI</p>
+                                        <h3 class="font-bold text-slate-800 text-xl">Parameter Penilaian</h3>
+                                    </div>
+                                    <button id="btn-add-item" onclick="openItemModal(activeAdminCategoryId)" class="hidden bg-brand-600 hover:bg-brand-700 text-white px-5 py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-transform active:scale-[0.98] shadow-md shadow-brand-500/20">
+                                        <span class="material-symbols-rounded icon-outline text-[20px]">add</span> Tambah Item Baru
+                                    </button>
+                                </div>
+                                <div class="flex-1 overflow-y-auto custom-scroll p-4 sm:p-6 bg-slate-50/50">
+                                    <div id="admin-item-empty" class="h-full flex flex-col items-center justify-center text-slate-400 py-10">
+                                        <div class="w-20 h-20 rounded-full bg-slate-100 flex items-center justify-center mb-4 text-3xl">
+                                            <span class="material-symbols-rounded icon-outline text-[40px]">ads_click</span>
+                                        </div>
+                                        <p class="font-medium text-sm">Pilih kategori di kiri untuk mengelola parameter.</p>
+                                    </div>
+                                    <div id="admin-item-list" class="space-y-4 hidden pb-10"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Tab: Master ID Utilitas -->
-                <div id="content-admin-id" class="hidden w-full px-4 sm:px-6 lg:px-8 mt-6 sm:mt-8 animate-content max-w-full mx-auto">
-                    <div class="mb-6 border-b border-slate-200 pb-4 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
-                        <div>
-                            <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight">Master ID Pelanggan</h2>
-                            <p class="text-slate-500 text-sm mt-1 font-medium">Kelola database ID Pelanggan Listrik dan Air (Satu SS bisa memiliki banyak ID).</p>
-                        </div>
-                        <div class="flex gap-2 flex-wrap w-full sm:w-auto">
+                    <!-- Section: Master ID Utilitas -->
+                    <div id="section-admin-id" class="hidden animate-content w-full">
+                        <div class="flex gap-2 flex-wrap justify-end mb-4">
                             <button onclick="openUploadMasterIdModal()" class="shrink-0 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 px-5 py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-transform active:scale-95 shadow-sm">
                                 <span class="material-symbols-rounded icon-outline text-[20px]">upload_file</span> Upload Bulk
                             </button>
@@ -595,37 +582,37 @@
                                 <span class="material-symbols-rounded icon-outline text-[20px]">add</span> Tambah ID Baru
                             </button>
                         </div>
-                    </div>
-                    
-                    <div class="w-full bg-surface rounded-3xl shadow-soft border border-slate-200 flex flex-col overflow-hidden min-h-[500px]">
-                        <div class="p-4 border-b border-slate-100 bg-slate-50/50 flex flex-col md:flex-row gap-4 items-center justify-between">
-                            <div class="relative w-full md:w-80">
-                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><span class="material-symbols-rounded icon-outline text-slate-400 text-lg">search</span></div>
-                                <input type="text" id="search-admin-id" oninput="renderAdminId()" placeholder="Cari nama area, ID, atau pemilik..." class="input-modern w-full pl-10 pr-3 py-2 rounded-xl text-sm font-medium bg-white border border-slate-200">
+                        
+                        <div class="w-full bg-surface rounded-3xl shadow-soft border border-slate-200 flex flex-col overflow-hidden min-h-[450px]">
+                            <div class="p-4 border-b border-slate-100 bg-slate-50/50 flex flex-col md:flex-row gap-4 items-center justify-between">
+                                <div class="relative w-full md:w-80">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><span class="material-symbols-rounded icon-outline text-slate-400 text-lg">search</span></div>
+                                    <input type="text" id="search-admin-id" oninput="renderAdminId()" placeholder="Cari nama area, ID, atau pemilik..." class="input-modern w-full pl-10 pr-3 py-2 rounded-xl text-sm font-medium bg-white border border-slate-200">
+                                </div>
+                                <div class="flex gap-2 w-full md:w-auto">
+                                    <select id="filter-tipe-id" onchange="renderAdminId()" class="input-modern px-4 py-2 rounded-xl text-sm font-bold bg-white w-full md:w-auto">
+                                        <option value="all">Semua Tipe</option>
+                                        <option value="Listrik">Listrik PLN</option>
+                                        <option value="Air">Air (PDAM/WTP)</option>
+                                    </select>
+                                </div>
                             </div>
-                            <div class="flex gap-2 w-full md:w-auto">
-                                <select id="filter-tipe-id" onchange="renderAdminId()" class="input-modern px-4 py-2 rounded-xl text-sm font-bold bg-white w-full md:w-auto">
-                                    <option value="all">Semua Tipe</option>
-                                    <option value="Listrik">Listrik PLN</option>
-                                    <option value="Air">Air (PDAM/WTP)</option>
-                                </select>
+                            <div class="overflow-x-auto flex-1 custom-scroll p-4">
+                                <table class="w-full text-left min-w-[800px] bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm">
+                                    <thead>
+                                        <tr class="bg-slate-100/80 text-slate-500 text-[11px] uppercase tracking-wider border-b border-slate-200">
+                                            <th class="p-4 font-extrabold w-[250px]">Staging Area</th>
+                                            <th class="p-4 font-extrabold w-[130px]">Kategori</th>
+                                            <th class="p-4 font-extrabold">No. ID Pelanggan</th>
+                                            <th class="p-4 font-extrabold">Atas Nama (Pemilik)</th>
+                                            <th class="p-4 font-extrabold text-center w-[120px]">Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="admin-id-tbody" class="divide-y divide-slate-100 text-sm">
+                                        <tr><td colspan="5" class="p-8 text-center text-slate-400">Klik "Tambah ID Baru" untuk mulai mendata.</td></tr>
+                                    </tbody>
+                                </table>
                             </div>
-                        </div>
-                        <div class="overflow-x-auto flex-1 custom-scroll p-4">
-                            <table class="w-full text-left min-w-[800px] bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm">
-                                <thead>
-                                    <tr class="bg-slate-100/80 text-slate-500 text-[11px] uppercase tracking-wider border-b border-slate-200">
-                                        <th class="p-4 font-extrabold w-[250px]">Staging Area</th>
-                                        <th class="p-4 font-extrabold w-[130px]">Kategori</th>
-                                        <th class="p-4 font-extrabold">No. ID Pelanggan</th>
-                                        <th class="p-4 font-extrabold">Atas Nama (Pemilik)</th>
-                                        <th class="p-4 font-extrabold text-center w-[120px]">Aksi</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="admin-id-tbody" class="divide-y divide-slate-100 text-sm">
-                                    <tr><td colspan="5" class="p-8 text-center text-slate-400">Klik "Tambah ID Baru" untuk mulai mendata.</td></tr>
-                                </tbody>
-                            </table>
                         </div>
                     </div>
                 </div>
@@ -895,17 +882,9 @@
                 <span class="material-symbols-rounded icon-outline text-[24px]">home_repair_service</span>
                 <span class="text-[9px] font-bold uppercase tracking-widest">Utilitas</span>
             </button>
-            <button onclick="switchTab('admin-users')" id="mob-tab-admin-users" style="display: none;" class="flex-1 py-2 flex flex-col items-center gap-1 text-slate-400 hover:text-slate-900 transition-colors">
-                <span class="material-symbols-rounded icon-outline text-[24px]">group</span>
-                <span class="text-[9px] font-bold uppercase tracking-widest">Users</span>
-            </button>
-            <button onclick="switchTab('admin-form')" id="mob-tab-admin-form" style="display: none;" class="flex-1 py-2 flex flex-col items-center gap-1 text-slate-400 hover:text-slate-900 transition-colors">
-                <span class="material-symbols-rounded icon-outline text-[24px]">layers</span>
-                <span class="text-[9px] font-bold uppercase tracking-widest">Format</span>
-            </button>
-            <button onclick="switchTab('admin-id')" id="mob-tab-admin-id" style="display: none;" class="flex-1 py-2 flex flex-col items-center gap-1 text-slate-400 hover:text-slate-900 transition-colors">
-                <span class="material-symbols-rounded icon-outline text-[24px]">credit_card</span>
-                <span class="text-[9px] font-bold uppercase tracking-widest">Master ID</span>
+            <button onclick="switchTab('pengaturan')" id="mob-tab-pengaturan" style="display: none;" class="flex-1 py-2 flex flex-col items-center gap-1 text-slate-400 hover:text-slate-900 transition-colors">
+                <span class="material-symbols-rounded icon-outline text-[24px]">settings</span>
+                <span class="text-[9px] font-bold uppercase tracking-widest">Pengaturan</span>
             </button>
         </nav>
     </div>
@@ -1852,26 +1831,26 @@
             }
             if(document.getElementById('util-filter-tahun')) document.getElementById('util-filter-tahun').value = now.getFullYear();
 
-            const tUsers = document.getElementById('tab-admin-users'); const tAdminForm = document.getElementById('tab-admin-form'); const tAdminId = document.getElementById('tab-admin-id');
-            const mUsers = document.getElementById('mob-tab-admin-users'); const mAdminForm = document.getElementById('mob-tab-admin-form'); const mAdminId = document.getElementById('mob-tab-admin-id');
+            const tPengaturan = document.getElementById('tab-pengaturan');
+            const mPengaturan = document.getElementById('mob-tab-pengaturan');
             const btnOpenForm = document.getElementById('btn-open-form'); const btnAdminHapus = document.getElementById('btn-admin-hapus-data');
             const btnBroadUtil = document.getElementById('btn-broadcast-utilitas'); const btnBroadCek = document.getElementById('btn-broadcast-ceklis');
             const notifContainer = document.getElementById('notification-container');
             const personalDashboard = document.getElementById('user-personal-dashboard');
             
-            tUsers.style.display = 'none'; tAdminForm.style.display = 'none'; if(tAdminId) tAdminId.style.display = 'none';
-            if(mUsers) mUsers.style.display = 'none'; if(mAdminForm) mAdminForm.style.display = 'none'; if(mAdminId) mAdminId.style.display = 'none';
+            if(tPengaturan) tPengaturan.style.display = 'none';
+            if(mPengaturan) mPengaturan.style.display = 'none';
             btnOpenForm.style.display = 'none'; if(btnAdminHapus) btnAdminHapus.style.display = 'none';
             if(btnBroadUtil) btnBroadUtil.style.display = 'none'; if(btnBroadCek) btnBroadCek.style.display = 'none';
             if(notifContainer) notifContainer.style.display = 'none';
 
             if (currentUser.role === 'admin') {
-                tUsers.style.display = 'flex'; tAdminForm.style.display = 'flex'; if(tAdminId) tAdminId.style.display = 'flex';
-                if(mUsers) mUsers.style.display = 'flex'; if(mAdminForm) mAdminForm.style.display = 'flex'; if(mAdminId) mAdminId.style.display = 'flex';
+                if(tPengaturan) tPengaturan.style.display = 'flex';
+                if(mPengaturan) mPengaturan.style.display = 'flex';
                 btnOpenForm.style.display = 'flex'; if(btnAdminHapus) btnAdminHapus.style.display = 'flex';
                 if(btnBroadUtil) btnBroadUtil.style.display = 'flex'; if(btnBroadCek) btnBroadCek.style.display = 'flex';
                 if(personalDashboard) personalDashboard.classList.add('hidden');
-                switchTab('panduan'); await renderAdminUsers(); await renderAdminCategoryList();
+                switchTab('panduan'); await renderAdminUsers(); await renderAdminCategoryList(); await renderAdminId();
             } else if (currentUser.role === 'user') {
                 btnOpenForm.style.display = 'flex'; 
                 if(notifContainer) notifContainer.style.display = 'block';
@@ -2112,8 +2091,36 @@
             document.getElementById('view-login').classList.remove('hidden'); document.getElementById('view-login').classList.add('flex');
         }
 
+        let currentAdminSubTab = 'users';
+
+        window.switchAdminSubTab = function(subTab) {
+            currentAdminSubTab = subTab;
+            const subTabs = ['users', 'form', 'id'];
+            const colors = { users: 'text-indigo-600', form: 'text-brand-600', id: 'text-amber-600' };
+            
+            subTabs.forEach(t => {
+                const btn = document.getElementById(`subtab-${t}`);
+                const sec = document.getElementById(`section-admin-${t}`);
+                if(!btn || !sec) return;
+                
+                if(t === subTab) {
+                    sec.classList.remove('hidden');
+                    btn.classList.add('bg-white', 'shadow', colors[t]);
+                    btn.classList.remove('text-slate-500', 'hover:text-slate-700');
+                } else {
+                    sec.classList.add('hidden');
+                    btn.classList.remove('bg-white', 'shadow', colors[t]);
+                    btn.classList.add('text-slate-500', 'hover:text-slate-700');
+                }
+            });
+
+            if (subTab === 'users') renderAdminUsers();
+            if (subTab === 'form') renderAdminCategoryList();
+            if (subTab === 'id') renderAdminId();
+        };
+
         function switchTab(tabName) {
-            const views = ['admin-users', 'admin-form', 'dashboard', 'utilitas', 'panduan', 'admin-id'];
+            const views = ['pengaturan', 'dashboard', 'utilitas', 'panduan'];
             views.forEach(v => {
                 const content = document.getElementById(`content-${v}`); if (content) content.classList.add('hidden');
                 
@@ -2145,10 +2152,8 @@
             }
             
             if (tabName === 'dashboard') applyFiltersAndRender();
-            if (tabName === 'admin-users') renderAdminUsers();
-            if (tabName === 'admin-form') renderAdminCategoryList();
+            if (tabName === 'pengaturan') switchAdminSubTab(currentAdminSubTab);
             if (tabName === 'utilitas') renderUtilitasTable();
-            if (tabName === 'admin-id') renderAdminId();
 
             const scrollArea = document.getElementById('main-scroll-area'); if(scrollArea) scrollArea.scrollTop = 0;
         }
