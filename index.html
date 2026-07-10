@@ -192,6 +192,17 @@
                     <button type="submit" id="btn-login" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 transition-all shadow-md shadow-brand-500/20 mt-8 active:scale-[0.98]">
                         Masuk Sistem <span class="material-symbols-rounded text-xl">arrow_forward</span>
                     </button>
+
+                    <div class="mt-5 text-center">
+                        <div class="relative flex items-center py-2 mb-3">
+                            <div class="flex-grow border-t border-slate-200"></div>
+                            <span class="flex-shrink-0 mx-4 text-slate-400 text-[10px] font-bold uppercase tracking-widest">Akses Publik</span>
+                            <div class="flex-grow border-t border-slate-200"></div>
+                        </div>
+                        <button type="button" onclick="loginAsVisitor()" class="w-full bg-white hover:bg-slate-50 text-slate-600 border border-slate-200 font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 transition-all shadow-sm active:scale-[0.98]">
+                            <span class="material-symbols-rounded icon-outline text-xl">visibility</span> Masuk Sebagai Visitor (Tamu)
+                        </button>
+                    </div>
                 </form>
             </div>
         </div>
@@ -1659,6 +1670,35 @@
         let failedUsernameCount = 0;
         let failedPasswordCount = 0;
 
+        window.loginAsVisitor = async function() {
+            const btn = document.getElementById('btn-login');
+            btn.innerHTML = '<span class="material-symbols-rounded animate-spin">sync</span> Memproses...';
+            
+            try {
+                // Cek apakah akun visitor 000000 ada, jika tidak, buatkan otomatis
+                const { data } = await supabaseClient.from('users').select('id').eq('username', '000000').maybeSingle();
+                if (!data) {
+                    await supabaseClient.from('users').insert([{
+                        id: 'V' + Date.now(),
+                        username: '000000',
+                        password: '000000',
+                        pic_name: 'Visitor (Tamu Publik)',
+                        role: 'visitor',
+                        is_active: true
+                    }]);
+                }
+                
+                // Isi form dan klik submit
+                document.getElementById('username').value = '000000';
+                document.getElementById('password').value = '000000';
+                btn.click();
+            } catch(e) {
+                console.error(e);
+                Island.show('Gagal masuk sebagai tamu.', 'error');
+                btn.innerHTML = 'Masuk Sistem <span class="material-symbols-rounded text-xl">arrow_forward</span>';
+            }
+        };
+
         window.togglePasswordVisibility = function(inputId, iconId) {
             const input = document.getElementById(inputId);
             const icon = document.getElementById(iconId);
@@ -1779,7 +1819,7 @@
             const icon = document.getElementById('sidebar-icon');
             if(icon) icon.textContent = 'menu';
             
-            if (currentUser.password === '123') {
+            if (currentUser.password === '123' && currentUser.role !== 'visitor') {
                 Island.show('Wajib ganti sandi default Anda!', 'error', 5000);
                 openChangePasswordModal(true);
                 return;
@@ -2384,6 +2424,10 @@
 
         let forceChangePw = false;
         function openChangePasswordModal(forced = false) { 
+            if (currentUser && currentUser.role === 'visitor') {
+                Island.show('Akun Visitor tidak dapat mengubah sandi.', 'error');
+                return;
+            }
             forceChangePw = forced;
             document.getElementById('modal-change-password').classList.remove('hidden'); 
             document.getElementById('new-password').value = forced ? '' : currentUser.password;
