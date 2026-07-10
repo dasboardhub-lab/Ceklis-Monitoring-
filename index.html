@@ -1273,44 +1273,13 @@
                     </div>
 
                     <div class="space-y-4 pt-4 border-t border-slate-200">
-                        <h3 class="font-bold text-slate-800 flex items-center gap-2"><span class="material-symbols-rounded text-blue-500">water_drop</span> Pemakaian Air</h3>
-                        <div>
-                            <label class="label-modern mb-2">Sumber Air</label>
-                            <div class="flex gap-4">
-                                <label class="cursor-pointer"><input type="radio" name="air_sumber" value="PDAM" class="peer sr-only" required onchange="toggleAirFields()"><div class="px-4 py-2 rounded-lg text-sm font-bold border-2 border-slate-200 peer-checked:border-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700">PDAM</div></label>
-                                <label class="cursor-pointer"><input type="radio" name="air_sumber" value="WTP" class="peer sr-only" required onchange="toggleAirFields()"><div class="px-4 py-2 rounded-lg text-sm font-bold border-2 border-slate-200 peer-checked:border-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700">WTP</div></label>
-                                <label class="cursor-pointer"><input type="radio" name="air_sumber" value="Sumur Bor" class="peer sr-only" required onchange="toggleAirFields()"><div class="px-4 py-2 rounded-lg text-sm font-bold border-2 border-slate-200 peer-checked:border-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700">Sumur Bor</div></label>
-                            </div>
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-2 gap-2">
+                            <h3 class="font-bold text-slate-800 flex items-center gap-2"><span class="material-symbols-rounded text-blue-500">water_drop</span> Pemakaian Air</h3>
+                            <a href="https://wa.me/6285215226972?text=Halo%20Tim%20GA,%20saya%20butuh%20bantuan%20untuk%20menambahkan%20Master%20ID%20Pelanggan%20(Listrik/Air)%20baru%20di%20area%20saya." target="_blank" class="bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200 px-3 py-1.5 rounded-lg text-[9px] sm:text-[10px] font-bold transition-colors flex items-center gap-1 uppercase tracking-widest shadow-sm">
+                                <span class="material-symbols-rounded text-[16px]">support_agent</span> Hubungi Tim GA Untuk Tambah ID Meteran
+                            </a>
                         </div>
-
-                        <div id="air-pdam-fields" class="hidden space-y-4 bg-blue-50/50 p-4 rounded-xl border border-blue-100">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div><label class="label-modern">Nomor ID Pelanggan Air</label><input type="text" id="u-air-id" name="air_id" list="history-air-id" autocomplete="off" oninput="this.value = this.value.replace(/[^0-9]/g, '')" class="input-modern w-full px-4 py-3 rounded-xl text-sm font-mono"></div>
-                                <div><label class="label-modern">Nama Pemilik ID</label><input type="text" id="u-air-nama" name="air_nama" list="history-air-nama" autocomplete="off" class="input-modern w-full px-4 py-3 rounded-xl text-sm"></div>
-                            </div>
-                        </div>
-                        
-                        <div id="air-mekanisme-container" class="hidden">
-                            <label class="label-modern">Mekanisme Pembayaran</label>
-                            <div class="flex gap-2">
-                                <select id="u-air-mekanisme" name="air_mekanisme" class="input-modern w-full px-4 py-3 rounded-xl font-bold text-sm" onchange="toggleAirMekanisme()">
-                                    <option value="">-- Pilih --</option>
-                                    <option value="Dibayar Ke PDAM Atau WTP Tiap Bulannya, Hanya Pemakaian Pribadi Staging">Dibayar Ke PDAM Atau WTP Tiap Bulannya, Hanya Pemakaian Pribadi Staging</option>
-                                    <option value="Dibagi Dengan Ruko Tetangga, Karena 1 Meteran PDAM Dipakai Lebih Dari 1 Ruko">Dibagi Dengan Ruko Tetangga, Karena 1 Meteran PDAM Dipakai Lebih Dari 1 Ruko</option>
-                                    <option value="Dibayarkan Include Atau Sudah Termasuk Dengan Biaya Sewa Ruko">Dibayarkan Include Atau Sudah Termasuk Dengan Biaya Sewa Ruko</option>
-                                    <option value="Lainnya">Yang lain...</option>
-                                </select>
-                                <input type="text" id="u-air-mekanisme-lain" name="air_mekanisme_lain" placeholder="Sebutkan..." class="hidden input-modern w-full px-4 py-3 rounded-xl text-sm">
-                            </div>
-                        </div>
-
-                        <div id="air-angka-container" class="hidden">
-                            <label class="label-modern">Angka Meteran Air Saat Ini</label>
-                            <div class="grid grid-cols-2 gap-4 items-center">
-                                <input type="text" id="u-air-angka" name="air_angka" oninput="formatRibuanBulat(this)" class="input-modern w-full px-4 py-3 rounded-xl font-bold text-sm text-blue-700">
-                                <span class="text-rose-500 text-[10px] sm:text-xs font-bold italic">*abaikan angka di belakang koma (,)</span>
-                            </div>
-                        </div>
+                        <div id="air-meters-container" class="space-y-6 mb-6"></div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
@@ -2489,6 +2458,32 @@
             return { bulan: month, tahun: year, minggu: week, rangeStr: rangeStr };
         }
 
+        // Fungsi Helper untuk menarik semua data Air
+        function extractAirMeters(d) {
+            let meters = [];
+            if (d.air_id || d.air_id_0 || d.air_angka || d.air_angka_0) {
+                meters.push({ 
+                    id: d.air_id || d.air_id_0 || '-', 
+                    nama: d.air_nama || d.air_nama_0 || '-',
+                    sumber: d.air_sumber || d.air_sumber_0 || 'PDAM',
+                    mekanisme: d.air_mekanisme || d.air_mekanisme_0 || '-',
+                    angka: parseSafeNumber(d.air_angka || d.air_angka_0) 
+                });
+            }
+            for (let i = 1; i <= 20; i++) {
+                if (d[`air_id_${i}`] || d[`air_angka_${i}`]) {
+                    meters.push({ 
+                        id: d[`air_id_${i}`] || '-', 
+                        nama: d[`air_nama_${i}`] || '-',
+                        sumber: d[`air_sumber_${i}`] || 'PDAM',
+                        mekanisme: d[`air_mekanisme_${i}`] || '-',
+                        angka: parseSafeNumber(d[`air_angka_${i}`]) 
+                    });
+                }
+            }
+            return meters;
+        }
+
         // Fungsi Helper untuk menarik semua data Listrik dalam bentuk Array dari data JSON
         function extractListrikMeters(d) {
             let meters = [];
@@ -2530,31 +2525,32 @@
             
             const d = data.data;
 
-            if (d.edited_at) {
-                content += `<div class="mb-4 bg-amber-50/50 p-2 rounded border border-amber-200 text-center shadow-sm">
-                    <p class="text-[10px] text-amber-600 uppercase font-bold tracking-widest flex items-center justify-center gap-1"><span class="material-symbols-rounded text-[14px]">history</span> Terakhir Diubah</p>
-                    <p class="text-xs font-bold text-amber-800">${d.edited_at} <span class="font-medium text-[10px]">oleh ${d.edited_by || '-'}</span></p>
-                </div>`;
-            }
-            
             const renderAir = () => {
-                let h = `<div class="mb-4"><h4 class="font-bold text-sm text-blue-600 border-b border-blue-100 pb-1 mb-2 flex items-center gap-1"><span class="material-symbols-rounded text-[16px]">water_drop</span> Informasi Air</h4>`;
-                h += `<p class="text-xs mb-1"><span class="font-semibold">Sumber:</span> ${d.air_sumber || '-'}</p>`;
-                if (d.air_sumber === 'PDAM' || d.air_sumber === 'WTP') {
-                    h += `<p class="text-xs mb-1"><span class="font-semibold">ID Pelanggan:</span> ${d.air_id || '-'}</p>`;
-                    h += `<p class="text-xs mb-1"><span class="font-semibold">Nama Pemilik:</span> ${d.air_nama || '-'}</p>`;
-                    h += `<p class="text-xs mb-1"><span class="font-semibold">Mekanisme:</span> ${d.air_mekanisme || '-'}</p>`;
-                }
-                h += `<p class="text-xs mb-1 mt-2"><span class="font-semibold">Kondisi Meteran:</span> <span class="${d.air_kondisi_meteran === 'Rusak' ? 'text-rose-600 font-bold' : ''}">${d.air_kondisi_meteran || '-'}</span> ${d.air_meteran_rusak ? `(${d.air_meteran_rusak})` : ''}</p>`;
-                h += `<p class="text-xs mb-1"><span class="font-semibold">Kondisi Pipa:</span> <span class="${d.air_kondisi_pipa === 'Rusak' ? 'text-rose-600 font-bold' : ''}">${d.air_kondisi_pipa || '-'}</span> ${d.air_pipa_rusak ? `(${d.air_pipa_rusak})` : ''}</p>`;
+                let amArr = extractAirMeters(d);
+                let h = `<div class="mb-4"><h4 class="font-bold text-sm text-blue-600 border-b border-blue-100 pb-1 mb-2 flex items-center gap-1"><span class="material-symbols-rounded text-[16px]">water_drop</span> Informasi Air (${amArr.length} Meteran)</h4>`;
+                
+                amArr.forEach((m, i) => {
+                    h += `<div class="bg-blue-50 p-3 rounded-xl mb-2 border border-blue-100 shadow-sm">
+                            <p class="text-[10px] font-extrabold text-blue-600 mb-1.5 uppercase tracking-widest">Meteran ${i+1}</p>
+                            <p class="text-xs mb-1"><span class="font-semibold text-slate-500">Sumber:</span> <span class="font-bold">${m.sumber || '-'}</span></p>
+                            <p class="text-xs mb-1"><span class="font-semibold text-slate-500">ID Pelanggan:</span> <span class="font-bold break-all">${m.id || '-'}</span></p>
+                            <p class="text-xs mb-1"><span class="font-semibold text-slate-500">Nama:</span> <span class="font-bold">${m.nama || '-'}</span></p>
+                            <p class="text-xs mb-1"><span class="font-semibold text-slate-500">Mekanisme:</span> <span class="font-bold">${m.mekanisme || '-'}</span></p>
+                            <p class="text-xs mb-0 mt-2 border-t border-blue-200 pt-1.5"><span class="font-semibold text-slate-500">Angka Terakhir:</span> <span class="font-extrabold text-blue-600">${parseSafeNumber(m.angka).toLocaleString('id-ID')}</span></p>
+                          </div>`;
+                });
+
+                h += `<h5 class="text-xs font-bold text-slate-700 mt-3 mb-1">Kondisi Fisik Fasilitas Air:</h5>`;
+                h += `<p class="text-xs mb-1"><span class="font-semibold text-slate-500">Kondisi Meteran:</span> <span class="${d.air_kondisi_meteran === 'Rusak' ? 'text-rose-600 font-bold' : ''}">${d.air_kondisi_meteran || '-'}</span> ${d.air_meteran_rusak ? `(${d.air_meteran_rusak})` : ''}</p>`;
+                h += `<p class="text-xs mb-1"><span class="font-semibold text-slate-500">Kondisi Pipa:</span> <span class="${d.air_kondisi_pipa === 'Rusak' ? 'text-rose-600 font-bold' : ''}">${d.air_kondisi_pipa || '-'}</span> ${d.air_pipa_rusak ? `(${d.air_pipa_rusak})` : ''}</p>`;
                 if (d.air_tandon === 'Ada') {
-                    h += `<p class="text-xs mb-1 mt-2"><span class="font-semibold">Kondisi Tandon:</span> <span class="${d.air_kondisi_tandon === 'Rusak' ? 'text-rose-600 font-bold' : ''}">${d.air_kondisi_tandon || '-'}</span> ${d.air_tandon_rusak ? `(${d.air_tandon_rusak})` : ''}</p>`;
+                    h += `<p class="text-xs mb-1 mt-2"><span class="font-semibold text-slate-500">Kondisi Tandon:</span> <span class="${d.air_kondisi_tandon === 'Rusak' ? 'text-rose-600 font-bold' : ''}">${d.air_kondisi_tandon || '-'}</span> ${d.air_tandon_rusak ? `(${d.air_tandon_rusak})` : ''}</p>`;
                     if (d.air_otomatis === 'Ada') {
-                        h += `<p class="text-xs mb-1"><span class="font-semibold">Otomatis Tandon:</span> <span class="${d.air_kondisi_otomatis === 'Rusak' ? 'text-rose-600 font-bold' : ''}">${d.air_kondisi_otomatis || '-'}</span> ${d.air_otomatis_rusak ? `(${d.air_otomatis_rusak})` : ''}</p>`;
+                        h += `<p class="text-xs mb-1"><span class="font-semibold text-slate-500">Otomatis Tandon:</span> <span class="${d.air_kondisi_otomatis === 'Rusak' ? 'text-rose-600 font-bold' : ''}">${d.air_kondisi_otomatis || '-'}</span> ${d.air_otomatis_rusak ? `(${d.air_otomatis_rusak})` : ''}</p>`;
                     }
                 }
                 if (d.air_pompa === 'Ada') {
-                    h += `<p class="text-xs mb-1"><span class="font-semibold">Pompa Air:</span> <span class="${d.air_kondisi_pompa === 'Rusak' ? 'text-rose-600 font-bold' : ''}">${d.air_kondisi_pompa || '-'}</span> ${d.air_pompa_rusak ? `(${d.air_pompa_rusak})` : ''}</p>`;
+                    h += `<p class="text-xs mb-1"><span class="font-semibold text-slate-500">Pompa Air:</span> <span class="${d.air_kondisi_pompa === 'Rusak' ? 'text-rose-600 font-bold' : ''}">${d.air_kondisi_pompa || '-'}</span> ${d.air_pompa_rusak ? `(${d.air_pompa_rusak})` : ''}</p>`;
                 }
                 h += `</div>`;
                 return h;
@@ -2698,29 +2694,57 @@
 
             const d = data.data;
             
-            if(d.air_sumber) { const el = document.querySelector(`input[name="air_sumber"][value="${d.air_sumber}"]`); if(el) el.checked = true; }
-            toggleAirFields();
+            const airContainer = document.getElementById('air-meters-container');
+            airContainer.innerHTML = '';
             
-            const uAirIdEdit = document.getElementById('u-air-id');
-            const uAirNamaEdit = document.getElementById('u-air-nama');
-            if(uAirIdEdit) { 
-                uAirIdEdit.removeAttribute('readonly'); 
-                uAirIdEdit.classList.remove('bg-slate-100', 'text-slate-500'); 
-                uAirIdEdit.value = d.air_id || ''; 
-            }
-            if(uAirNamaEdit) { 
-                uAirNamaEdit.removeAttribute('readonly'); 
-                uAirNamaEdit.classList.remove('bg-slate-100', 'text-slate-500'); 
-                uAirNamaEdit.value = d.air_nama || ''; 
-            }
-            
-            if (d.air_mekanisme) {
-                const mekOpts = Array.from(document.getElementById('u-air-mekanisme').options).map(o => o.value);
-                if(mekOpts.includes(d.air_mekanisme)) { document.getElementById('u-air-mekanisme').value = d.air_mekanisme; } 
-                else { document.getElementById('u-air-mekanisme').value = 'Lainnya'; document.getElementById('u-air-mekanisme-lain').value = d.air_mekanisme; }
-            }
-            toggleAirMekanisme();
-            document.getElementById('u-air-angka').value = d.air_angka ? parseSafeNumber(d.air_angka).toLocaleString('id-ID') : '';
+            let airMeters = extractAirMeters(d);
+            airMeters.forEach((m, idx) => {
+                const isUtama = idx === 0;
+                const title = isUtama ? 'Meteran Air 1 (Utama)' : `Meteran Air ${idx + 1}`;
+                const idSuffix = isUtama ? '' : `_${idx}`;
+                const htmlIdSuffix = idSuffix ? `-${idx}` : '';
+
+                const html = `
+                    <div class="air-item relative bg-blue-50/50 p-4 rounded-xl border border-blue-100 shadow-sm ${!isUtama ? 'mt-4' : ''}" id="air-item-${idx}">
+                        <h4 class="text-[10px] font-extrabold text-blue-600 uppercase tracking-widest mb-3 bg-blue-100 inline-block px-2 py-1 rounded border border-blue-200">${title}</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="md:col-span-2">
+                                <label class="label-modern mb-2">Sumber Air</label>
+                                <div class="flex gap-4">
+                                    <label class="cursor-pointer"><input type="radio" name="air_sumber${idSuffix}" value="PDAM" class="peer sr-only" ${m.sumber === 'PDAM' ? 'checked' : ''} required><div class="px-4 py-2 rounded-lg text-sm font-bold border-2 border-slate-200 peer-checked:border-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700">PDAM</div></label>
+                                    <label class="cursor-pointer"><input type="radio" name="air_sumber${idSuffix}" value="WTP" class="peer sr-only" ${m.sumber === 'WTP' ? 'checked' : ''} required><div class="px-4 py-2 rounded-lg text-sm font-bold border-2 border-slate-200 peer-checked:border-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700">WTP</div></label>
+                                    <label class="cursor-pointer"><input type="radio" name="air_sumber${idSuffix}" value="Sumur Bor" class="peer sr-only" ${m.sumber === 'Sumur Bor' ? 'checked' : ''} required><div class="px-4 py-2 rounded-lg text-sm font-bold border-2 border-slate-200 peer-checked:border-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700">Sumur Bor</div></label>
+                                </div>
+                            </div>
+                            <div><label class="label-modern">Nomor ID Pelanggan Air</label><input type="text" id="u-air-id${htmlIdSuffix}" name="air_id${idSuffix}" value="${m.id === '-' ? '' : m.id}" list="history-air-id" autocomplete="off" class="input-modern w-full px-4 py-3 rounded-xl text-sm font-mono"></div>
+                            <div><label class="label-modern">Nama Pemilik ID Pelanggan</label><input type="text" id="u-air-nama${htmlIdSuffix}" name="air_nama${idSuffix}" value="${m.nama === '-' ? '' : m.nama}" list="history-air-nama" autocomplete="off" class="input-modern w-full px-4 py-3 rounded-xl text-sm"></div>
+                            
+                            <div class="md:col-span-2">
+                                <label class="label-modern">Mekanisme Pembayaran</label>
+                                <div class="flex gap-2">
+                                    <select id="u-air-mekanisme${htmlIdSuffix}" name="air_mekanisme${idSuffix}" class="input-modern w-full px-4 py-3 rounded-xl font-bold text-sm" onchange="toggleAirMekanisme('${htmlIdSuffix}')" required>
+                                        <option value="">-- Pilih --</option>
+                                        <option value="Dibayar Ke PDAM Atau WTP Tiap Bulannya, Hanya Pemakaian Pribadi Staging" ${m.mekanisme === 'Dibayar Ke PDAM Atau WTP Tiap Bulannya, Hanya Pemakaian Pribadi Staging' ? 'selected' : ''}>Dibayar Ke PDAM Atau WTP Tiap Bulannya, Hanya Pemakaian Pribadi Staging</option>
+                                        <option value="Dibagi Dengan Ruko Tetangga, Karena 1 Meteran PDAM Dipakai Lebih Dari 1 Ruko" ${m.mekanisme === 'Dibagi Dengan Ruko Tetangga, Karena 1 Meteran PDAM Dipakai Lebih Dari 1 Ruko' ? 'selected' : ''}>Dibagi Dengan Ruko Tetangga, Karena 1 Meteran PDAM Dipakai Lebih Dari 1 Ruko</option>
+                                        <option value="Dibayarkan Include Atau Sudah Termasuk Dengan Biaya Sewa Ruko" ${m.mekanisme === 'Dibayarkan Include Atau Sudah Termasuk Dengan Biaya Sewa Ruko' ? 'selected' : ''}>Dibayarkan Include Atau Sudah Termasuk Dengan Biaya Sewa Ruko</option>
+                                        <option value="Lainnya" ${!['Dibayar Ke PDAM Atau WTP Tiap Bulannya, Hanya Pemakaian Pribadi Staging', 'Dibagi Dengan Ruko Tetangga, Karena 1 Meteran PDAM Dipakai Lebih Dari 1 Ruko', 'Dibayarkan Include Atau Sudah Termasuk Dengan Biaya Sewa Ruko', '-'].includes(m.mekanisme) ? 'selected' : ''}>Yang lain...</option>
+                                    </select>
+                                    <input type="text" id="u-air-mekanisme-lain${htmlIdSuffix}" name="air_mekanisme_lain${idSuffix}" value="${!['Dibayar Ke PDAM Atau WTP Tiap Bulannya, Hanya Pemakaian Pribadi Staging', 'Dibagi Dengan Ruko Tetangga, Karena 1 Meteran PDAM Dipakai Lebih Dari 1 Ruko', 'Dibayarkan Include Atau Sudah Termasuk Dengan Biaya Sewa Ruko', '-'].includes(m.mekanisme) ? m.mekanisme : ''}" placeholder="Sebutkan..." class="${!['Dibayar Ke PDAM Atau WTP Tiap Bulannya, Hanya Pemakaian Pribadi Staging', 'Dibagi Dengan Ruko Tetangga, Karena 1 Meteran PDAM Dipakai Lebih Dari 1 Ruko', 'Dibayarkan Include Atau Sudah Termasuk Dengan Biaya Sewa Ruko', '-'].includes(m.mekanisme) ? '' : 'hidden'} input-modern w-full px-4 py-3 rounded-xl text-sm">
+                                </div>
+                            </div>
+                            
+                            <div class="md:col-span-2">
+                                <label class="label-modern">Angka di Meteran Saat Ini</label>
+                                <div class="grid grid-cols-2 gap-4 items-center">
+                                    <input type="text" id="u-air-angka${htmlIdSuffix}" name="air_angka${idSuffix}" value="${m.angka ? m.angka.toLocaleString('id-ID') : ''}" required oninput="formatRibuanBulat(this)" class="input-modern w-full px-4 py-3 rounded-xl text-sm font-bold text-blue-700" placeholder="Ketik angka meteran...">
+                                    <span class="text-rose-500 text-[10px] sm:text-xs font-bold italic">*abaikan angka di belakang koma (,)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                airContainer.insertAdjacentHTML('beforeend', html);
+            });
             
             if(d.air_kondisi_meteran) { const el = document.querySelector(`input[name="air_kondisi_meteran"][value="${d.air_kondisi_meteran}"]`); if(el) el.checked = true; }
             document.getElementById('air-meteran-rusak').value = d.air_meteran_rusak || ''; toggleRusak('air_kondisi_meteran', 'air-meteran-rusak');
@@ -2928,35 +2952,94 @@
                     masterListrik = masterIds.filter(m => m.tipe === 'Listrik');
                 }
 
-                // Reset field Air
-                const uAirId = document.getElementById('u-air-id');
-                const uAirNama = document.getElementById('u-air-nama');
-                if (uAirId) {
-                    uAirId.value = '';
-                    uAirId.removeAttribute('readonly'); 
-                    uAirId.classList.remove('bg-slate-100', 'text-slate-500');
-                }
-                if (uAirNama) {
-                    uAirNama.value = '';
-                    uAirNama.removeAttribute('readonly'); 
-                    uAirNama.classList.remove('bg-slate-100', 'text-slate-500');
-                }
-
+                const airContainer = document.getElementById('air-meters-container');
+                airContainer.innerHTML = '';
+                
                 if (masterAir.length > 0) {
-                    const air = masterAir[0];
-                    if (uAirId) {
-                        uAirId.value = air.id_pelanggan || '';
-                        uAirId.setAttribute('readonly', true);
-                        uAirId.classList.add('bg-slate-100', 'text-slate-500');
-                    }
-                    if (uAirNama) {
-                        uAirNama.value = air.nama_pemilik || '';
-                        uAirNama.setAttribute('readonly', true);
-                        uAirNama.classList.add('bg-slate-100', 'text-slate-500');
-                    }
-                    // Auto select PDAM karena ada ID
-                    const pdamRadio = document.querySelector('input[name="air_sumber"][value="PDAM"]');
-                    if(pdamRadio) pdamRadio.checked = true;
+                    masterAir.forEach((m, idx) => {
+                        const isUtama = idx === 0;
+                        const title = isUtama ? 'Meteran Air 1 (Utama)' : `Meteran Air ${idx + 1}`;
+                        const idSuffix = isUtama ? '' : `_${idx}`;
+                        const htmlIdSuffix = idSuffix ? `-${idx}` : '';
+
+                        const html = `
+                            <div class="air-item relative bg-blue-50/50 p-4 rounded-xl border border-blue-100 shadow-sm ${!isUtama ? 'mt-4' : ''}" id="air-item-${idx}">
+                                <h4 class="text-[10px] font-extrabold text-blue-600 uppercase tracking-widest mb-3 bg-blue-100 inline-block px-2 py-1 rounded border border-blue-200">${title}</h4>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="md:col-span-2">
+                                        <label class="label-modern mb-2">Sumber Air</label>
+                                        <div class="flex gap-4 pointer-events-none opacity-80">
+                                            <label class="cursor-pointer"><input type="radio" name="air_sumber${idSuffix}" value="PDAM" class="peer sr-only" checked><div class="px-4 py-2 rounded-lg text-sm font-bold border-2 border-slate-200 peer-checked:border-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700">PDAM/WTP</div></label>
+                                        </div>
+                                    </div>
+                                    <div><label class="label-modern">Nomor ID Pelanggan Air</label><input type="text" id="u-air-id${htmlIdSuffix}" name="air_id${idSuffix}" value="${m.id_pelanggan || ''}" readonly class="input-modern w-full px-4 py-3 rounded-xl text-sm font-mono bg-slate-200/50 text-slate-500 cursor-not-allowed"></div>
+                                    <div><label class="label-modern">Nama Pemilik ID Pelanggan</label><input type="text" id="u-air-nama${htmlIdSuffix}" name="air_nama${idSuffix}" value="${m.nama_pemilik || ''}" readonly class="input-modern w-full px-4 py-3 rounded-xl text-sm bg-slate-200/50 text-slate-500 cursor-not-allowed"></div>
+                                    
+                                    <div class="md:col-span-2">
+                                        <label class="label-modern">Mekanisme Pembayaran</label>
+                                        <div class="flex gap-2">
+                                            <select id="u-air-mekanisme${htmlIdSuffix}" name="air_mekanisme${idSuffix}" class="input-modern w-full px-4 py-3 rounded-xl font-bold text-sm" onchange="toggleAirMekanisme('${htmlIdSuffix}')" required>
+                                                <option value="">-- Pilih --</option>
+                                                <option value="Dibayar Ke PDAM Atau WTP Tiap Bulannya, Hanya Pemakaian Pribadi Staging">Dibayar Ke PDAM Atau WTP Tiap Bulannya, Hanya Pemakaian Pribadi Staging</option>
+                                                <option value="Dibagi Dengan Ruko Tetangga, Karena 1 Meteran PDAM Dipakai Lebih Dari 1 Ruko">Dibagi Dengan Ruko Tetangga, Karena 1 Meteran PDAM Dipakai Lebih Dari 1 Ruko</option>
+                                                <option value="Dibayarkan Include Atau Sudah Termasuk Dengan Biaya Sewa Ruko">Dibayarkan Include Atau Sudah Termasuk Dengan Biaya Sewa Ruko</option>
+                                                <option value="Lainnya">Yang lain...</option>
+                                            </select>
+                                            <input type="text" id="u-air-mekanisme-lain${htmlIdSuffix}" name="air_mekanisme_lain${idSuffix}" placeholder="Sebutkan..." class="hidden input-modern w-full px-4 py-3 rounded-xl text-sm">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="md:col-span-2">
+                                        <label class="label-modern">Angka di Meteran Saat Ini</label>
+                                        <div class="grid grid-cols-2 gap-4 items-center">
+                                            <input type="text" id="u-air-angka${htmlIdSuffix}" name="air_angka${idSuffix}" required oninput="formatRibuanBulat(this)" class="input-modern w-full px-4 py-3 rounded-xl text-sm font-bold text-blue-700" placeholder="Ketik angka meteran...">
+                                            <span class="text-rose-500 text-[10px] sm:text-xs font-bold italic">*abaikan angka di belakang koma (,)</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        airContainer.insertAdjacentHTML('beforeend', html);
+                    });
+                } else {
+                    const html = `
+                        <div class="air-item relative bg-blue-50/50 p-4 rounded-xl border border-blue-100 shadow-sm" id="air-item-0">
+                            <h4 class="text-[10px] font-extrabold text-blue-600 uppercase tracking-widest mb-3 bg-blue-100 inline-block px-2 py-1 rounded border border-blue-200">Meteran Air 1</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="md:col-span-2">
+                                    <label class="label-modern mb-2">Sumber Air</label>
+                                    <div class="flex gap-4">
+                                        <label class="cursor-pointer"><input type="radio" name="air_sumber" value="PDAM" class="peer sr-only" required><div class="px-4 py-2 rounded-lg text-sm font-bold border-2 border-slate-200 peer-checked:border-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700">PDAM</div></label>
+                                        <label class="cursor-pointer"><input type="radio" name="air_sumber" value="WTP" class="peer sr-only" required><div class="px-4 py-2 rounded-lg text-sm font-bold border-2 border-slate-200 peer-checked:border-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700">WTP</div></label>
+                                        <label class="cursor-pointer"><input type="radio" name="air_sumber" value="Sumur Bor" class="peer sr-only" required><div class="px-4 py-2 rounded-lg text-sm font-bold border-2 border-slate-200 peer-checked:border-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700">Sumur Bor</div></label>
+                                    </div>
+                                </div>
+                                <div><label class="label-modern">Nomor ID Pelanggan Air</label><input type="text" id="u-air-id" name="air_id" list="history-air-id" autocomplete="off" class="input-modern w-full px-4 py-3 rounded-xl text-sm font-mono"></div>
+                                <div><label class="label-modern">Nama Pemilik ID Pelanggan</label><input type="text" id="u-air-nama" name="air_nama" list="history-air-nama" autocomplete="off" class="input-modern w-full px-4 py-3 rounded-xl text-sm"></div>
+                                <div class="md:col-span-2">
+                                    <label class="label-modern">Mekanisme Pembayaran</label>
+                                    <div class="flex gap-2">
+                                        <select id="u-air-mekanisme" name="air_mekanisme" class="input-modern w-full px-4 py-3 rounded-xl font-bold text-sm" onchange="toggleAirMekanisme('')" required>
+                                            <option value="">-- Pilih --</option>
+                                            <option value="Dibayar Ke PDAM Atau WTP Tiap Bulannya, Hanya Pemakaian Pribadi Staging">Dibayar Ke PDAM Atau WTP Tiap Bulannya, Hanya Pemakaian Pribadi Staging</option>
+                                            <option value="Dibagi Dengan Ruko Tetangga, Karena 1 Meteran PDAM Dipakai Lebih Dari 1 Ruko">Dibagi Dengan Ruko Tetangga, Karena 1 Meteran PDAM Dipakai Lebih Dari 1 Ruko</option>
+                                            <option value="Dibayarkan Include Atau Sudah Termasuk Dengan Biaya Sewa Ruko">Dibayarkan Include Atau Sudah Termasuk Dengan Biaya Sewa Ruko</option>
+                                            <option value="Lainnya">Yang lain...</option>
+                                        </select>
+                                        <input type="text" id="u-air-mekanisme-lain" name="air_mekanisme_lain" placeholder="Sebutkan..." class="hidden input-modern w-full px-4 py-3 rounded-xl text-sm">
+                                    </div>
+                                </div>
+                                <div class="md:col-span-2">
+                                    <label class="label-modern">Angka di Meteran Saat Ini</label>
+                                    <div class="grid grid-cols-2 gap-4 items-center">
+                                        <input type="text" id="u-air-angka" name="air_angka" required oninput="formatRibuanBulat(this)" class="input-modern w-full px-4 py-3 rounded-xl text-sm font-bold text-blue-700" placeholder="Ketik angka meteran...">
+                                        <span class="text-rose-500 text-[10px] sm:text-xs font-bold italic">*abaikan angka di belakang koma (,)</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    airContainer.insertAdjacentHTML('beforeend', html);
                 }
 
                 const listrikContainer = document.getElementById('listrik-meters-container');
@@ -3048,7 +3131,7 @@
                 document.getElementById('u-periode-tahun').value = wi.tahun;
                 document.getElementById('u-periode-minggu').value = wi.minggu;
 
-                toggleAirFields(); toggleAirMekanisme(); toggleSubTandon(); toggleSubPompa(); toggleIpl('ipl_bersih', 'ipl-bersih-fields'); toggleIpl('ipl_aman', 'ipl-aman-fields');
+                toggleSubTandon(); toggleSubPompa(); toggleIpl('ipl_bersih', 'ipl-bersih-fields'); toggleIpl('ipl_aman', 'ipl-aman-fields');
 
                 await populateUtilitasHistory(uName);
 
@@ -3070,37 +3153,15 @@
             input.value = val;
         }
 
-        function toggleAirFields() {
-            const s = document.querySelector('input[name="air_sumber"]:checked')?.value || ''; 
-            const f = document.getElementById('air-pdam-fields');
-            const mek = document.getElementById('air-mekanisme-container');
-            const mekInput = document.getElementById('u-air-mekanisme');
-            const angka = document.getElementById('air-angka-container');
-            const angkaInput = document.getElementById('u-air-angka');
-            
-            if(s === 'PDAM' || s === 'WTP') { 
-                f.classList.remove('hidden'); 
-                document.getElementById('u-air-id').required=true; 
-                document.getElementById('u-air-nama').required=true; 
-                mek.classList.remove('hidden');
-                mekInput.required = true;
-                angka.classList.remove('hidden');
-                angkaInput.required = true;
-            } 
-            else { 
-                f.classList.add('hidden'); 
-                document.getElementById('u-air-id').required=false; 
-                document.getElementById('u-air-nama').required=false; 
-                mek.classList.add('hidden');
-                mekInput.required = false;
-                angka.classList.add('hidden');
-                angkaInput.required = false;
+        window.toggleAirMekanisme = function(suffix = '') {
+            const sel = document.getElementById('u-air-mekanisme' + suffix);
+            const inp = document.getElementById('u-air-mekanisme-lain' + suffix);
+            if (sel && inp) {
+                if (sel.value === 'Lainnya') { inp.classList.remove('hidden'); inp.required = true; } 
+                else { inp.classList.add('hidden'); inp.required = false; }
             }
-        }
-        function toggleAirMekanisme() {
-            const s = document.getElementById('u-air-mekanisme').value; const f = document.getElementById('u-air-mekanisme-lain');
-            if(s === 'Lainnya') { f.classList.remove('hidden'); f.required = true; } else { f.classList.add('hidden'); f.required = false; }
-        }
+        };
+
         function toggleRusak(radioName, inputId) {
             const val = document.querySelector(`input[name="${radioName}"]:checked`)?.value; 
             const inp = document.getElementById(inputId);
@@ -3189,7 +3250,16 @@
             delete dataObj.edit_id;
             delete dataObj.original_date;
 
-            if(dataObj.air_mekanisme === 'Lainnya') dataObj.air_mekanisme = dataObj.air_mekanisme_lain;
+            Object.keys(dataObj).forEach(k => {
+                if (k.startsWith('air_mekanisme') && !k.includes('_lain')) {
+                    let suffix = k.substring('air_mekanisme'.length); 
+                    if (dataObj[k] === 'Lainnya') {
+                        dataObj[k] = dataObj[`air_mekanisme_lain${suffix}`];
+                    }
+                    delete dataObj[`air_mekanisme_lain${suffix}`];
+                }
+            });
+
             if(dataObj.ipl_bersih_nom) dataObj.ipl_bersih_nom = parseSafeNumber(dataObj.ipl_bersih_nom);
             if(dataObj.ipl_aman_nom) dataObj.ipl_aman_nom = parseSafeNumber(dataObj.ipl_aman_nom);
 
@@ -3487,11 +3557,15 @@
                                 }
                             });
                         } else {
-                            let currVal = parseSafeNumber(submitMinggu.data[`${currentUtilView}_angka`]);
-                            if (prevSubmit) {
-                                let prevVal = parseSafeNumber(prevSubmit.data[`${currentUtilView}_angka`]);
-                                if (currVal >= prevVal) { totalUsageMinggu += (currVal - prevVal); hasDataMinggu = true; }
-                            }
+                            let currAirMeters = extractAirMeters(submitMinggu.data);
+                            let prevAirMeters = prevSubmit ? extractAirMeters(prevSubmit.data) : [];
+                            currAirMeters.forEach(cm => {
+                                let pm = prevAirMeters.find(m => m.id === cm.id);
+                                if (pm && cm.angka >= pm.angka) {
+                                    totalUsageMinggu += (cm.angka - pm.angka);
+                                    hasDataMinggu = true;
+                                }
+                            });
                         }
                     }
                     let avgUsageMinggu = hasDataMinggu ? (totalUsageMinggu / diffDaysMinggu) : 0;
@@ -3529,9 +3603,15 @@
                                     }
                                 });
                             } else {
-                                let currVal = parseSafeNumber(subBulan.data[`${currentUtilView}_angka`]);
-                                let prevVal = parseSafeNumber(prevSubmit.data[`${currentUtilView}_angka`]);
-                                if (currVal >= prevVal) { totalUsageBulan += (currVal - prevVal); hasDataBulan = true; }
+                                let currAirMeters = extractAirMeters(subBulan.data);
+                                let prevAirMeters = extractAirMeters(prevSubmit.data);
+                                currAirMeters.forEach(cm => {
+                                    let pm = prevAirMeters.find(m => m.id === cm.id);
+                                    if (pm && cm.angka >= pm.angka) {
+                                        totalUsageBulan += (cm.angka - pm.angka);
+                                        hasDataBulan = true;
+                                    }
+                                });
                             }
                         }
                     });
@@ -3610,9 +3690,14 @@
 
                             if (currentUtilView === 'air') {
                                 if (prevSubmit) {
-                                    let currAir = parseSafeNumber(submit.data.air_angka);
-                                    let lastAir = parseSafeNumber(prevSubmit.data.air_angka);
-                                    if (currAir >= lastAir) sortVal = currAir - lastAir;
+                                    let currMeters = extractAirMeters(submit.data);
+                                    let prevMeters = extractAirMeters(prevSubmit.data);
+                                    let tempVal = 0;
+                                    currMeters.forEach(cm => {
+                                         let pm = prevMeters.find(m => m.id === cm.id);
+                                         if (pm && cm.angka >= pm.angka) tempVal += (cm.angka - pm.angka);
+                                    });
+                                    sortVal = tempVal;
                                 }
                             } else if (currentUtilView === 'listrik') {
                                  if (prevSubmit) {
@@ -3708,13 +3793,19 @@
                         const cellClick = `onclick="showUtilitasDetail('${submit.id}')" title="Klik untuk lihat detail form" class="cursor-pointer hover:bg-slate-50 transition-colors p-3 border-r border-slate-100 align-top"`;
                         
                         const airHtml = `
-                            <div class="grid grid-cols-2 gap-x-2 gap-y-1 text-[10px]">
-                                <div class="text-slate-500 font-bold">Sumber</div><div class="font-semibold">${d.air_sumber || '-'}</div>
-                                <div class="text-slate-500 font-bold">Angka</div><div class="text-blue-600 font-bold">${parseSafeNumber(d.air_angka).toLocaleString('id-ID')}</div>
-                                <div class="text-slate-500 font-bold">Meteran</div><div class="font-semibold ${d.air_kondisi_meteran==='Rusak'?'text-rose-600':''}">${d.air_kondisi_meteran || '-'}</div>
-                                <div class="text-slate-500 font-bold">Pipa</div><div class="font-semibold ${d.air_kondisi_pipa==='Rusak'?'text-rose-600':''}">${d.air_kondisi_pipa || '-'}</div>
-                                <div class="text-slate-500 font-bold">Tandon</div><div class="font-semibold ${d.air_kondisi_tandon==='Rusak'?'text-rose-600':''}">${d.air_tandon === 'Ada' ? (d.air_kondisi_tandon || '-') : 'Tidak Ada'}</div>
-                                <div class="text-slate-500 font-bold">Pompa</div><div class="font-semibold ${d.air_kondisi_pompa==='Rusak'?'text-rose-600':''}">${d.air_pompa === 'Ada' ? (d.air_kondisi_pompa || '-') : 'Tidak Ada'}</div>
+                            <div class="flex flex-col gap-2 text-[10px]">
+                                ${extractAirMeters(d).map((m, idx) => `
+                                    <div class="bg-blue-50 p-1.5 rounded border border-blue-100">
+                                        <div class="font-semibold break-all text-blue-700">${m.id || '-'}</div>
+                                        <div class="text-blue-600 font-extrabold text-xs mt-0.5">Mtr: ${m.angka.toLocaleString('id-ID')}</div>
+                                    </div>
+                                `).join('')}
+                                <div class="mt-1 pt-1 border-t border-slate-200 grid grid-cols-2 gap-x-2 gap-y-1">
+                                    <div class="text-slate-500 font-bold">Meteran</div><div class="font-semibold ${d.air_kondisi_meteran==='Rusak'?'text-rose-600':''}">${d.air_kondisi_meteran || '-'}</div>
+                                    <div class="text-slate-500 font-bold">Pipa</div><div class="font-semibold ${d.air_kondisi_pipa==='Rusak'?'text-rose-600':''}">${d.air_kondisi_pipa || '-'}</div>
+                                    <div class="text-slate-500 font-bold">Tandon</div><div class="font-semibold ${d.air_kondisi_tandon==='Rusak'?'text-rose-600':''}">${d.air_tandon === 'Ada' ? (d.air_kondisi_tandon || '-') : 'Tidak Ada'}</div>
+                                    <div class="text-slate-500 font-bold">Pompa</div><div class="font-semibold ${d.air_kondisi_pompa==='Rusak'?'text-rose-600':''}">${d.air_pompa === 'Ada' ? (d.air_kondisi_pompa || '-') : 'Tidak Ada'}</div>
+                                </div>
                             </div>
                         `;
 
@@ -3779,14 +3870,24 @@
                             }
 
                             if(currentUtilView === 'air') {
-                                let currAir = parseSafeNumber(d.air_angka);
+                                let currAirMeters = extractAirMeters(d);
+                                let prevAirMeters = prevSubmit ? extractAirMeters(prevSubmit.data) : [];
+                                
                                 let pemakaian = null;
                                 let avg = null;
                                 
                                 if (prevSubmit) {
-                                    let lastAir = parseSafeNumber(prevSubmit.data.air_angka);
-                                    if (currAir >= lastAir) {
-                                        pemakaian = currAir - lastAir;
+                                    let hasDiff = false;
+                                    let tempPemakaian = 0;
+                                    currAirMeters.forEach(cm => {
+                                        let pm = prevAirMeters.find(m => m.id === cm.id);
+                                        if (pm && cm.angka >= pm.angka) {
+                                            tempPemakaian += (cm.angka - pm.angka);
+                                            hasDiff = true;
+                                        }
+                                    });
+                                    if (hasDiff) {
+                                        pemakaian = tempPemakaian;
                                         avg = pemakaian / diffDays;
                                         aggregatedTrend[wIdx] += pemakaian;
                                         aggregatedAvgTrend[wIdx] += avg;
@@ -3803,15 +3904,16 @@
                                         </div>
                                     `;
                                 } else {
-                                    let statusTxt = (prevSubmit && currAir < parseSafeNumber(prevSubmit.data.air_angka)) ? 'Reset Meteran' : 'Mulai / Start';
-                                    diffHtml = `<div class="mb-1.5"><strong class="text-slate-400 text-[9px] uppercase tracking-widest bg-slate-100 px-2 py-0.5 rounded">${statusTxt}</strong></div>`;
+                                    diffHtml = `<div class="mb-1.5"><strong class="text-slate-400 text-[9px] uppercase tracking-widest bg-slate-100 px-2 py-0.5 rounded">Mulai / Start</strong></div>`;
                                 }
                                 
+                                let meterTexts = currAirMeters.map((cm, idx) => `<span class="text-[9px] text-slate-500 font-mono bg-blue-50/50 border border-blue-100/80 px-1 py-0.5 rounded w-full text-center truncate mb-0.5 last:mb-0" title="${cm.id}">${currAirMeters.length > 1 ? 'M'+(idx+1) : 'Mtr'}: ${cm.angka.toLocaleString('id-ID')}</span>`).join('');
+
                                 rowHtml += `<td class="p-2 border-r border-slate-50 relative hover:bg-blue-50/50 transition-colors cursor-pointer" ${cellClick}>
                                     ${warningHtml}
                                     <div class="flex flex-col items-center w-full mt-1">
                                         ${diffHtml}
-                                        <span class="text-[9px] text-slate-500 font-mono bg-blue-50/50 border border-blue-100 px-2 py-0.5 rounded w-full text-center mb-1">Mtr: ${currAir.toLocaleString('id-ID')}</span>
+                                        <div class="w-full flex flex-col mb-1">${meterTexts}</div>
                                         <span class="text-[8px] text-slate-400 font-medium">${submit.date.split(',')[0]}</span>
                                     </div>
                                 </td>`;
@@ -4005,11 +4107,19 @@
                                             finalCountData[bIdx]++; 
                                         }
                                     } else {
-                                        let curr = parseSafeNumber(submit.data[`${currentUtilView}_angka`]);
-                                        let prev = parseSafeNumber(prevSubmit.data[`${currentUtilView}_angka`]);
-                                        if (curr >= prev) { 
-                                            finalTrendData[bIdx] += (curr - prev); 
-                                            finalAvgTrendData[bIdx] += ((curr - prev) / diffDays);
+                                        let currAirMeters = extractAirMeters(submit.data);
+                                        let prevAirMeters = extractAirMeters(prevSubmit.data);
+                                        let hasData = false; let dVal = 0;
+                                        currAirMeters.forEach(cm => {
+                                            let pm = prevAirMeters.find(m => m.id === cm.id);
+                                            if (pm && cm.angka >= pm.angka) {
+                                                dVal += (cm.angka - pm.angka);
+                                                hasData = true;
+                                            }
+                                        });
+                                        if (hasData) { 
+                                            finalTrendData[bIdx] += dVal; 
+                                            finalAvgTrendData[bIdx] += (dVal / diffDays);
                                             finalCountData[bIdx]++; 
                                         }
                                     }
@@ -5465,6 +5575,7 @@
                 const rows = data.map(d => {
                     const dt = d.data || {};
                     let listrikMeters = extractListrikMeters(dt);
+                    let airMeters = extractAirMeters(dt);
                     
                     let rowData = {
                         "ID Laporan": d.id,
@@ -5476,11 +5587,6 @@
                         "Koordinator (SSC)": d.ssc,
                         "PIC": d.pic,
                         
-                        "Air - Sumber": dt.air_sumber || '-',
-                        "Air - ID Pelanggan": dt.air_id || '-',
-                        "Air - Nama Pemilik": dt.air_nama || '-',
-                        "Air - Mekanisme": dt.air_mekanisme || '-',
-                        "Air - Angka Meteran": dt.air_angka || 0,
                         "Air - Kondisi Meteran": dt.air_kondisi_meteran || '-',
                         "Air - Ket Rusak Meteran": dt.air_meteran_rusak || '-',
                         "Air - Kondisi Pipa": dt.air_kondisi_pipa || '-',
@@ -5499,6 +5605,14 @@
                         "IPL - Nom Keamanan": dt.ipl_aman_nom || 0,
                         "IPL - Jadwal Keamanan": dt.ipl_aman_jadwal || '-'
                     };
+
+                    for(let i=0; i<3; i++) {
+                        rowData[`Air ${i+1} - ID`] = airMeters[i]?.id || '-';
+                        rowData[`Air ${i+1} - Nama`] = airMeters[i]?.nama || '-';
+                        rowData[`Air ${i+1} - Sumber`] = airMeters[i]?.sumber || '-';
+                        rowData[`Air ${i+1} - Mekanisme`] = airMeters[i]?.mekanisme || '-';
+                        rowData[`Air ${i+1} - Angka`] = airMeters[i]?.angka !== undefined ? airMeters[i].angka : '-';
+                    }
 
                     for(let i=0; i<5; i++) {
                         rowData[`Listrik ${i+1} - ID`] = listrikMeters[i]?.id || '-';
