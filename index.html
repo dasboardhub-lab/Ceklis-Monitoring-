@@ -363,11 +363,23 @@
 
                     <!-- Filter & Tab View -->
                     <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
-                        <div class="flex bg-slate-100 p-1 rounded-xl shadow-inner gap-1 flex-wrap">
-                            <button onclick="switchUtilView('air')" id="btn-view-air" class="px-4 py-2 rounded-lg text-sm font-bold bg-white shadow text-blue-600 transition-all">Data Air</button>
-                            <button onclick="switchUtilView('listrik')" id="btn-view-listrik" class="px-4 py-2 rounded-lg text-sm font-bold text-slate-500 hover:text-slate-700 transition-all">Data Listrik</button>
-                            <button onclick="switchUtilView('ipl')" id="btn-view-ipl" class="px-4 py-2 rounded-lg text-sm font-bold text-slate-500 hover:text-slate-700 transition-all">Data IPL</button>
-                            <button onclick="switchUtilView('rekap')" id="btn-view-rekap" class="px-4 py-2 rounded-lg text-sm font-bold text-slate-500 hover:text-slate-700 transition-all">Rekap Lengkap</button>
+                        <div class="flex bg-slate-100 p-1 rounded-2xl shadow-inner gap-1 flex-nowrap overflow-x-auto hide-scrollbar">
+                            <button onclick="switchUtilView('air')" id="btn-view-air" class="px-4 py-2 rounded-xl text-[10px] font-bold bg-white shadow text-blue-600 transition-all flex flex-col items-center justify-center min-w-[50px]">
+                                <span class="material-symbols-rounded text-[22px]">water_drop</span>
+                                <span class="tab-text block mt-1 uppercase tracking-widest">Air</span>
+                            </button>
+                            <button onclick="switchUtilView('listrik')" id="btn-view-listrik" class="px-3 py-2 rounded-xl text-[10px] font-bold text-slate-400 hover:text-slate-700 transition-all flex flex-col items-center justify-center min-w-[50px]">
+                                <span class="material-symbols-rounded text-[22px]">bolt</span>
+                                <span class="tab-text hidden mt-1 uppercase tracking-widest">Listrik</span>
+                            </button>
+                            <button onclick="switchUtilView('ipl')" id="btn-view-ipl" class="px-3 py-2 rounded-xl text-[10px] font-bold text-slate-400 hover:text-slate-700 transition-all flex flex-col items-center justify-center min-w-[50px]">
+                                <span class="material-symbols-rounded text-[22px]">payments</span>
+                                <span class="tab-text hidden mt-1 uppercase tracking-widest">IPL</span>
+                            </button>
+                            <button onclick="switchUtilView('rekap')" id="btn-view-rekap" class="px-3 py-2 rounded-xl text-[10px] font-bold text-slate-400 hover:text-slate-700 transition-all flex flex-col items-center justify-center min-w-[50px]">
+                                <span class="material-symbols-rounded text-[22px]">table_chart</span>
+                                <span class="tab-text hidden mt-1 uppercase tracking-widest">Rekap</span>
+                            </button>
                         </div>
                         <div class="flex flex-wrap sm:flex-nowrap gap-2">
                             <select id="util-filter-minggu" onchange="renderUtilitasTable()" class="hidden input-modern px-4 py-2 rounded-xl text-sm font-bold w-32"><option value="1">Minggu 1</option><option value="2">Minggu 2</option><option value="3">Minggu 3</option><option value="4">Minggu 4</option><option value="5">Minggu 5</option></select>
@@ -2901,12 +2913,15 @@
             views.forEach(v => {
                 const btn = document.getElementById(`btn-view-${v}`);
                 if(!btn) return;
+                const textSpan = btn.querySelector('.tab-text');
                 if(v === view) {
-                    btn.classList.add('bg-white', 'shadow', colors[v]);
-                    btn.classList.remove('text-slate-500', 'hover:text-slate-700');
+                    btn.classList.add('bg-white', 'shadow', colors[v], 'px-4');
+                    btn.classList.remove('text-slate-400', 'hover:text-slate-700', 'px-3');
+                    if(textSpan) textSpan.classList.remove('hidden');
                 } else {
-                    btn.classList.remove('bg-white', 'shadow', 'text-blue-600', 'text-amber-500', 'text-emerald-500', 'text-purple-600');
-                    btn.classList.add('text-slate-500', 'hover:text-slate-700');
+                    btn.classList.remove('bg-white', 'shadow', 'text-blue-600', 'text-amber-500', 'text-emerald-500', 'text-purple-600', 'px-4');
+                    btn.classList.add('text-slate-400', 'hover:text-slate-700', 'px-3');
+                    if(textSpan) textSpan.classList.add('hidden');
                 }
             });
 
@@ -3660,7 +3675,7 @@
                             let prevAirMeters = prevSubmit ? extractAirMeters(prevSubmit.data) : [];
                             currAirMeters.forEach(cm => {
                                 let pm = prevAirMeters.find(m => m.id === cm.id);
-                                if (pm && cm.angka >= pm.angka) {
+                                if (pm && cm.angka >= pm.angka && cm.sumber !== 'Sumur Bor') {
                                     totalUsageMinggu += (cm.angka - pm.angka);
                                     hasDataMinggu = true;
                                 }
@@ -3706,7 +3721,7 @@
                                 let prevAirMeters = extractAirMeters(prevSubmit.data);
                                 currAirMeters.forEach(cm => {
                                     let pm = prevAirMeters.find(m => m.id === cm.id);
-                                    if (pm && cm.angka >= pm.angka) {
+                                    if (pm && cm.angka >= pm.angka && cm.sumber !== 'Sumur Bor') {
                                         totalUsageBulan += (cm.angka - pm.angka);
                                         hasDataBulan = true;
                                     }
@@ -3794,7 +3809,7 @@
                                     let tempVal = 0;
                                     currMeters.forEach(cm => {
                                          let pm = prevMeters.find(m => m.id === cm.id);
-                                         if (pm && cm.angka >= pm.angka) tempVal += (cm.angka - pm.angka);
+                                         if (pm && cm.angka >= pm.angka && cm.sumber !== 'Sumur Bor') tempVal += (cm.angka - pm.angka);
                                     });
                                     sortVal = tempVal;
                                 }
@@ -3974,13 +3989,14 @@
                                 
                                 let pemakaian = null;
                                 let avg = null;
+                                let isOnlySumurBor = currAirMeters.length > 0 && currAirMeters.every(m => m.sumber === 'Sumur Bor');
                                 
-                                if (prevSubmit) {
+                                if (prevSubmit && !isOnlySumurBor) {
                                     let hasDiff = false;
                                     let tempPemakaian = 0;
                                     currAirMeters.forEach(cm => {
                                         let pm = prevAirMeters.find(m => m.id === cm.id);
-                                        if (pm && cm.angka >= pm.angka) {
+                                        if (pm && cm.angka >= pm.angka && cm.sumber !== 'Sumur Bor') {
                                             tempPemakaian += (cm.angka - pm.angka);
                                             hasDiff = true;
                                         }
@@ -3995,25 +4011,31 @@
                                 }
                                 
                                 let diffHtml = '';
-                                if (pemakaian !== null) {
-                                    diffHtml = `
-                                        <div class="flex justify-between items-end w-full px-1 mb-1.5">
-                                            <strong class="text-blue-600 text-[14px] leading-none" title="Total Pemakaian">+${pemakaian.toLocaleString('id-ID')}</strong>
-                                            <span class="text-[9px] text-slate-400 font-bold leading-none" title="Rata-rata (${diffDays.toFixed(0)} Hari)">(${avg.toLocaleString('id-ID', {maximumFractionDigits:1})}/hr)</span>
-                                        </div>
-                                    `;
-                                } else {
-                                    diffHtml = `<div class="mb-1.5"><strong class="text-slate-400 text-[9px] uppercase tracking-widest bg-slate-100 px-2 py-0.5 rounded">Mulai / Start</strong></div>`;
-                                }
+                                let meterTexts = '';
                                 
-                                let meterTexts = currAirMeters.map((cm, idx) => `<span class="text-[9px] text-slate-500 font-mono bg-blue-50/50 border border-blue-100/80 px-1 py-0.5 rounded w-full text-center truncate mb-0.5 last:mb-0" title="${cm.sumber === 'Sumur Bor' ? 'Sumur Bor' : cm.id}">${currAirMeters.length > 1 ? 'M'+(idx+1) : 'Mtr'}: ${cm.sumber === 'Sumur Bor' ? 'Bor' : cm.angka.toLocaleString('id-ID')}</span>`).join('');
+                                if (isOnlySumurBor) {
+                                    diffHtml = '';
+                                    meterTexts = `<span class="text-[10px] text-emerald-600 font-bold bg-emerald-50 border border-emerald-200 px-2 py-1 rounded w-full text-center truncate mb-1 shadow-sm">Sumur Bor</span>`;
+                                } else {
+                                    if (pemakaian !== null) {
+                                        diffHtml = `
+                                            <div class="flex justify-between items-end w-full px-1 mb-1.5">
+                                                <strong class="text-blue-600 text-[14px] leading-none" title="Total Pemakaian">+${pemakaian.toLocaleString('id-ID')}</strong>
+                                                <span class="text-[9px] text-slate-400 font-bold leading-none" title="Rata-rata (${diffDays.toFixed(0)} Hari)">(${avg.toLocaleString('id-ID', {maximumFractionDigits:1})}/hr)</span>
+                                            </div>
+                                        `;
+                                    } else {
+                                        diffHtml = `<div class="mb-1.5"><strong class="text-slate-400 text-[9px] uppercase tracking-widest bg-slate-100 px-2 py-0.5 rounded">Mulai / Start</strong></div>`;
+                                    }
+                                    meterTexts = currAirMeters.map((cm, idx) => `<span class="text-[9px] text-slate-500 font-mono bg-blue-50/50 border border-blue-100/80 px-1 py-0.5 rounded w-full text-center truncate mb-0.5 last:mb-0" title="${cm.sumber === 'Sumur Bor' ? 'Sumur Bor' : cm.id}">${currAirMeters.length > 1 ? 'M'+(idx+1) : 'Mtr'}: ${cm.sumber === 'Sumur Bor' ? 'Bor' : cm.angka.toLocaleString('id-ID')}</span>`).join('');
+                                }
 
                                 rowHtml += `<td class="p-2 border-r border-slate-50 relative hover:bg-blue-50/50 transition-colors cursor-pointer" ${cellClick}>
                                     ${warningHtml}
-                                    <div class="flex flex-col items-center w-full mt-1">
+                                    <div class="flex flex-col items-center justify-center w-full mt-1 min-h-[45px]">
                                         ${diffHtml}
-                                        <div class="w-full flex flex-col mb-1">${meterTexts}</div>
-                                        <span class="text-[8px] text-slate-400 font-medium">${submit.date.split(',')[0]}</span>
+                                        <div class="w-full flex flex-col items-center justify-center">${meterTexts}</div>
+                                        <span class="text-[8px] text-slate-400 font-medium mt-auto pt-1">${submit.date.split(',')[0]}</span>
                                     </div>
                                 </td>`;
                                 
@@ -4211,7 +4233,7 @@
                                         let hasData = false; let dVal = 0;
                                         currAirMeters.forEach(cm => {
                                             let pm = prevAirMeters.find(m => m.id === cm.id);
-                                            if (pm && cm.angka >= pm.angka) {
+                                            if (pm && cm.angka >= pm.angka && cm.sumber !== 'Sumur Bor') {
                                                 dVal += (cm.angka - pm.angka);
                                                 hasData = true;
                                             }
