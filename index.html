@@ -1552,9 +1552,17 @@
             </div>
             
             <h3 class="relative z-10 font-extrabold text-slate-900 text-2xl mb-2 tracking-tight">Terima Kasih!</h3>
-            <p class="relative z-10 text-slate-500 text-sm leading-relaxed mb-8 font-medium px-2">
+            <p class="relative z-10 text-slate-500 text-sm leading-relaxed mb-4 font-medium px-2">
                 Laporan Anda telah berhasil tersimpan. Kontribusi Anda sangat berarti dalam menjaga kualitas dan standar operasional area kita.
             </p>
+            
+            <div class="relative z-10 bg-slate-50 border border-slate-100 rounded-xl p-3 w-full mb-8 text-left">
+                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-0.5">Kode Area</p>
+                <p id="ty-staging-name" class="text-sm font-extrabold text-slate-800 truncate">-</p>
+                <div class="h-px w-full bg-slate-200 my-2"></div>
+                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-0.5">PIC Pelapor</p>
+                <p id="ty-pic-name" class="text-sm font-bold text-slate-600 truncate">-</p>
+            </div>
             
             <button onclick="closeThankYouModal()" class="relative z-10 w-full bg-slate-900 hover:bg-black text-white font-bold py-3.5 rounded-xl transition-transform active:scale-95 shadow-md flex justify-center items-center gap-2">
                 Tutup & Lanjutkan <span class="material-symbols-rounded text-[18px]">arrow_forward</span>
@@ -2505,7 +2513,7 @@
         // Fungsi Helper untuk menarik semua data Air
         function extractAirMeters(d) {
             let meters = [];
-            if (d.air_id || d.air_id_0 || d.air_angka || d.air_angka_0) {
+            if (d.air_sumber || d.air_sumber_0 || d.air_id || d.air_id_0 || d.air_angka || d.air_angka_0) {
                 meters.push({ 
                     id: d.air_id || d.air_id_0 || '-', 
                     nama: d.air_nama || d.air_nama_0 || '-',
@@ -2515,7 +2523,7 @@
                 });
             }
             for (let i = 1; i <= 20; i++) {
-                if (d[`air_id_${i}`] || d[`air_angka_${i}`]) {
+                if (d[`air_sumber_${i}`] || d[`air_id_${i}`] || d[`air_angka_${i}`]) {
                     meters.push({ 
                         id: d[`air_id_${i}`] || '-', 
                         nama: d[`air_nama_${i}`] || '-',
@@ -2574,13 +2582,21 @@
                 let h = `<div class="mb-4"><h4 class="font-bold text-sm text-blue-600 border-b border-blue-100 pb-1 mb-2 flex items-center gap-1"><span class="material-symbols-rounded text-[16px]">water_drop</span> Informasi Air (${amArr.length} Meteran)</h4>`;
                 
                 amArr.forEach((m, i) => {
-                    h += `<div class="bg-blue-50 p-3 rounded-xl mb-2 border border-blue-100 shadow-sm">
-                            <p class="text-[10px] font-extrabold text-blue-600 mb-1.5 uppercase tracking-widest">Meteran ${i+1}</p>
-                            <p class="text-xs mb-1"><span class="font-semibold text-slate-500">Sumber:</span> <span class="font-bold">${m.sumber || '-'}</span></p>
+                    let fieldsHtml = '';
+                    if (m.sumber === 'Sumur Bor') {
+                        fieldsHtml = `<p class="text-xs mb-1"><span class="font-semibold text-slate-500">Sumber:</span> <span class="font-bold text-emerald-600">Sumur Bor</span></p>
+                                      <p class="text-xs text-slate-400 italic mt-2 border-t border-blue-200 pt-1.5">Tidak memiliki tagihan/meteran.</p>`;
+                    } else {
+                        fieldsHtml = `<p class="text-xs mb-1"><span class="font-semibold text-slate-500">Sumber:</span> <span class="font-bold">${m.sumber || '-'}</span></p>
                             <p class="text-xs mb-1"><span class="font-semibold text-slate-500">ID Pelanggan:</span> <span class="font-bold break-all">${m.id || '-'}</span></p>
                             <p class="text-xs mb-1"><span class="font-semibold text-slate-500">Nama:</span> <span class="font-bold">${m.nama || '-'}</span></p>
                             <p class="text-xs mb-1"><span class="font-semibold text-slate-500">Mekanisme:</span> <span class="font-bold">${m.mekanisme || '-'}</span></p>
-                            <p class="text-xs mb-0 mt-2 border-t border-blue-200 pt-1.5"><span class="font-semibold text-slate-500">Angka Terakhir:</span> <span class="font-extrabold text-blue-600">${parseSafeNumber(m.angka).toLocaleString('id-ID')}</span></p>
+                            <p class="text-xs mb-0 mt-2 border-t border-blue-200 pt-1.5"><span class="font-semibold text-slate-500">Angka Terakhir:</span> <span class="font-extrabold text-blue-600">${parseSafeNumber(m.angka).toLocaleString('id-ID')}</span></p>`;
+                    }
+
+                    h += `<div class="bg-blue-50 p-3 rounded-xl mb-2 border border-blue-100 shadow-sm">
+                            <p class="text-[10px] font-extrabold text-blue-600 mb-1.5 uppercase tracking-widest">Meteran ${i+1}</p>
+                            ${fieldsHtml}
                           </div>`;
                 });
 
@@ -2755,39 +2771,43 @@
                             <div class="md:col-span-2">
                                 <label class="label-modern mb-2">Sumber Air</label>
                                 <div class="flex gap-4">
-                                    <label class="cursor-pointer"><input type="radio" name="air_sumber${idSuffix}" value="PDAM" class="peer sr-only" ${m.sumber === 'PDAM' ? 'checked' : ''} required><div class="px-4 py-2 rounded-lg text-sm font-bold border-2 border-slate-200 peer-checked:border-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700">PDAM</div></label>
-                                    <label class="cursor-pointer"><input type="radio" name="air_sumber${idSuffix}" value="WTP" class="peer sr-only" ${m.sumber === 'WTP' ? 'checked' : ''} required><div class="px-4 py-2 rounded-lg text-sm font-bold border-2 border-slate-200 peer-checked:border-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700">WTP</div></label>
-                                    <label class="cursor-pointer"><input type="radio" name="air_sumber${idSuffix}" value="Sumur Bor" class="peer sr-only" ${m.sumber === 'Sumur Bor' ? 'checked' : ''} required><div class="px-4 py-2 rounded-lg text-sm font-bold border-2 border-slate-200 peer-checked:border-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700">Sumur Bor</div></label>
-                                </div>
-                            </div>
-                            <div><label class="label-modern">Nomor ID Pelanggan Air</label><input type="text" id="u-air-id${htmlIdSuffix}" name="air_id${idSuffix}" value="${m.id === '-' ? '' : m.id}" list="history-air-id" autocomplete="off" class="input-modern w-full px-4 py-3 rounded-xl text-sm font-mono"></div>
-                            <div><label class="label-modern">Nama Pemilik ID Pelanggan</label><input type="text" id="u-air-nama${htmlIdSuffix}" name="air_nama${idSuffix}" value="${m.nama === '-' ? '' : m.nama}" list="history-air-nama" autocomplete="off" class="input-modern w-full px-4 py-3 rounded-xl text-sm"></div>
-                            
-                            <div class="md:col-span-2">
-                                <label class="label-modern">Mekanisme Pembayaran</label>
-                                <div class="flex gap-2">
-                                    <select id="u-air-mekanisme${htmlIdSuffix}" name="air_mekanisme${idSuffix}" class="input-modern w-full px-4 py-3 rounded-xl font-bold text-sm" onchange="toggleAirMekanisme('${htmlIdSuffix}')" required>
-                                        <option value="">-- Pilih --</option>
-                                        <option value="Dibayar Ke PDAM Atau WTP Tiap Bulannya, Hanya Pemakaian Pribadi Staging" ${m.mekanisme === 'Dibayar Ke PDAM Atau WTP Tiap Bulannya, Hanya Pemakaian Pribadi Staging' ? 'selected' : ''}>Dibayar Ke PDAM Atau WTP Tiap Bulannya, Hanya Pemakaian Pribadi Staging</option>
-                                        <option value="Dibagi Dengan Ruko Tetangga, Karena 1 Meteran PDAM Dipakai Lebih Dari 1 Ruko" ${m.mekanisme === 'Dibagi Dengan Ruko Tetangga, Karena 1 Meteran PDAM Dipakai Lebih Dari 1 Ruko' ? 'selected' : ''}>Dibagi Dengan Ruko Tetangga, Karena 1 Meteran PDAM Dipakai Lebih Dari 1 Ruko</option>
-                                        <option value="Dibayarkan Include Atau Sudah Termasuk Dengan Biaya Sewa Ruko" ${m.mekanisme === 'Dibayarkan Include Atau Sudah Termasuk Dengan Biaya Sewa Ruko' ? 'selected' : ''}>Dibayarkan Include Atau Sudah Termasuk Dengan Biaya Sewa Ruko</option>
-                                        <option value="Lainnya" ${!['Dibayar Ke PDAM Atau WTP Tiap Bulannya, Hanya Pemakaian Pribadi Staging', 'Dibagi Dengan Ruko Tetangga, Karena 1 Meteran PDAM Dipakai Lebih Dari 1 Ruko', 'Dibayarkan Include Atau Sudah Termasuk Dengan Biaya Sewa Ruko', '-'].includes(m.mekanisme) ? 'selected' : ''}>Yang lain...</option>
-                                    </select>
-                                    <input type="text" id="u-air-mekanisme-lain${htmlIdSuffix}" name="air_mekanisme_lain${idSuffix}" value="${!['Dibayar Ke PDAM Atau WTP Tiap Bulannya, Hanya Pemakaian Pribadi Staging', 'Dibagi Dengan Ruko Tetangga, Karena 1 Meteran PDAM Dipakai Lebih Dari 1 Ruko', 'Dibayarkan Include Atau Sudah Termasuk Dengan Biaya Sewa Ruko', '-'].includes(m.mekanisme) ? m.mekanisme : ''}" placeholder="Sebutkan..." class="${!['Dibayar Ke PDAM Atau WTP Tiap Bulannya, Hanya Pemakaian Pribadi Staging', 'Dibagi Dengan Ruko Tetangga, Karena 1 Meteran PDAM Dipakai Lebih Dari 1 Ruko', 'Dibayarkan Include Atau Sudah Termasuk Dengan Biaya Sewa Ruko', '-'].includes(m.mekanisme) ? '' : 'hidden'} input-modern w-full px-4 py-3 rounded-xl text-sm">
+                                    <label class="cursor-pointer"><input type="radio" name="air_sumber${idSuffix}" value="PDAM" class="peer sr-only" ${m.sumber === 'PDAM' ? 'checked' : ''} onchange="toggleAirFields('${htmlIdSuffix}', '${idSuffix}')" required><div class="px-4 py-2 rounded-lg text-sm font-bold border-2 border-slate-200 peer-checked:border-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700">PDAM</div></label>
+                                    <label class="cursor-pointer"><input type="radio" name="air_sumber${idSuffix}" value="WTP" class="peer sr-only" ${m.sumber === 'WTP' ? 'checked' : ''} onchange="toggleAirFields('${htmlIdSuffix}', '${idSuffix}')" required><div class="px-4 py-2 rounded-lg text-sm font-bold border-2 border-slate-200 peer-checked:border-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700">WTP</div></label>
+                                    <label class="cursor-pointer"><input type="radio" name="air_sumber${idSuffix}" value="Sumur Bor" class="peer sr-only" ${m.sumber === 'Sumur Bor' ? 'checked' : ''} onchange="toggleAirFields('${htmlIdSuffix}', '${idSuffix}')" required><div class="px-4 py-2 rounded-lg text-sm font-bold border-2 border-slate-200 peer-checked:border-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700">Sumur Bor</div></label>
                                 </div>
                             </div>
                             
-                            <div class="md:col-span-2">
-                                <label class="label-modern">Angka di Meteran Saat Ini</label>
-                                <div class="grid grid-cols-2 gap-4 items-center">
-                                    <input type="text" id="u-air-angka${htmlIdSuffix}" name="air_angka${idSuffix}" value="${m.angka ? m.angka.toLocaleString('id-ID') : ''}" required oninput="formatRibuanBulat(this)" class="input-modern w-full px-4 py-3 rounded-xl text-sm font-bold text-blue-700" placeholder="Ketik angka meteran...">
-                                    <span class="text-rose-500 text-[10px] sm:text-xs font-bold italic">*abaikan angka di belakang koma (,)</span>
+                            <div id="air-dynamic-fields${htmlIdSuffix}" class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+                                <div><label class="label-modern">Nomor ID Pelanggan Air</label><input type="text" id="u-air-id${htmlIdSuffix}" name="air_id${idSuffix}" value="${m.id === '-' ? '' : m.id}" list="history-air-id" autocomplete="off" class="input-modern w-full px-4 py-3 rounded-xl text-sm font-mono"></div>
+                                <div><label class="label-modern">Nama Pemilik ID Pelanggan</label><input type="text" id="u-air-nama${htmlIdSuffix}" name="air_nama${idSuffix}" value="${m.nama === '-' ? '' : m.nama}" list="history-air-nama" autocomplete="off" class="input-modern w-full px-4 py-3 rounded-xl text-sm"></div>
+                                
+                                <div class="md:col-span-2">
+                                    <label class="label-modern">Mekanisme Pembayaran</label>
+                                    <div class="flex gap-2">
+                                        <select id="u-air-mekanisme${htmlIdSuffix}" name="air_mekanisme${idSuffix}" class="input-modern w-full px-4 py-3 rounded-xl font-bold text-sm" onchange="toggleAirMekanisme('${htmlIdSuffix}')" required>
+                                            <option value="">-- Pilih --</option>
+                                            <option value="Dibayar Ke PDAM Atau WTP Tiap Bulannya, Hanya Pemakaian Pribadi Staging" ${m.mekanisme === 'Dibayar Ke PDAM Atau WTP Tiap Bulannya, Hanya Pemakaian Pribadi Staging' ? 'selected' : ''}>Dibayar Ke PDAM Atau WTP Tiap Bulannya, Hanya Pemakaian Pribadi Staging</option>
+                                            <option value="Dibagi Dengan Ruko Tetangga, Karena 1 Meteran PDAM Dipakai Lebih Dari 1 Ruko" ${m.mekanisme === 'Dibagi Dengan Ruko Tetangga, Karena 1 Meteran PDAM Dipakai Lebih Dari 1 Ruko' ? 'selected' : ''}>Dibagi Dengan Ruko Tetangga, Karena 1 Meteran PDAM Dipakai Lebih Dari 1 Ruko</option>
+                                            <option value="Dibayarkan Include Atau Sudah Termasuk Dengan Biaya Sewa Ruko" ${m.mekanisme === 'Dibayarkan Include Atau Sudah Termasuk Dengan Biaya Sewa Ruko' ? 'selected' : ''}>Dibayarkan Include Atau Sudah Termasuk Dengan Biaya Sewa Ruko</option>
+                                            <option value="Lainnya" ${!['Dibayar Ke PDAM Atau WTP Tiap Bulannya, Hanya Pemakaian Pribadi Staging', 'Dibagi Dengan Ruko Tetangga, Karena 1 Meteran PDAM Dipakai Lebih Dari 1 Ruko', 'Dibayarkan Include Atau Sudah Termasuk Dengan Biaya Sewa Ruko', '-'].includes(m.mekanisme) ? 'selected' : ''}>Yang lain...</option>
+                                        </select>
+                                        <input type="text" id="u-air-mekanisme-lain${htmlIdSuffix}" name="air_mekanisme_lain${idSuffix}" value="${!['Dibayar Ke PDAM Atau WTP Tiap Bulannya, Hanya Pemakaian Pribadi Staging', 'Dibagi Dengan Ruko Tetangga, Karena 1 Meteran PDAM Dipakai Lebih Dari 1 Ruko', 'Dibayarkan Include Atau Sudah Termasuk Dengan Biaya Sewa Ruko', '-'].includes(m.mekanisme) ? m.mekanisme : ''}" placeholder="Sebutkan..." class="${!['Dibayar Ke PDAM Atau WTP Tiap Bulannya, Hanya Pemakaian Pribadi Staging', 'Dibagi Dengan Ruko Tetangga, Karena 1 Meteran PDAM Dipakai Lebih Dari 1 Ruko', 'Dibayarkan Include Atau Sudah Termasuk Dengan Biaya Sewa Ruko', '-'].includes(m.mekanisme) ? '' : 'hidden'} input-modern w-full px-4 py-3 rounded-xl text-sm">
+                                    </div>
+                                </div>
+                                
+                                <div class="md:col-span-2">
+                                    <label class="label-modern">Angka di Meteran Saat Ini</label>
+                                    <div class="grid grid-cols-2 gap-4 items-center">
+                                        <input type="text" id="u-air-angka${htmlIdSuffix}" name="air_angka${idSuffix}" value="${m.angka ? m.angka.toLocaleString('id-ID') : ''}" required oninput="formatRibuanBulat(this)" class="input-modern w-full px-4 py-3 rounded-xl text-sm font-bold text-blue-700" placeholder="Ketik angka meteran...">
+                                        <span class="text-rose-500 text-[10px] sm:text-xs font-bold italic">*abaikan angka di belakang koma (,)</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 `;
                 airContainer.insertAdjacentHTML('beforeend', html);
+                setTimeout(() => toggleAirFields(htmlIdSuffix, idSuffix), 10);
             });
             
             if(d.air_kondisi_meteran) { const el = document.querySelector(`input[name="air_kondisi_meteran"][value="${d.air_kondisi_meteran}"]`); if(el) el.checked = true; }
@@ -3013,37 +3033,41 @@
                                     <div class="md:col-span-2">
                                         <label class="label-modern mb-2">Sumber Air</label>
                                         <div class="flex gap-4 pointer-events-none opacity-80">
-                                            <label class="cursor-pointer"><input type="radio" name="air_sumber${idSuffix}" value="PDAM" class="peer sr-only" checked><div class="px-4 py-2 rounded-lg text-sm font-bold border-2 border-slate-200 peer-checked:border-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700">PDAM/WTP</div></label>
-                                        </div>
-                                    </div>
-                                    <div><label class="label-modern">Nomor ID Pelanggan Air</label><input type="text" id="u-air-id${htmlIdSuffix}" name="air_id${idSuffix}" value="${m.id_pelanggan || ''}" readonly class="input-modern w-full px-4 py-3 rounded-xl text-sm font-mono bg-slate-200/50 text-slate-500 cursor-not-allowed"></div>
-                                    <div><label class="label-modern">Nama Pemilik ID Pelanggan</label><input type="text" id="u-air-nama${htmlIdSuffix}" name="air_nama${idSuffix}" value="${m.nama_pemilik || ''}" readonly class="input-modern w-full px-4 py-3 rounded-xl text-sm bg-slate-200/50 text-slate-500 cursor-not-allowed"></div>
-                                    
-                                    <div class="md:col-span-2">
-                                        <label class="label-modern">Mekanisme Pembayaran</label>
-                                        <div class="flex gap-2">
-                                            <select id="u-air-mekanisme${htmlIdSuffix}" name="air_mekanisme${idSuffix}" class="input-modern w-full px-4 py-3 rounded-xl font-bold text-sm" onchange="toggleAirMekanisme('${htmlIdSuffix}')" required>
-                                                <option value="">-- Pilih --</option>
-                                                <option value="Dibayar Ke PDAM Atau WTP Tiap Bulannya, Hanya Pemakaian Pribadi Staging">Dibayar Ke PDAM Atau WTP Tiap Bulannya, Hanya Pemakaian Pribadi Staging</option>
-                                                <option value="Dibagi Dengan Ruko Tetangga, Karena 1 Meteran PDAM Dipakai Lebih Dari 1 Ruko">Dibagi Dengan Ruko Tetangga, Karena 1 Meteran PDAM Dipakai Lebih Dari 1 Ruko</option>
-                                                <option value="Dibayarkan Include Atau Sudah Termasuk Dengan Biaya Sewa Ruko">Dibayarkan Include Atau Sudah Termasuk Dengan Biaya Sewa Ruko</option>
-                                                <option value="Lainnya">Yang lain...</option>
-                                            </select>
-                                            <input type="text" id="u-air-mekanisme-lain${htmlIdSuffix}" name="air_mekanisme_lain${idSuffix}" placeholder="Sebutkan..." class="hidden input-modern w-full px-4 py-3 rounded-xl text-sm">
+                                            <label class="cursor-pointer"><input type="radio" name="air_sumber${idSuffix}" value="PDAM" class="peer sr-only" checked onchange="toggleAirFields('${htmlIdSuffix}', '${idSuffix}')"><div class="px-4 py-2 rounded-lg text-sm font-bold border-2 border-slate-200 peer-checked:border-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700">PDAM/WTP</div></label>
                                         </div>
                                     </div>
                                     
-                                    <div class="md:col-span-2">
-                                        <label class="label-modern">Angka di Meteran Saat Ini</label>
-                                        <div class="grid grid-cols-2 gap-4 items-center">
-                                            <input type="text" id="u-air-angka${htmlIdSuffix}" name="air_angka${idSuffix}" required oninput="formatRibuanBulat(this)" class="input-modern w-full px-4 py-3 rounded-xl text-sm font-bold text-blue-700" placeholder="Ketik angka meteran...">
-                                            <span class="text-rose-500 text-[10px] sm:text-xs font-bold italic">*abaikan angka di belakang koma (,)</span>
+                                    <div id="air-dynamic-fields${htmlIdSuffix}" class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+                                        <div><label class="label-modern">Nomor ID Pelanggan Air</label><input type="text" id="u-air-id${htmlIdSuffix}" name="air_id${idSuffix}" value="${m.id_pelanggan || ''}" readonly class="input-modern w-full px-4 py-3 rounded-xl text-sm font-mono bg-slate-200/50 text-slate-500 cursor-not-allowed"></div>
+                                        <div><label class="label-modern">Nama Pemilik ID Pelanggan</label><input type="text" id="u-air-nama${htmlIdSuffix}" name="air_nama${idSuffix}" value="${m.nama_pemilik || ''}" readonly class="input-modern w-full px-4 py-3 rounded-xl text-sm bg-slate-200/50 text-slate-500 cursor-not-allowed"></div>
+                                        
+                                        <div class="md:col-span-2">
+                                            <label class="label-modern">Mekanisme Pembayaran</label>
+                                            <div class="flex gap-2">
+                                                <select id="u-air-mekanisme${htmlIdSuffix}" name="air_mekanisme${idSuffix}" class="input-modern w-full px-4 py-3 rounded-xl font-bold text-sm" onchange="toggleAirMekanisme('${htmlIdSuffix}')" required>
+                                                    <option value="">-- Pilih --</option>
+                                                    <option value="Dibayar Ke PDAM Atau WTP Tiap Bulannya, Hanya Pemakaian Pribadi Staging">Dibayar Ke PDAM Atau WTP Tiap Bulannya, Hanya Pemakaian Pribadi Staging</option>
+                                                    <option value="Dibagi Dengan Ruko Tetangga, Karena 1 Meteran PDAM Dipakai Lebih Dari 1 Ruko">Dibagi Dengan Ruko Tetangga, Karena 1 Meteran PDAM Dipakai Lebih Dari 1 Ruko</option>
+                                                    <option value="Dibayarkan Include Atau Sudah Termasuk Dengan Biaya Sewa Ruko">Dibayarkan Include Atau Sudah Termasuk Dengan Biaya Sewa Ruko</option>
+                                                    <option value="Lainnya">Yang lain...</option>
+                                                </select>
+                                                <input type="text" id="u-air-mekanisme-lain${htmlIdSuffix}" name="air_mekanisme_lain${idSuffix}" placeholder="Sebutkan..." class="hidden input-modern w-full px-4 py-3 rounded-xl text-sm">
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="md:col-span-2">
+                                            <label class="label-modern">Angka di Meteran Saat Ini</label>
+                                            <div class="grid grid-cols-2 gap-4 items-center">
+                                                <input type="text" id="u-air-angka${htmlIdSuffix}" name="air_angka${idSuffix}" required oninput="formatRibuanBulat(this)" class="input-modern w-full px-4 py-3 rounded-xl text-sm font-bold text-blue-700" placeholder="Ketik angka meteran...">
+                                                <span class="text-rose-500 text-[10px] sm:text-xs font-bold italic">*abaikan angka di belakang koma (,)</span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         `;
                         airContainer.insertAdjacentHTML('beforeend', html);
+                        setTimeout(() => toggleAirFields(htmlIdSuffix, idSuffix), 10);
                     });
                 } else {
                     const html = `
@@ -3053,37 +3077,43 @@
                                 <div class="md:col-span-2">
                                     <label class="label-modern mb-2">Sumber Air</label>
                                     <div class="flex gap-4">
-                                        <label class="cursor-pointer"><input type="radio" name="air_sumber" value="PDAM" class="peer sr-only" required><div class="px-4 py-2 rounded-lg text-sm font-bold border-2 border-slate-200 peer-checked:border-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700">PDAM</div></label>
-                                        <label class="cursor-pointer"><input type="radio" name="air_sumber" value="WTP" class="peer sr-only" required><div class="px-4 py-2 rounded-lg text-sm font-bold border-2 border-slate-200 peer-checked:border-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700">WTP</div></label>
-                                        <label class="cursor-pointer"><input type="radio" name="air_sumber" value="Sumur Bor" class="peer sr-only" required><div class="px-4 py-2 rounded-lg text-sm font-bold border-2 border-slate-200 peer-checked:border-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700">Sumur Bor</div></label>
+                                        <label class="cursor-pointer"><input type="radio" name="air_sumber" value="PDAM" class="peer sr-only" onchange="toggleAirFields('', '')" required><div class="px-4 py-2 rounded-lg text-sm font-bold border-2 border-slate-200 peer-checked:border-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700">PDAM</div></label>
+                                        <label class="cursor-pointer"><input type="radio" name="air_sumber" value="WTP" class="peer sr-only" onchange="toggleAirFields('', '')" required><div class="px-4 py-2 rounded-lg text-sm font-bold border-2 border-slate-200 peer-checked:border-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700">WTP</div></label>
+                                        <label class="cursor-pointer"><input type="radio" name="air_sumber" value="Sumur Bor" class="peer sr-only" onchange="toggleAirFields('', '')" required><div class="px-4 py-2 rounded-lg text-sm font-bold border-2 border-slate-200 peer-checked:border-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700">Sumur Bor</div></label>
                                     </div>
                                 </div>
-                                <div><label class="label-modern">Nomor ID Pelanggan Air</label><input type="text" id="u-air-id" name="air_id" list="history-air-id" autocomplete="off" class="input-modern w-full px-4 py-3 rounded-xl text-sm font-mono"></div>
-                                <div><label class="label-modern">Nama Pemilik ID Pelanggan</label><input type="text" id="u-air-nama" name="air_nama" list="history-air-nama" autocomplete="off" class="input-modern w-full px-4 py-3 rounded-xl text-sm"></div>
-                                <div class="md:col-span-2">
-                                    <label class="label-modern">Mekanisme Pembayaran</label>
-                                    <div class="flex gap-2">
-                                        <select id="u-air-mekanisme" name="air_mekanisme" class="input-modern w-full px-4 py-3 rounded-xl font-bold text-sm" onchange="toggleAirMekanisme('')" required>
-                                            <option value="">-- Pilih --</option>
-                                            <option value="Dibayar Ke PDAM Atau WTP Tiap Bulannya, Hanya Pemakaian Pribadi Staging">Dibayar Ke PDAM Atau WTP Tiap Bulannya, Hanya Pemakaian Pribadi Staging</option>
-                                            <option value="Dibagi Dengan Ruko Tetangga, Karena 1 Meteran PDAM Dipakai Lebih Dari 1 Ruko">Dibagi Dengan Ruko Tetangga, Karena 1 Meteran PDAM Dipakai Lebih Dari 1 Ruko</option>
-                                            <option value="Dibayarkan Include Atau Sudah Termasuk Dengan Biaya Sewa Ruko">Dibayarkan Include Atau Sudah Termasuk Dengan Biaya Sewa Ruko</option>
-                                            <option value="Lainnya">Yang lain...</option>
-                                        </select>
-                                        <input type="text" id="u-air-mekanisme-lain" name="air_mekanisme_lain" placeholder="Sebutkan..." class="hidden input-modern w-full px-4 py-3 rounded-xl text-sm">
+                                
+                                <div id="air-dynamic-fields" class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+                                    <div><label class="label-modern">Nomor ID Pelanggan Air</label><input type="text" id="u-air-id" name="air_id" list="history-air-id" autocomplete="off" class="input-modern w-full px-4 py-3 rounded-xl text-sm font-mono"></div>
+                                    <div><label class="label-modern">Nama Pemilik ID Pelanggan</label><input type="text" id="u-air-nama" name="air_nama" list="history-air-nama" autocomplete="off" class="input-modern w-full px-4 py-3 rounded-xl text-sm"></div>
+                                    
+                                    <div class="md:col-span-2">
+                                        <label class="label-modern">Mekanisme Pembayaran</label>
+                                        <div class="flex gap-2">
+                                            <select id="u-air-mekanisme" name="air_mekanisme" class="input-modern w-full px-4 py-3 rounded-xl font-bold text-sm" onchange="toggleAirMekanisme('')" required>
+                                                <option value="">-- Pilih --</option>
+                                                <option value="Dibayar Ke PDAM Atau WTP Tiap Bulannya, Hanya Pemakaian Pribadi Staging">Dibayar Ke PDAM Atau WTP Tiap Bulannya, Hanya Pemakaian Pribadi Staging</option>
+                                                <option value="Dibagi Dengan Ruko Tetangga, Karena 1 Meteran PDAM Dipakai Lebih Dari 1 Ruko">Dibagi Dengan Ruko Tetangga, Karena 1 Meteran PDAM Dipakai Lebih Dari 1 Ruko</option>
+                                                <option value="Dibayarkan Include Atau Sudah Termasuk Dengan Biaya Sewa Ruko">Dibayarkan Include Atau Sudah Termasuk Dengan Biaya Sewa Ruko</option>
+                                                <option value="Lainnya">Yang lain...</option>
+                                            </select>
+                                            <input type="text" id="u-air-mekanisme-lain" name="air_mekanisme_lain" placeholder="Sebutkan..." class="hidden input-modern w-full px-4 py-3 rounded-xl text-sm">
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="md:col-span-2">
-                                    <label class="label-modern">Angka di Meteran Saat Ini</label>
-                                    <div class="grid grid-cols-2 gap-4 items-center">
-                                        <input type="text" id="u-air-angka" name="air_angka" required oninput="formatRibuanBulat(this)" class="input-modern w-full px-4 py-3 rounded-xl text-sm font-bold text-blue-700" placeholder="Ketik angka meteran...">
-                                        <span class="text-rose-500 text-[10px] sm:text-xs font-bold italic">*abaikan angka di belakang koma (,)</span>
+                                    
+                                    <div class="md:col-span-2">
+                                        <label class="label-modern">Angka di Meteran Saat Ini</label>
+                                        <div class="grid grid-cols-2 gap-4 items-center">
+                                            <input type="text" id="u-air-angka" name="air_angka" required oninput="formatRibuanBulat(this)" class="input-modern w-full px-4 py-3 rounded-xl text-sm font-bold text-blue-700" placeholder="Ketik angka meteran...">
+                                            <span class="text-rose-500 text-[10px] sm:text-xs font-bold italic">*abaikan angka di belakang koma (,)</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     `;
                     airContainer.insertAdjacentHTML('beforeend', html);
+                    setTimeout(() => toggleAirFields('', ''), 10);
                 }
 
                 const listrikContainer = document.getElementById('listrik-meters-container');
@@ -3203,6 +3233,31 @@
             if (sel && inp) {
                 if (sel.value === 'Lainnya') { inp.classList.remove('hidden'); inp.required = true; } 
                 else { inp.classList.add('hidden'); inp.required = false; }
+            }
+        };
+
+        window.toggleAirFields = function(htmlSuffix = '', nameSuffix = '') {
+            const radio = document.querySelector(`input[name="air_sumber${nameSuffix}"]:checked`);
+            const container = document.getElementById(`air-dynamic-fields${htmlSuffix}`);
+            if (!container || !radio) return;
+
+            const isSumurBor = radio.value === 'Sumur Bor';
+            
+            const inputId = document.getElementById(`u-air-id${htmlSuffix}`);
+            const inputNama = document.getElementById(`u-air-nama${htmlSuffix}`);
+            const inputAngka = document.getElementById(`u-air-angka${htmlSuffix}`);
+            const selectMekanisme = document.getElementById(`u-air-mekanisme${htmlSuffix}`);
+            
+            if (isSumurBor) {
+                container.classList.add('hidden');
+                if(inputId) inputId.required = false;
+                if(inputNama) inputNama.required = false;
+                if(inputAngka) inputAngka.required = false;
+                if(selectMekanisme) selectMekanisme.required = false;
+            } else {
+                container.classList.remove('hidden');
+                if(inputAngka) inputAngka.required = true;
+                if(selectMekanisme) selectMekanisme.required = true;
             }
         };
 
@@ -3394,7 +3449,7 @@
                 
                 closeUtilitasModal();
                 renderUtilitasTable();
-                showThankYouModal();
+                showThankYouModal(uName, uPic);
                 setTimeout(() => checkAndShowReminders(false), 1000);
             } catch(error) {
                 console.error(error);
@@ -3840,8 +3895,8 @@
                             <div class="flex flex-col gap-2 text-[10px]">
                                 ${extractAirMeters(d).map((m, idx) => `
                                     <div class="bg-blue-50 p-1.5 rounded border border-blue-100">
-                                        <div class="font-semibold break-all text-blue-700">${m.id || '-'}</div>
-                                        <div class="text-blue-600 font-extrabold text-xs mt-0.5">Mtr: ${m.angka.toLocaleString('id-ID')}</div>
+                                        <div class="font-semibold break-all text-blue-700">${m.sumber === 'Sumur Bor' ? 'Sumur Bor' : (m.id || '-')}</div>
+                                        <div class="text-blue-600 font-extrabold text-xs mt-0.5">${m.sumber === 'Sumur Bor' ? 'Tanpa Meteran' : ('Mtr: ' + m.angka.toLocaleString('id-ID'))}</div>
                                     </div>
                                 `).join('')}
                                 <div class="mt-1 pt-1 border-t border-slate-200 grid grid-cols-2 gap-x-2 gap-y-1">
@@ -3951,7 +4006,7 @@
                                     diffHtml = `<div class="mb-1.5"><strong class="text-slate-400 text-[9px] uppercase tracking-widest bg-slate-100 px-2 py-0.5 rounded">Mulai / Start</strong></div>`;
                                 }
                                 
-                                let meterTexts = currAirMeters.map((cm, idx) => `<span class="text-[9px] text-slate-500 font-mono bg-blue-50/50 border border-blue-100/80 px-1 py-0.5 rounded w-full text-center truncate mb-0.5 last:mb-0" title="${cm.id}">${currAirMeters.length > 1 ? 'M'+(idx+1) : 'Mtr'}: ${cm.angka.toLocaleString('id-ID')}</span>`).join('');
+                                let meterTexts = currAirMeters.map((cm, idx) => `<span class="text-[9px] text-slate-500 font-mono bg-blue-50/50 border border-blue-100/80 px-1 py-0.5 rounded w-full text-center truncate mb-0.5 last:mb-0" title="${cm.sumber === 'Sumur Bor' ? 'Sumur Bor' : cm.id}">${currAirMeters.length > 1 ? 'M'+(idx+1) : 'Mtr'}: ${cm.sumber === 'Sumur Bor' ? 'Bor' : cm.angka.toLocaleString('id-ID')}</span>`).join('');
 
                                 rowHtml += `<td class="p-2 border-r border-slate-50 relative hover:bg-blue-50/50 transition-colors cursor-pointer" ${cellClick}>
                                     ${warningHtml}
@@ -4563,7 +4618,7 @@
             document.querySelectorAll('[id^="note-container-"]').forEach(el => { el.classList.add('max-h-0', 'opacity-0'); setTimeout(() => el.classList.add('hidden'), 300); });
             btn.disabled = false; btn.innerHTML = '<span class="material-symbols-rounded icon-fill">send</span> <span>Kirim Laporan Inspeksi</span>';
             closeChecklistModal(); 
-            showThankYouModal();
+            showThankYouModal(targetData.stagging_name, targetData.pic);
             setTimeout(() => switchTab('dashboard'), 500);
             setTimeout(() => checkAndShowReminders(false), 1000);
         });
@@ -5870,9 +5925,13 @@
             window.open(url, '_blank');
         };
 
-        window.showThankYouModal = function() {
+        window.showThankYouModal = function(stagingName, picName) {
             const container = document.getElementById('modal-thank-you');
             const box = document.getElementById('thank-you-box');
+            
+            document.getElementById('ty-staging-name').textContent = stagingName || '-';
+            document.getElementById('ty-pic-name').textContent = picName || '-';
+            
             container.classList.remove('hidden');
             void container.offsetWidth; // Memicu ulang render
             container.classList.remove('opacity-0');
