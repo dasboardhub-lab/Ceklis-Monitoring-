@@ -811,7 +811,7 @@
                                                 <span class="material-symbols-rounded icon-fill">pie_chart</span>
                                             </div>
                                             <strong class="text-sm block text-slate-900 mb-2">A. Ceklis Monitoring (Bulanan)</strong>
-                                            <p class="text-xs text-slate-500 leading-relaxed mb-6">Inspeksi kondisi fisik area (sekali per bulan, tanggal 20 hingga akhir bulan). Gunakan <strong>"Opsi N/A" (Tidak Ada)</strong> khusus jika fasilitas yang dinilai secara aktual memang tidak tersedia di area Anda. Sistem juga akan mewajibkan Anda mengisi catatan/keterangan apabila terdapat barang yang dilaporkan Rusak/Tidak Standar.</p>
+                                            <p class="text-xs text-slate-500 leading-relaxed mb-6">Inspeksi kondisi fisik area (sekali per bulan, tanggal 20 hingga akhir bulan). Gunakan <strong>"Tidak ada" (Tidak Ada)</strong> khusus jika fasilitas yang dinilai secara aktual memang tidak tersedia di area Anda. Sistem juga akan mewajibkan Anda mengisi catatan/keterangan apabila terdapat barang yang dilaporkan Rusak/Tidak Standar.</p>
                                         </div>
                                         <button onclick="switchTab('dashboard'); if(!isSidebarOpen && window.innerWidth >= 768) toggleSidebar();" class="w-full bg-slate-50 hover:bg-brand-600 text-slate-600 hover:text-white font-bold py-3 rounded-xl text-xs transition-all flex items-center justify-center gap-2 border border-slate-200 hover:border-transparent active:scale-95">
                                             Buka Menu Ceklis <span class="material-symbols-rounded text-[16px]">arrow_forward</span>
@@ -1079,35 +1079,35 @@
             </div>
         </div>
     </div>
-
-    <!-- MODAL: Manage Item Form (Parameter Inspeksi) -->
+    <!-- MODAL: Manage Parameter Checklist -->
     <div id="modal-item-form" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[400] flex items-center justify-center p-4">
-        <div class="max-w-md w-full bg-surface rounded-3xl shadow-float overflow-hidden animate-modal flex flex-col border border-slate-200">
+        <div class="max-w-lg w-full bg-surface rounded-3xl shadow-float overflow-hidden animate-modal flex flex-col border border-slate-200">
             <div class="bg-surface border-b border-slate-100 p-6 flex justify-between items-center shrink-0">
-                <h3 id="modal-item-title" class="font-bold text-slate-900 text-lg flex items-center gap-2">Tambah Parameter</h3>
-                <button type="button" onclick="closeItemModal()" class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 flex items-center justify-center transition-colors"><span class="material-symbols-rounded text-sm">close</span></button>
+                <h3 id="modal-item-title" class="font-bold text-slate-900 text-lg flex items-center gap-2">Kelola Pertanyaan</h3>
+                <button onclick="closeItemModal()" class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 flex items-center justify-center transition-colors"><span class="material-symbols-rounded text-sm">close</span></button>
             </div>
-            <div class="p-6 sm:p-8">
+            <div class="p-6 sm:p-8 overflow-y-auto custom-scroll">
                 <form id="form-manage-item" class="space-y-4">
-                    <input type="hidden" id="manage-item-catId">
-                    <input type="hidden" id="manage-item-id">
+                    <input type="hidden" id="manage-item-catId"><input type="hidden" id="manage-item-id">
                     <div>
-                        <label class="label-modern">Sub Kategori (Grouping)</label>
-                        <input type="text" id="manage-item-subcategory" list="subcat-list" placeholder="Kosongkan jika umum" class="input-modern w-full px-4 py-3 rounded-xl font-bold text-sm text-slate-800">
+                        <label class="label-modern">Parameter Inspeksi</label>
+                        <textarea id="manage-item-label" required rows="2" placeholder="Cth: Kebersihan lantai area depan..." class="input-modern w-full px-4 py-3 rounded-xl font-medium text-sm"></textarea>
+                    </div>
+                    <div>
+                        <label class="label-modern flex justify-between"><span>Sub Kategori (Grup)</span><span class="font-normal text-slate-400 normal-case">Opsional</span></label>
+                        <input type="text" id="manage-item-subcategory" list="subcat-list" placeholder="Cth: Area Dalam..." class="input-modern w-full px-4 py-3 rounded-xl font-medium text-sm">
                         <datalist id="subcat-list"></datalist>
                     </div>
-                    <div>
-                        <label class="label-modern">Pertanyaan / Objek Inspeksi</label>
-                        <textarea id="manage-item-label" required rows="2" placeholder="Contoh: Kondisi keramik lantai" class="input-modern w-full px-4 py-3 rounded-xl font-bold text-sm text-slate-800 resize-none"></textarea>
+                    <div class="pt-6 flex justify-end gap-2 border-t border-slate-100 mt-6">
+                        <button type="button" onclick="closeItemModal()" class="px-5 py-2.5 rounded-xl font-bold text-sm text-slate-600 hover:bg-slate-100 transition-colors">Batal</button>
+                        <button type="submit" class="px-6 py-2.5 rounded-xl font-bold text-sm text-white bg-slate-900 hover:bg-black transition-transform active:scale-95 shadow-md">Simpan Parameter</button>
                     </div>
-                    <div>
-                        <label class="label-modern">Opsi Penilaian (Jawaban)</label>
-                        <select id="manage-item-type" required class="input-modern w-full px-4 py-3 rounded-xl font-bold text-sm text-slate-800 cursor-pointer">
-                            <option value="ok_nonok">OK / Non OK</option>
-                            <option value="ada_tidak">Ada / Tidak Ada</option>
-                            <option value="normal_rusak">Normal / Rusak</option>
-                        </select>
-                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Kelola Master ID -->
                     <div class="pt-6 flex justify-end gap-2 border-t border-slate-100 mt-6">
                         <button type="button" onclick="closeItemModal()" class="px-5 py-2.5 rounded-xl font-bold text-sm text-slate-600 hover:bg-slate-100 transition-colors">Batal</button>
                         <button type="submit" class="px-6 py-2.5 rounded-xl font-bold text-sm text-white bg-slate-900 hover:bg-black transition-transform active:scale-95 shadow-md">Simpan Parameter</button>
@@ -4925,31 +4925,45 @@
                     else if (Object.keys(groupedItems).length > 1 && groupedItems['Tanpa Sub Kategori'].length > 0) { listState.innerHTML += `<div class="mt-6 mb-3 flex items-center gap-2 px-1"><span class="bg-slate-200 text-slate-600 text-[10px] uppercase font-bold px-3 py-1 rounded flex items-center gap-1.5 tracking-wider"><span class="material-symbols-rounded text-[14px]">list</span> Umum</span></div>`; }
 
                     groupedItems[subCatName].forEach((item, idx) => {
-                        const typeBadgeStr = itemTypeConfig[item.type || 'ok_nonok'].pos + ' / ' + itemTypeConfig[item.type || 'ok_nonok'].neg;
+                        const posL = item.posLabel || (itemTypeConfig[item.type || 'ok_nonok']?.pos || 'OK');
+                        const negL = item.negLabel || (itemTypeConfig[item.type || 'ok_nonok']?.neg || 'Non OK');
                         listState.innerHTML += `
-                            <div class="bg-white border border-slate-200 rounded-2xl p-4 flex flex-col sm:flex-row gap-4 justify-between sm:items-center hover:border-brand-300 hover:shadow-soft smooth-transition">
-                                <div class="flex items-start gap-3 flex-1">
+                            <div class="bg-white border border-slate-200 rounded-2xl p-4 flex flex-col xl:flex-row gap-4 justify-between xl:items-center hover:border-brand-300 hover:shadow-soft smooth-transition">
+                                <div class="flex items-start gap-3 flex-1 min-w-[200px]">
                                     <div class="bg-slate-50 text-slate-400 border border-slate-100 w-8 h-8 rounded-lg flex items-center justify-center shrink-0"><span class="material-symbols-rounded text-[16px]">tag</span></div>
-                                    <div>
+                                    <div class="flex-1">
                                         <p class="text-sm font-bold text-slate-800 leading-snug">${item.label}</p>
-                                        <div class="flex gap-2 items-center mt-1.5">
-                                            <span class="bg-slate-100 text-slate-600 px-2 py-0.5 rounded text-[9px] font-extrabold uppercase tracking-widest">${typeBadgeStr}</span>
-                                        </div>
                                     </div>
                                 </div>
-                                <div class="flex flex-col sm:flex-row sm:items-center gap-4 shrink-0 bg-slate-50 sm:bg-transparent p-3 sm:p-0 rounded-xl sm:rounded-none border sm:border-transparent border-slate-100">
-                                    <label class="flex items-center cursor-pointer group justify-between sm:justify-start">
-                                        <span class="text-[10px] font-extrabold ${item.allowNA ? 'text-slate-700' : 'text-slate-400'} uppercase tracking-widest order-2 sm:order-1 sm:mr-3">Opsi "Tidak Ada"</span>
-                                        <div class="relative inline-block w-8 align-middle select-none order-1 sm:order-2">
+                                <div class="flex flex-wrap sm:flex-nowrap items-center gap-3 shrink-0 bg-slate-50 p-2 rounded-xl border border-slate-100">
+                                    <div class="flex flex-col">
+                                        <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1 ml-1">Kondisi Normal</span>
+                                        <input type="text" value="${posL}" onchange="adminUpdateLabel('${cat.id}', '${item.id}', 'pos', this.value)" class="w-24 sm:w-28 text-xs font-bold text-emerald-700 bg-white border border-slate-200 rounded-lg px-2 py-1.5 focus:border-emerald-500 outline-none shadow-sm text-center">
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1 ml-1">Kondisi Abnormal</span>
+                                        <input type="text" value="${negL}" onchange="adminUpdateLabel('${cat.id}', '${item.id}', 'neg', this.value)" class="w-24 sm:w-28 text-xs font-bold text-rose-700 bg-white border border-slate-200 rounded-lg px-2 py-1.5 focus:border-rose-500 outline-none shadow-sm text-center">
+                                    </div>
+                                    <div class="hidden sm:block w-px h-8 bg-slate-200 mx-1"></div>
+                                    <div class="flex flex-col items-center justify-center px-1" title="Wajibkan PIC mengisi catatan jika kondisi abnormal">
+                                        <span class="text-[9px] font-bold ${item.requiresNote ? 'text-rose-700' : 'text-slate-400'} uppercase tracking-widest mb-1.5">Wajib Note</span>
+                                        <div class="relative inline-block w-8 align-middle select-none">
+                                            <input type="checkbox" id="req-note-${item.id}" class="toggle-checkbox absolute z-10 block w-4 h-4 mt-0.5 rounded-full bg-white border border-slate-300 appearance-none cursor-pointer peer transition-all" ${item.requiresNote ? 'checked' : ''} onchange="adminToggleItemNote('${cat.id}', '${item.id}')"/>
+                                            <label for="req-note-${item.id}" class="toggle-label block overflow-hidden h-5 rounded-full bg-slate-200 cursor-pointer peer-checked:bg-rose-500 transition-colors"></label>
+                                        </div>
+                                    </div>
+                                    <div class="hidden sm:block w-px h-8 bg-slate-200 mx-1"></div>
+                                    <div class="flex flex-col items-center justify-center px-1">
+                                        <span class="text-[9px] font-bold ${item.allowNA ? 'text-slate-700' : 'text-slate-400'} uppercase tracking-widest mb-1.5">Tidak ada</span>
+                                        <div class="relative inline-block w-8 align-middle select-none">
                                             <input type="checkbox" id="allow-na-${item.id}" class="toggle-checkbox absolute z-10 block w-4 h-4 mt-0.5 rounded-full bg-white border border-slate-300 appearance-none cursor-pointer peer transition-all" ${item.allowNA ? 'checked' : ''} onchange="adminToggleItemNA('${cat.id}', '${item.id}')"/>
                                             <label for="allow-na-${item.id}" class="toggle-label block overflow-hidden h-5 rounded-full bg-slate-200 cursor-pointer peer-checked:bg-slate-700 transition-colors"></label>
                                         </div>
-                                    </label>
-                                    <div class="hidden sm:block h-6 w-px bg-slate-200"></div>
-                                    <div class="flex gap-1 justify-end">
-                                        <button onclick="openItemModal('${cat.id}', '${item.id}')" class="text-slate-400 hover:text-brand-600 hover:bg-brand-50 w-8 h-8 rounded-lg transition-colors flex items-center justify-center bg-white sm:bg-transparent border border-slate-200 sm:border-transparent shadow-sm sm:shadow-none"><span class="material-symbols-rounded text-[18px]">edit</span></button>
-                                        <button onclick="adminDeleteItem('${cat.id}', '${item.id}')" class="text-slate-400 hover:text-rose-600 hover:bg-rose-50 w-8 h-8 rounded-lg transition-colors flex items-center justify-center bg-white sm:bg-transparent border border-slate-200 sm:border-transparent shadow-sm sm:shadow-none"><span class="material-symbols-rounded text-[18px]">delete</span></button>
                                     </div>
+                                </div>
+                                <div class="flex gap-1 justify-end shrink-0">
+                                    <button onclick="openItemModal('${cat.id}', '${item.id}')" class="text-slate-400 hover:text-brand-600 hover:bg-brand-50 w-8 h-8 rounded-lg transition-colors flex items-center justify-center bg-white border border-slate-200 shadow-sm" title="Edit Parameter"><span class="material-symbols-rounded text-[18px]">edit</span></button>
+                                    <button onclick="adminDeleteItem('${cat.id}', '${item.id}')" class="text-slate-400 hover:text-rose-600 hover:bg-rose-50 w-8 h-8 rounded-lg transition-colors flex items-center justify-center bg-white border border-slate-200 shadow-sm" title="Hapus Parameter"><span class="material-symbols-rounded text-[18px]">delete</span></button>
                                 </div>
                             </div>`;
                     });
@@ -4964,8 +4978,14 @@
             supabaseClient.from('checklist_master').select('*').eq('id', catId).single().then(({data}) => {
                 const datalist = document.getElementById('subcat-list'); datalist.innerHTML = '';
                 if(data && data.items) { const subs = [...new Set(data.items.map(i => i.subCategory).filter(Boolean))]; subs.forEach(s => datalist.innerHTML += `<option value="${s}">`); }
-                if (itemId) { const item = data.items.find(i => i.id === itemId); document.getElementById('manage-item-label').value = item.label; document.getElementById('manage-item-type').value = item.type || 'ok_nonok'; document.getElementById('manage-item-subcategory').value = item.subCategory || ''; } 
-                else { document.getElementById('form-manage-item').reset(); document.getElementById('manage-item-type').value = 'ok_nonok'; }
+                if (itemId) { 
+                    const item = data.items.find(i => i.id === itemId); 
+                    document.getElementById('manage-item-label').value = item.label; 
+                    document.getElementById('manage-item-subcategory').value = item.subCategory || ''; 
+                } 
+                else { 
+                    document.getElementById('form-manage-item').reset(); 
+                }
                 document.getElementById('modal-item-form').classList.remove('hidden');
             });
         }
@@ -4973,12 +4993,25 @@
         function closeItemModal() { document.getElementById('modal-item-form').classList.add('hidden'); }
 
         document.getElementById('form-manage-item').addEventListener('submit', async function(e) {
-            e.preventDefault(); const catId = document.getElementById('manage-item-catId').value; const itemId = document.getElementById('manage-item-id').value; const label = document.getElementById('manage-item-label').value.trim(); const type = document.getElementById('manage-item-type').value; const subCategory = document.getElementById('manage-item-subcategory').value.trim();
+            e.preventDefault(); const catId = document.getElementById('manage-item-catId').value; const itemId = document.getElementById('manage-item-id').value; const label = document.getElementById('manage-item-label').value.trim(); const subCategory = document.getElementById('manage-item-subcategory').value.trim();
             const { data: cat } = await supabaseClient.from('checklist_master').select('*').eq('id', catId).single();
-            if (itemId) { const item = cat.items.find(i => i.id === itemId); item.label = label; item.type = type; item.subCategory = subCategory; } 
-            else { cat.items.push({ id: 'I'+Date.now(), label: label, type: type, requiresNote: false, allowNA: false, subCategory: subCategory }); }
+            if (itemId) { const item = cat.items.find(i => i.id === itemId); item.label = label; item.subCategory = subCategory; item.type = 'custom'; } 
+            else { cat.items.push({ id: 'I'+Date.now(), label: label, type: 'custom', posLabel: 'OK', negLabel: 'Rusak', requiresNote: false, allowNA: false, subCategory: subCategory }); }
             await supabaseClient.from('checklist_master').update({ items: cat.items }).eq('id', catId); renderAdminItems(cat); closeItemModal(); Island.show('Disimpan.', 'success');
         });
+
+        window.adminUpdateLabel = async function(catId, itemId, type, value) {
+            if (!value.trim()) return;
+            const { data: cat } = await supabaseClient.from('checklist_master').select('*').eq('id', catId).single();
+            if (!cat || !cat.items) return;
+            const item = cat.items.find(i => i.id === itemId);
+            if (!item) return;
+            if (type === 'pos') item.posLabel = value.trim();
+            if (type === 'neg') item.negLabel = value.trim();
+            item.type = 'custom';
+            await supabaseClient.from('checklist_master').update({ items: cat.items }).eq('id', catId);
+            Island.show('Label tersimpan otomatis.', 'success', 1500);
+        };
 
         async function adminDeleteItem(catId, itemId) {
             Modal.danger('Hapus Pertanyaan', 'Dihapus dari format semua area.', async () => {
@@ -5344,7 +5377,7 @@
             if (showIssuesOnly) {
                 const displayedItemIds = [];
                 filteredCats.forEach(cat => {
-                    if (cat.items) cat.items.forEach(item => displayedItemIds.push({ id: item.id, type: item.type }));
+                    if (cat.items) cat.items.forEach(item => displayedItemIds.push({ id: item.id, posLabel: item.posLabel, type: item.type }));
                 });
                 
                 renderData = renderData.filter(d => {
@@ -5352,8 +5385,8 @@
                     return displayedItemIds.some(item => {
                         const ans = d.answers[item.id];
                         if (!ans) return false;
-                        const tDef = itemTypeConfig[item.type || 'ok_nonok'];
-                        return ans.status !== tDef.pos && ans.status !== 'N/A';
+                        const posL = item.posLabel || (itemTypeConfig[item.type || 'ok_nonok']?.pos || 'OK');
+                        return ans.status !== posL && ans.status !== 'N/A';
                     });
                 });
             }
@@ -5451,7 +5484,7 @@
 
         function renderDashboardBodyAndNotes(data, notesData, filteredCats, allCats, sscHistory) {
             const tbody = document.getElementById('dashboard-tbody'); const noteSec = document.getElementById('dashboard-notes-section'); const noteCon = document.getElementById('dashboard-notes-container');
-            let html = '', noteHtml = ''; const itemMap = {}; allCats.forEach(c => { if(c.items) c.items.forEach(i => itemMap[i.id] = { label: i.label, cat: c.category, type: i.type || 'ok_nonok' }) });
+            let html = '', noteHtml = ''; const itemMap = {}; allCats.forEach(c => { if(c.items) c.items.forEach(i => itemMap[i.id] = { label: i.label, cat: c.category, type: i.type, posLabel: i.posLabel, negLabel: i.negLabel }) });
 
             if (data.length === 0) { html = `<tr><td colspan="100" class="p-10 text-center text-slate-400 font-bold bg-slate-50">BELUM ADA DATA.</td></tr>`; } 
             else {
@@ -5504,10 +5537,12 @@
 
                         scKeys.forEach(sc => {
                             grouped[sc].forEach(item => {
-                                const ans = sub.answers[item.id]; const tDef = itemTypeConfig[item.type || 'ok_nonok'];
+                                const ans = sub.answers[item.id]; 
+                                const posL = item.posLabel || (itemTypeConfig[item.type || 'ok_nonok']?.pos || 'OK');
+                                const negL = item.negLabel || (itemTypeConfig[item.type || 'ok_nonok']?.neg || 'Non OK');
                                 if(ans) {
                                     let bgClass, txtClass, iconClass;
-                                    const isPos = ans.status === tDef.pos;
+                                    const isPos = ans.status === posL;
                                     const isNA = ans.status === 'N/A';
                                     
                                     if (isNA) {
@@ -5515,16 +5550,16 @@
                                         txtClass = 'text-slate-400';
                                         iconClass = 'horizontal_rule';
                                     } else if (isPos) {
-                                        bgClass = tDef.bgPos;
-                                        txtClass = tDef.textPos;
-                                        iconClass = tDef.iconPos;
+                                        bgClass = 'bg-emerald-50';
+                                        txtClass = 'text-emerald-700';
+                                        iconClass = 'check';
                                     } else {
-                                        bgClass = tDef.bgNeg;
-                                        txtClass = tDef.textNeg;
-                                        iconClass = tDef.iconNeg;
+                                        bgClass = 'bg-rose-50';
+                                        txtClass = 'text-rose-700';
+                                        iconClass = 'close';
                                     }
                                     
-                                    html += `<td class="px-1 py-1 border-r border-slate-100 text-center"><div class="w-6 h-6 rounded border border-white shadow-sm ${bgClass} ${txtClass} flex items-center justify-center mx-auto relative" title="${isNA ? 'Tidak Ada' : ans.status}"><span class="material-symbols-rounded icon-fill text-[14px]">${iconClass}</span>${(!isPos && !isNA && ans.note && item.requiresNote) ? '<span class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-amber-500 border-2 border-white rounded-full"></span>':''}</div></td>`;
+                                    html += `<td class="px-1 py-1 border-r border-slate-100 text-center"><div class="w-6 h-6 rounded border border-white shadow-sm ${bgClass} ${txtClass} flex items-center justify-center mx-auto relative" title="${isNA ? 'Tidak Ada' : ans.status}"><span class="material-symbols-rounded icon-fill text-[14px]">${iconClass}</span>${(!isPos && !isNA && ans.note) ? '<span class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-amber-500 border-2 border-white rounded-full"></span>':''}</div></td>`;
                                 } else html += `<td class="px-1 py-1 border-r border-slate-100 text-center text-slate-200 text-[10px] font-bold">-</td>`;
                             });
                         });
@@ -5539,7 +5574,9 @@
                 notesData.forEach(sub => {
                     let notesByCategory = {};
                     Object.keys(sub.answers).forEach(itemId => {
-                        const ans = sub.answers[itemId]; const meta = itemMap[itemId]; const isNeg = meta ? ans.status === itemTypeConfig[meta.type].neg : (ans.status === 'Non OK' || ans.status === 'Tidak Ada' || ans.status === 'Rusak');
+                        const ans = sub.answers[itemId]; const meta = itemMap[itemId]; 
+                        const posL = meta?.posLabel || (itemTypeConfig[meta?.type || 'ok_nonok']?.pos || 'OK');
+                        const isNeg = ans.status !== posL && ans.status !== 'N/A';
                         if (isNeg && ans.note) { if(meta && allowedCatNames.includes(meta.cat)) { if(!notesByCategory[meta.cat]) notesByCategory[meta.cat] = []; notesByCategory[meta.cat].push({ label: meta.label, note: ans.note }); } }
                     });
 
@@ -5590,12 +5627,13 @@
                     if (subCatName !== 'Tanpa Sub Kategori') { html += `<div class="px-6 py-2 bg-indigo-50/50 flex items-center gap-2 border-y border-indigo-100/50"><span class="material-symbols-rounded icon-outline text-indigo-500 text-[14px]">account_tree</span><h4 class="font-extrabold text-indigo-700 text-[10px] tracking-widest uppercase">${subCatName}</h4></div>`; }
                     
                     groupedItems[subCatName].forEach(item => {
-                        const typeDef = itemTypeConfig[item.type || 'ok_nonok'];
+                        const posL = item.posLabel || (itemTypeConfig[item.type || 'ok_nonok']?.pos || 'OK');
+                        const negL = item.negLabel || (itemTypeConfig[item.type || 'ok_nonok']?.neg || 'Non OK');
                         let naHtml = '';
                         if (item.allowNA) {
                             naHtml = `
                                 <label class="cursor-pointer relative flex-1 lg:flex-none">
-                                    <input type="radio" name="status-${item.id}" value="N/A" onchange="handleRadioChange('${item.id}', ${item.requiresNote}, 'N/A', '${item.type}')" class="peer sr-only" required>
+                                    <input type="radio" name="status-${item.id}" value="N/A" onchange="handleRadioChange('${item.id}', false, ${!!item.requiresNote})" class="peer sr-only" required>
                                     <div class="flex items-center justify-center px-4 py-2 rounded-lg border border-transparent text-slate-500 smooth-transition hover:bg-slate-100 bg-transparent text-xs font-bold w-full min-w-[90px] peer-checked:bg-slate-200 peer-checked:text-slate-700 peer-checked:shadow-sm">
                                         <span class="material-symbols-rounded icon-fill mr-1.5 text-[16px] opacity-70">horizontal_rule</span>Tidak Ada
                                     </div>
@@ -5609,15 +5647,15 @@
                                     <p class="text-slate-800 font-bold text-sm leading-relaxed flex-1">${item.label}</p>
                                     <div class="flex items-center gap-2 shrink-0 bg-slate-100 p-1 rounded-xl w-full lg:w-auto">
                                         <label class="cursor-pointer relative flex-1 lg:flex-none">
-                                            <input type="radio" name="status-${item.id}" value="${typeDef.pos}" onchange="handleRadioChange('${item.id}', ${item.requiresNote}, '${typeDef.pos}', '${item.type}')" class="peer sr-only" required>
+                                            <input type="radio" name="status-${item.id}" value="${posL}" onchange="handleRadioChange('${item.id}', false, ${!!item.requiresNote})" class="peer sr-only" required>
                                             <div class="radio-card-pos flex items-center justify-center px-4 py-2 rounded-lg border border-transparent text-slate-500 smooth-transition hover:bg-white bg-transparent text-xs font-bold w-full min-w-[110px]">
-                                                <span class="material-symbols-rounded icon-fill mr-1.5 text-[16px] opacity-70">${typeDef.iconPos}</span>${typeDef.posL}
+                                                <span class="material-symbols-rounded icon-fill mr-1.5 text-[16px] opacity-70">check</span>${posL}
                                             </div>
                                         </label>
                                         <label class="cursor-pointer relative flex-1 lg:flex-none">
-                                            <input type="radio" name="status-${item.id}" value="${typeDef.neg}" onchange="handleRadioChange('${item.id}', ${item.requiresNote}, '${typeDef.neg}', '${item.type}')" class="peer sr-only" required>
+                                            <input type="radio" name="status-${item.id}" value="${negL}" onchange="handleRadioChange('${item.id}', true, ${!!item.requiresNote})" class="peer sr-only" required>
                                             <div class="radio-card-neg flex items-center justify-center px-4 py-2 rounded-lg border border-transparent text-slate-500 smooth-transition hover:bg-white bg-transparent text-xs font-bold w-full min-w-[110px]">
-                                                <span class="material-symbols-rounded icon-fill mr-1.5 text-[16px] opacity-70">${typeDef.iconNeg}</span>${typeDef.negL}
+                                                <span class="material-symbols-rounded icon-fill mr-1.5 text-[16px] opacity-70">close</span>${negL}
                                             </div>
                                         </label>
                                         ${naHtml}
@@ -5636,13 +5674,22 @@
             });
         }
 
-        window.handleRadioChange = function(itemId, requiresNote, value, type) {
+        window.handleRadioChange = function(itemId, isNegative, requiresNote = false) {
             const container = document.getElementById(`note-container-${itemId}`); const input = document.getElementById(`note-input-${itemId}`);
             if (!container || !input) return;
-            const def = itemTypeConfig[type || 'ok_nonok']; const isNegative = value === def.neg;
             
-            if (requiresNote && isNegative) {
-                container.classList.remove('hidden'); setTimeout(() => { container.classList.remove('max-h-0', 'opacity-0'); container.classList.add('max-h-[150px]', 'opacity-100'); input.required = true; }, 10);
+            if (isNegative) {
+                container.classList.remove('hidden'); 
+                setTimeout(() => { 
+                    container.classList.remove('max-h-0', 'opacity-0'); 
+                    container.classList.add('max-h-[150px]', 'opacity-100'); 
+                    input.required = requiresNote ? true : false;
+                    if(requiresNote) {
+                        input.placeholder = "Keterangan detail (Wajib diisi)...";
+                    } else {
+                        input.placeholder = "Keterangan detail (Opsional)...";
+                    }
+                }, 10);
             } else {
                 container.classList.remove('max-h-[150px]', 'opacity-100'); container.classList.add('max-h-0', 'opacity-0'); setTimeout(() => { container.classList.add('hidden'); }, 300);
                 input.required = false; input.value = ''; 
