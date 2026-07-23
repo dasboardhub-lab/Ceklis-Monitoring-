@@ -742,8 +742,8 @@
                     </div>
                     
                     <!-- Panel Leaderboard Admin (Khusus Admin) -->
-                    <div id="admin-leaderboard-panel" class="hidden mb-6 animate-content">
-                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+                    <div id="admin-leaderboard-panel" class="mb-6 animate-content">
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
                             <!-- Top 5 Paling Cepat Ceklis -->
                             <div class="bg-white rounded-2xl sm:rounded-3xl shadow-sm border border-slate-200 p-4 sm:p-5 flex flex-col">
                                 <div class="flex items-center gap-3 mb-4 border-b border-slate-100 pb-3">
@@ -758,13 +758,24 @@
                             <!-- Top 5 Pemborosan Listrik -->
                             <div class="bg-white rounded-2xl sm:rounded-3xl shadow-sm border border-slate-200 p-4 sm:p-5 flex flex-col">
                                 <div class="flex items-center gap-3 mb-4 border-b border-slate-100 pb-3">
-                                    <div class="w-8 h-8 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center shrink-0"><span class="material-symbols-rounded text-[18px]">trending_up</span></div>
+                                    <div class="w-8 h-8 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center shrink-0"><span class="material-symbols-rounded text-[18px]">bolt</span></div>
                                     <div>
                                         <h3 class="font-extrabold text-slate-800 text-xs sm:text-sm">Top 5 Pemborosan Listrik</h3>
                                         <p class="text-[9px] text-slate-400 font-medium">Berdasarkan selisih (KWh) tertinggi</p>
                                     </div>
                                 </div>
                                 <div id="worstboard-listrik" class="space-y-1.5 flex-1"></div>
+                            </div>
+                            <!-- Top 5 Pemborosan Air -->
+                            <div class="bg-white rounded-2xl sm:rounded-3xl shadow-sm border border-slate-200 p-4 sm:p-5 flex flex-col">
+                                <div class="flex items-center gap-3 mb-4 border-b border-slate-100 pb-3">
+                                    <div class="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0"><span class="material-symbols-rounded text-[18px]">water_drop</span></div>
+                                    <div>
+                                        <h3 class="font-extrabold text-slate-800 text-xs sm:text-sm">Top 5 Pemborosan Air</h3>
+                                        <p class="text-[9px] text-slate-400 font-medium">Berdasarkan selisih (m³) tertinggi</p>
+                                    </div>
+                                </div>
+                                <div id="worstboard-air" class="space-y-1.5 flex-1"></div>
                             </div>
                         </div>
                     </div>
@@ -1882,6 +1893,9 @@
                 document.getElementById('btn-util-bulan-text').querySelector('span').textContent = monthNames[now.getMonth()];
             }
             if(document.getElementById('util-filter-tahun')) document.getElementById('util-filter-tahun').value = now.getFullYear();
+
+            if(document.getElementById('filter-month')) document.getElementById('filter-month').value = currentMonthStr;
+            if(document.getElementById('filter-year')) document.getElementById('filter-year').value = now.getFullYear();
 
             const tPengaturan = document.getElementById('tab-pengaturan');
             const mPengaturan = document.getElementById('mob-tab-pengaturan');
@@ -5546,111 +5560,158 @@
                 return (a.stagging_name || '').localeCompare(b.stagging_name || ''); 
             });
 
-            // LEADERBOARD ADMIN
-            if (currentUser.role === 'admin') {
-                document.getElementById('admin-leaderboard-panel').classList.remove('hidden');
-                
-                // 1. Top Ceklis
-                const leaderboardEl = document.getElementById('leaderboard-ceklis');
-                if (validFilteredSubs.length === 0) {
-                    leaderboardEl.innerHTML = '<div class="text-center text-slate-400 text-xs py-4">Belum ada laporan di periode ini.</div>';
-                } else {
-                    let sortedSubs = [...validFilteredSubs].sort((a,b) => parseDateObj(a.date) - parseDateObj(b.date));
-                    let uniqueCeklis = [];
-                    let seenAreas = new Set();
-                    for(let s of sortedSubs) {
-                        if(!seenAreas.has(s.stagging_name)) {
-                            seenAreas.add(s.stagging_name);
-                            uniqueCeklis.push(s);
-                            if(uniqueCeklis.length >= 5) break;
-                        }
+            // LEADERBOARD DIBUKA UNTUK SEMUA ROLE
+            document.getElementById('admin-leaderboard-panel').classList.remove('hidden');
+            
+            // 1. Top Ceklis
+            const leaderboardEl = document.getElementById('leaderboard-ceklis');
+            if (validFilteredSubs.length === 0) {
+                leaderboardEl.innerHTML = '<div class="text-center text-slate-400 text-xs py-4">Belum ada laporan di periode ini.</div>';
+            } else {
+                let sortedSubs = [...validFilteredSubs].sort((a,b) => parseDateObj(a.date) - parseDateObj(b.date));
+                let uniqueCeklis = [];
+                let seenAreas = new Set();
+                for(let s of sortedSubs) {
+                    if(!seenAreas.has(s.stagging_name)) {
+                        seenAreas.add(s.stagging_name);
+                        uniqueCeklis.push(s);
+                        if(uniqueCeklis.length >= 5) break;
                     }
-                    let ceklisHtml = '';
-                    uniqueCeklis.forEach((s, i) => {
-                        let rankColor = i === 0 ? 'bg-amber-100 text-amber-600' : (i === 1 ? 'bg-slate-200 text-slate-600' : (i === 2 ? 'bg-orange-100 text-orange-600' : 'bg-slate-50 text-slate-400'));
-                        ceklisHtml += `
-                            <div class="flex justify-between items-center p-2 hover:bg-emerald-50 rounded-lg transition-colors border border-transparent hover:border-emerald-100">
+                }
+                let ceklisHtml = '';
+                uniqueCeklis.forEach((s, i) => {
+                    let rankColor = i === 0 ? 'bg-amber-100 text-amber-600' : (i === 1 ? 'bg-slate-200 text-slate-600' : (i === 2 ? 'bg-orange-100 text-orange-600' : 'bg-slate-50 text-slate-400'));
+                    ceklisHtml += `
+                        <div class="flex justify-between items-center p-2 hover:bg-emerald-50 rounded-lg transition-colors border border-transparent hover:border-emerald-100">
+                            <div class="flex items-center gap-2 overflow-hidden">
+                                <span class="w-6 h-6 rounded-full ${rankColor} flex items-center justify-center text-[10px] font-black shrink-0">${i+1}</span>
+                                <div class="truncate">
+                                    <p class="text-[11px] font-bold text-slate-700 truncate">${s.stagging_name}</p>
+                                    <p class="text-[9px] text-slate-400 truncate">${s.pic}</p>
+                                </div>
+                            </div>
+                            <span class="text-[9px] font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded shrink-0">${s.date.split(',')[0]}</span>
+                        </div>
+                    `;
+                });
+                leaderboardEl.innerHTML = ceklisHtml;
+            }
+
+            // 2. Worstboard Listrik & Air
+            const worstboardEl = document.getElementById('worstboard-listrik');
+            const worstboardAirEl = document.getElementById('worstboard-air');
+            const { data: allUtils } = await supabaseClient.from('utilitas_data').select('*').eq('tahun', vY === 'all' ? new Date().getFullYear() : vY);
+            
+            if (!allUtils || allUtils.length === 0) {
+                worstboardEl.innerHTML = '<div class="text-center text-slate-400 text-xs py-4">Data utilitas tidak tersedia.</div>';
+                worstboardAirEl.innerHTML = '<div class="text-center text-slate-400 text-xs py-4">Data utilitas tidak tersedia.</div>';
+            } else {
+                let areaUsageListrik = {};
+                let areaUsageAir = {};
+                
+                validUsers.forEach(u => {
+                    let uSubs = allUtils.filter(d => d.stagging_name === u.stagging_name && (vM === 'all' || d.bulan == vM));
+                    uSubs.sort((a,b) => {
+                        if (a.tahun != b.tahun) return a.tahun - b.tahun;
+                        if (a.bulan != b.bulan) return a.bulan - b.bulan;
+                        return a.minggu - b.minggu;
+                    });
+                    
+                    let totalPemakaianListrik = 0;
+                    let totalPemakaianAir = 0;
+                    
+                    uSubs.forEach((sub, idx) => {
+                        if (idx > 0) {
+                            let prevSub = uSubs[idx-1];
+                            
+                            // Hitung Listrik
+                            let currMeters = extractListrikMeters(sub.data);
+                            let prevMeters = extractListrikMeters(prevSub.data);
+                            
+                            currMeters.forEach(cm => {
+                                let pm = prevMeters.find(m => m.id === cm.id);
+                                if (pm) {
+                                    if (cm.kategori === 'Pra Bayar (Token)') {
+                                        if (pm.angka >= cm.angka) totalPemakaianListrik += (pm.angka - cm.angka);
+                                    } else {
+                                        if (cm.angka >= pm.angka) totalPemakaianListrik += (cm.angka - pm.angka);
+                                    }
+                                }
+                            });
+
+                            // Hitung Air
+                            let currAirMeters = extractAirMeters(sub.data);
+                            let prevAirMeters = extractAirMeters(prevSub.data);
+                            currAirMeters.forEach(cm => {
+                                let pm = prevAirMeters.find(m => m.id === cm.id);
+                                if (pm && cm.angka >= pm.angka && cm.sumber !== 'Sumur Bor') {
+                                    totalPemakaianAir += (cm.angka - pm.angka);
+                                }
+                            });
+                        }
+                    });
+                    
+                    if(totalPemakaianListrik > 0) {
+                        areaUsageListrik[u.stagging_name] = { total: totalPemakaianListrik, pic: u.pic_name || u.username };
+                    }
+                    if(totalPemakaianAir > 0) {
+                        areaUsageAir[u.stagging_name] = { total: totalPemakaianAir, pic: u.pic_name || u.username };
+                    }
+                });
+
+                // Render Listrik
+                let sortedListrik = Object.keys(areaUsageListrik).map(k => ({ name: k, total: areaUsageListrik[k].total, pic: areaUsageListrik[k].pic })).sort((a,b) => b.total - a.total).slice(0, 5);
+                
+                if (sortedListrik.length === 0) {
+                    worstboardEl.innerHTML = '<div class="text-center text-slate-400 text-xs py-4">Belum ada pemakaian yang tercatat.</div>';
+                } else {
+                    let worstHtml = '';
+                    sortedListrik.forEach((u, i) => {
+                        let rankColor = i < 3 ? 'bg-rose-100 text-rose-600' : 'bg-slate-100 text-slate-500';
+                        worstHtml += `
+                            <div class="flex justify-between items-center p-2 hover:bg-rose-50 rounded-lg transition-colors border border-transparent hover:border-rose-100">
                                 <div class="flex items-center gap-2 overflow-hidden">
                                     <span class="w-6 h-6 rounded-full ${rankColor} flex items-center justify-center text-[10px] font-black shrink-0">${i+1}</span>
                                     <div class="truncate">
-                                        <p class="text-[11px] font-bold text-slate-700 truncate">${s.stagging_name}</p>
-                                        <p class="text-[9px] text-slate-400 truncate">${s.pic}</p>
+                                        <p class="text-[11px] font-bold text-slate-700 truncate">${u.name}</p>
+                                        <p class="text-[9px] text-slate-400 truncate">${u.pic}</p>
                                     </div>
                                 </div>
-                                <span class="text-[9px] font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded shrink-0">${s.date.split(',')[0]}</span>
+                                <div class="flex flex-col items-end shrink-0">
+                                    <span class="text-[10px] font-extrabold text-rose-600">${u.total.toLocaleString('id-ID')} KWh</span>
+                                </div>
                             </div>
                         `;
                     });
-                    leaderboardEl.innerHTML = ceklisHtml;
+                    worstboardEl.innerHTML = worstHtml;
                 }
 
-                // 2. Worstboard Listrik
-                const worstboardEl = document.getElementById('worstboard-listrik');
-                const { data: allUtils } = await supabaseClient.from('utilitas_data').select('*').eq('tahun', vY === 'all' ? new Date().getFullYear() : vY);
-                if (!allUtils || allUtils.length === 0) {
-                    worstboardEl.innerHTML = '<div class="text-center text-slate-400 text-xs py-4">Data utilitas tidak tersedia.</div>';
+                // Render Air
+                let sortedAir = Object.keys(areaUsageAir).map(k => ({ name: k, total: areaUsageAir[k].total, pic: areaUsageAir[k].pic })).sort((a,b) => b.total - a.total).slice(0, 5);
+                
+                if (sortedAir.length === 0) {
+                    worstboardAirEl.innerHTML = '<div class="text-center text-slate-400 text-xs py-4">Belum ada pemakaian yang tercatat.</div>';
                 } else {
-                    let areaUsage = {};
-                    validUsers.forEach(u => {
-                        let uSubs = allUtils.filter(d => d.stagging_name === u.stagging_name && (vM === 'all' || d.bulan == vM));
-                        uSubs.sort((a,b) => {
-                            if (a.tahun != b.tahun) return a.tahun - b.tahun;
-                            if (a.bulan != b.bulan) return a.bulan - b.bulan;
-                            return a.minggu - b.minggu;
-                        });
-                        
-                        let totalPemakaian = 0;
-                        uSubs.forEach((sub, idx) => {
-                            if (idx > 0) {
-                                let prevSub = uSubs[idx-1];
-                                let currMeters = extractListrikMeters(sub.data);
-                                let prevMeters = extractListrikMeters(prevSub.data);
-                                
-                                currMeters.forEach(cm => {
-                                    let pm = prevMeters.find(m => m.id === cm.id);
-                                    if (pm) {
-                                        if (cm.kategori === 'Pra Bayar (Token)') {
-                                            if (pm.angka >= cm.angka) totalPemakaian += (pm.angka - cm.angka);
-                                        } else {
-                                            if (cm.angka >= pm.angka) totalPemakaian += (cm.angka - pm.angka);
-                                        }
-                                    }
-                                });
-                            }
-                        });
-                        if(totalPemakaian > 0) {
-                            areaUsage[u.stagging_name] = { total: totalPemakaian, pic: u.pic_name || u.username };
-                        }
-                    });
-
-                    let sortedUsage = Object.keys(areaUsage).map(k => ({ name: k, total: areaUsage[k].total, pic: areaUsage[k].pic })).sort((a,b) => b.total - a.total).slice(0, 5);
-                    
-                    if (sortedUsage.length === 0) {
-                        worstboardEl.innerHTML = '<div class="text-center text-slate-400 text-xs py-4">Belum ada pemakaian yang tercatat.</div>';
-                    } else {
-                        let worstHtml = '';
-                        sortedUsage.forEach((u, i) => {
-                            let rankColor = i < 3 ? 'bg-rose-100 text-rose-600' : 'bg-slate-100 text-slate-500';
-                            worstHtml += `
-                                <div class="flex justify-between items-center p-2 hover:bg-rose-50 rounded-lg transition-colors border border-transparent hover:border-rose-100">
-                                    <div class="flex items-center gap-2 overflow-hidden">
-                                        <span class="w-6 h-6 rounded-full ${rankColor} flex items-center justify-center text-[10px] font-black shrink-0">${i+1}</span>
-                                        <div class="truncate">
-                                            <p class="text-[11px] font-bold text-slate-700 truncate">${u.name}</p>
-                                            <p class="text-[9px] text-slate-400 truncate">${u.pic}</p>
-                                        </div>
-                                    </div>
-                                    <div class="flex flex-col items-end shrink-0">
-                                        <span class="text-[10px] font-extrabold text-rose-600">${u.total.toLocaleString('id-ID')} KWh</span>
+                    let worstAirHtml = '';
+                    sortedAir.forEach((u, i) => {
+                        let rankColor = i < 3 ? 'bg-blue-100 text-blue-600' : 'bg-slate-100 text-slate-500';
+                        worstAirHtml += `
+                            <div class="flex justify-between items-center p-2 hover:bg-blue-50 rounded-lg transition-colors border border-transparent hover:border-blue-100">
+                                <div class="flex items-center gap-2 overflow-hidden">
+                                    <span class="w-6 h-6 rounded-full ${rankColor} flex items-center justify-center text-[10px] font-black shrink-0">${i+1}</span>
+                                    <div class="truncate">
+                                        <p class="text-[11px] font-bold text-slate-700 truncate">${u.name}</p>
+                                        <p class="text-[9px] text-slate-400 truncate">${u.pic}</p>
                                     </div>
                                 </div>
-                            `;
-                        });
-                        worstboardEl.innerHTML = worstHtml;
-                    }
+                                <div class="flex flex-col items-end shrink-0">
+                                    <span class="text-[10px] font-extrabold text-blue-600">${u.total.toLocaleString('id-ID')} m³</span>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    worstboardAirEl.innerHTML = worstAirHtml;
                 }
-            } else {
-                document.getElementById('admin-leaderboard-panel').classList.add('hidden');
             }
 
             renderDashboardHeaders(filteredCats); renderDashboardBodyAndNotes(renderData, validFilteredSubs, filteredCats, safeAllCats, sscHistory);
