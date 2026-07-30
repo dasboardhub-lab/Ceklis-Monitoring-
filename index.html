@@ -495,6 +495,32 @@
                             </table>
                         </div>
                     </div>
+
+                    <!-- Tabel Catatan Follow Up (Khusus Air & Listrik) -->
+                    <div id="utilitas-notes-section" class="hidden bg-surface rounded-3xl shadow-soft border border-slate-200 overflow-hidden mb-8 flex flex-col">
+                        <div class="p-5 border-b border-slate-100 flex items-center gap-3 bg-slate-50 shrink-0">
+                            <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center border border-indigo-100"><span class="material-symbols-rounded icon-fill">speaker_notes</span></div>
+                            <div>
+                                <h3 class="font-extrabold text-slate-900 text-lg">Log Evaluasi & Catatan</h3>
+                                <p class="text-xs text-slate-500 font-medium mt-0.5">Riwayat follow up pemakaian Air & Listrik yang tidak wajar.</p>
+                            </div>
+                        </div>
+                        <div class="overflow-auto custom-scroll w-full max-h-[400px]">
+                            <table class="w-full text-left border-collapse min-w-max text-xs">
+                                <thead class="sticky top-0 z-20 shadow-sm">
+                                    <tr class="bg-white text-slate-500 text-[10px] uppercase tracking-widest font-extrabold border-b border-slate-200">
+                                        <th class="p-4 w-[20%]">Staging Area</th>
+                                        <th class="p-4 w-[15%]">Periode</th>
+                                        <th class="p-4 w-[55%]">Isi Catatan (Admin)</th>
+                                        <th class="p-4 w-[10%] text-center">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="utilitas-notes-tbody" class="bg-white divide-y divide-slate-100">
+                                    <tr><td colspan="4" class="p-8 text-center text-slate-400 font-medium">Memuat data...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Tab: Pengaturan Sistem (Gabungan) -->
@@ -2833,6 +2859,47 @@
                 content += renderAir() + renderListrik() + renderIpl();
             }
             
+            // FITUR CATATAN FOLLOW UP ADMIN
+            if (currentUtilView !== 'ipl') {
+                let noteHtml = `<div class="mt-4 pt-4 border-t border-slate-200">`;
+                
+                const renderNoteField = (type, title, icon, color, val) => {
+                    let h = `<div class="mb-3 last:mb-0">
+                        <label class="label-modern flex items-center gap-2 mb-2">
+                            <span class="material-symbols-rounded text-${color}-500 text-[18px]">${icon}</span> 
+                            Catatan Evaluasi ${title}
+                        </label>`;
+                    if (currentUser.role === 'admin') {
+                        h += `<textarea id="detail-admin-note-${type}" rows="2" class="input-modern w-full px-3 py-2 rounded-xl text-sm" placeholder="Ketik hasil follow up ${title.toLowerCase()}...">${val || ''}</textarea>`;
+                    } else {
+                        if (val) {
+                            h += `<div class="p-3 bg-${color}-50 border border-${color}-100 rounded-xl text-sm text-${color}-800 font-medium italic leading-relaxed">"${val}"</div>`;
+                        } else {
+                            h += `<div class="p-3 bg-slate-50 border border-slate-100 rounded-xl text-xs text-slate-400 font-medium text-center">Belum ada catatan evaluasi dari Admin.</div>`;
+                        }
+                    }
+                    h += `</div>`;
+                    return h;
+                };
+
+                if (currentUtilView === 'air' || currentUtilView === 'rekap') {
+                    noteHtml += renderNoteField('air', 'Air', 'water_drop', 'blue', d.admin_note_air);
+                }
+                if (currentUtilView === 'listrik' || currentUtilView === 'rekap') {
+                    noteHtml += renderNoteField('listrik', 'Listrik', 'bolt', 'amber', d.admin_note_listrik);
+                }
+                    
+                if (currentUser.role === 'admin') {
+                    noteHtml += `
+                        <button onclick="saveAdminUtilNote('${id}')" class="mt-2 w-full bg-indigo-50 hover:bg-indigo-100 text-indigo-600 border border-indigo-200 text-xs font-bold py-2 rounded-xl transition-colors flex items-center justify-center gap-1 shadow-sm">
+                            <span class="material-symbols-rounded text-[16px]">save</span> Simpan Catatan
+                        </button>
+                    `;
+                }
+                noteHtml += `</div>`;
+                content += noteHtml;
+            }
+            
             document.getElementById('detail-content').innerHTML = content;
             
             const btnEdit = document.getElementById('btn-edit-detail');
@@ -2874,6 +2941,28 @@
                 renderUtilitasTable();
                 setTimeout(() => checkAndShowReminders(false), 1000);
             });
+        };
+
+        window.saveAdminUtilNote = async function(id) {
+            const dataRow = globalUtilData.find(d => d.id === id);
+            if (!dataRow) return;
+
+            Island.show('Menyimpan catatan...', 'info');
+            
+            const noteAir = document.getElementById('detail-admin-note-air');
+            const noteListrik = document.getElementById('detail-admin-note-listrik');
+            
+            if (noteAir) dataRow.data.admin_note_air = noteAir.value.trim();
+            if (noteListrik) dataRow.data.admin_note_listrik = noteListrik.value.trim();
+            
+            try {
+                await supabaseClient.from('utilitas_data').update({ data: dataRow.data }).eq('id', id);
+                Island.show('Catatan berhasil disimpan.', 'success');
+                renderUtilitasTable(); 
+            } catch(e) {
+                console.error(e);
+                Island.show('Gagal menyimpan catatan.', 'error');
+            }
         };
 
         window.deleteSubmission = function(id) {
@@ -3698,7 +3787,7 @@
                     <tr class="bg-slate-100 text-slate-600 font-bold border-b border-slate-200 uppercase tracking-wider">
                         <th class="p-3 border-r border-slate-200 min-w-[150px] sticky-col-1 z-50 bg-slate-100 cursor-pointer hover:bg-slate-200 transition-colors" onclick="handleUtilSort('ssc')">
                             <div class="flex items-center justify-between">
-                                <span>Staging & PIC</span>
+                                <span>Staging Area</span>
                                 ${utilSortCol === 'ssc' ? `<span class="material-symbols-rounded text-[14px]">${utilSortDir === 'asc' ? 'arrow_upward' : 'arrow_downward'}</span>` : '<span class="material-symbols-rounded text-[14px] text-slate-300">swap_vert</span>'}
                             </div>
                         </th>`;
@@ -3741,14 +3830,32 @@
             }
 
             const { data: users } = await supabaseClient.from('users').select('*').eq('role', 'user');
-            let validUsers = (users || []).filter(u => u.stagging_name);
+            let rawUsers = (users || []).filter(u => u.stagging_name);
             
             if(selKoor.length > 0) {
-                validUsers = validUsers.filter(u => selKoor.includes(u.ssc));
+                rawUsers = rawUsers.filter(u => selKoor.includes(u.ssc));
             }
             if(selStagings.length > 0) {
-                validUsers = validUsers.filter(u => selStagings.includes(u.stagging_name));
+                rawUsers = rawUsers.filter(u => selStagings.includes(u.stagging_name));
             }
+
+            let uniqueStagingsMap = {};
+            rawUsers.forEach(u => {
+                if(!uniqueStagingsMap[u.stagging_name]) {
+                    uniqueStagingsMap[u.stagging_name] = {
+                        stagging_name: u.stagging_name,
+                        ssc: u.ssc,
+                        pic_name: u.pic_name || u.username,
+                        pic_list: [u.pic_name || u.username]
+                    };
+                } else {
+                    if (!uniqueStagingsMap[u.stagging_name].pic_list.includes(u.pic_name || u.username)) {
+                        uniqueStagingsMap[u.stagging_name].pic_list.push(u.pic_name || u.username);
+                    }
+                    uniqueStagingsMap[u.stagging_name].pic_name = uniqueStagingsMap[u.stagging_name].pic_list.join(' / ');
+                }
+            });
+            let validUsers = Object.values(uniqueStagingsMap);
             
             const { data: dbData } = await supabaseClient
                 .from('utilitas_data')
@@ -4059,9 +4166,11 @@
                     submitsForMinggu.sort((a,b) => parseInt(b.bulan) - parseInt(a.bulan));
                     const submit = submitsForMinggu.length > 0 ? submitsForMinggu[0] : null;
                     
+                    let displayPicName = submit ? submit.pic : u.pic_name;
+
                     let rowHtml = `<td class="p-3 border-r border-slate-200 sticky-col-1 bg-white">
                         <strong class="text-slate-900 text-xs block mb-0.5">${u.stagging_name}</strong>
-                        <span class="text-[10px] text-slate-500 block mb-1">${u.pic_name || u.username}</span>
+                        <span class="text-[10px] text-slate-500 block mb-1">${displayPicName}</span>
                         ${submit ? `<span class="text-[8px] text-brand-600 bg-brand-50 px-1.5 py-0.5 rounded font-bold border border-brand-100">Inp: ${submit.date.split(',')[0]}</span>` : ''}
                     </td>`;
 
@@ -4106,14 +4215,14 @@
 
                         rowHtml += `<td ${cellClick}>${airHtml}</td><td ${cellClick}>${listrikHtml}</td><td ${cellClick}>${iplHtml}</td>`;
                     } else {
-                        rowHtml += `<td colspan="3" class="p-4 text-center text-slate-400 font-bold text-[10px] bg-slate-50/50">Belum ada data pengisian di Minggu ${selMinggu}</td>`;
+                        rowHtml += `<td colspan="3" class="p-3 border-r border-slate-100 text-center text-slate-400 font-medium text-[10px] bg-slate-50">Belum ada data</td>`;
                     }
-                    html += `<tr class="border-b border-slate-100 hover:bg-slate-50/50 transition-colors">${rowHtml}</tr>`;
-
+                    html += `<tr class="hover:bg-slate-50/50 border-b border-slate-100 transition-colors">${rowHtml}</tr>`;
                 } else {
+                    let recentSubmit = userSubmitsCurrent.length > 0 ? userSubmitsCurrent.reduce((a, b) => (parseDateObj(a.date) > parseDateObj(b.date) ? a : b)) : null;
+
                     let rowHtml = `<td class="p-3 border-r border-slate-200 sticky-col-1 ${rowBg}">
                         <strong class="${textName} text-xs block mb-0.5">${u.stagging_name}</strong>
-                        <span class="text-[10px] ${textPic}">${u.pic_name || u.username}</span>
                         ${topBadge}
                     </td>`;
 
@@ -4144,6 +4253,20 @@
                                 let ts2 = parseDateObj(prevSubmit.date);
                                 diffDays = (ts1 - ts2) / (1000 * 60 * 60 * 24);
                                 if (diffDays <= 0) diffDays = 7;
+                            }
+
+                            let adminNoteHtml = '';
+                            let noteContent = '';
+                            if (currentUtilView === 'air') noteContent = d.admin_note_air;
+                            else if (currentUtilView === 'listrik') noteContent = d.admin_note_listrik;
+                            else if (currentUtilView === 'rekap') {
+                                if (d.admin_note_air && d.admin_note_listrik) noteContent = `Air: ${d.admin_note_air} | Listrik: ${d.admin_note_listrik}`;
+                                else if (d.admin_note_air) noteContent = `Air: ${d.admin_note_air}`;
+                                else if (d.admin_note_listrik) noteContent = `Listrik: ${d.admin_note_listrik}`;
+                            }
+                            
+                            if (noteContent) {
+                                adminNoteHtml = `<span class="absolute top-1 left-1 material-symbols-rounded text-indigo-500 text-[14px]" title="Catatan Admin: ${noteContent.replace(/"/g, '&quot;')}">speaker_notes</span>`;
                             }
 
                             if(currentUtilView === 'air') {
@@ -4194,11 +4317,12 @@
                                 }
 
                                 rowHtml += `<td class="p-2 border-r border-slate-50 relative hover:bg-blue-50/50 transition-colors cursor-pointer" ${cellClick}>
-                                    ${warningHtml}
+                                    ${warningHtml}${adminNoteHtml}
                                     <div class="flex flex-col items-center justify-center w-full mt-1 min-h-[45px]">
                                         ${diffHtml}
                                         <div class="w-full flex flex-col items-center justify-center">${meterTexts}</div>
                                         <span class="text-[8px] text-slate-400 font-medium mt-auto pt-1">${submit.date.split(',')[0]}</span>
+                                        <span class="text-[8px] text-blue-600 font-bold truncate w-full text-center leading-none mt-0.5" title="Diinput oleh: ${submit.pic}">${submit.pic}</span>
                                     </div>
                                 </td>`;
                                 
@@ -4261,11 +4385,12 @@
                                 let meterTexts = currMeters.map((cm, idx) => `<span class="text-[9px] text-slate-500 font-mono bg-amber-50/50 border border-amber-100/80 px-1 py-0.5 rounded w-full text-center truncate mb-0.5 last:mb-0" title="${cm.id}">${currMeters.length > 1 ? 'M'+(idx+1) : 'Mtr'}: ${cm.angka.toLocaleString('id-ID')}</span>`).join('');
                                 
                                 rowHtml += `<td class="p-2 border-r border-slate-50 relative hover:bg-amber-50/50 transition-colors cursor-pointer" ${cellClick}>
-                                    ${warningHtml}
+                                    ${warningHtml}${adminNoteHtml}
                                     <div class="flex flex-col items-center w-full mt-1">
                                         ${diffHtml}
                                         <div class="w-full flex flex-col mb-1">${meterTexts}</div>
                                         <span class="text-[8px] text-slate-400 font-medium">${submit.date.split(',')[0]}</span>
+                                        <span class="text-[8px] text-amber-600 font-bold truncate w-full text-center leading-none mt-0.5" title="Diinput oleh: ${submit.pic}">${submit.pic}</span>
                                     </div>
                                 </td>`;
                                 
@@ -4300,7 +4425,7 @@
                                 let isLastWeekOfMonth = w.minggu === 4 || w.minggu === 5 || !weekIterators[wIdx+1] || weekIterators[wIdx+1].bulan !== b;
 
                                 rowHtml += `<td class="p-2 border-r border-slate-100 text-center relative cursor-pointer hover:bg-emerald-50/50" ${cellClick}>
-                                    ${warningHtml}
+                                    ${warningHtml}${adminNoteHtml}
                                     <div class="flex flex-col gap-1 items-center w-full mt-1">
                                         <div class="bg-white border border-emerald-100 rounded px-1.5 py-1 w-full text-left shadow-sm mb-0.5">
                                             <span class="text-[9px] font-bold ${d.ipl_bersih==='Ada'?'text-emerald-600':'text-slate-400'} block truncate">B: ${d.ipl_bersih==='Ada'?'Rp'+(parseSafeNumber(d.ipl_bersih_nom)/1000)+'k':'-'} <span class="font-medium text-[8px] opacity-70">(${d.ipl_bersih_jadwal==='1 Kali Sebulan'?'Bln':'Mgg'})</span></span>
@@ -4308,6 +4433,7 @@
                                         </div>
                                         ${isLastWeekOfMonth && mTotal > 0 ? `<div class="bg-emerald-50 text-emerald-700 border border-emerald-200 rounded w-full px-1 py-1 text-center mb-0.5"><span class="text-[8px] font-bold uppercase tracking-widest block opacity-70 leading-none mb-0.5">Total Bln Ini</span><span class="text-[10px] font-extrabold leading-none">Rp ${(mTotal/1000).toLocaleString('id-ID')}k</span></div>` : ''}
                                         <span class="text-[8px] text-slate-400 font-medium">${submit.date.split(',')[0]}</span>
+                                        <span class="text-[8px] text-emerald-600 font-bold truncate w-full text-center leading-none mt-0.5" title="Diinput oleh: ${submit.pic}">${submit.pic}</span>
                                     </div>
                                 </td>`;
                             }
@@ -4454,6 +4580,70 @@
                     }
                 }
                 renderUtilitasChart(chartLabels, chartDatasets);
+            }
+
+            // RENDER TABEL CATATAN EVALUASI (Khusus Air & Listrik)
+            const notesSection = document.getElementById('utilitas-notes-section');
+            const notesTbody = document.getElementById('utilitas-notes-tbody');
+
+            if (currentUtilView === 'ipl') {
+                if (notesSection) notesSection.classList.add('hidden');
+            } else {
+                if (notesSection) notesSection.classList.remove('hidden');
+                
+                let notedSubs = utilDataCurrent.filter(d => {
+                    if (currentUtilView === 'air') return d.data && d.data.admin_note_air && d.data.admin_note_air.trim() !== '';
+                    if (currentUtilView === 'listrik') return d.data && d.data.admin_note_listrik && d.data.admin_note_listrik.trim() !== '';
+                    return d.data && ((d.data.admin_note_air && d.data.admin_note_air.trim() !== '') || (d.data.admin_note_listrik && d.data.admin_note_listrik.trim() !== ''));
+                });
+                
+                notedSubs.sort((a, b) => {
+                    if (a.tahun !== b.tahun) return b.tahun - a.tahun;
+                    if (a.bulan !== b.bulan) return b.bulan - a.bulan;
+                    return b.minggu - a.minggu;
+                });
+
+                if (notedSubs.length === 0) {
+                    if(notesTbody) notesTbody.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-slate-400 font-medium">Belum ada catatan evaluasi untuk periode filter saat ini.</td></tr>`;
+                } else {
+                    let notesHtml = '';
+                    notedSubs.forEach(sub => {
+                        const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agt', 'Sep', 'Okt', 'Nov', 'Des'];
+                        const periodStr = `Minggu ${sub.minggu}, ${monthNames[sub.bulan - 1]} ${sub.tahun}`;
+                        
+                        let noteText = '';
+                        if (currentUtilView === 'air') {
+                            noteText = `<div class="text-blue-700 text-xs italic leading-relaxed border-l-[3px] border-blue-300 pl-3">"${sub.data.admin_note_air}"</div>`;
+                        } else if (currentUtilView === 'listrik') {
+                            noteText = `<div class="text-amber-700 text-xs italic leading-relaxed border-l-[3px] border-amber-300 pl-3">"${sub.data.admin_note_listrik}"</div>`;
+                        } else {
+                            if (sub.data.admin_note_air) noteText += `<div class="text-blue-700 text-xs italic leading-relaxed border-l-[3px] border-blue-300 pl-3 mb-2"><span class="font-bold">Air:</span> "${sub.data.admin_note_air}"</div>`;
+                            if (sub.data.admin_note_listrik) noteText += `<div class="text-amber-700 text-xs italic leading-relaxed border-l-[3px] border-amber-300 pl-3"><span class="font-bold">Listrik:</span> "${sub.data.admin_note_listrik}"</div>`;
+                        }
+
+                        notesHtml += `
+                            <tr class="hover:bg-slate-50 transition-colors border-b border-slate-100">
+                                <td class="p-4 align-top">
+                                    <strong class="text-slate-800 font-bold block">${sub.stagging_name}</strong>
+                                    <span class="text-[10px] text-slate-500 font-bold uppercase">${sub.ssc}</span>
+                                </td>
+                                <td class="p-4 align-top">
+                                    <span class="bg-indigo-50 text-indigo-700 font-bold px-2 py-1 rounded border border-indigo-100 text-[10px] whitespace-nowrap">${periodStr}</span>
+                                    <div class="text-[9px] text-slate-400 mt-1.5 font-medium">${sub.date.split(',')[0]}</div>
+                                </td>
+                                <td class="p-4 align-top">
+                                    ${noteText}
+                                </td>
+                                <td class="p-4 align-top text-center">
+                                    <button onclick="showUtilitasDetail('${sub.id}')" class="bg-white hover:bg-slate-100 text-slate-600 border border-slate-200 px-3 py-1.5 rounded-lg text-[10px] font-bold transition-colors shadow-sm inline-flex items-center gap-1">
+                                        <span class="material-symbols-rounded text-[14px]">visibility</span> Detail
+                                    </button>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                    if(notesTbody) notesTbody.innerHTML = notesHtml;
+                }
             }
         }
 
@@ -5517,7 +5707,17 @@
             });
 
             const locationMap = new Map();
-            validUsers.forEach(u => { const key = `${u.ssc}|${u.province}|${u.stagging_name}`; locationMap.set(key, { user_id: u.id, pic: '-', ssc: u.ssc, province: u.province, stagging_name: u.stagging_name, date: '-', answers: {} }); });
+            validUsers.forEach(u => { 
+                const key = `${u.ssc}|${u.province}|${u.stagging_name}`; 
+                if(!locationMap.has(key)) {
+                    locationMap.set(key, { user_id: u.id, pic: '-', pic_list: [u.pic_name || u.username], ssc: u.ssc, province: u.province, stagging_name: u.stagging_name, date: '-', answers: {} }); 
+                } else {
+                    const existing = locationMap.get(key);
+                    if (!existing.pic_list.includes(u.pic_name || u.username)) {
+                        existing.pic_list.push(u.pic_name || u.username);
+                    }
+                }
+            });
 
             const validFilteredSubs = [];
 
@@ -5527,7 +5727,11 @@
                 if (matchM && matchY && matchSsc) {
                     validFilteredSubs.push(sub);
                     const key = `${sub.ssc}|${sub.province}|${sub.stagging_name}`; const existing = locationMap.get(key);
-                    if (!existing || existing.date === '-' || parseDateObj(sub.date) > parseDateObj(existing.date)) { locationMap.set(key, sub); }
+                    if (!existing || existing.date === '-' || parseDateObj(sub.date) > parseDateObj(existing.date)) { 
+                        const prevPicList = existing ? existing.pic_list : [];
+                        sub.pic_list = prevPicList;
+                        locationMap.set(key, sub); 
+                    }
                 }
             });
 
@@ -5844,7 +6048,7 @@
                         <td class="px-2 py-2 sticky-col-1 col-w-1 text-center font-extrabold text-slate-800 text-[10px] hidden md:table-cell uppercase">${sub.ssc || '-'}</td>
                         <td class="px-2 py-2 sticky-col-2 col-w-2 text-center font-bold text-slate-500 text-[10px] hidden md:table-cell uppercase">${sub.province || '-'}</td>
                         <td class="px-2 py-2 sticky-col-3 col-w-3 font-extrabold text-slate-900 text-[11px] shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] md:shadow-none leading-tight uppercase">${sub.stagging_name || '-'}</td>
-                        <td class="px-2 py-2 text-slate-800 font-bold text-[10px] leading-tight min-w-[140px] uppercase">${sub.pic !== '-' ? sub.pic : '<span class="text-slate-300 italic font-medium normal-case">Kosong</span>'}</td>
+                        <td class="px-2 py-2 text-slate-800 font-bold text-[10px] leading-tight min-w-[140px] uppercase">${sub.pic !== '-' ? sub.pic : (sub.pic_list ? sub.pic_list.join(' / ') : '<span class="text-slate-300 italic font-medium normal-case">Kosong</span>')}</td>
                         <td class="px-2 py-2 text-center text-slate-500 text-[9px] font-bold bg-slate-50 min-w-[110px]">${sub.date.replace(', ', '<br><span class="text-brand-600">')}</span></td>
                         <td class="px-2 py-2 text-center align-middle bg-white">${actionHtml}</td>`;
 
@@ -6235,6 +6439,14 @@
                 let activeUsers = globalFieldUsers.filter(u => u.stagging_name);
                 if (selKoor.length > 0) activeUsers = activeUsers.filter(u => selKoor.includes(u.ssc));
                 if (selStagings.length > 0) activeUsers = activeUsers.filter(u => selStagings.includes(u.stagging_name));
+
+                let uniqueActiveStagingsMap = {};
+                activeUsers.forEach(u => {
+                    if(!uniqueActiveStagingsMap[u.stagging_name]) {
+                        uniqueActiveStagingsMap[u.stagging_name] = u;
+                    }
+                });
+                activeUsers = Object.values(uniqueActiveStagingsMap);
 
                 activeUsers.sort((a, b) => a.stagging_name.localeCompare(b.stagging_name));
 
