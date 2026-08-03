@@ -6241,83 +6241,130 @@
             Island.show('Menyiapkan file Excel...', 'info', 5000);
 
             try {
-                let query = supabaseClient.from('utilitas_data').select('*').eq('tahun', vYear);
-                if (vMonth !== 'all') {
-                    query = query.eq('bulan', vMonth);
-                }
-
-                const { data, error } = await query;
+                // Fetch ALL data to calculate differences properly
+                const { data: allData, error } = await supabaseClient.from('utilitas_data').select('*').order('tahun', {ascending: true}).order('bulan', {ascending: true}).order('minggu', {ascending: true});
                 if (error) throw error;
 
-                if (!data || data.length === 0) {
+                if (!allData || allData.length === 0) {
+                    Island.show('Tidak ada data sama sekali.', 'error');
+                    return;
+                }
+
+                let stagingGroups = {};
+                allData.forEach(d => {
+                    if (!stagingGroups[d.stagging_name]) stagingGroups[d.stagging_name] = [];
+                    stagingGroups[d.stagging_name].push(d);
+                });
+
+                let exportRows = [];
+                const monthNames = ['', 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+
+                Object.keys(stagingGroups).sort().forEach(stg => {
+                    let userSubs = stagingGroups[stg];
+                    
+                    userSubs.forEach((sub, idx) => {
+                        const matchYear = vYear === 'all' || parseInt(sub.tahun) === parseInt(vYear);
+                        const matchMonth = vMonth === 'all' || parseInt(sub.bulan) === parseInt(vMonth);
+                        
+                        if (matchYear && matchMonth) {
+                            let pemakaianAir = 0;
+                            let pemakaianListrik = 0;
+                            let hasDiffAir = false;
+                            let hasDiffListrik = false;
+                            let isTopUpListrik = false;
+                            let diffDays = 7;
+
+                            if (idx > 0) {
+                                let prevSub = userSubs[idx - 1];
+                                
+                                let ts1 = parseDateObj(sub.date);
+                                let ts2 = parseDateObj(prevSub.date);
+                                diffDays = (ts1 - ts2) / (1000 * 60 * 60 * 24);
+                                if (diffDays <= 0) diffDays = 7;
+                                
+                                // Kalkulasi Air
+                                let currAirMeters = extractAirMeters(sub.data);
+                                let prevAirMeters = extractAirMeters(prevSub.data);
+                                currAirMeters.forEach(cm => {
+                                    let pm = prevAirMeters.find(m => m.id === cm.id);
+                                    if (pm && cm.angka >= pm.angka && cm.sumber !== 'Sumur Bor') {
+                                        pemakaianAir += (cm.angka - pm.angka);
+                                        hasDiffAir = true;
+                                    }
+                                });
+
+                                // Kalkulasi Listrik
+                                let currListrikMeters = extractListrikMeters(sub.data);
+                                let prevListrikMeters = extractListrikMeters(prevSub.data);
+                                currListrikMeters.forEach(cm => {
+                                    let pm = prevListrikMeters.find(m => m.id === cm.id);
+                                    if (pm) {
+                                        if (cm.kategori === 'Pra Bayar (Token)') {
+                                            if (pm.angka >= cm.angka) {
+                                                pemakaianListrik += (pm.angka - cm.angka);
+                                                hasDiffListrik = true;
+                                            } else {
+                                                isTopUpListrik = true;
+                                            }
+                                        } else {
+                                            if (cm.angka >= pm.angka) {
+                                                pemakaianListrik += (cm.angka - pm.angka);
+                                                hasDiffListrik = true;
+                                            }
+                                        }
+                                    }
+                                });
+                            }
+
+                            const dt = sub.data || {};
+                            let iplBersih = dt.ipl_bersih === 'Ada' ? parseSafeNumber(dt.ipl_bersih_nom) : 0;
+                            let iplAman = dt.ipl_aman === 'Ada' ? parseSafeNumber(dt.ipl_aman_nom) : 0;
+
+                            let txtAir = hasDiffAir ? pemakaianAir : (idx === 0 ? 'Mulai / Start' : 0);
+                            let avgAir = hasDiffAir ? parseFloat((pemakaianAir / diffDays).toFixed(1)) : (idx === 0 ? 'Mulai / Start' : 0);
+                            
+                            let txtListrik = hasDiffListrik ? pemakaianListrik : (isTopUpListrik ? 'Isi Token' : (idx === 0 ? 'Mulai / Start' : 0));
+                            let avgListrik = hasDiffListrik ? parseFloat((pemakaianListrik / diffDays).toFixed(1)) : (isTopUpListrik ? 'Isi Token' : (idx === 0 ? 'Mulai / Start' : 0));
+
+                            exportRows.push({
+                                "Tahun": sub.tahun,
+                                "Bulan": monthNames[parseInt(sub.bulan)],
+                                "Minggu Ke": sub.minggu,
+                                "Koordinator (SSC)": sub.ssc,
+                                "Staging Area": sub.stagging_name,
+                                "PIC Pengisi": sub.pic,
+                                "Pemakaian Air (m3)": txtAir,
+                                "Rata-rata Air/Hari (m3)": avgAir,
+                                "Pemakaian Listrik (KWh)": txtListrik,
+                                "Rata-rata Listrik/Hari (KWh)": avgListrik,
+                                "Tagihan IPL Kebersihan (Rp)": iplBersih,
+                                "Tagihan IPL Keamanan (Rp)": iplAman,
+                                "Catatan Evaluasi Air": dt.admin_note_air || '-',
+                                "Catatan Evaluasi Listrik": dt.admin_note_listrik || '-',
+                                "Tanggal Input Form": sub.date.split(',')[0]
+                            });
+                        }
+                    });
+                });
+
+                if (exportRows.length === 0) {
                     Island.show('Tidak ada data pada periode tersebut.', 'error');
                     return;
                 }
 
-                // Pengurutan data berdasarkan Bulan, Minggu, lalu Nama Staging
-                data.sort((a, b) => {
-                    if (a.bulan !== b.bulan) return a.bulan - b.bulan;
-                    if (a.minggu !== b.minggu) return a.minggu - b.minggu;
-                    return (a.stagging_name || '').localeCompare(b.stagging_name || '');
+                // Sort by Tahun -> Bulan -> Minggu -> SSC -> Staging
+                exportRows.sort((a, b) => {
+                    if (a.Tahun !== b.Tahun) return a.Tahun - b.Tahun;
+                    if (monthNames.indexOf(a.Bulan) !== monthNames.indexOf(b.Bulan)) return monthNames.indexOf(a.Bulan) - monthNames.indexOf(b.Bulan);
+                    if (a["Minggu Ke"] !== b["Minggu Ke"]) return a["Minggu Ke"] - b["Minggu Ke"];
+                    if (a["Koordinator (SSC)"] !== b["Koordinator (SSC)"]) return (a["Koordinator (SSC)"] || '').localeCompare(b["Koordinator (SSC)"] || '');
+                    return (a["Staging Area"] || '').localeCompare(b["Staging Area"] || '');
                 });
 
-                const rows = data.map(d => {
-                    const dt = d.data || {};
-                    let listrikMeters = extractListrikMeters(dt);
-                    let airMeters = extractAirMeters(dt);
-                    
-                    let rowData = {
-                        "ID Laporan": d.id,
-                        "Tanggal Input": d.date,
-                        "Bulan": d.bulan,
-                        "Tahun": d.tahun,
-                        "Minggu Ke": d.minggu,
-                        "Staging Area": d.stagging_name,
-                        "Koordinator (SSC)": d.ssc,
-                        "PIC": d.pic,
-                        
-                        "Air - Kondisi Meteran": dt.air_kondisi_meteran || '-',
-                        "Air - Ket Rusak Meteran": dt.air_meteran_rusak || '-',
-                        "Air - Kondisi Pipa": dt.air_kondisi_pipa || '-',
-                        "Air - Ket Rusak Pipa": dt.air_pipa_rusak || '-',
-                        "Air - Ada Tandon": dt.air_tandon || '-',
-                        "Air - Kondisi Tandon": dt.air_kondisi_tandon || '-',
-                        "Air - Ada Otomatis": dt.air_otomatis || '-',
-                        "Air - Kondisi Otomatis": dt.air_kondisi_otomatis || '-',
-                        "Air - Ada Pompa": dt.air_pompa || '-',
-                        "Air - Kondisi Pompa": dt.air_kondisi_pompa || '-',
-                        
-                        "IPL - Kebersihan": dt.ipl_bersih || '-',
-                        "IPL - Nom Kebersihan": dt.ipl_bersih_nom || 0,
-                        "IPL - Jadwal Kebersihan": dt.ipl_bersih_jadwal || '-',
-                        "IPL - Keamanan": dt.ipl_aman || '-',
-                        "IPL - Nom Keamanan": dt.ipl_aman_nom || 0,
-                        "IPL - Jadwal Keamanan": dt.ipl_aman_jadwal || '-'
-                    };
-
-                    for(let i=0; i<3; i++) {
-                        rowData[`Air ${i+1} - ID`] = airMeters[i]?.id || '-';
-                        rowData[`Air ${i+1} - Nama`] = airMeters[i]?.nama || '-';
-                        rowData[`Air ${i+1} - Sumber`] = airMeters[i]?.sumber || '-';
-                        rowData[`Air ${i+1} - Mekanisme`] = airMeters[i]?.mekanisme || '-';
-                        rowData[`Air ${i+1} - Angka`] = airMeters[i]?.angka !== undefined ? airMeters[i].angka : '-';
-                    }
-
-                    for(let i=0; i<5; i++) {
-                        rowData[`Listrik ${i+1} - ID`] = listrikMeters[i]?.id || '-';
-                        rowData[`Listrik ${i+1} - Nama`] = listrikMeters[i]?.nama || '-';
-                        rowData[`Listrik ${i+1} - Kategori`] = listrikMeters[i]?.kategori || '-';
-                        rowData[`Listrik ${i+1} - Angka`] = listrikMeters[i]?.angka !== undefined ? listrikMeters[i].angka : '-';
-                    }
-
-                    return rowData;
-                });
-
-                const ws = XLSX.utils.json_to_sheet(rows);
+                const ws = XLSX.utils.json_to_sheet(exportRows);
                 const wb = XLSX.utils.book_new();
-                XLSX.utils.book_append_sheet(wb, ws, "Data Utilitas");
+                XLSX.utils.book_append_sheet(wb, ws, "Rekap Pemakaian");
                 
-                const monthNames = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agt', 'Sep', 'Okt', 'Nov', 'Des'];
                 const filenameMonth = vMonth === 'all' ? 'SatuTahun' : monthNames[parseInt(vMonth)];
                 XLSX.writeFile(wb, `Export_Utilitas_IPL_${filenameMonth}_${vYear}.xlsx`);
                 
